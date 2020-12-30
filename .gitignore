@@ -8,6 +8,6 @@ node_modules
 .node-persist
 
 #Ignore json
-lib/*.json
+lib/antifake.json
 
 
