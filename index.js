@@ -1,12 +1,15 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const welcome = require('./lib/welcome')
-const msgHandler = require('./msgHndlr')
-const anti_link = require('./lib/antilink')
-const anti_flood = require('./lib/antiflood')
+const {criarArquivosJson} = require('./lib/functions')
 const options = require('./options')
+const msgHandler = require('./msgHndlr')
 
 const start = async (client = new Client()) => {
         console.log('[SERVIDOR] Servidor iniciado!')
+        await criarArquivosJson()
+        const welcome = require('./lib/welcome')
+        const anti_link = require('./lib/antilink')
+        const anti_flood = require('./lib/antiflood')
+        
         // Force it to keep the current session
         client.onStateChanged((state) => {
             console.log('[Cliente Status]', state)
