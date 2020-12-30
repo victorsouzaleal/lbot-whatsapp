@@ -11,7 +11,7 @@
 <a href="https://github.com/Victorsouza02/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/Victorsouza02?color=red&style=flat-square"></a>
 <a href="https://github.com/Victorsouza02/Whatsapp-Bot-Leal/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/Victorsouza02/Whatsapp-Bot-Leal?color=red&style=flat-square"></a>
 <a href="https://github.com/Victorsouza02/Whatsapp-Bot-Leal/network/members"><img title="Forks" src="https://img.shields.io/github/forks/Victorsouza02/Whatsapp-Bot-Leal?color=red&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/Whatsapp-Bot-Leal/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/Victorsouza02/Whatsapp-Bot-Leal?label=Watchers&color=blue&style=flat-square"></a>
+<a href="https://github.com/Victorsouza02/Whatsapp-Bot-Leal/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/Victorsouza02/Whatsapp-Bot-Leal?label=Acompanhando&color=blue&style=flat-square"></a>
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/ATUALIZADO-SIM-blue.svg"/></a>
 </p>
 
@@ -31,7 +31,7 @@ no diretório do projeto que você clonou!
 ```
 
 ### Uso
-Antes de executar este script, primeiro edite [este arquivo](https://github.com/Victorsouza02/Whatsapp-Bot-Leal/blob/main/.env) com o seu número de Whatsapp e as chaves de API necessárias para alguns comandos. (LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.)
+Na primeira inicialização o script criará os arquivos necessários para o funcionamento, após inicializar ele irá pedir para você configurar o .env na raiz do projeto. Vá até o .env e configure ele com o seu número de Whatsapp e as chaves de API necessárias para alguns comandos. (LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.)
 
 ```bash
 > npm start
