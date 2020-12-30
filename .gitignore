@@ -15,3 +15,9 @@ lib/*.json
 
 #Ignore .log
 *.log
+
+#Ignore media files
+media/aswu.mp4
+media/output.gif
+media/tts/*.mp3
+media/tts/nope.txt

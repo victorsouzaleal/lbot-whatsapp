@@ -252,7 +252,17 @@ module.exports = msgHandler = async (client, message) => {
                 await fs.writeFile(outFile, result.base64img)
                 await client.sendImageAsSticker(from, `data:${mimetype};base64,${result.base64img}`)
             } catch(err) {
-                client.reply(from,(err[0].code == "insufficient_credits") ? msgs_texto.erro.sticker.sem_credito : msgs_texto.erro.sticker.erro_background,id)
+                switch(err[0].code){
+                    case 'insufficient_credits':
+                        client.reply(from,msgs_texto.erro.sticker.sem_credito,id)
+                        break
+                    case 'auth_failed':
+                        console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
+                        client.reply(from,msgs_texto.erro.sticker.autenticacao,id)
+                        break
+                    default:
+                        client.reply(from,msgs_texto.erro.sticker.erro_background,id)    
+                }
             }
         } else if (quotedMsg) {
             try {
@@ -265,7 +275,17 @@ module.exports = msgHandler = async (client, message) => {
                 await fs.writeFile(outFile, result.base64img)
                 await client.sendImageAsSticker(from, `data:${quotedMsg.mimetype};base64,${result.base64img}`)
             } catch(err) {
-                client.reply(from,(err[0].code == "insufficient_credits") ? msgs_texto.erro.sticker.sem_credito : msgs_texto.erro.sticker.erro_background,id)
+                switch(err[0].code){
+                    case 'insufficient_credits':
+                        client.reply(from,msgs_texto.erro.sticker.sem_credito,id)
+                        break
+                    case 'auth_failed':
+                        console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
+                        client.reply(from,msgs_texto.erro.sticker.autenticacao,id)
+                        break
+                    default:
+                        client.reply(from,msgs_texto.erro.sticker.erro_background,id)    
+                }
             }   
         } else {
             client.reply(from, msgs_texto.erro.geral, id)
@@ -330,14 +350,19 @@ module.exports = msgHandler = async (client, message) => {
             break
 
         case '!noticias':
-            const resp = await  get.get(`http://newsapi.org/v2/top-headlines?country=br&apiKey=${api_news}`).json()
-            const noticias = resp.articles;
-            let noticias_msg = "╔══✪〘 NOTICIAS 〙✪══\n╠\n"
-            noticias.forEach(async(noticia) =>{
-                noticias_msg += `╠➥ 📰🗞️ *${noticia.title}* \n╠\n`
-            })
-            noticias_msg += '╚═〘 Patrocínio : Malas Boa Viagem 〙'
-            client.reply(from, noticias_msg, id)
+            try {
+                const resp = await  get.get(`http://newsapi.org/v2/top-headlines?country=br&apiKey=${api_news}`).json()
+                const noticias = resp.articles;
+                let noticias_msg = "╔══✪〘 NOTICIAS 〙✪══\n╠\n"
+                noticias.forEach(async(noticia) =>{
+                    noticias_msg += `╠➥ 📰🗞️ *${noticia.title}* \n╠\n`
+                })
+                noticias_msg += '╚═〘 Patrocínio : Malas Boa Viagem 〙'
+                client.reply(from, noticias_msg, id)
+            } catch {
+                console.log("[ERRO] Erro na chave API de notícias, configure no arquivo .env")
+                client.reply(from,msgs_texto.erro.noticia.autenticacao)
+            }
             break;
         
         case '!viadometro' :
@@ -532,7 +557,7 @@ module.exports = msgHandler = async (client, message) => {
             break
 
         case "!dono":
-            await client.sendTextWithMentions(from, `🤖 O Dono do Bot é : @${ownerNumber[1]}`)
+            await client.sendTextWithMentions(from, `🤖 O Dono do Bot é : @${ownerNumber}`)
             break
 
         case '!marcartodos':
