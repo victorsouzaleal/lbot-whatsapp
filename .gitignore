@@ -7,4 +7,7 @@ node_modules
 #Ignore node-persist
 .node-persist
 
+#Ignore json
+lib/*.json
+
 
