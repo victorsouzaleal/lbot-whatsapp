@@ -1,0 +1,10 @@
+# Ignore node_modules folder
+node_modules
+
+# Ignore Session data
+*.data.json
+
+#Ignore node-persist
+.node-persist
+
+
