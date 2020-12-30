@@ -39,61 +39,53 @@ Antes de executar este script, primeiro edite [este arquivo](https://github.com/
 
 ## Features
 
-| Sticker Creator |                Feature           |
+| Criador de Sticker |                Recursos        |
 | :-----------: | :--------------------------------: |
-|       ✅       | Send Photo with Caption          |
-|       ✅       | Reply A Photo                    |
-|       ✅       | Image Url                        |
-|       ✅       | Send Video or GIF with Caption   |
+|       ✅       | Envie foto com legenda !s       |
+|       ✅       | Responder foto  com !s               |
+|       ✅       | Enviar URL de imagem com !s                   |
+|       ✅       | Envie video ou GIF com legenda !sgif ou !sgif2  |
+|       ✅       | Tirar fundo de fotos e criar Sticker com !ssf  |
 
 
-| Downloader |                     Feature                |
+| Utilitários |                     Recursos            |
 | :------------: | :---------------------------------------------: |
-|       ✅        |   YouTube mp3/mp4 Downloader                    |
-|       ❌        |   Doujin Downloader         |
-|       ✅        |   Instagram Video/Image Downloader                  |
-|       ✅        |   Facebook Video Downloader                  |
+|       ✅        |   Texto para voz                   |
+|       ✅        |   Pesquisa de imagens                  |
+|       ✅        |   Rastreamento Correios                  |
+|       ✅        |   Noticias Atuais                 |
+|       ✅        |   Tradutor                |
 
 
-| Other  |                     Feature                     |
+| Apenas Grupo  |                     Recursos             |
 | :------------: | :---------------------------------------------: |
-|       ✅        |   Get a random meme             |
-|       ✅        |   Text to speech                |
-|       ✅        |   Get a random waifu images     |
-|       ✅        |   Get a random quotes           |
-|       ✅        |   Get a random anime quotes     |
-|       ✅        |   Get info gempa from BMKG      |
-|       ✅        |   Weather's report's     |
-|       ✅        |   Wikipedia                 |
-|       ✅        |   Anime searcher    |
-|       ✅        |   Get a random cat images       |
-|       ✅        |   Get a random dog images       |
-|      And        |   Others...                     |
+|       ✅        |   Promover usuário                  |
+|       ✅        |   Rebaixar usuário                |
+|       ✅        |   Remover usuário                     |
+|       ✅        |   Adicionar usuário                      |
+|       ✅        |   Marcar todos              |
+|       ✅        |   Obter link do grupo               |
+|       ✅        |   Obter lista de administradores               |
+|       ✅        |   Obter dono do grupo              |
+|       ✅        |   Bem Vindo  |
+|       ✅        |   Anti Fake(números estrangeiros)|
+|       ✅        |   Anti Link de grupos  |
+|       ✅        |   Anti Flood  |
+|       ✅        |   Banir Todos  |
+|       ✅        |   Apagar mensagens do bot  |
 
 
-| Group Only  |                     Feature                     |
+| Apenas Dono do Bot  |              Recurso           |
 | :------------: | :---------------------------------------------: |
-|       ✅        |   Promote User                  |
-|       ✅        |   Demote User                   |
-|       ✅        |   Kick User                     |
-|       ✅        |   Add User                      |
-|       ✅        |   Mention All User              |
-|       ✅        |   Get link group                |
-|       ✅        |   Get Admin list                |
-|       ✅        |   Get owner group               |
-|       ✅        |   enable or disable nsfw command|
-|       ✅        |   enable or disable welcome feature|
-
-
-| Owner Group Only  |              Feature                |
-| :------------: | :---------------------------------------------: |
-|       ✅        |   Kick All Member Group                 |
-
-| Owner Bot Only  |              Feature                |
-| :------------: | :---------------------------------------------: |
-|       ✅        |   leave all group                   |
-|       ✅        |   clear all message                 |
-|       ✅        |   Broadcast                      |
+|       ✅        |   Entrar em um grupo                 |
+|       ✅        |   Sair de todos os grupos                  |
+|       ✅        |   Limpar todos os chats              |
+|       ✅        |   Broadcast - Anuncio Geral                     |
+|       ✅        |   Bloquear/Desbloquear usuário                     |
+|       ✅        |   Sair do grupo                     |
+|       ✅        |   Limpar somente chat de contatos                 |
+|       ✅        |   Obter lista de usuários bloqueados                |
+|       ✅        |   Modificar status atual do bot                |
 
 
 ### Solucão de problemas
