@@ -305,16 +305,18 @@ module.exports = msgHandler = async (client, message) => {
         
         case '!voz':
             var dataText = '';
+            var id_resp = id
             if (args.length === 1) {
                 return client.reply(from, msgs_texto.erro.voz.cmd_erro ,id)
             } else if(quotedMsg !== undefined && quotedMsg.type == 'chat'){
-                dataText = quotedMsg.body
+                dataText = (args.length == 2) ? quotedMsg.body : body.slice(8)
             } else {
                 dataText = body.slice(8)
             }
+
             if (dataText === '') return client.reply(from, msgs_texto.erro.voz.texto_vazio , id)
             if (dataText.length > 5000) return client.reply(from, msgs_texto.erro.voz.texto_longo, id)
-
+            if(quotedMsg !== undefined) id_resp = quotedMsgObj.id
             const ttsEn = require('node-gtts')('en')
             const ttsPt = require('node-gtts')('pt')
 	        const ttsJp = require('node-gtts')('ja')
@@ -324,24 +326,24 @@ module.exports = msgHandler = async (client, message) => {
             var dataBhs = body.slice(5, 7).toLowerCase()
 	        if (dataBhs == 'pt') {
                 ttsPt.save('./media/tts/resPt.mp3', dataText, function () {
-                    client.sendPtt(from, './media/tts/resPt.mp3', id)
+                    client.sendPtt(from, './media/tts/resPt.mp3', id_resp)
                 })
             } else if (dataBhs == 'en') {
                 ttsEn.save('./media/tts/resEn.mp3', dataText, function () {
-                    client.sendPtt(from, './media/tts/resEn.mp3', id)
+                    client.sendPtt(from, './media/tts/resEn.mp3', id_resp)
                 })
             } else if (dataBhs == 'jp') {
                 ttsJp.save('./media/tts/resJp.mp3', dataText, function () {
-                    client.sendPtt(from, './media/tts/resJp.mp3', id)
+                    client.sendPtt(from, './media/tts/resJp.mp3', id_resp)
                 })
             } 
               else if (dataBhs == 'es') {
                 ttsEs.save('./media/tts/resEs.mp3', dataText, function () {
-                    client.sendPtt(from, './media/tts/resEs.mp3', id)
+                    client.sendPtt(from, './media/tts/resEs.mp3', id_resp)
                 })
             } else if (dataBhs == 'it') {
                 ttsIt.save('./media/tts/resIt.mp3', dataText, function () {
-                    client.sendPtt(from, './media/tts/resIt.mp3', id)
+                    client.sendPtt(from, './media/tts/resIt.mp3', id_resp)
                 })
             } 
               else {
@@ -476,7 +478,7 @@ module.exports = msgHandler = async (client, message) => {
                 } 
             } else if (args[1].toLowerCase() === 'desligado') {
                 if(antifake_g.includes(chat.id)){
-                    antifake_g.splice(antilink_g.indexOf(chat.id), 1)
+                    antifake_g.splice(antifake_g.indexOf(chat.id), 1)
                     fs.writeFileSync('./lib/antifake.json', JSON.stringify(antifake_g))
                     client.reply(from,  msgs_texto.sucesso.grupo.antifake.desativado, id)
                 } else {
@@ -653,13 +655,14 @@ module.exports = msgHandler = async (client, message) => {
             if(args.length === 1) return client.reply(from, msgs_texto.erro.grupo.fechar.cmd_erro, id)
             client.setGroupToAdminsOnly(groupId,(args[1] == "on") ? true : false)
             break
+         
 
         //COMANDOS DO DONO
         case "!admin":
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             client.sendText(from, admin)
             break
-
+            
         case '!entrargrupo':
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             if (args.length < 2) return client.reply(from, msgs_texto.erro.grupo.entrar_grupo.cmd_erro, id)
@@ -705,7 +708,7 @@ module.exports = msgHandler = async (client, message) => {
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             const all_chats = await client.getAllChats()
             for (let dchat of all_chats) {
-                if(dchat.id.match(/@c.us/g) && dchat.id != id) await client.deleteChat(dchat.id)
+                if(dchat.id.match(/@c.us/g) && dchat.id != sender.id) await client.deleteChat(dchat.id)
             }
             client.reply(from, msgs_texto.sucesso.grupo.limpartudo, id)
             break    
@@ -764,6 +767,30 @@ module.exports = msgHandler = async (client, message) => {
                 }
             }
             break
+
+            case '!bc':
+                if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+                let msg_bc = body.slice(4)
+                const chats_bc = await client.getAllChatIds()
+                for (let id_chat of chats_bc) {
+                    var chat_bc_info = await client.getChatById(id_chat)
+                    if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, `[🤖 LEALZIN BOT ANÚNCIA]\n\n${msg_bc}`)
+                }
+                client.reply(from, 'Anúncio feito com sucesso', id)
+                break
+            
+            case '!bcgrupos':
+                if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+                let msg_bcgrupos = body.slice(10)
+                const chats_bcgrupos = await client.getAllChatIds()
+                for (let id_chat of chats_bcgrupos) {
+                    if(id_chat.match(/@g.us/g)){
+                        var chat_bcgrupos_info = await client.getChatById(id_chat)
+                        if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, `[🤖LEALZIN BOT ANÚNCIA]\n\n${msg_bcgrupos}`)
+                    }
+                }
+                client.reply(from, 'Anúncio feito com sucesso', id)
+                break
 
             case '!estado':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)

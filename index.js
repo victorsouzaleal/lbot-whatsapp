@@ -46,7 +46,6 @@ const start = async (client = new Client()) => {
         // listening on Incoming Call
         client.onIncomingCall(( async (call) => {
             await client.sendText(call.peerJid, 'Não posso receber ligações.')
-            .then(() => client.contactBlock(call.peerJid))
         }))
     }
 
