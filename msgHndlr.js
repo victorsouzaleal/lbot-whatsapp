@@ -17,6 +17,7 @@ const { admin } = require('./lib/help')
 const { RemoveBgResult, removeBackgroundFromImageBase64, removeBackgroundFromImageFile } = require('remove.bg')
 moment.tz.setDefault('America/Sao_Paulo')
 const msgs_texto = require('./lib/msgs')
+const axios = require('axios')
 var Scraper = require('images-scraper');
 const google = new Scraper({
   puppeteer: {
@@ -61,7 +62,7 @@ module.exports = msgHandler = async (client, message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
-        const ownerNumber = process.env.NUMERO_DONO // Número do administrador do bot
+        const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
         const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
         const isBlocked = blockNumber.includes(sender.id)
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
@@ -98,11 +99,12 @@ module.exports = msgHandler = async (client, message) => {
             const url_malacos_img = "https://instagram.fsdu6-1.fna.fbcdn.net/v/t51.2885-15/e35/123749592_128000845743872_4350553576495440946_n.jpg?_nc_ht=instagram.fsdu6-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=m2UaMTuk_mcAX8qUg__&tp=1&oh=d3cf971a3b695cfe302c494f355922b2&oe=60035949"
             client.sendFileFromUrl(from, url_malacos_img, 'malacos.jpeg', 'Somos o problema', id)
             break
-
+            
         case '!img':
             let qtd_Img = 1;
             let data_Img = ""
- 
+            let imgs_validas = []
+
             if(!isNaN(args[1])){
                 if(args[1] > 0 && args[1] <= 5) {
                     qtd_Img = args[1]
@@ -118,11 +120,21 @@ module.exports = msgHandler = async (client, message) => {
 
             if (data_Img === '') return client.reply(from, msgs_texto.erro.img.tema_vazio , id)
             if (data_Img.length > 500) return client.reply(from, msgs_texto.erro.img.tema_longo , id)
-            const results = await google.scrape(data_Img, qtd_Img);
+            const results = await google.scrape(data_Img, 30);
             results.forEach(result=>{
-                if(!result.url.includes('lookaside'))client.sendFileFromUrl(from, result.url , result.description, "", (qtd_Img == 1) ? id : "")
+                if(!result.url.includes('lookaside')) imgs_validas.push({url: result.url, description: result.description})
             })
-            break    
+
+            for(let i = 0; i < qtd_Img ; i++){
+                let img_index_aleatorio = Math.floor(Math.random() * imgs_validas.length)
+                axios.get(imgs_validas[img_index_aleatorio].url).then(()=> {
+                    client.sendFileFromUrl(from, imgs_validas[img_index_aleatorio].url , imgs_validas[img_index_aleatorio].description, "", (qtd_Img == 1) ? id : "")
+                    imgs_validas.splice(img_index_aleatorio,1)
+                }).catch(()=>{
+                    console.log("[ERRO] Não foi possível obter esta imagem")
+                })
+            }
+            break       
 
         case '!mascote':
             //const url_mascote_img = "https://i.imgur.com/mVwa7q4.png"
@@ -372,7 +384,7 @@ module.exports = msgHandler = async (client, message) => {
             if(!quotedMsg) return client.reply(from, msgs_texto.erro.grupo.viadometro.cmd_erro, id)
             const medida = [' 0%\n\n - ESSE É MACHO ','██                 20% \n\n - HMMMMM ', '████             40%\n\n - JÁ MAMOU O PRIMO', '██████         60%\n\n - EITA MAMOU O BONDE', '████████     80%\n\n - JÁ SENTOU EM ALGUEM', '██████████ 100%\n\n - BIXONA ALERTA VERMELHO CUIDADO COM SEUS ORGÃOS SEXUAIS']
             let aleatorio = Math.floor(Math.random() * medida.length)
-            if(ownerNumber.includes(quotedMsgObj.author)) aleatorio = 0
+            if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) aleatorio = 0
             client.reply(from,`🤖 *VIADÔMETRO* - ${medida[aleatorio]}`, quotedMsgObj.id)
             break
         
@@ -559,7 +571,7 @@ module.exports = msgHandler = async (client, message) => {
             break
 
         case "!dono":
-            await client.sendTextWithMentions(from, `🤖 O Dono do Bot é : @${ownerNumber}`)
+            await client.sendTextWithMentions(from, `🤖 O Dono do Bot é : @${ownerNumber[0]}`)
             break
 
         case '!marcartodos':
@@ -737,12 +749,17 @@ module.exports = msgHandler = async (client, message) => {
             }
 
             for (let user_b of usuarios_bloq){
-                if(blockNumber.includes(user_b)) {
-                    await client.sendTextWithMentions(from, `[❗] O Usuário @${user_b.replace(/@c.us/g, '')} já está *bloqueado*.`)
+                if(ownerNumber.includes(user_b.replace(/@c.us/g, ''))){
+                    await client.sendTextWithMentions(from, `[❗] O Usuário @${user_b.replace(/@c.us/g, '')} é dono do BOT, não foi possivel bloquear.`)
                 } else {
-                    await client.contactBlock(user_b)
-                    await client.sendTextWithMentions(from, `✅ O Usuário @${user_b.replace(/@c.us/g, '')} foi *bloqueado* com sucesso`)
+                    if(blockNumber.includes(user_b)) {
+                        await client.sendTextWithMentions(from, `[❗] O Usuário @${user_b.replace(/@c.us/g, '')} já está *bloqueado*.`)
+                    } else {
+                        await client.contactBlock(user_b)
+                        await client.sendTextWithMentions(from, `✅ O Usuário @${user_b.replace(/@c.us/g, '')} foi *bloqueado* com sucesso`)
+                    }
                 }
+                
             }
             break      
 
@@ -770,6 +787,7 @@ module.exports = msgHandler = async (client, message) => {
 
             case '!bc':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+                if(args.length === 1) return client.reply(from, msgs_texto.erro.grupo.bc.cmd_erro, id)
                 let msg_bc = body.slice(4)
                 const chats_bc = await client.getAllChatIds()
                 for (let id_chat of chats_bc) {
@@ -781,6 +799,7 @@ module.exports = msgHandler = async (client, message) => {
             
             case '!bcgrupos':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+                if(args.length === 1) return client.reply(from, msgs_texto.erro.grupo.bcgrupos.cmd_erro, id)
                 let msg_bcgrupos = body.slice(10)
                 const chats_bcgrupos = await client.getAllChatIds()
                 for (let id_chat of chats_bcgrupos) {

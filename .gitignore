@@ -18,6 +18,7 @@ lib/*.json
 
 #Ignore media files
 media/aswu.mp4
+media/img/noBg.png
 media/output.gif
 media/tts/*.mp3
 media/tts/nope.txt
