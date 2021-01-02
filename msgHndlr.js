@@ -137,9 +137,8 @@ module.exports = msgHandler = async (client, message) => {
             break       
 
         case '!mascote':
-            //const url_mascote_img = "https://i.imgur.com/mVwa7q4.png"
-            const url_mascote_img_natal = "https://i.imgur.com/YTq7Oc7l.png"
-            client.sendFileFromUrl(from, url_mascote_img_natal, 'mascote.jpeg', 'Whatsapp Jr. 2021', id)
+            const url_mascote_img = "https://i.imgur.com/mVwa7q4.png"
+            client.sendFileFromUrl(from, url_mascote_img, 'mascote.jpeg', 'Whatsapp Jr.', id)
             break 
 
         case '!ajuda': //Menu principal
@@ -398,6 +397,11 @@ module.exports = msgHandler = async (client, message) => {
             break
 
         //COMANDOS PARA GRUPO
+        case '!regras':
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            let grupo_info = await client.getChatById(groupId)
+            await client.sendFileFromUrl(from, grupo_info.contact.profilePicThumbObj.eurl, grupo_info.contact.name, grupo_info.groupMetadata.desc,id)
+            break
         case '!status':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
@@ -583,7 +587,7 @@ module.exports = msgHandler = async (client, message) => {
                 hehe += '╠➥'
                 hehe += ` @${groupMem[i].id.replace(/@c.us/g, '')}\n`
             }
-            hehe += '╚═〘 Lealzin BOT 〙'
+            hehe += '╚═〘 LBOT v2.0 〙'
             await client.sendTextWithMentions(from, hehe)
             break
 
@@ -695,7 +699,9 @@ module.exports = msgHandler = async (client, message) => {
         case '!sair':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if(!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot , id)
-            await client.sendText(from, msgs_texto.sucesso.grupo.sair).then(() => client.leaveGroup(groupId))
+            await client.sendText(from, msgs_texto.sucesso.grupo.sair).then(async () =>{
+                await client.leaveGroup(groupId)
+            }) 
             break
 
         case '!listablock':
@@ -792,7 +798,7 @@ module.exports = msgHandler = async (client, message) => {
                 const chats_bc = await client.getAllChatIds()
                 for (let id_chat of chats_bc) {
                     var chat_bc_info = await client.getChatById(id_chat)
-                    if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, `[🤖 LEALZIN BOT ANÚNCIA]\n\n${msg_bc}`)
+                    if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, `[🤖 LBOT v2.0 ANÚNCIA]\n\n${msg_bc}`)
                 }
                 client.reply(from, 'Anúncio feito com sucesso', id)
                 break
@@ -805,10 +811,16 @@ module.exports = msgHandler = async (client, message) => {
                 for (let id_chat of chats_bcgrupos) {
                     if(id_chat.match(/@g.us/g)){
                         var chat_bcgrupos_info = await client.getChatById(id_chat)
-                        if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, `[🤖LEALZIN BOT ANÚNCIA]\n\n${msg_bcgrupos}`)
+                        if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, `[🤖LBOT v2.0 ANÚNCIA]\n\n${msg_bcgrupos}`)
                     }
                 }
                 client.reply(from, 'Anúncio feito com sucesso', id)
+                break
+            
+            case '!print':
+                if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+                let print = await client.getSnapshot()
+                await client.sendFile(from,print,"print.png",'Captura de Tela',id)
                 break
 
             case '!estado':
