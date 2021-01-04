@@ -6,9 +6,9 @@ const msgHandler = require('./msgHndlr')
 const start = async (client = new Client()) => {
         console.log('[SERVIDOR] Servidor iniciado!')
         await criarArquivosJson()
-        const welcome = require('./lib/welcome')
-        const anti_link = require('./lib/antilink')
-        const anti_flood = require('./lib/antiflood')
+        const aoEntrarGrupo = require('./lib/aoEntrarGrupo')
+        const antiLink= require('./lib/antiLink')
+        const antiFlood = require('./lib/antiFlood')
         
         // Force it to keep the current session
         client.onStateChanged((state) => {
@@ -24,13 +24,13 @@ const start = async (client = new Client()) => {
                 }
             })
 
-            anti_link(client,message)
-            anti_flood(client,message)
+            antiLink(client,message)
+            antiFlood(client,message)
             msgHandler(client, message)
         }))
 
         client.onGlobalParicipantsChanged((async (ev) => {
-            await welcome(client, ev)
+            await aoEntrarGrupo(client, ev)
         }))
         
         client.onAddedToGroup(((chat) => {
