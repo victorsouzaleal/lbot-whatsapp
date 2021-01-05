@@ -1,6 +1,6 @@
 {
-    "utilidades":["!ajuda","!s","!sgif","!sgif2","!ssf","!traduz","!voz","!img","!noticias","!rastreio"],
-    "admin_grupo":["!status","!regras","!add","!banir","!promover","!rebaixar","!marcartodos","!listaradmins","!donogrupo","!linkgrupo","!fechar","!antilink","!bemvindo","!antifake","!antiflood","!apagar","!banirtodos"],
-    "diversao":["!mascote","!viadometro","!detector"],
+    "utilidades":["!ajuda","!s","!sgif","!sgif2","!ssf","!traduz","!voz","!img","!noticias","!rastreio","!calc","!info","!google"],
+    "admin_grupo":["!status","!regras","!add","!ban","!promover","!rebaixar","!mt","!adms","!dono","!link","!rlink","!f","!alink","!bv","!afake","!aflood","!apg","!bantodos"],
+    "diversao":["!mascote","!viadometro","!detector","!roletarussa","!casal","!gadometro","!top5gados","!par"],
     "dono_bot":["!sair","!sairgrupos","!entrargrupo","!bc","!bcgrupos","!print","!limpartudo","!limpar","!listablock","!bloquear","!desbloquear","!estado"]
 }

@@ -15,6 +15,7 @@ const google = new Scraper({
     headless: true,
   }
 });
+const serp = require('serp')
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -32,9 +33,42 @@ module.exports = utilidades = async(client,message) => {
     const args =  commands.split(' ')
     const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
     const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
+    const botNumber = await client.getHostNumber()
 
     switch(command){
+
      //################## UTILIDADES ########################
+     case "!info":
+        const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
+        let msg_info = "*Criador do Bot* : Leal\n"
+        msg_info += "*Criado em* : 21/12/2020\n"
+        msg_info += "*Nome do bot* : LBot v2.0\n"
+        msg_info += "*Contato do criador* : wa.me/5521995612287\n"
+        await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
+        break
+
+    case "!google":
+        if (args.length === 1) return client.reply(from, "[ERRO] Digite o que você quer pesquisar", id)
+        let q_search = body.slice(8)
+        const config_google = {
+            host : "google.com.br",
+            qs : {
+              q : q_search,
+              filter : 0,
+              pws : 0
+            },
+            num : 3
+        }
+        const resultados_p = await serp.search(config_google)
+        let msg_resultado = `🔎 Resultados da pesquisa de : *${q_search}*🔎\n\n` 
+        resultados_p.forEach((resultado)=>{
+            msg_resultado += `═════════════════\n`
+            msg_resultado += `🔎 ${resultado.title}\n`
+            msg_resultado += `*Link* : ${resultado.url}\n\n`
+        })
+        await client.reply(from,msg_resultado,id)
+        break
+
      case '!rastreio':
         var dataText = '';
         if (args.length === 1) return client.reply(from, msgs_texto.erro.rastreio.cmd_erro, id)
@@ -329,5 +363,20 @@ module.exports = utilidades = async(client,message) => {
             client.reply(from,msgs_texto.erro.noticia.autenticacao)
         }
         break;
+
+    case '!calc':
+        if(args.length === 1) return client.reply(from, "[ERRO] Você deve digitar !calcular [expressão-matemática]",id)
+        let expressao = body.slice(6)
+        if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, "[ERRO] Sua expressão matemática tem caracteres inválidos",id)
+        expressao = expressao.replace(",",".")
+        try {
+            resultado = eval(expressao)
+            if(isNaN(resultado)) return client.reply(from, `🧮 Para de ficar tentando dividir por 0 , seu mongol. `,id)
+            client.reply(from, `🧮 O resultado é *${resultado}* `,id)
+        } catch {
+            client.reply(from, "[ERRO] Houve um erro no cálculo dessa expressão.",id)
+        }
+        break
     }
+
 }

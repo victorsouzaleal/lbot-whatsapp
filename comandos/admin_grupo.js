@@ -47,13 +47,13 @@ module.exports = admin_grupo = async(client,message) => {
             client.sendText(from,status_text)
             break
 
-        case '!bemvindo':
+        case '!bv':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (args.length === 1) return client.reply(from, msgs_texto.erro.grupo.bemvindo.cmd_erro, id)
             const bv_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
 
-            if (args[1].toLowerCase() === 'ligado') {
+            if (args[1].toLowerCase() === 'on') {
                 if(!bv_recursos.bemvindo.includes(chat.id)) {
                     bv_recursos.bemvindo.push(chat.id)
                     fs.writeFileSync('./lib/recursos.json', JSON.stringify(bv_recursos))
@@ -62,7 +62,7 @@ module.exports = admin_grupo = async(client,message) => {
                     client.reply(from, msgs_texto.erro.grupo.bemvindo.ligado , id)
 
                 }
-            } else if (args[1].toLowerCase() === 'desligado') {
+            } else if (args[1].toLowerCase() === 'off') {
                 if(bv_recursos.bemvindo.includes(chat.id)) {
                     bv_recursos.bemvindo.splice(bv_recursos.bemvindo.indexOf(chat.id), 1)
                     fs.writeFileSync('./lib/recursos.json', JSON.stringify(bv_recursos))
@@ -75,14 +75,14 @@ module.exports = admin_grupo = async(client,message) => {
             }
             break
 
-        case '!antilink':
+        case '!alink':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, msgs_texto.erro.grupo.antilink.cmd_erro, id)
                 const al_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
 
-                if (args[1].toLowerCase() === 'ligado') {
+                if (args[1].toLowerCase() === 'on') {
                     if(!al_recursos.antilink.includes(chat.id)){
                         al_recursos.antilink.push(chat.id)
                         fs.writeFileSync('./lib/recursos.json', JSON.stringify(al_recursos))
@@ -90,7 +90,7 @@ module.exports = admin_grupo = async(client,message) => {
                     } else {
                         client.reply(from, msgs_texto.erro.grupo.antilink.ligado , id)
                     } 
-                } else if (args[1].toLowerCase() === 'desligado') {
+                } else if (args[1].toLowerCase() === 'off') {
                     if(al_recursos.antilink.includes(chat.id)){
                         al_recursos.antilink.splice(al_recursos.antilink.indexOf(chat.id), 1)
                         fs.writeFileSync('./lib/recursos.json', JSON.stringify(al_recursos))
@@ -103,15 +103,21 @@ module.exports = admin_grupo = async(client,message) => {
                     client.reply(from, msgs_texto.erro.grupo.antilink.cmd_erro, id)
                 }
                 break
+        case '!rlink':
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+            if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
+            client.revokeGroupInviteLink(groupId).then(()=>{client.reply(from, "✅ Link foi redefinido com sucesso",id)}).catch(()=>{client.reply(from, "[❗] Houve um erro na redefinição de link",id)})
+            break        
 
-        case '!antifake':
+        case '!afake':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
             if (args.length === 1) return client.reply(from, msgs_texto.erro.grupo.antifake.cmd_erro, id)
             const af_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
 
-            if (args[1].toLowerCase() === 'ligado') {
+            if (args[1].toLowerCase() === 'on') {
                 if(!af_recursos.antifake.includes(chat.id)){
                     af_recursos.antifake.push(chat.id)
                     fs.writeFileSync('./lib/recursos.json', JSON.stringify(af_recursos))
@@ -119,7 +125,7 @@ module.exports = admin_grupo = async(client,message) => {
                 } else {
                     client.reply(from, msgs_texto.erro.grupo.antifake.ligado , id)
                 } 
-            } else if (args[1].toLowerCase() === 'desligado') {
+            } else if (args[1].toLowerCase() === 'off') {
                 if(af_recursos.antifake.includes(chat.id)){
                     af_recursos.antifake.splice(af_recursos.antifake.indexOf(chat.id), 1)
                     fs.writeFileSync('./lib/recursos.json', JSON.stringify(af_recursos))
@@ -132,7 +138,7 @@ module.exports = admin_grupo = async(client,message) => {
             }
             break
         
-        case '!antiflood':
+        case '!aflood':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
@@ -153,7 +159,7 @@ module.exports = admin_grupo = async(client,message) => {
                 estado = args[1]
             }
             
-            if (estado.toLowerCase() === 'ligado') {
+            if (estado.toLowerCase() === 'on') {
                 if(afl_recursos.antiflood.grupos.includes(chat.id)) return client.reply(from, msgs_texto.erro.grupo.antiflood.ligado , id)
                 afl_recursos.antiflood.grupos.push(chat.id)
                 afl_recursos.antiflood.dados.push({
@@ -163,7 +169,7 @@ module.exports = admin_grupo = async(client,message) => {
                 })
                 fs.writeFileSync('./lib/recursos.json', JSON.stringify(afl_recursos))
                 client.reply(from,  msgs_texto.sucesso.grupo.antiflood.ativado, id)
-            } else if (estado.toLowerCase() === 'desligado') {
+            } else if (estado.toLowerCase() === 'off') {
                 if(!afl_recursos.antiflood.grupos.includes(chat.id)) return client.reply(from, msgs_texto.erro.grupo.antiflood.desligado , id)
                 afl_recursos.antiflood.grupos.splice(afl_recursos.antiflood.grupos.indexOf(chat.id),1)
                 afl_recursos.antiflood.dados.splice(afl_recursos.antiflood.dados.findIndex(dado => dado.groupId == chat.id),1)
@@ -174,7 +180,7 @@ module.exports = admin_grupo = async(client,message) => {
             }
             break
 
-        case '!linkgrupo':
+        case '!link':
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (isGroupMsg) {
@@ -185,31 +191,26 @@ module.exports = admin_grupo = async(client,message) => {
             }
             break
 
-        case '!listaradmins':
+        case '!adms':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             let mimin = ''
-            console.log(groupAdmins)
             for (let admon of groupAdmins) {
                 mimin += `➸ @${admon.replace(/@c.us/g, '')}\n` 
             }
             await client.sendTextWithMentions(from, mimin)
             break
 
-        case "!donogrupo":
+        case "!dono":
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             const Owner_ = chat.groupMetadata.owner
             await client.sendTextWithMentions(from, `🤖 O Dono do grupo é : @${Owner_}`)
             break
 
-        case "!dono":
-            await client.sendTextWithMentions(from, `🤖 O Dono do Bot é : @${ownerNumber[0]}`)
-            break
-
-        case '!marcartodos':
+        case '!mt':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
             const groupMem = await client.getGroupMembers(groupId)
-            let hehe = '╔══✪〘🤖 Marcando Todos 〙✪══\n'
+            let hehe =  (args.length > 1) ? `╔══✪〘${body.slice(4)}〙✪══\n` : '╔══✪〘🤖 Marcando Todos 〙✪══\n'
             for (let i = 0; i < groupMem.length; i++) {
                 hehe += '╠➥'
                 hehe += ` @${groupMem[i].id.replace(/@c.us/g, '')}\n`
@@ -218,7 +219,7 @@ module.exports = admin_grupo = async(client,message) => {
             await client.sendTextWithMentions(from, hehe)
             break
 
-        case '!banirtodos':
+        case '!bantodos':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             const isGroupOwner = sender.id === chat.groupMetadata.owner
             if (!isGroupOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_grupo, id)           
@@ -243,7 +244,7 @@ module.exports = admin_grupo = async(client,message) => {
             }
             break
 
-        case '!banir':
+        case '!ban':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
             if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
@@ -282,7 +283,7 @@ module.exports = admin_grupo = async(client,message) => {
             await client.demoteParticipant(groupId, mentionedJidList[0])
             await client.sendTextWithMentions(from, `✅ Sucesso! O membro @${mentionedJidList[0]} foi rebaixado para MEMBRO.`)
             break
-        case '!apagar':
+        case '!apg':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
             if (!quotedMsg) return client.reply(from, msgs_texto.erro.grupo.apagar.cmd_erro, id)
@@ -290,7 +291,7 @@ module.exports = admin_grupo = async(client,message) => {
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
             break
 
-        case '!fechar':
+        case '!f':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)   
