@@ -42,6 +42,7 @@ module.exports = diversao = async(client,message) => {
             client.sendFileFromUrl(from, url_mascote_img, 'mascote.jpeg', 'Whatsapp Jr.', id)
             break 
 
+        case '!roletrando':
         case '!roletarussa':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)

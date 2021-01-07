@@ -9,7 +9,7 @@ const get = require('got')
 const {exec} = require('child_process')
 const axios = require('axios')
 const {removeBackgroundFromImageBase64} = require('remove.bg')
-var Scraper = require('images-scraper');
+var Scraper = require('images-scraper')
 const google = new Scraper({
   puppeteer: {
     headless: true,
@@ -46,7 +46,81 @@ module.exports = utilidades = async(client,message) => {
         msg_info += "*Contato do criador* : wa.me/5521995612287\n"
         await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
         break
+    
+    case "!ddd":
+        let ddd_selecionado = ""
+        if(quotedMsg){
+            let codigo_brasileiro = quotedMsgObj.author.slice(0,2)
+            if(codigo_brasileiro != "55") return client.reply("[ERRO] Esse comando só é aceito com números brasileiros.",id)
+            ddd_selecionado = quotedMsgObj.author.slice(2,4)
+        } else if(args.length > 1 && args[1].length == 2){
+            ddd_selecionado = args[1]
+        } else {
+            return client.reply(from,"[ERRO] Você deve responder alguém com *!ddd* ou colocar o ddd após o comando", id)
+        }
+        const estados = JSON.parse(fs.readFileSync('./lib/ddd.json')).estados
+        estados.forEach(async (estado) =>{
+            if(estado.ddd.includes(ddd_selecionado)) return client.reply(from,`📱 Estado : *${estado.nome}* / Região : *${estado.regiao}*`,id)
+        })
+        break
 
+    case "!clima":
+        if(args.length === 1) return client.reply(from, "[ERRO] Você deve digitar !clima [cidade] [estado]",id)
+        let local_escolhido = body.slice(7)
+        const apiClima3Dias = encodeURI(`http://api.weatherapi.com/v1/forecast.json?key=${process.env.API_CLIMA}&q=${local_escolhido}&days=3&lang=pt`)
+        try{
+            await axios.get(apiClima3Dias).then(resp =>{
+                let regiao = resp.data.location.region !== undefined ? `${resp.data.location.region}, ` : ""
+                let msg_clima = `☀️ CONSULTA DE CLIMA ☀️\n\n`
+                msg_clima += `*Local encontrado :* ${resp.data.location.name} - ${regiao} ${resp.data.location.country}\n`
+                msg_clima += `*${resp.data.current.condition.text}* - *${resp.data.current.temp_c}C°* Atualmente\n\n`
+                msg_clima += `═════════════════\n`
+                msg_clima += `Previsão 3 dias 👇 : \n`
+                resp.data.forecast.forecastday.forEach(dia =>{
+                    data_array = dia.date.split("-")
+                    data_formatada = `${data_array[2]}/${data_array[1]}/${data_array[0]}`
+                    msg_clima += `*Dia ${data_formatada}* - Máx: *${dia.day.maxtemp_c}C°* / Min: *${dia.day.mintemp_c}C°* / Média: *${dia.day.avgtemp_c}C°* \n`
+                })
+                client.reply(from,msg_clima,id)
+            })
+        } catch {
+            client.reply(from,"[ERRO] Local não encontrado ou houve um erro na API.",id)
+        }
+        
+        break
+
+    case "!moeda":
+        if(args.length !== 3) return client.reply(from, "[ERRO] Digite o tipo de moeda e quantidade para converter para Real Brasileiro", id)
+        const moedas_suportadas = ['dolar','euro','iene']
+        args[1] = args[1].toLowerCase()
+        args[2] = args[2].replace(",",".")
+        if(!moedas_suportadas.includes(args[1])) return client.reply(from, "[ERRO] Atualmente é suportado : dolar|euro|iene", id)
+        if(isNaN(args[2])) return client.reply(from, "[ERRO] O valor não é um número válido", id)
+        if(args[2] > 1000000000000000) return client.reply(from, "[ERRO] Quantidade muito alta, você provavelmente não tem todo esse dinheiro.", id)
+        axios.get("https://economia.awesomeapi.com.br/json/all").then(async (resp)=>{
+            let dados_moeda_selecionada = {}
+            switch(args[1]){
+                case 'dolar':
+                    args[1] = (args[2] > 1) ? "Dólares" : "Dólar"
+                    dados_moeda_selecionada = resp.data.USD
+                    break
+                case 'euro':
+                    args[1] = (args[2] > 1) ? "Euros" : "Euro"
+                    dados_moeda_selecionada = resp.data.EUR
+                    break
+                case 'iene':
+                    args[1] = (args[2] > 1) ? "Ienes" : "Iene"
+                    dados_moeda_selecionada = resp.data.JPY
+                    break           
+            }
+            let valor_reais = dados_moeda_selecionada.ask * args[2]
+            valor_reais = valor_reais.toFixed(2).replace(".",",")
+            let dh_atualizacao = dados_moeda_selecionada.create_date.split(" ")
+            let d_atualizacao = dh_atualizacao[0].split("-")
+            let h_atualizacao = dh_atualizacao[1]
+            await client.reply(from, `💵 Atualmente *${args[2]} ${args[1]}* está valendo *R$ ${valor_reais}*\n\nInformação atualizada : *${d_atualizacao[2]}/${d_atualizacao[1]}/${d_atualizacao[0]} às ${h_atualizacao}*`,id)
+        })
+        break
     case "!google":
         if (args.length === 1) return client.reply(from, "[ERRO] Digite o que você quer pesquisar", id)
         let q_search = body.slice(8)
@@ -365,7 +439,7 @@ module.exports = utilidades = async(client,message) => {
         break;
 
     case '!calc':
-        if(args.length === 1) return client.reply(from, "[ERRO] Você deve digitar !calcular [expressão-matemática]",id)
+        if(args.length === 1) return client.reply(from, "[ERRO] Você deve digitar ex: !calc [2+2]",id)
         let expressao = body.slice(6)
         if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, "[ERRO] Sua expressão matemática tem caracteres inválidos",id)
         expressao = expressao.replace(",",".")

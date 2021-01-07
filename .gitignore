@@ -8,7 +8,7 @@ node_modules
 .node-persist
 
 #Ignore json
-lib/*.json
+lib/recursos.json
 
 #Ignore .ev
 .env

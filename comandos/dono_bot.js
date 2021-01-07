@@ -1,6 +1,7 @@
 //REQUERINDO MODULOS
 const {admin} = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
+const fs = require('fs-extra')
 
 module.exports = dono_bot = async(client,message) => {
     const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
@@ -71,7 +72,12 @@ module.exports = dono_bot = async(client,message) => {
                 if(dchat.id.match(/@c.us/g) && dchat.id != sender.id) await client.deleteChat(dchat.id)
             }
             client.reply(from, msgs_texto.sucesso.grupo.limpartudo, id)
-            break    
+            break
+            
+        case '!rconfig':
+            await fs.writeFileSync("./lib/recursos.json", JSON.stringify({"bemvindo":[],"antilink":[],"antifake":[],"antiflood":{"grupos":[],"dados":[]}}) , 'utf8')
+            client.reply(from, "As configurações dos grupos foram resetadas com sucesso.")
+            break
 
         case '!sairgrupos':
         if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)

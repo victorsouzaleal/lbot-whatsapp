@@ -1,0 +1,139 @@
+{
+    "estados" : [
+        {
+            "nome": "São Paulo",
+            "regiao": "Sudeste",
+            "ddd" : ["11", "12", "13", "14", "15", "16", "17", "18", "19"]
+        },
+        {
+            "nome": "Santa Catarina",
+            "regiao": "Sul",
+            "ddd": ["47","48","49"]
+        },
+        {
+            "nome": "Rio Grande do Sul",
+            "regiao": "Sul",
+            "ddd": ["51","53","54","55"]
+        },
+        {
+            "nome": "Paraná",
+            "regiao": "Sul",
+            "ddd": ["41", "42", "43", "44", "45", "46"]
+        },
+        {
+            "nome": "Rio de Janeiro",
+            "regiao": "Sudeste",
+            "ddd": ["21", "22" ,"24"]
+        },
+        {
+            "nome": "Minas Gerais",
+            "regiao": "Sudeste",
+            "ddd": ["31", "32", "33", "34", "35", "37" , "38"]
+        },
+        {
+            "nome": "Espirito Santo",
+            "regiao": "Sudeste",
+            "ddd": ["27","28"]
+        },
+        {
+            "nome": "Tocantins",
+            "regiao": "Norte",
+            "ddd": ["63"]
+        },
+        {
+            "nome": "Roraima",
+            "regiao": "Norte",
+            "ddd": ["95"]
+        },
+        {
+            "nome": "Rondônia",
+            "regiao": "Norte",
+            "ddd": ["69"]
+        },
+        {
+            "nome": "Pará",
+            "regiao": "Norte",
+            "ddd": ["91", "93", "94"]
+        },
+        {
+            "nome": "Amazonas",
+            "regiao": "Norte",
+            "ddd": ["92", "97"]
+        },
+        {
+            "nome": "Amapá",
+            "regiao": "Norte",
+            "ddd": ["96"]
+        },
+        {
+            "nome": "Acre",
+            "regiao": "Norte",
+            "ddd": ["68"]
+        },
+        {
+            "nome": "Sergipe",
+            "regiao": "Nordeste",
+            "ddd": ["79"]
+        },
+        {
+            "nome": "Rio Grande do Norte",
+            "regiao": "Nordeste",
+            "ddd": ["84"]
+        },
+        {
+            "nome": "Piauí",
+            "regiao": "Nordeste",
+            "ddd": ["86", "89"]
+        },
+        {
+            "nome": "Pernambuco",
+            "regiao": "Nordeste",
+            "ddd": ["81", "87"]
+        },
+        {
+            "nome": "Paraíba",
+            "regiao": "Nordeste",
+            "ddd": ["83"]
+        },
+        {
+            "nome": "Maranhão",
+            "regiao": "Nordeste",
+            "ddd": ["98", "99"]
+        },
+        {
+            "nome": "Ceará",
+            "regiao": "Nordeste",
+            "ddd": ["85", "88"]
+        },
+        {
+            "nome": "Bahia",
+            "regiao": "Nordeste",
+            "ddd": ["71", "73", "74", "75" , "77"]
+        },
+        {
+            "nome": "Alagoas",
+            "regiao": "Nordeste",
+            "ddd": ["82"]
+        },
+        {
+            "nome": "Mato Grosso do Sul",
+            "regiao": "Centro-Oeste",
+            "ddd": ["67"]
+        },
+        {
+            "nome": "Mato Grosso",
+            "regiao": "Centro-Oeste",
+            "ddd": ["65", "66"]
+        },
+        {
+            "nome": "Goías",
+            "regiao": "Centro-Oeste",
+            "ddd": ["62", "64"]
+        },
+        {
+            "nome": "Destrito Federal",
+            "regiao": "Centro-Oeste",
+            "ddd": ["61"]
+        }
+    ]
+}
