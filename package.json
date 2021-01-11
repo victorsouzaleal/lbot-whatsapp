@@ -32,7 +32,9 @@
     "request": "^2.88.2",
     "serp": "^2.1.0",
     "video-url-link": "^0.1.4",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "youtube-mp3-downloader": "^0.7.6",
+    "youtube-sr": "^2.0.5"
   },
   "directories": {
     "lib": "lib"

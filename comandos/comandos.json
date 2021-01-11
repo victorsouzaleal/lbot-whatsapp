@@ -1,6 +1,6 @@
 {
-    "utilidades":["!ajuda","!s","!sgif","!sgif2","!ssf","!traduz","!voz","!img","!noticias","!rastreio","!calc","!info","!google","!moeda","!clima","!ddd"],
-    "admin_grupo":["!status","!regras","!add","!ban","!promover","!rebaixar","!mt","!adms","!dono","!link","!rlink","!f","!alink","!bv","!afake","!aflood","!apg","!bantodos"],
-    "diversao":["!mascote","!viadometro","!detector","!roletarussa","!casal","!gadometro","!top5gados","!par","!roletrando"],
+    "utilidades":["!ajuda","!s","!sgif","!sgif2","!ssf","!traduz","!voz","!img","!noticias","!rastreio","!calc","!info","!google","!moeda","!clima","!ddd","!play","!anime"],
+    "admin_grupo":["!status","!regras","!add","!ban","!promover","!rebaixar","!mt","!adms","!dono","!link","!rlink","!f","!alink","!bv","!afake","!aflood","!apg","!bantodos","!vb", "!votar", "!votacao"],
+    "diversao":["!mascote","!viadometro","!detector","!roletarussa","!casal","!gadometro","!top5","!par","!roletrando","!malacos", "!fch"],
     "dono_bot":["!sair","!sairgrupos","!entrargrupo","!bc","!bcgrupos","!print","!limpartudo","!limpar","!listablock","!bloquear","!desbloquear","!estado","!admin","!rconfig"]
 }

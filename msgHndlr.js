@@ -16,7 +16,7 @@ const dono_bot = require('./comandos/dono_bot')
 
 module.exports = msgHandler = async (client, message) => {
     try {
-        const {t, sender, isGroupMsg, chat, caption} = message
+        const {t, sender, isGroupMsg, chat, caption,id, from} = message
         let { body } = message
         const {formattedTitle } = chat
         let { pushname, verifiedName } = sender
@@ -50,7 +50,9 @@ module.exports = msgHandler = async (client, message) => {
             await diversao(client,message)
         } else if(lista_comandos.dono_bot.includes(command)){
             await dono_bot(client,message)
-        } 
+        } else {
+            if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite *!ajuda* para mais informações.",id)
+        }
 
     } catch (err) {
         console.log(color('[ERRO]', 'red'), err)

@@ -24,25 +24,25 @@ module.exports = dono_bot = async(client,message) => {
             
         case '!entrargrupo':
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            if (args.length < 2) return client.reply(from, msgs_texto.erro.grupo.entrar_grupo.cmd_erro, id)
+            if (args.length < 2) return client.reply(from, msgs_texto.admin.entrar_grupo.cmd_erro, id)
             const link = args[1]
             const tGr = await client.getAllGroups()
             const isLink = link.match(/(https:\/\/chat.whatsapp.com)/gi)
             const check = await client.inviteInfo(link)
-            if (!isLink) return client.reply(from, msgs_texto.erro.grupo.entrar_grupo.link_invalido, id)
-            if (tGr.length > 10) return client.reply(from, msgs_texto.erro.grupo.entrar_grupo.maximo_grupos, id)
-            if (check.size < 5) return client.reply(from, msgs_texto.erro.grupo.entrar_grupo.minimo_membros, id)
+            if (!isLink) return client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
+            if (tGr.length > 10) return client.reply(from, msgs_texto.admin.entrar_grupo.maximo_grupos, id)
+            if (check.size < 5) return client.reply(from, msgs_texto.admin.entrar_grupo.minimo_membros, id)
             if (check.status === 200) {
-                await client.joinGroupViaLink(link).then(() => client.reply(from, msgs_texto.sucesso.grupo.entrargrupo,id))
+                await client.joinGroupViaLink(link).then(() => client.reply(from, msgs_texto.admin.entrar_grupo.entrar_sucesso,id))
             } else {
-                client.reply(from, msgs_texto.erro.grupo.entrar_grupo.link_invalido, id)
+                client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
             }
             break
 
         case '!sair':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if(!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot , id)
-            await client.sendText(from, msgs_texto.sucesso.grupo.sair).then(async () =>{
+            await client.sendText(from, msgs_texto.admin.sair.sair_sucesso).then(async () =>{
                 await client.leaveGroup(groupId)
             }) 
             break
@@ -62,7 +62,7 @@ module.exports = dono_bot = async(client,message) => {
             for (let dchat of allChatz) {
                 await client.deleteChat(dchat.id)
             }
-            client.reply(from, msgs_texto.sucesso.grupo.limpartudo, id)
+            client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
             break
 
         case '!limpar':
@@ -71,12 +71,12 @@ module.exports = dono_bot = async(client,message) => {
             for (let dchat of all_chats) {
                 if(dchat.id.match(/@c.us/g) && dchat.id != sender.id) await client.deleteChat(dchat.id)
             }
-            client.reply(from, msgs_texto.sucesso.grupo.limpartudo, id)
+            client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
             break
             
         case '!rconfig':
-            await fs.writeFileSync("./lib/recursos.json", JSON.stringify({"bemvindo":[],"antilink":[],"antifake":[],"antiflood":{"grupos":[],"dados":[]}}) , 'utf8')
-            client.reply(from, "As configurações dos grupos foram resetadas com sucesso.")
+            await fs.writeFileSync("./lib/recursos.json", JSON.stringify({"bemvindo":[],"antilink":[],"antifake":[],"antiflood":{"grupos":[],"dados":[]},"voteban":[]}) , 'utf8')
+            client.reply(from,msgs_texto.admin.rconfig.reset_sucesso,id)
             break
 
         case '!sairgrupos':
@@ -87,7 +87,7 @@ module.exports = dono_bot = async(client,message) => {
                 await client.sendText(gclist.contact.id, `🤖 Estou saindo dos grupos, total de grupos : ${allChats.length}`)
                 await client.leaveGroup(gclist.contact.id)
             }
-            client.reply(from, msgs_texto.sucesso.grupo.sairtodos, id)
+            client.reply(from, msgs_texto.admin.sairtodos.sair_sucesso, id)
             break
 
         case "!bloquear":
@@ -141,19 +141,19 @@ module.exports = dono_bot = async(client,message) => {
 
         case '!bc':
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            if(args.length === 1) return client.reply(from, msgs_texto.erro.grupo.bc.cmd_erro, id)
+            if(args.length === 1) return client.reply(from, msgs_texto.admin.bc.cmd_erro, id)
             let msg_bc = body.slice(4)
             const chats_bc = await client.getAllChatIds()
             for (let id_chat of chats_bc) {
                 var chat_bc_info = await client.getChatById(id_chat)
                 if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, `[🤖 LBOT v2.0 ANÚNCIA]\n\n${msg_bc}`)
             }
-            client.reply(from, 'Anúncio feito com sucesso', id)
+            client.reply(from, msgs_texto.admin.bc.bc_sucesso , id)
             break
         
         case '!bcgrupos':
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            if(args.length === 1) return client.reply(from, msgs_texto.erro.grupo.bcgrupos.cmd_erro, id)
+            if(args.length === 1) return client.reply(from, msgs_texto.admin.bcgrupos.cmd_erro, id)
             let msg_bcgrupos = body.slice(10)
             const chats_bcgrupos = await client.getAllChatIds()
             for (let id_chat of chats_bcgrupos) {
@@ -162,7 +162,7 @@ module.exports = dono_bot = async(client,message) => {
                     if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, `[🤖LBOT v2.0 ANÚNCIA]\n\n${msg_bcgrupos}`)
                 }
             }
-            client.reply(from, 'Anúncio feito com sucesso', id)
+            client.reply(from, msgs_texto.admin.bcgrupos.bc_sucesso , id)
             break
         
         case '!print':

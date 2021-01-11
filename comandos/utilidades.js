@@ -1,4 +1,6 @@
 //REQUERINDO MÓDULOS
+process.setMaxListeners(0)
+const {segParaHora} = require('../lib/functions')
 const { decryptMedia } = require('@open-wa/wa-decrypt')
 const { rastrearEncomendas } = require('correios-brasil')
 const translate = require('@vitalets/google-translate-api')
@@ -19,6 +21,18 @@ const serp = require('serp')
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
+const Youtube = require('youtube-sr')
+const YoutubeMp3Downloader = require("youtube-mp3-downloader");
+const { artifactregistry } = require('googleapis/build/src/apis/artifactregistry')
+const msgs = require('../lib/msgs')
+var YD = new YoutubeMp3Downloader({
+    "ffmpegPath": ffmpegPath,               // FFmpeg binary location
+    "outputPath": "./media",    // Output file location (default: the home directory)
+    "youtubeVideoQuality": "highestaudio",  // Desired video quality (default: highestaudio)
+    "queueParallelism": 1,                  // Download parallelism (default: 1)
+    "progressTimeout": 2000,                // Interval in ms for the progress reports (default: 1000)
+    "allowWebm": false                      // Enable download from WebM sources (default: false)
+});
 
 
 module.exports = utilidades = async(client,message) => {
@@ -40,10 +54,11 @@ module.exports = utilidades = async(client,message) => {
      //################## UTILIDADES ########################
      case "!info":
         const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
+        let numero_dono = process.env.NUMERO_DONO.split(",")
         let msg_info = "*Criador do Bot* : Leal\n"
         msg_info += "*Criado em* : 21/12/2020\n"
         msg_info += "*Nome do bot* : LBot v2.0\n"
-        msg_info += "*Contato do criador* : wa.me/5521995612287\n"
+        msg_info += `*Contato do criador* : wa.me/${numero_dono[0]}\n`
         await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
         break
     
@@ -51,12 +66,12 @@ module.exports = utilidades = async(client,message) => {
         let ddd_selecionado = ""
         if(quotedMsg){
             let codigo_brasileiro = quotedMsgObj.author.slice(0,2)
-            if(codigo_brasileiro != "55") return client.reply("[ERRO] Esse comando só é aceito com números brasileiros.",id)
+            if(codigo_brasileiro != "55") return client.reply(from, msgs_texto.utilidades.ddd.somente_br ,id)
             ddd_selecionado = quotedMsgObj.author.slice(2,4)
         } else if(args.length > 1 && args[1].length == 2){
             ddd_selecionado = args[1]
         } else {
-            return client.reply(from,"[ERRO] Você deve responder alguém com *!ddd* ou colocar o ddd após o comando", id)
+            return client.reply(from, msgs_texto.utilidades.ddd.cmd_erro, id)
         }
         const estados = JSON.parse(fs.readFileSync('./lib/ddd.json')).estados
         estados.forEach(async (estado) =>{
@@ -65,8 +80,8 @@ module.exports = utilidades = async(client,message) => {
         break
 
     case "!clima":
-        if(args.length === 1) return client.reply(from, "[ERRO] Você deve digitar !clima [cidade] [estado]",id)
-        let local_escolhido = body.slice(7)
+        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.clima.cmd_erro ,id)
+        let local_escolhido = body.slice(7).normalize("NFD").replace(/[\u0300-\u036f]/g, '');
         const apiClima3Dias = encodeURI(`http://api.weatherapi.com/v1/forecast.json?key=${process.env.API_CLIMA}&q=${local_escolhido}&days=3&lang=pt`)
         try{
             await axios.get(apiClima3Dias).then(resp =>{
@@ -84,19 +99,19 @@ module.exports = utilidades = async(client,message) => {
                 client.reply(from,msg_clima,id)
             })
         } catch {
-            client.reply(from,"[ERRO] Local não encontrado ou houve um erro na API.",id)
+            client.reply(from,msgs_texto.utilidades.clima.erro_resultado,id)
         }
         
         break
 
     case "!moeda":
-        if(args.length !== 3) return client.reply(from, "[ERRO] Digite o tipo de moeda e quantidade para converter para Real Brasileiro", id)
+        if(args.length !== 3) return client.reply(from, msgs_texto.utilidades.moeda.cmd_erro, id)
         const moedas_suportadas = ['dolar','euro','iene']
         args[1] = args[1].toLowerCase()
         args[2] = args[2].replace(",",".")
-        if(!moedas_suportadas.includes(args[1])) return client.reply(from, "[ERRO] Atualmente é suportado : dolar|euro|iene", id)
-        if(isNaN(args[2])) return client.reply(from, "[ERRO] O valor não é um número válido", id)
-        if(args[2] > 1000000000000000) return client.reply(from, "[ERRO] Quantidade muito alta, você provavelmente não tem todo esse dinheiro.", id)
+        if(!moedas_suportadas.includes(args[1])) return client.reply(from, msgs_texto.utilidades.moeda.nao_suportado, id)
+        if(isNaN(args[2])) return client.reply(from, msgs_texto.utilidades.moeda.valor_invalido , id)
+        if(args[2] > 1000000000000000) return client.reply(from, msgs_texto.utilidades.moeda.valor_limite, id)
         axios.get("https://economia.awesomeapi.com.br/json/all").then(async (resp)=>{
             let dados_moeda_selecionada = {}
             switch(args[1]){
@@ -122,7 +137,7 @@ module.exports = utilidades = async(client,message) => {
         })
         break
     case "!google":
-        if (args.length === 1) return client.reply(from, "[ERRO] Digite o que você quer pesquisar", id)
+        if (args.length === 1) return client.reply(from, msgs_texto.utilidades.google.cmd_erro , id)
         let q_search = body.slice(8)
         const config_google = {
             host : "google.com.br",
@@ -145,11 +160,11 @@ module.exports = utilidades = async(client,message) => {
 
      case '!rastreio':
         var dataText = '';
-        if (args.length === 1) return client.reply(from, msgs_texto.erro.rastreio.cmd_erro, id)
+        if (args.length === 1) return client.reply(from, msgs_texto.utilidades.rastreio.cmd_erro, id)
         codigoRastreio = [body.slice(10)]
-        if(codigoRastreio[0].length != 13) return client.reply(from, msgs_texto.erro.rastreio.codigo_invalido ,id)
+        if(codigoRastreio[0].length != 13) return client.reply(from, msgs_texto.utilidades.rastreio.codigo_invalido ,id)
         rastrearEncomendas(codigoRastreio).then((resp) => {
-            if(resp[0].length < 1) return client.reply(from, msgs_texto.erro.rastreio.nao_postado ,id)
+            if(resp[0].length < 1) return client.reply(from, msgs_texto.utilidades.rastreio.nao_postado ,id)
             let dados_rastreio = "📦📦*RASTREIO*📦📦\n\n"
             resp[0].forEach(dado =>{
                 let dados_local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
@@ -159,10 +174,38 @@ module.exports = utilidades = async(client,message) => {
             client.reply(from, dados_rastreio ,id)
         });
         break
+    
+    case "!play":
+        if(args.length === 1) return client.reply(from,msgs_texto.utilidades.play.cmd_erro,id)
+        let youtube_pesquisa = body.slice(6)
+        Youtube.searchOne(youtube_pesquisa).then(resp=>{
+            const video = resp
+            if(video.duration > 300000) return client.reply(from,msgs_texto.utilidades.play.limite,id)
+            client.reply(from,`[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\nTitulo: *${video.title}*\nDuração: *${video.durationFormatted}*`,id)
+            //GERANDO NOME ARQUIVO
+            let letras = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+            let nome_arquivo = ""
+            for(let i = 0; i < 6; i++){
+                let letra_aleatoria = Math.floor(Math.random() * letras.length)
+                nome_arquivo += letras[letra_aleatoria]
+            }
+            //BAIXANDO MUSICA
+            YD.download(video.id, nome_arquivo+".mp3");
+            YD.on("finished", async () =>{
+                try{
+                    await client.sendAudio(from, `./media/${nome_arquivo}.mp3`, id).then(async ()=>{
+                        await fs.unlinkSync(`./media/${nome_arquivo}.mp3`)
+                    })
+                } catch {}
+            })
+            YD.on("error", ()=>{
+                client.reply(from,msgs_texto.utilidades.play.erro_download,id)
+            })
+        })
+        .catch(()=>{
+            client.reply(from,msgs_texto.utilidades.play.erro_pesquisa,id)
+        })
 
-    case '!malacos':
-        const url_malacos_img = "https://instagram.fsdu6-1.fna.fbcdn.net/v/t51.2885-15/e35/123749592_128000845743872_4350553576495440946_n.jpg?_nc_ht=instagram.fsdu6-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=m2UaMTuk_mcAX8qUg__&tp=1&oh=d3cf971a3b695cfe302c494f355922b2&oe=60035949"
-        client.sendFileFromUrl(from, url_malacos_img, 'malacos.jpeg', 'Somos o problema', id)
         break
         
     case '!img':
@@ -177,14 +220,14 @@ module.exports = utilidades = async(client,message) => {
                     data_Img += `${args[i]} `
                 }
             } else {
-                return client.reply(from, msgs_texto.erro.img.qtd_imagem , id)
+                return client.reply(from, msgs_texto.utilidades.img.qtd_imagem , id)
             }
         } else {
             data_Img = body.slice(5)
         }
 
-        if (data_Img === '') return client.reply(from, msgs_texto.erro.img.tema_vazio , id)
-        if (data_Img.length > 500) return client.reply(from, msgs_texto.erro.img.tema_longo , id)
+        if (data_Img === '') return client.reply(from, msgs_texto.utilidades.img.tema_vazio , id)
+        if (data_Img.length > 500) return client.reply(from, msgs_texto.utilidades.img.tema_longo , id)
         const results = await google.scrape(data_Img, 30);
         results.forEach(result=>{
             if(!result.url.includes('lookaside')) imgs_validas.push({url: result.url, description: result.description})
@@ -196,7 +239,7 @@ module.exports = utilidades = async(client,message) => {
                 client.sendFileFromUrl(from, imgs_validas[img_index_aleatorio].url , imgs_validas[img_index_aleatorio].description, "", (qtd_Img == 1) ? id : "")
                 imgs_validas.splice(img_index_aleatorio,1)
             }).catch(()=>{
-                console.log("[ERRO] Não foi possível obter esta imagem")
+                client.sendText(from, msgs_texto.utilidades.img.erro_imagem)
             })
         }
         break       
@@ -220,10 +263,10 @@ module.exports = utilidades = async(client,message) => {
                 await client.sendStickerfromUrl(from, url, { method: 'get' })
                     .catch(err => console.log('ERRO : ', err))
             } else {
-                client.reply(from, msgs_texto.erro.sticker.link_invalido , id)
+                client.reply(from, msgs_texto.utilidades.sticker.link_invalido , id)
             }
         } else {
-                client.reply(from, msgs_texto.erro.sticker.cmd_erro , id)
+                client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
         }
         break
 
@@ -231,39 +274,39 @@ module.exports = utilidades = async(client,message) => {
         if (isMedia) {
             if (mimetype === 'video/mp4' && message.duration < 10 || mimetype === 'image/gif' && message.duration < 10) {
                 const mediaData = await decryptMedia(message, uaOverride)
-                client.reply(from, msgs_texto.espera.geral , id)
+                client.reply(from, msgs_texto.geral.espera , id)
                 const filename = `./media/aswu.${mimetype.split('/')[1]}`
                 await fs.writeFileSync(filename, mediaData)
-                await exec(`gify ${filename} ./media/output.gif --fps=30 --scale=240:240`, async function (error, stdout, stderr) {
+                await exec(`gify ${filename} ./media/output.gif --fps=10 --scale=240:240`, async function (error, stdout, stderr) {
                     const gif = await fs.readFileSync('./media/output.gif', { encoding: "base64" })
                     try {
                         await client.sendImageAsSticker(from, `data:image/gif;base64,${gif.toString('base64')}`)
                     } catch (err){
-                        client.reply(from, msgs_texto.erro.sticker.video_longo , id)
+                        client.reply(from, msgs_texto.utilidades.sticker.video_longo , id)
                     }
                 })
             } else {
-                client.reply(from, msgs_texto.erro.sticker.video_invalido, id)
+                client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
             }
         } else if (quotedMsg){
             if(quotedMsg.type == 'image' && quotedMsg.duration < 10 || quotedMsg && quotedMsg.type == 'video' && quotedMsg.duration < 10){
                 const mediaData = await decryptMedia(quotedMsg, uaOverride)
-                client.reply(from, msgs_texto.espera.geral, id)
+                client.reply(from, msgs_texto.geral.espera, id)
                 const filename = `./media/aswu.${quotedMsg.mimetype.split('/')[1]}`
                 await fs.writeFileSync(filename, mediaData)
-                await exec(`gify ${filename} ./media/output.gif --fps=30 --scale=240:240`, async function (error, stdout, stderr) {
+                await exec(`gify ${filename} ./media/output.gif --fps=10 --scale=240:240`, async function (error, stdout, stderr) {
                     const gif = await fs.readFileSync('./media/output.gif', { encoding: "base64" })
                     try {
                         await client.sendImageAsSticker(from, `data:image/gif;base64,${gif.toString('base64')}`)
                     } catch (err){
-                        client.reply(from,msgs_texto.erro.sticker.video_longo, id)
+                        client.reply(from,msgs_texto.utilidades.sticker.video_longo, id)
                     }
                 })
             } else {
-                client.reply(from, msgs_texto.erro.sticker.video_invalido, id)
+                client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
             }                 
         } else {
-            client.reply(from, msgs_texto.erro.geral, id)
+            client.reply(from, msgs_texto.geral.erro, id)
         }          
         break
     
@@ -271,7 +314,7 @@ module.exports = utilidades = async(client,message) => {
         if (isMedia) {
             if (mimetype === 'video/mp4' && message.duration < 10) {
                 const mediaData = await decryptMedia(message, uaOverride)
-                client.reply(from, msgs_texto.espera.geral, id)
+                client.reply(from, msgs_texto.geral.espera, id)
                 const filename = `./media/aswu.${mimetype.split('/')[1]}`
                 await fs.writeFileSync(filename, mediaData)
                 try{
@@ -282,16 +325,16 @@ module.exports = utilidades = async(client,message) => {
                         loop: 0
                     })
                 } catch(err){
-                    client.reply(from, msgs_texto.erro.sticker.video_longo, id)
+                    client.reply(from, msgs_texto.utilidades.sticker.video_longo, id)
                 }
             }
             else {
-                client.reply(from, msgs_texto.erro.sticker.video_invalido, id)
+                client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
             }
         } else if (quotedMsg){
             if (quotedMsg.mimetype === 'video/mp4' && quotedMsg.duration < 10) {
                 const mediaData = await decryptMedia(quotedMsg, uaOverride)
-                client.reply(from,msgs_texto.espera.geral , id)
+                client.reply(from,msgs_texto.geral.espera , id)
                 const filename = `./media/aswu.${quotedMsg.mimetype.split('/')[1]}`
                 await fs.writeFileSync(filename, mediaData)
                 try{
@@ -302,11 +345,11 @@ module.exports = utilidades = async(client,message) => {
                         loop: 0
                     })
                 } catch(err){
-                    client.reply(from, msgs_texto.erro.sticker.video_longo, id)
+                    client.reply(from, msgs_texto.utilidades.sticker.video_longo, id)
                 }
             }
             else {
-                client.reply(from,msgs_texto.erro.sticker.video_invalido, id)
+                client.reply(from,msgs_texto.utilidades.sticker.video_invalido, id)
             }
         }   
         break
@@ -325,14 +368,14 @@ module.exports = utilidades = async(client,message) => {
         } catch(err) {
             switch(err[0].code){
                 case 'insufficient_credits':
-                    client.reply(from,msgs_texto.erro.sticker.sem_credito,id)
+                    client.reply(from,msgs_texto.utilidades.sticker.sem_credito,id)
                     break
                 case 'auth_failed':
                     console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
-                    client.reply(from,msgs_texto.erro.sticker.autenticacao,id)
+                    client.reply(from,msgs_texto.utilidades.sticker.autenticacao,id)
                     break
                 default:
-                    client.reply(from,msgs_texto.erro.sticker.erro_background,id)    
+                    client.reply(from,msgs_texto.utilidades.sticker.erro_background,id)    
             }
         }
     } else if (quotedMsg) {
@@ -348,29 +391,87 @@ module.exports = utilidades = async(client,message) => {
         } catch(err) {
             switch(err[0].code){
                 case 'insufficient_credits':
-                    client.reply(from,msgs_texto.erro.sticker.sem_credito,id)
+                    client.reply(from,msgs_texto.utilidades.sticker.sem_credito,id)
                     break
                 case 'auth_failed':
                     console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
-                    client.reply(from,msgs_texto.erro.sticker.autenticacao,id)
+                    client.reply(from,msgs_texto.utilidades.sticker.autenticacao,id)
                     break
                 default:
-                    client.reply(from,msgs_texto.erro.sticker.erro_background,id)    
+                    client.reply(from,msgs_texto.utilidades.sticker.erro_background,id)    
             }
         }   
     } else {
-        client.reply(from, msgs_texto.erro.geral, id)
+        client.reply(from, msgs_texto.geral.erro, id)
     }
         break
 
+    case "!anime":
+        if (isMedia && type === 'image') {
+            client.reply(from,"[AGUARDE] Estou processando a imagem e pesquisando o anime.",id)
+            try {
+                var mediaData = await decryptMedia(message, uaOverride)
+                var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                axios.post("https://trace.moe/api/search",{
+                    image: imageBase64
+                }).then((resp)=>{
+                    let tempo_inicial = segParaHora(resp.data.docs[0].from)
+                    let tempo_final = segParaHora(resp.data.docs[0].to)
+                    let episodio = resp.data.docs[0].episode
+                    let titulo = resp.data.docs[0].title_english
+                    let similaridade = resp.data.docs[0].similarity * 100
+                    similaridade = similaridade.toFixed(2)
+                    if(similaridade < 87) return client.reply(from,"[ERRO] Nível de similaridade é muito baixo, certifique se enviar uma cena válida de anime.",id)
+                    is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
+                    client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
+                    resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
+                }).catch((resp)=>{
+                    if(resp.status == 429) return client.reply(from,"[ERRO] Muitas solicitações sendo feitas, tente novamente mais tarde.",id)
+                    if(resp.status == 400) return client.reply(from,"[ERRO] Não foi possível achar resultados para esta imagem",id)
+                    if(resp.status == 500 || resp.status == 503) return client.reply(from,"[ERRO] Houve um erro no servidor de pesquisa de imagem.",id)
+                })
+            } catch(err) {
+                client.reply(from,"[ERRO] Houve um erro no processamento da imagem",id)
+            }
+        } else if (quotedMsg && quotedMsg.type === 'image') {
+            client.reply(from,"[AGUARDE] Estou processando a imagem e pesquisando o anime.",id)
+            try {
+                var mediaData = await decryptMedia(quotedMsg, uaOverride)
+                var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                axios.post("https://trace.moe/api/search",{
+                    image: imageBase64
+                }).then((resp)=>{
+                    let tempo_inicial = segParaHora(resp.data.docs[0].from)
+                    let tempo_final = segParaHora(resp.data.docs[0].to)
+                    let episodio = resp.data.docs[0].episode
+                    let titulo = resp.data.docs[0].title_english
+                    let similaridade = resp.data.docs[0].similarity * 100
+                    similaridade = similaridade.toFixed(2)
+                    if(similaridade < 87) return client.reply(from,"[ERRO] Nível de similaridade é muito baixo, certifique se enviar uma cena válida de anime.",id)
+                    is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
+                    client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
+                    resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
+                }).catch((resp)=>{
+                    console.log(resp)
+                    if(resp.status == 429) return client.reply(from,"[ERRO] Muitas solicitações sendo feitas, tente novamente mais tarde.",id)
+                    if(resp.status == 400) return client.reply(from,"[ERRO] Não foi possível achar resultados para esta imagem",id)
+                    if(resp.status == 500 || resp.status == 503) return client.reply(from,"[ERRO] Houve um erro no servidor de pesquisa de imagem.",id)
+                })
+            } catch(err) {
+                client.reply(from,"[ERRO] Houve um erro no processamento da imagem",id)
+            }   
+        } else {
+            client.reply(from,"[ERRO] Você deve postar uma imagem com *!anime* ou responder outra imagem com *!anime*", id)
+        }
+    break
     
     case "!traduz":
-        if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto.erro.traduz.cmd_erro ,id)
+        if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto.utilidades.traduz.cmd_erro ,id)
         translate(quotedMsg.body , {to: 'pt'}).then(async(res) => {
             console.log(res.text)
             await client.reply(from, res.text, quotedMsgObj.id);
-        }).catch(err => {
-            console.error(err);
+        }).catch(() => {
+            client.reply(from, msgs_texto.utilidades.traduz.erro_servidor, id)
         });
         break  
     
@@ -378,15 +479,15 @@ module.exports = utilidades = async(client,message) => {
         var dataText = '';
         var id_resp = id
         if (args.length === 1) {
-            return client.reply(from, msgs_texto.erro.voz.cmd_erro ,id)
+            return client.reply(from, msgs_texto.utilidades.voz.cmd_erro ,id)
         } else if(quotedMsg !== undefined && quotedMsg.type == 'chat'){
             dataText = (args.length == 2) ? quotedMsg.body : body.slice(8)
         } else {
             dataText = body.slice(8)
         }
 
-        if (dataText === '') return client.reply(from, msgs_texto.erro.voz.texto_vazio , id)
-        if (dataText.length > 5000) return client.reply(from, msgs_texto.erro.voz.texto_longo, id)
+        if (dataText === '') return client.reply(from, msgs_texto.utilidades.voz.texto_vazio , id)
+        if (dataText.length > 5000) return client.reply(from, msgs_texto.utilidades.voz.texto_longo, id)
         if(quotedMsg !== undefined) id_resp = quotedMsgObj.id
         const ttsEn = require('node-gtts')('en')
         const ttsPt = require('node-gtts')('pt')
@@ -418,7 +519,7 @@ module.exports = utilidades = async(client,message) => {
             })
         } 
           else {
-            client.reply(from, msgs_texto.erro.voz.nao_suportado, id)
+            client.reply(from, msgs_texto.utilidades.voz.nao_suportado, id)
         }
         break
 
@@ -433,22 +534,21 @@ module.exports = utilidades = async(client,message) => {
             noticias_msg += '╚═〘 Patrocínio : Malas Boa Viagem 〙'
             client.reply(from, noticias_msg, id)
         } catch {
-            console.log("[ERRO] Erro na chave API de notícias, configure no arquivo .env")
-            client.reply(from,msgs_texto.erro.noticia.autenticacao)
+            client.reply(from,msgs_texto.utilidades.noticia.autenticacao)
         }
         break;
 
     case '!calc':
-        if(args.length === 1) return client.reply(from, "[ERRO] Você deve digitar ex: !calc [2+2]",id)
+        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.calc.cmd_erro ,id)
         let expressao = body.slice(6)
-        if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, "[ERRO] Sua expressão matemática tem caracteres inválidos",id)
+        if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, msgs_texto.utilidades.calc.carac_invalidos,id)
         expressao = expressao.replace(",",".")
         try {
             resultado = eval(expressao)
-            if(isNaN(resultado)) return client.reply(from, `🧮 Para de ficar tentando dividir por 0 , seu mongol. `,id)
+            if(isNaN(resultado)) return client.reply(from, msgs_texto.utilidades.calc.divisao_zero,id)
             client.reply(from, `🧮 O resultado é *${resultado}* `,id)
         } catch {
-            client.reply(from, "[ERRO] Houve um erro no cálculo dessa expressão.",id)
+            client.reply(from, msgs_texto.utilidades.calc.erro_calculo,id)
         }
         break
     }
