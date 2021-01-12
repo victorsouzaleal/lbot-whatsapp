@@ -33,6 +33,7 @@ var YD = new YoutubeMp3Downloader({
     "progressTimeout": 2000,                // Interval in ms for the progress reports (default: 1000)
     "allowWebm": false                      // Enable download from WebM sources (default: false)
 });
+const db = require('../database/database')
 
 
 module.exports = utilidades = async(client,message) => {
@@ -242,10 +243,50 @@ module.exports = utilidades = async(client,message) => {
                 client.sendText(from, msgs_texto.utilidades.img.erro_imagem)
             })
         }
-        break       
+        break
+    
+    case '!meusdados':
+        let meusdados = await db.obterUsuario(sender.id)
+        let tipo_usuario_dados = "Comum"
+        let max_comandos_md = (meusdados.max_comandos_dia == null) ? "Sem limite" : meusdados.max_comandos_dia
+        switch(meusdados.tipo) {
+            case "dono":
+                tipo_usuario_dados = "🤖 Dono"
+                break
+            case "vip":
+                tipo_usuario_dados = "⭐ VIP"
+                break
+            case "comum":
+                tipo_usuario_dados = "👤 Comum"
+                break    
+        }
+        let msg_meusdados = `[🤖*SEUS DADOS DE USO*🤖]\n\n`
+        msg_meusdados += `Tipo de usuário : *${tipo_usuario_dados}*\n`
+        msg_meusdados += `Nome : *${meusdados.nome}*\n`
+        msg_meusdados += `Comandos usados hoje : *${meusdados.comandos_dia}/${max_comandos_md}*\n`
+        msg_meusdados += `Limite diário : *${max_comandos_md}*\n`
+        msg_meusdados += `Total de comandos usados : *${meusdados.comandos_total} comandos*\n`
+        client.reply(from, msg_meusdados, id)
+        break
 
     case '!ajuda': //Menu principal
-        client.sendText(from, help)
+        let dados_user = await db.obterUsuario(sender.id)
+        let max_comm = (dados_user.max_comandos_dia == null) ? "Sem limite" : dados_user.max_comandos_dia
+        let tipo_usuario = "Comum"
+        switch(dados_user.tipo) {
+            case "dono":
+                tipo_usuario = "🤖 Dono"
+                break
+            case "vip":
+                tipo_usuario = "⭐ VIP"
+                break
+            case "comum":
+                tipo_usuario = "👤 Comum"
+                break     
+        }
+        let msgs_dados = `Usuário : *${dados_user.nome}* -  Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n`
+        msgs_dados += `═════════════════\n`
+        client.sendText(from, msgs_dados+help)
         break
 
     case '!s':

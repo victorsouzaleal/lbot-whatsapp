@@ -25,6 +25,8 @@
     "got": "^11.7.0",
     "images-scraper": "^5.0.7",
     "moment-timezone": "^0.5.31",
+    "nedb": "^1.8.0",
+    "nedb-async": "^0.1.6",
     "needle": "^2.5.2",
     "node-fetch": "^2.6.1",
     "node-gtts": "^2.0.2",

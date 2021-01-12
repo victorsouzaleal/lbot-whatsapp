@@ -2,6 +2,8 @@
 const {admin} = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
 const fs = require('fs-extra')
+const db = require('../database/database')
+const { ml } = require('googleapis/build/src/apis/ml')
 
 module.exports = dono_bot = async(client,message) => {
     const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
@@ -137,6 +139,148 @@ module.exports = dono_bot = async(client,message) => {
                     await client.sendTextWithMentions(from, `✅ O Usuário @${user_d.replace(/@c.us/g,'')} foi *desbloqueado* com sucesso`)
                 }
             }
+            break
+        
+        case "!mudarlimite":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from, "[ERRO] Você deve responder algúem com *!mudarlimite novo-limite* ou mencionar alguém após o comando",id)
+            if(isNaN(args[1])) return client.reply(from, "[ERRO] O número para definir o limite de comandos é inválido",id)
+            if(quotedMsg){
+                let mc_registrado = await db.verificarRegistro(quotedMsgObj.author)
+                if(mc_registrado){
+                    let ml_user = await db.obterUsuario(quotedMsgObj.author)
+                    if(ml_user.tipo == "vip" || ml_user.tipo == "dono") return  client.reply(from, `[❗] Você não pode alterar limite de um vip/dono (Sem limites).`,id)
+                    await db.definirLimite(quotedMsgObj.author, args[1])
+                    client.reply(from, `✅ O limite desse usuário foi definido para ${args[1]} comandos/dia`,id)
+                } else {
+                    client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                }
+            } else if (mentionedJidList.length === 1){
+                let mc_registrado = await db.verificarRegistro(mentionedJidList[0])
+                if(mc_registrado){
+                    let ml_user = await db.obterUsuario(quotedMsgObj.author)
+                    if(ml_user.tipo == "vip" || ml_user.tipo == "dono") return  client.reply(from, `[❗] Você não pode alterar limite de um vip/dono (Sem limites).`,id)
+                    await db.definirLimite(mentionedJidList[0], args[1])
+                    client.reply(from, `✅ O limite desse usuário foi definido para ${args[1]} comandos/dia`,id)
+                } else {
+                    client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                }
+            } else {
+                client.reply(from, "[❗] Você deve responder algúem com *!mudarlimite novo-limite* ou mencionar alguém após o comando",id)
+            }
+            break
+        
+        case "!tipo":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from, "[ERRO] Você deve responder algúem com *!cargo membro|admin* ou mencionar alguém após o comando",id)
+            if(args[1].toLowerCase() == "comum" || args[1].toLowerCase() == "vip"){
+                if(quotedMsg){
+                    if(ownerNumber.includes(quotedMsgObj.author.replace("@c.us",""))) return client.reply(from, "[ERRO] Não é possivel alterar cargo do dono",id)
+                    let c_registrado = await db.verificarRegistro(quotedMsgObj.author)
+                    if(c_registrado){
+                        await db.alterarTipoUsuario(quotedMsgObj.author, args[1])
+                        return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
+                    } else {
+                        return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                    }
+                } else if (mentionedJidList.length === 1){
+                    if(ownerNumber.includes(mentionedJidList[0].replace("@c.us",""))) return client.reply(from, "[ERRO] Não é possivel alterar cargo do dono",id)
+                    let c_registrado = await db.verificarRegistro(mentionedJidList[0])
+                    if(c_registrado){
+                        await db.alterarTipoUsuario(mentionedJidList[0], args[1])
+                        return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
+                    } else {
+                        return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                    }
+                } else if(args.length >= 2){
+                    let numero_usuario = ""
+                    for (let i = 2; i < args.length; i++){
+                        numero_usuario += args[i]
+                    }
+                    numero_usuario = numero_usuario.replace(/\W+/g,"")
+                    if(ownerNumber.includes(numero_usuario)) return client.reply(from, "[ERRO] Não é possivel alterar cargo do dono",id)
+                    let c_registrado = await db.verificarRegistro(numero_usuario+"@c.us")
+                    if(c_registrado){
+                        await db.alterarTipoUsuario(numero_usuario+"@c.us", args[1])
+                        return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
+                    } else {
+                        return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                    }
+                } else {
+                    client.reply(from, "[ERRO] Você deve responder algúem com *!cargo membro|admin* ou mencionar alguém após o comando",id)
+                }
+            } else {
+                 client.reply(from, "[ERRO] Você deve escolher *Comum* ou *Vip* como cargo",id)
+            }
+            break
+        
+        case "!limparvip":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            await db.limparVip()
+            client.reply(from, `✅ Todos os VIP foram convertidos para COMUM`,id)
+            break
+        
+        case "!resetarcmd":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            db.resetarComandosDia().then(async()=>{
+                client.reply(from, `✅ Os comandos diários de todos os usuários foram resetados`,id)
+            })
+            break
+
+        case "!verdados":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            let vd_usuario = {}
+            if(quotedMsg){
+                let vd_registrado = await db.verificarRegistro(quotedMsgObj.author)
+                if(vd_registrado){
+                    vd_usuario = await db.obterUsuario(quotedMsgObj.author)
+                } else {
+                    return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                }
+            } else if (mentionedJidList.length === 1){
+                let vd_registrado = await db.verificarRegistro(mentionedJidList[0])
+                if(vd_registrado){
+                    vd_usuario = await db.obterUsuario(mentionedJidList[0])
+                } else {
+                    return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                }
+            } else if(args.length >= 1){
+                let vd_numero_usuario = ""
+                for (let i = 1; i < args.length; i++){
+                    vd_numero_usuario += args[i]
+                }
+                vd_numero_usuario = vd_numero_usuario.replace(/\W+/g,"")
+                let vd_registrado = await db.verificarRegistro(vd_numero_usuario+"@c.us")
+                if(vd_registrado){
+                    vd_usuario = await db.obterUsuario(vd_numero_usuario+"@c.us")
+                } else {
+                    return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                }
+            } else {
+               return client.reply(from, "[ERRO] Você deve responder algúem com *!verdados* ou mencionar alguém após o comando",id)
+            }
+
+            let max_comandos_vd = (vd_usuario.max_comandos_dia == null) ? "Sem limite" : vd_usuario.max_comandos_dia
+
+            switch(vd_usuario.tipo) {
+                case "dono":
+                    vd_usuario.tipo = "🤖 Dono"
+                    break
+                case "vip":
+                    vd_usuario.tipo  = "⭐ VIP"
+                    break
+                case "comum":
+                    vd_usuario.tipo  = "👤 Comum"
+                    break    
+            }
+
+            let msg_verdados = `[🤖*VER DADOS DE USO*🤖]\n\n`
+            msg_verdados += `Tipo de usuário : *${vd_usuario.tipo }*\n`
+            msg_verdados += `Nome : *${vd_usuario.nome}*\n`
+            msg_verdados += `Comandos usados hoje : *${vd_usuario.comandos_dia}/${max_comandos_vd}*\n`
+            msg_verdados += `Limite diário : *${max_comandos_vd}*\n`
+            msg_verdados += `Total de comandos usados : *${vd_usuario.comandos_total} comandos*\n`
+            client.reply(from, msg_verdados, id)
             break
 
         case '!bc':

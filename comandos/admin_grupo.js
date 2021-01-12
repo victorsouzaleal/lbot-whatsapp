@@ -17,7 +17,6 @@ module.exports = admin_grupo = async(client,message) => {
     const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
     const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
     const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
-    const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
 
     switch(command){
         //##################### ADMINISTRAÇÃO GRUPO #########################
