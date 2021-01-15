@@ -5,7 +5,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const { rastrearEncomendas } = require('correios-brasil')
 const translate = require('@vitalets/google-translate-api')
 const fs = require('fs-extra')
-const { help} = require('../lib/menu')
+const {msg_admin_grupo, msg_comum, msg_comum_grupo} = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
 const get = require('got')
 const {exec} = require('child_process')
@@ -23,8 +23,6 @@ const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
 const Youtube = require('youtube-sr')
 const YoutubeMp3Downloader = require("youtube-mp3-downloader");
-const { artifactregistry } = require('googleapis/build/src/apis/artifactregistry')
-const msgs = require('../lib/msgs')
 var YD = new YoutubeMp3Downloader({
     "ffmpegPath": ffmpegPath,               // FFmpeg binary location
     "outputPath": "./media",    // Output file location (default: the home directory)
@@ -39,7 +37,7 @@ const db = require('../database/database')
 module.exports = utilidades = async(client,message) => {
     const api_remove_bg = process.env.API_REMOVE_BG
     const api_news = process.env.API_NEWS_ORG
-    const { type, id, from, sender, caption, isMedia, mimetype, quotedMsg, quotedMsgObj} = message
+    const { type, id, from, sender, chat, isGroupMsg, caption, isMedia, mimetype, quotedMsg, quotedMsgObj} = message
     let { body } = message
     let { pushname, verifiedName } = sender
     pushname = pushname || verifiedName
@@ -49,6 +47,9 @@ module.exports = utilidades = async(client,message) => {
     const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
     const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
     const botNumber = await client.getHostNumber()
+    const groupId = isGroupMsg ? chat.groupMetadata.id : ''
+    const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
+    const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
 
     switch(command){
 
@@ -262,7 +263,7 @@ module.exports = utilidades = async(client,message) => {
         }
         let msg_meusdados = `[🤖*SEUS DADOS DE USO*🤖]\n\n`
         msg_meusdados += `Tipo de usuário : *${tipo_usuario_dados}*\n`
-        msg_meusdados += `Nome : *${meusdados.nome}*\n`
+        msg_meusdados += (pushname != undefined) ? `Nome : *${pushname}*\n` : `Nome : *???*\n`
         msg_meusdados += `Comandos usados hoje : *${meusdados.comandos_dia}/${max_comandos_md}*\n`
         msg_meusdados += `Limite diário : *${max_comandos_md}*\n`
         msg_meusdados += `Total de comandos usados : *${meusdados.comandos_total} comandos*\n`
@@ -284,9 +285,21 @@ module.exports = utilidades = async(client,message) => {
                 tipo_usuario = "👤 Comum"
                 break     
         }
-        let msgs_dados = `Usuário : *${dados_user.nome}* -  Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n`
+        let msgs_dados = (pushname != undefined) ? 
+        `Usuário : *${pushname}* -  Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n` :
+        `Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n`
         msgs_dados += `═════════════════\n`
-        client.sendText(from, msgs_dados+help)
+        let menu = ""
+        if(isGroupMsg){
+            if(isGroupAdmins){
+                menu = msg_admin_grupo
+            } else {
+                menu = msg_comum_grupo
+            }
+        } else {
+            menu = msg_comum
+        }
+        client.sendText(from, msgs_dados+menu)
         break
 
     case '!s':
@@ -449,7 +462,7 @@ module.exports = utilidades = async(client,message) => {
 
     case "!anime":
         if (isMedia && type === 'image') {
-            client.reply(from,"[AGUARDE] Estou processando a imagem e pesquisando o anime.",id)
+            client.reply(from,msgs_texto.utilidades.anime.espera,id)
             try {
                 var mediaData = await decryptMedia(message, uaOverride)
                 var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
@@ -462,20 +475,20 @@ module.exports = utilidades = async(client,message) => {
                     let titulo = resp.data.docs[0].title_english
                     let similaridade = resp.data.docs[0].similarity * 100
                     similaridade = similaridade.toFixed(2)
-                    if(similaridade < 87) return client.reply(from,"[ERRO] Nível de similaridade é muito baixo, certifique se enviar uma cena válida de anime.",id)
+                    if(similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
                     is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
                     client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
                     resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
                 }).catch((resp)=>{
-                    if(resp.status == 429) return client.reply(from,"[ERRO] Muitas solicitações sendo feitas, tente novamente mais tarde.",id)
-                    if(resp.status == 400) return client.reply(from,"[ERRO] Não foi possível achar resultados para esta imagem",id)
-                    if(resp.status == 500 || resp.status == 503) return client.reply(from,"[ERRO] Houve um erro no servidor de pesquisa de imagem.",id)
+                    if(resp.status == 429) return client.reply(from,msgs_texto.utilidades.anime.limite_solicitacao,id)
+                    if(resp.status == 400) return client.reply(from,msgs_texto.utilidades.anime.sem_resultado,id)
+                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto.utilidades.anime.erro_servidor,id)
                 })
             } catch(err) {
-                client.reply(from,"[ERRO] Houve um erro no processamento da imagem",id)
+                client.reply(from,msgs_texto.utilidades.anime.erro_processamento,id)
             }
         } else if (quotedMsg && quotedMsg.type === 'image') {
-            client.reply(from,"[AGUARDE] Estou processando a imagem e pesquisando o anime.",id)
+            client.reply(from,msgs_texto.utilidades.anime.espera,id)
             try {
                 var mediaData = await decryptMedia(quotedMsg, uaOverride)
                 var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
@@ -488,21 +501,21 @@ module.exports = utilidades = async(client,message) => {
                     let titulo = resp.data.docs[0].title_english
                     let similaridade = resp.data.docs[0].similarity * 100
                     similaridade = similaridade.toFixed(2)
-                    if(similaridade < 87) return client.reply(from,"[ERRO] Nível de similaridade é muito baixo, certifique se enviar uma cena válida de anime.",id)
+                    if(similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
                     is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
                     client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
                     resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
                 }).catch((resp)=>{
                     console.log(resp)
-                    if(resp.status == 429) return client.reply(from,"[ERRO] Muitas solicitações sendo feitas, tente novamente mais tarde.",id)
-                    if(resp.status == 400) return client.reply(from,"[ERRO] Não foi possível achar resultados para esta imagem",id)
-                    if(resp.status == 500 || resp.status == 503) return client.reply(from,"[ERRO] Houve um erro no servidor de pesquisa de imagem.",id)
+                    if(resp.status == 429) return client.reply(from,msgs_texto.utilidades.anime.limite_solicitacao,id)
+                    if(resp.status == 400) return client.reply(from,msgs_texto.utilidades.anime.sem_resultado,id)
+                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto.utilidades.anime.erro_servidor,id)
                 })
             } catch(err) {
-                client.reply(from,"[ERRO] Houve um erro no processamento da imagem",id)
+                client.reply(from,msgs_texto.utilidades.anime.erro_processamento,id)
             }   
         } else {
-            client.reply(from,"[ERRO] Você deve postar uma imagem com *!anime* ou responder outra imagem com *!anime*", id)
+            client.reply(from,msgs_texto.utilidades.anime.cmd_erro, id)
         }
     break
     

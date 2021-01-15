@@ -1,15 +1,16 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosJson} = require('./lib/functions')
+const {criarEnv} = require('./lib/functions')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
 
 const start = async (client = new Client()) => {
         console.log('[SERVIDOR] Servidor iniciado!')
-        await criarArquivosJson()
+        await criarEnv()
         const aoEntrarGrupo = require('./lib/aoEntrarGrupo')
         const antiLink= require('./lib/antiLink')
         const antiFlood = require('./lib/antiFlood')
-        
+        const cadastrarGrupo = require('./lib/cadastrarGrupo')
+
         // Force it to keep the current session
         client.onStateChanged((state) => {
             console.log('[Cliente Status]', state)
@@ -23,17 +24,19 @@ const start = async (client = new Client()) => {
                     client.cutMsgCache()
                 }
             })
-
+            await cadastrarGrupo(message)
             antiLink(client,message)
             antiFlood(client,message)
             msgHandler(client, message)
         }))
 
         client.onGlobalParicipantsChanged((async (ev) => {
+            await cadastrarGrupo(ev,"add")
             await aoEntrarGrupo(client, ev)
         }))
         
-        client.onAddedToGroup(((chat) => {
+        client.onAddedToGroup((async (chat) => {
+            await cadastrarGrupo(chat.id, "added")
             let totalMem = chat.groupMetadata.participants.length
             const minMem = 1
             if (totalMem < minMem) { 

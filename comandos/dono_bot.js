@@ -77,7 +77,7 @@ module.exports = dono_bot = async(client,message) => {
             break
             
         case '!rconfig':
-            await fs.writeFileSync("./lib/recursos.json", JSON.stringify({"bemvindo":[],"antilink":[],"antifake":[],"antiflood":{"grupos":[],"dados":[]},"voteban":[]}) , 'utf8')
+            await db.resetarGrupos()
             client.reply(from,msgs_texto.admin.rconfig.reset_sucesso,id)
             break
 
@@ -143,54 +143,33 @@ module.exports = dono_bot = async(client,message) => {
         
         case "!mudarlimite":
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            if(args.length === 1) return client.reply(from, "[ERRO] Você deve responder algúem com *!mudarlimite novo-limite* ou mencionar alguém após o comando",id)
-            if(isNaN(args[1])) return client.reply(from, "[ERRO] O número para definir o limite de comandos é inválido",id)
-            if(quotedMsg){
-                let mc_registrado = await db.verificarRegistro(quotedMsgObj.author)
-                if(mc_registrado){
-                    let ml_user = await db.obterUsuario(quotedMsgObj.author)
-                    if(ml_user.tipo == "vip" || ml_user.tipo == "dono") return  client.reply(from, `[❗] Você não pode alterar limite de um vip/dono (Sem limites).`,id)
-                    await db.definirLimite(quotedMsgObj.author, args[1])
-                    client.reply(from, `✅ O limite desse usuário foi definido para ${args[1]} comandos/dia`,id)
-                } else {
-                    client.reply(from, "[❗] Este usuário ainda não está registrado",id)
-                }
-            } else if (mentionedJidList.length === 1){
-                let mc_registrado = await db.verificarRegistro(mentionedJidList[0])
-                if(mc_registrado){
-                    let ml_user = await db.obterUsuario(quotedMsgObj.author)
-                    if(ml_user.tipo == "vip" || ml_user.tipo == "dono") return  client.reply(from, `[❗] Você não pode alterar limite de um vip/dono (Sem limites).`,id)
-                    await db.definirLimite(mentionedJidList[0], args[1])
-                    client.reply(from, `✅ O limite desse usuário foi definido para ${args[1]} comandos/dia`,id)
-                } else {
-                    client.reply(from, "[❗] Este usuário ainda não está registrado",id)
-                }
-            } else {
-                client.reply(from, "[❗] Você deve responder algúem com *!mudarlimite novo-limite* ou mencionar alguém após o comando",id)
-            }
+            if(args.length === 1) return client.reply(from,msgs_texto.admin.mudarlimite.cmd_erro,id)
+            if(isNaN(args[1])) return client.reply(from, msgs_texto.admin.mudarlimite.invalido,id)
+            await db.definirLimite(args[1])
+            client.reply(from, `✅ O limite diário de todos os usuários foi definido para ${args[1]} comandos/dia `,id)
             break
         
         case "!tipo":
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            if(args.length === 1) return client.reply(from, "[ERRO] Você deve responder algúem com *!cargo membro|admin* ou mencionar alguém após o comando",id)
+            if(args.length === 1) return client.reply(from, msgs_texto.admin.tipo.cmd_erro,id)
             if(args[1].toLowerCase() == "comum" || args[1].toLowerCase() == "vip"){
                 if(quotedMsg){
-                    if(ownerNumber.includes(quotedMsgObj.author.replace("@c.us",""))) return client.reply(from, "[ERRO] Não é possivel alterar cargo do dono",id)
+                    if(ownerNumber.includes(quotedMsgObj.author.replace("@c.us",""))) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
                     let c_registrado = await db.verificarRegistro(quotedMsgObj.author)
                     if(c_registrado){
                         await db.alterarTipoUsuario(quotedMsgObj.author, args[1])
                         return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
                     } else {
-                        return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                        return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
                     }
                 } else if (mentionedJidList.length === 1){
-                    if(ownerNumber.includes(mentionedJidList[0].replace("@c.us",""))) return client.reply(from, "[ERRO] Não é possivel alterar cargo do dono",id)
+                    if(ownerNumber.includes(mentionedJidList[0].replace("@c.us",""))) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
                     let c_registrado = await db.verificarRegistro(mentionedJidList[0])
                     if(c_registrado){
                         await db.alterarTipoUsuario(mentionedJidList[0], args[1])
                         return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
                     } else {
-                        return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                        return client.reply(from,msgs_texto.admin.tipo.nao_registrado,id)
                     }
                 } else if(args.length >= 2){
                     let numero_usuario = ""
@@ -198,34 +177,71 @@ module.exports = dono_bot = async(client,message) => {
                         numero_usuario += args[i]
                     }
                     numero_usuario = numero_usuario.replace(/\W+/g,"")
-                    if(ownerNumber.includes(numero_usuario)) return client.reply(from, "[ERRO] Não é possivel alterar cargo do dono",id)
+                    if(ownerNumber.includes(numero_usuario)) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
                     let c_registrado = await db.verificarRegistro(numero_usuario+"@c.us")
                     if(c_registrado){
                         await db.alterarTipoUsuario(numero_usuario+"@c.us", args[1])
                         return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
                     } else {
-                        return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                        return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
                     }
                 } else {
-                    client.reply(from, "[ERRO] Você deve responder algúem com *!cargo membro|admin* ou mencionar alguém após o comando",id)
+                    client.reply(from, msgs_texto.admin.tipo.cmd_erro,id)
                 }
             } else {
-                 client.reply(from, "[ERRO] Você deve escolher *Comum* ou *Vip* como cargo",id)
+                 client.reply(from, msgs_texto.admin.tipo.tipos_disponiveis,id)
             }
             break
         
         case "!limparvip":
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             await db.limparVip()
-            client.reply(from, `✅ Todos os VIP foram convertidos para COMUM`,id)
+            client.reply(from,msgs_texto.admin.limparvip.sucesso,id)
             break
         
-        case "!resetarcmd":
+        case "!rtodos":
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             db.resetarComandosDia().then(async()=>{
-                client.reply(from, `✅ Os comandos diários de todos os usuários foram resetados`,id)
+                client.reply(from, msgs_texto.admin.rtodos.sucesso,id)
             })
             break
+
+        case "!r":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            if(quotedMsg){
+                console.log(quotedMsgObj.author)
+                let r_registrado = await db.verificarRegistro(quotedMsgObj.author)
+                if(r_registrado){
+                    await db.resetarComandosDiaUsuario(quotedMsgObj.author)
+                    client.reply(from, msgs_texto.admin.r.sucesso,id)
+                } else {
+                    return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
+                }
+            } else if (mentionedJidList.length === 1){
+                let r_registrado = await db.verificarRegistro(mentionedJidList[0])
+                if(r_registrado){
+                    await db.resetarComandosDiaUsuario(mentionedJidList[0])
+                    client.reply(from, msgs_texto.admin.r.sucesso,id)
+                } else {
+                    return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
+                }
+            } else if(args.length >= 1){
+                let r_numero_usuario = ""
+                for (let i = 1; i < args.length; i++){
+                    r_numero_usuario += args[i]
+                }
+                r_numero_usuario = r_numero_usuario.replace(/\W+/g,"")
+                let r_registrado = await db.verificarRegistro(r_numero_usuario+"@c.us")
+                if(r_registrado){
+                    await db.resetarComandosDiaUsuario(r_numero_usuario+"@c.us")
+                    client.reply(from, msgs_texto.admin.r.sucesso,id)
+                } else {
+                    return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
+                }
+            } else {
+               return client.reply(from, msgs_texto.admin.r.cmd_erro,id)
+            }
+            break    
 
         case "!verdados":
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
@@ -235,14 +251,14 @@ module.exports = dono_bot = async(client,message) => {
                 if(vd_registrado){
                     vd_usuario = await db.obterUsuario(quotedMsgObj.author)
                 } else {
-                    return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                    return client.reply(from,msgs_texto.admin.vardados.nao_registrado,id)
                 }
             } else if (mentionedJidList.length === 1){
                 let vd_registrado = await db.verificarRegistro(mentionedJidList[0])
                 if(vd_registrado){
                     vd_usuario = await db.obterUsuario(mentionedJidList[0])
                 } else {
-                    return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                    return client.reply(from, msgs_texto.admin.vardados.nao_registrado,id)
                 }
             } else if(args.length >= 1){
                 let vd_numero_usuario = ""
@@ -254,10 +270,10 @@ module.exports = dono_bot = async(client,message) => {
                 if(vd_registrado){
                     vd_usuario = await db.obterUsuario(vd_numero_usuario+"@c.us")
                 } else {
-                    return client.reply(from, "[❗] Este usuário ainda não está registrado",id)
+                    return client.reply(from, msgs_texto.admin.vardados.nao_registrado,id)
                 }
             } else {
-               return client.reply(from, "[ERRO] Você deve responder algúem com *!verdados* ou mencionar alguém após o comando",id)
+               return client.reply(from, msgs_texto.admin.vardados.cmd_erro,id)
             }
 
             let max_comandos_vd = (vd_usuario.max_comandos_dia == null) ? "Sem limite" : vd_usuario.max_comandos_dia
@@ -276,7 +292,7 @@ module.exports = dono_bot = async(client,message) => {
 
             let msg_verdados = `[🤖*VER DADOS DE USO*🤖]\n\n`
             msg_verdados += `Tipo de usuário : *${vd_usuario.tipo }*\n`
-            msg_verdados += `Nome : *${vd_usuario.nome}*\n`
+            msg_verdados += `Numero Usuário : *${vd_usuario.id_usuario.replace("@c.us","")}*\n`
             msg_verdados += `Comandos usados hoje : *${vd_usuario.comandos_dia}/${max_comandos_vd}*\n`
             msg_verdados += `Limite diário : *${max_comandos_vd}*\n`
             msg_verdados += `Total de comandos usados : *${vd_usuario.comandos_total} comandos*\n`

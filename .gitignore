@@ -7,9 +7,6 @@ node_modules
 #Ignore node-persist
 .node-persist
 
-#Ignore json
-lib/recursos.json
-
 #Ignore .ev
 .env
 
@@ -21,7 +18,7 @@ media/aswu.mp4
 media/img/noBg.png
 media/output.gif
 media/tts/*.mp3
-media/tts/nope.txt
+
 
 #Ignore DB files
 database/db/*.db

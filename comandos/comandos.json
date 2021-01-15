@@ -1,7 +1,7 @@
 {
     "utilidades":["!ajuda","!s","!sgif","!sgif2","!ssf","!traduz","!voz","!img","!noticias","!rastreio","!calc","!info","!google","!moeda","!clima","!ddd","!play","!anime","!meusdados"],
-    "admin_grupo":["!status","!regras","!add","!ban","!promover","!rebaixar","!mt","!adms","!dono","!link","!rlink","!f","!alink","!bv","!afake","!aflood","!apg","!bantodos","!vb", "!votar", "!votacao"],
+    "admin_grupo":["!status","!regras","!add","!ban","!promover","!rebaixar","!mt","!adms","!dono","!link","!rlink","!f","!alink","!bv","!afake","!aflood","!apg","!bantodos","!vb", "!votar", "!votacao","!bcmd","!dcmd"],
     "diversao":["!mascote","!viadometro","!detector","!roletarussa","!casal","!gadometro","!top5","!par","!roletrando","!malacos", "!fch"],
-    "dono_bot":["!sair","!sairgrupos","!entrargrupo","!bc","!bcgrupos","!print","!limpartudo","!limpar","!listablock","!bloquear","!desbloquear","!estado","!admin","!rconfig","!mudarlimite","!tipo","!limparvip","!resetarcmd","!verdados"],
-    "excecoes_contagem": ["!meusdados"]
+    "dono_bot":["!sair","!sairgrupos","!entrargrupo","!bc","!bcgrupos","!print","!limpartudo","!limpar","!listablock","!bloquear","!desbloquear","!estado","!admin","!rconfig","!mudarlimite","!tipo","!limparvip","!rtodos", "!r","!verdados"],
+    "excecoes_contagem": ["!meusdados","!ajuda"]
 }

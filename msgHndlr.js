@@ -25,6 +25,9 @@ module.exports = msgHandler = async (client, message) => {
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
         const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
+        const groupId = isGroupMsg ? chat.groupMetadata.id : ''
+        const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
+        const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
 
         const msgs = (message) => {
             if (command.startsWith('!')) {
@@ -53,13 +56,22 @@ module.exports = msgHandler = async (client, message) => {
                     await db.registrarUsuarioComum(sender.id, nome_usuario)
                 }
             }
+
+            if(isGroupMsg){
+                let g_info = await db.obterGrupo(groupId)
+                if(g_info.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,`[❗] O comando *${command}* está temporariamente bloqueado neste grupo pelo administrador.`,id)
+            }
+
             if(!lista_comandos.excecoes_contagem.includes(command)){
                 let ultrapassou = await db.ultrapassouLimite(sender.id)
                 if(!ultrapassou){
                     await db.addContagem(sender.id)
                 } else {
                     duser  = await db.obterUsuario(sender.id)
-                    return client.reply(from, `${duser.nome} - você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`,id)
+                    return client.reply(from, 
+                        (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
+                        : `[❗]  Você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
+                        ,id) 
                 }
             }
         }
@@ -73,7 +85,7 @@ module.exports = msgHandler = async (client, message) => {
         } else if(lista_comandos.dono_bot.includes(command)){
             await dono_bot(client,message)
         } else {
-            if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite *!ajuda* para mais informações.",id)
+            if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite o comando *!ajuda* para mais informações.",id)
         }
 
     } catch (err) {

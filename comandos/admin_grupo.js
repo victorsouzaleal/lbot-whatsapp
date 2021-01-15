@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
-const fs = require('fs-extra')
 const msgs_texto = require('../lib/msgs')
-
+const db = require('../database/database')
+const fs = require('fs-extra')
 
 module.exports = admin_grupo = async(client,message) => {
     const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
@@ -28,21 +28,18 @@ module.exports = admin_grupo = async(client,message) => {
         case '!status':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-            const status_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
-            const isWelcome = status_recursos.bemvindo.includes(groupId)
-            const isAntilink = status_recursos.antilink.includes(groupId)
-            const isAntifake = status_recursos.antifake.includes(groupId)
-            const isAntiflood_on = status_recursos.antiflood.grupos.includes(groupId)
-
+            const g_status = await db.obterGrupo(groupId)
             let status_text = `[S T A T U S   D O   G R U P O]\n\n`
             status_text += "- Recurso Boas Vindas : "
-            status_text += (isWelcome) ? "✅ Ligado\n" : "❌ Desligado\n"
+            status_text += (g_status.bemvindo) ? "✅ Ligado\n" : "❌ Desligado\n"
             status_text += "- Recurso Anti-Link de Grupos : "
-            status_text += (isAntilink) ? "✅ Ligado\n" : "❌ Desligado\n"
+            status_text += (g_status.antilink) ? "✅ Ligado\n" : "❌ Desligado\n"
             status_text += "- Recurso Anti-Fake : "
-            status_text += (isAntifake) ? "✅ Ligado\n" : "❌ Desligado\n"
+            status_text += (g_status.antifake) ? "✅ Ligado\n" : "❌ Desligado\n"
             status_text += "- Recurso Anti-Flood : "
-            status_text += (isAntiflood_on) ? `✅ Ligado (Máx: ${status_recursos.antiflood.dados[status_recursos.antiflood.dados.findIndex(dado => dado.groupId == groupId)].max} mensagens)\n` : "❌ Desligado\n"
+            status_text += (g_status.antiflood.status) ? `✅ Ligado (Máx: ${g_status.antiflood.max} mensagens)\n` : "❌ Desligado\n"
+            status_text += "- Bloqueio de comandos : "
+            status_text += (g_status.block_cmds.length != 0) ? `✅ Comandos bloqueados : *${g_status.block_cmds.toString()}*\n` : "❌ Nenhum comando bloqueado\n"
             client.sendText(from,status_text)
             break
 
@@ -50,21 +47,19 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (args.length === 1) return client.reply(from, msgs_texto.grupo.bemvindo.cmd_erro, id)
-            const bv_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
+            const bv_status = await db.obterGrupo(groupId)
 
             if (args[1].toLowerCase() === 'on') {
-                if(!bv_recursos.bemvindo.includes(chat.id)) {
-                    bv_recursos.bemvindo.push(chat.id)
-                    fs.writeFileSync('./lib/recursos.json', JSON.stringify(bv_recursos))
+                if(!bv_status.bemvindo) {
+                    await db.alterarBemVindo(groupId)
                     client.reply(from, msgs_texto.grupo.bemvindo.ligado, id)
                 } else {
                     client.reply(from, msgs_texto.grupo.bemvindo.ja_ligado , id)
 
                 }
             } else if (args[1].toLowerCase() === 'off') {
-                if(bv_recursos.bemvindo.includes(chat.id)) {
-                    bv_recursos.bemvindo.splice(bv_recursos.bemvindo.indexOf(chat.id), 1)
-                    fs.writeFileSync('./lib/recursos.json', JSON.stringify(bv_recursos))
+                if(bv_status.bemvindo) {
+                    await db.alterarBemVindo(groupId,false)
                     client.reply(from, msgs_texto.grupo.bemvindo.desligado, id)
                 } else {
                     client.reply(from, msgs_texto.grupo.bemvindo.ja_desligado , id)
@@ -79,25 +74,22 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, msgs_texto.grupo.antilink.cmd_erro, id)
-                const al_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
+                const al_status = await db.obterGrupo(groupId)
 
                 if (args[1].toLowerCase() === 'on') {
-                    if(!al_recursos.antilink.includes(chat.id)){
-                        al_recursos.antilink.push(chat.id)
-                        fs.writeFileSync('./lib/recursos.json', JSON.stringify(al_recursos))
+                    if(!al_status.antilink){
+                        await db.alterarAntiLink(groupId)
                         client.reply(from, msgs_texto.grupo.antilink.ligado, id)
                     } else {
                         client.reply(from, msgs_texto.grupo.antilink.ja_ligado , id)
                     } 
                 } else if (args[1].toLowerCase() === 'off') {
-                    if(al_recursos.antilink.includes(chat.id)){
-                        al_recursos.antilink.splice(al_recursos.antilink.indexOf(chat.id), 1)
-                        fs.writeFileSync('./lib/recursos.json', JSON.stringify(al_recursos))
+                    if(al_status.antilink){
+                        await db.alterarAntiLink(groupId,false)
                         client.reply(from, msgs_texto.grupo.antilink.desligado, id)
                     } else {
                         client.reply(from, msgs_texto.grupo.antilink.ja_desligado , id)
                     }
-                    
                 } else {
                     client.reply(from, msgs_texto.grupo.antilink.cmd_erro, id)
                 }
@@ -114,20 +106,18 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
             if (args.length === 1) return client.reply(from, msgs_texto.grupo.antifake.cmd_erro, id)
-            const af_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
+            const af_status = await db.obterGrupo(groupId)
 
             if (args[1].toLowerCase() === 'on') {
-                if(!af_recursos.antifake.includes(chat.id)){
-                    af_recursos.antifake.push(chat.id)
-                    fs.writeFileSync('./lib/recursos.json', JSON.stringify(af_recursos))
+                if(!af_status.antifake){
+                    await db.alterarAntiFake(groupId)
                     client.reply(from,  msgs_texto.grupo.antifake.ligado, id)
                 } else {
                     client.reply(from, msgs_texto.grupo.antifake.ja_ligado , id)
                 } 
             } else if (args[1].toLowerCase() === 'off') {
-                if(af_recursos.antifake.includes(chat.id)){
-                    af_recursos.antifake.splice(af_recursos.antifake.indexOf(chat.id), 1)
-                    fs.writeFileSync('./lib/recursos.json', JSON.stringify(af_recursos))
+                if(af_status.antifake){
+                    await db.alterarAntiFake(groupId,false)
                     client.reply(from,  msgs_texto.grupo.antifake.desligado, id)
                 } else {
                     client.reply(from, msgs_texto.grupo.antifake.ja_desligado , id)
@@ -142,7 +132,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
             if (args.length === 1) return client.reply(from, msgs_texto.grupo.antiflood.cmd_erro, id)
-            const afl_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
+            const afl_status = await db.obterGrupo(groupId)
             let max_flood = 10
             let estado = ""
 
@@ -159,20 +149,12 @@ module.exports = admin_grupo = async(client,message) => {
             }
             
             if (estado.toLowerCase() === 'on') {
-                if(afl_recursos.antiflood.grupos.includes(chat.id)) return client.reply(from, msgs_texto.grupo.antiflood.ja_ligado , id)
-                afl_recursos.antiflood.grupos.push(chat.id)
-                afl_recursos.antiflood.dados.push({
-                    groupId : chat.id,
-                    max: max_flood,
-                    msgs : []
-                })
-                fs.writeFileSync('./lib/recursos.json', JSON.stringify(afl_recursos))
+                if(afl_status.antiflood.status) return client.reply(from, msgs_texto.grupo.antiflood.ja_ligado , id)
+                await db.alterarAntiFlood(groupId,true,max_flood)
                 client.reply(from,  msgs_texto.grupo.antiflood.ligado, id)
             } else if (estado.toLowerCase() === 'off') {
-                if(!afl_recursos.antiflood.grupos.includes(chat.id)) return client.reply(from, msgs_texto.grupo.antiflood.ja_desligado , id)
-                afl_recursos.antiflood.grupos.splice(afl_recursos.antiflood.grupos.indexOf(chat.id),1)
-                afl_recursos.antiflood.dados.splice(afl_recursos.antiflood.dados.findIndex(dado => dado.groupId == chat.id),1)
-                fs.writeFileSync('./lib/recursos.json', JSON.stringify(afl_recursos))
+                if(!afl_status.antiflood.status) return client.reply(from, msgs_texto.grupo.antiflood.ja_desligado , id)
+                await db.alterarAntiFlood(groupId,false)
                 client.reply(from,  msgs_texto.grupo.antiflood.desligado, id)
             } else {
                 client.reply(from, msgs_texto.grupo.antiflood.cmd_erro , id)
@@ -180,38 +162,33 @@ module.exports = admin_grupo = async(client,message) => {
             break
         
         case "!votacao":
-            const vb_recursos_votacao = JSON.parse(fs.readFileSync('./lib/recursos.json'))
-            let index_votacao = vb_recursos_votacao.voteban.findIndex(voto => voto.grupo == groupId)
-            if((index_votacao == -1)) {
+            const vb_status = await db.obterGrupo(groupId)
+            if(!vb_status.voteban.status) {
                 client.reply(from, msgs_texto.grupo.voteban.sem_votacao, id)
             } else {
-                client.sendTextWithMentions(from, `Atualmente existe um membro em votação : @${vb_recursos_votacao.voteban[index_votacao].usuario}`)
+                client.sendTextWithMentions(from, `Atualmente existe um membro em votação : @${vb_status.voteban.usuario}`)
             }
             break
         
         case '!votar':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            const vb_recursos_votar = JSON.parse(fs.readFileSync('./lib/recursos.json'))
-            let index_votar = vb_recursos_votar.voteban.findIndex(voto => voto.grupo == groupId)
-            if(index_votar == -1) return client.reply(from, msgs_texto.grupo.voteban.sem_votacao , id)
-            if(vb_recursos_votar.voteban[index_votar].votos.indexOf(sender.id) != -1) return client.reply(from, msgs_texto.grupo.voteban.ja_votou ,id)
-            vb_recursos_votar.voteban[index_votar].votos.push(sender.id)
-            fs.writeFileSync('./lib/recursos.json', JSON.stringify(vb_recursos_votar))
-            await client.reply(from, `[VOTE BAN] Você votou com sucesso no membro em votação. (${vb_recursos_votar.voteban[index_votar].votos.length}/${vb_recursos_votar.voteban[index_votar].max_votos} Votos)`,id)
-            if(vb_recursos_votar.voteban[index_votar].votos.length == vb_recursos_votar.voteban[index_votar].max_votos){
+            const votar_status = await db.obterGrupo(groupId)
+            if(!votar_status.voteban.status) return client.reply(from, msgs_texto.grupo.voteban.sem_votacao , id)
+            if(votar_status.voteban.votou.indexOf(sender.id) != -1) return client.reply(from, msgs_texto.grupo.voteban.ja_votou ,id)
+            let voteban  = await db.addVoto(groupId,sender.id)
+            await client.reply(from, `[VOTE BAN] Você votou com sucesso no membro em votação. (${votar_status.voteban.votos + 1}/${votar_status.voteban.max} Votos)`,id)
+            if(voteban){
                 if (isBotGroupAdmins) {
-                    await client.removeParticipant(from, vb_recursos_votar.voteban[index_votar].usuario)
+                    await client.removeParticipant(from, votar_status.voteban.usuario)
                     .then(()=>{
-                        client.sendTextWithMentions(from, `[VOTE BAN] O membro @${vb_recursos_votar.voteban[index_votar].usuario} que estava em votação foi banido com sucesso. VIVA A DEMOCRACIA!`)
+                        client.sendTextWithMentions(from, `[VOTE BAN] O membro @${votar_status.voteban.usuario} que estava em votação foi banido com sucesso. VIVA A DEMOCRACIA!`)
                     }).catch(()=>{
                         client.sendText(from, msgs_texto.grupo.voteban.erro_ban)
                     })
-                    
                 } else {
                     client.reply(from, msgs_texto.grupo.voteban.erro_botadmin , id)
                 }
-                vb_recursos_votar.voteban.splice(index_votar,1)
-                fs.writeFileSync('./lib/recursos.json', JSON.stringify(vb_recursos_votar))
+                await db.alterarVoteban(groupId,false)
             }
 
             break   
@@ -220,26 +197,70 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if(args.length === 1) return client.reply(from, msgs_texto.grupo.voteban.cmd_erro ,id)
-            const vb_recursos = JSON.parse(fs.readFileSync('./lib/recursos.json'))
+            const vtb_status = await db.obterGrupo(groupId)
             if(args[1] == "on"){
-                if(vb_recursos.voteban.findIndex(voto => voto.grupo == groupId) != -1) return client.reply(from, msgs_texto.grupo.voteban.ja_aberto ,id)
+                if(vtb_status.voteban.status) return client.reply(from, msgs_texto.grupo.voteban.ja_aberto ,id)
                 if(mentionedJidList.length != 1) return client.reply(from, msgs_texto.grupo.voteban.erro_mencao ,id)
                 if(mentionedJidList[0] == botNumber+"@c.us" || mentionedJidList[0] == chat.groupMetadata.owner) return client.reply(from, msgs_texto.grupo.voteban.erro_dono ,id)
-                if (vb_recursos.voteban.findIndex(voto => voto.usuario == mentionedJidList[0]) != -1) return client.reply(from, msgs_texto.grupo.voteban.membro_ja_aberto ,id)
                 if(isNaN(args[3])) return client.reply(from, msgs_texto.grupo.voteban.erro_num_votos ,id)
                 if(args[3] < 3 || args[3]> 30) return client.reply(from, msgs_texto.grupo.voteban.limit_num_votos ,id)
-                vb_recursos.voteban.push({grupo : groupId, usuario: mentionedJidList[0], max_votos: args[3], votos: []})
-                fs.writeFileSync('./lib/recursos.json', JSON.stringify(vb_recursos))
+                await db.alterarVoteban(groupId,true,args[3],mentionedJidList[0])
                 client.sendTextWithMentions(from, `[VOTE BAN] Uma votação foi aberta para expulsar o membro @${mentionedJidList[0]}. (0/${args[3]} Votos)\n\nO comando *!votar* foi habilitado.`)
             } else if(args[1] == "off"){
-                let index_usuario = vb_recursos.voteban.findIndex(voto => voto.grupo == groupId)
-                if (index_usuario == -1) return client.reply(from,msgs_texto.grupo.voteban.sem_votacao,id)
-                client.sendTextWithMentions(from, `[VOTE BAN] A votação para expulsar @${vb_recursos.voteban[index_usuario].usuario} foi encerrada.`)
-                vb_recursos.voteban.splice(index_usuario,1)
-                fs.writeFileSync('./lib/recursos.json', JSON.stringify(vb_recursos))
+                if (!vtb_status.voteban.status) return client.reply(from,msgs_texto.grupo.voteban.sem_votacao,id)
+                client.sendTextWithMentions(from, `[VOTE BAN] A votação para expulsar @${vtb_status.voteban.usuario} foi encerrada.`)
+                await db.alterarVoteban(groupId,false)
             } else {
                 client.reply(from,msgs_texto.grupo.voteban.cmd_erro,id)
             }
+            break
+
+        case "!bcmd":
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+            if(args.length === 1) return client.reply(from, msgs_texto.grupo.bcmd.cmd_erro ,id)
+            let msg_resp = "[🤖 *Bloquear comandos* 🤖]\n\n"
+            let b_cmd_inseridos = body.slice(6).split(",")
+            let b_cmd_verificados = []
+            const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
+            let b_cmd_grupo = await db.obterGrupo(groupId)
+            b_cmd_inseridos.forEach(b_cmd =>{
+                if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd)){
+                    if(b_cmd_grupo.block_cmds.includes(b_cmd)){
+                        msg_resp+= `- Comando *${b_cmd}* já está bloqueado.\n`
+                    } else {
+                        b_cmd_verificados.push(b_cmd)
+                        msg_resp+= `- Comando *${b_cmd}* bloqueado com sucesso.\n`
+                    }
+                    
+                } else if (lista_comandos.admin_grupo.includes(b_cmd) || lista_comandos.dono_bot.includes(b_cmd) ){
+                    msg_resp+= `- Comando *${b_cmd}* não pode ser bloqueado (Comando ADMIN).\n`
+                } else {
+                    msg_resp+= `- Comando *${b_cmd}* não existe.\n`
+                }
+            })
+            if(b_cmd_verificados.length != 0) await db.addBlockedCmd(groupId, b_cmd_verificados)
+            client.reply(from, msg_resp, id)
+            break
+        
+        case "!dcmd":
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+            if(args.length === 1) return client.reply(from,msgs_texto.grupo.dcmd.cmd_erro,id)
+            let d_msg_resp = "[🤖 *Desbloquear Comandos* 🤖]\n\n"
+            let d_cmd_inseridos = body.slice(6).split(",")
+            let d_cmd_verificados = []
+            let d_cmd_grupo = await db.obterGrupo(groupId)
+            d_cmd_inseridos.forEach((d_cmd) =>{
+                if(d_cmd_grupo.block_cmds.includes(d_cmd)) {
+                    d_cmd_verificados.push(d_cmd)
+                    d_msg_resp += `- Comando *${d_cmd}* foi desbloqueado.\n`
+                } else {
+                    d_msg_resp += `- Comando *${d_cmd}* já esta desbloqueado ou nunca foi bloqueado.\n`
+                }
+            })
+            if(d_cmd_verificados.length != 0) await db.removeBlockedCmd(groupId, d_cmd_verificados)
+            client.reply(from, d_msg_resp, id)
             break
 
         case '!link':
