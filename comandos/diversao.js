@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 const fs = require('fs-extra')
-const msgs_texto = require('../lib/msgs')
+const {msgs_texto} = require('../lib/msgs')
 
 module.exports = diversao = async(client,message) => {
     const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj,mentionedJidList} = message
@@ -21,50 +21,52 @@ module.exports = diversao = async(client,message) => {
 
     switch(command){
         case '!detector' :
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            if(!quotedMsg) return client.reply(from, msgs_texto.diversao.detector.cmd_erro , id)
-            await client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto.diversao.detector.espera, id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if(!quotedMsg) return client.reply(from, msgs_texto().diversao.detector.cmd_erro , id)
+            await client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto().diversao.detector.espera, id)
             const imgs_detector = ['verdade.png','vaipra.png','mentiroso.png','meengana.png','kao.png','incerteza.png','estresse.png','conversapraboi.png']
             let aleatorio_detector = Math.floor(Math.random() * imgs_detector.length)
             await client.sendFile(from, `./media/img/detector/${imgs_detector[aleatorio_detector]}`, 'detector.png', "", quotedMsgObj.id)
             break
         
         case '!viadometro' :
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            if(!quotedMsg) return client.reply(from, msgs_texto.diversao.viadometro.cmd_erro, id)
-            const viadometro_resps = msgs_texto.diversao.viadometro.respostas
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if(!quotedMsg) return client.reply(from, msgs_texto().diversao.viadometro.cmd_erro, id)
+            const viadometro_resps = msgs_texto().diversao.viadometro.respostas
             let aleatorio = Math.floor(Math.random() * viadometro_resps.length)
             if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) aleatorio = 0
             client.reply(from,`🧩 *VIADÔMETRO* - ${viadometro_resps[aleatorio]}`, quotedMsgObj.id)
             break
 
+        case "!massacote":
         case '!mascote':
-            const url_mascote_img = "https://i.imgur.com/mVwa7q4.png"
+            //const url_mascote_img = "https://i.imgur.com/mVwa7q4.png"
+            const url_mascote_img = "https://i.imgur.com/srwThvU.jpg"
             client.sendFileFromUrl(from, url_mascote_img, 'mascote.jpeg', 'Whatsapp Jr.', id)
             break 
 
         case '!malacos':
-            const url_malacos_img = "https://instagram.fsdu6-1.fna.fbcdn.net/v/t51.2885-15/e35/123749592_128000845743872_4350553576495440946_n.jpg?_nc_ht=instagram.fsdu6-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=m2UaMTuk_mcAX8qUg__&tp=1&oh=d3cf971a3b695cfe302c494f355922b2&oe=60035949"
+            const url_malacos_img = "https://i.imgur.com/7bcn2TK.jpg"
             client.sendFileFromUrl(from, url_malacos_img, 'malacos.jpeg', 'Somos o problema', id)
             break
 
         case '!roletrando':
         case '!roletarussa':
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-            if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
+            if (!isBotGroupAdmins) return client.reply(from,msgs_texto().permissao.bot_admin, id)
             let membros_id = await client.getGroupMembersId(groupId)
             membros_id.splice(membros_id.indexOf(groupOwner),1)
             membros_id.splice(membros_id.indexOf(botNumber+'@c.us'),1)
             let membro_id_index = Math.floor(Math.random() * membros_id.length)
-            await client.reply(from, msgs_texto.diversao.roletarussa.espera , id)
+            await client.reply(from, msgs_texto().diversao.roletarussa.espera , id)
             await client.sendTextWithMentions(from,`🔫 Você foi o escolhido @${membros_id[membro_id_index].replace(/@c.us/g, '')}, até a próxima!`).then(async ()=>{
                 await client.removeParticipant(groupId, membros_id[membro_id_index])
             })
             break
         
         case '!casal':
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
             let casal_membros_id = await client.getGroupMembersId(groupId)
             const p1_index = Math.floor(Math.random() * casal_membros_id.length)
             const pessoa1 = casal_membros_id[p1_index]
@@ -75,9 +77,9 @@ module.exports = diversao = async(client,message) => {
             break
 
         case '!gadometro':
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, msgs_texto.diversao.gadometro.cmd_erro , id) 
-            const gadometro_resps = msgs_texto.diversao.gadometro.respostas 
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, msgs_texto().diversao.gadometro.cmd_erro , id) 
+            const gadometro_resps = msgs_texto().diversao.gadometro.respostas 
             let gado_aleatorio = Math.floor(Math.random() * gadometro_resps.length)
             let alvo = ''
 
@@ -96,8 +98,8 @@ module.exports = diversao = async(client,message) => {
             break
 
         case '!top5':
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            if(args.length === 1) return client.reply(from,msgs_texto.diversao.top5.cmd_erro , id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if(args.length === 1) return client.reply(from,msgs_texto().diversao.top5.cmd_erro , id)
             let tema_ranking = body.slice(6)
             let ranking_membros_id = await client.getGroupMembersId(groupId)
             let msg_top5 = `╔══✪〘🏆 TOP 5 ${tema_ranking} 🏆 〙\n╠\n`
@@ -125,14 +127,14 @@ module.exports = diversao = async(client,message) => {
             break
 
         case '!par':
-            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            if(mentionedJidList.length !== 2) return client.reply(from, msgs_texto.diversao.par.cmd_erro , id)
-            const par_resps = msgs_texto.diversao.par.respostas
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if(mentionedJidList.length !== 2) return client.reply(from, msgs_texto().diversao.par.cmd_erro , id)
+            const par_resps = msgs_texto().diversao.par.respostas
             let par_aleatorio = Math.floor(Math.random() * par_resps.length)
             client.sendTextWithMentions(from, `👩‍❤️‍👨 PAR - @${mentionedJidList[0].replace(/@c.us/g, '')} & @${mentionedJidList[1].replace(/@c.us/g, '')}\n\n${par_resps[par_aleatorio]}`)
             break
         case "!fch":
-            let cartas = JSON.parse(fs.readFileSync('./lib/cartas.json'))
+            let cartas = JSON.parse(fs.readFileSync('./database/json/cartas.json'))
             let carta_preta_aleatoria = Math.floor(Math.random() * cartas.cartas_pretas.length)
             let carta_preta_escolhida = cartas.cartas_pretas[carta_preta_aleatoria]
             let cont_parametros = 1

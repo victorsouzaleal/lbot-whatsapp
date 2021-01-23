@@ -6,8 +6,9 @@ const { rastrearEncomendas } = require('correios-brasil')
 const translate = require('@vitalets/google-translate-api')
 const fs = require('fs-extra')
 const {msg_admin_grupo, msg_comum, msg_comum_grupo} = require('../lib/menu')
-const msgs_texto = require('../lib/msgs')
+const {msgs_texto} = require('../lib/msgs')
 const get = require('got')
+const path = require('path')
 const {exec} = require('child_process')
 const axios = require('axios')
 const {removeBackgroundFromImageBase64} = require('remove.bg')
@@ -22,15 +23,13 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
 const Youtube = require('youtube-sr')
-const YoutubeMp3Downloader = require("youtube-mp3-downloader");
-var YD = new YoutubeMp3Downloader({
-    "ffmpegPath": ffmpegPath,               // FFmpeg binary location
-    "outputPath": "./media",    // Output file location (default: the home directory)
-    "youtubeVideoQuality": "highestaudio",  // Desired video quality (default: highestaudio)
-    "queueParallelism": 1,                  // Download parallelism (default: 1)
-    "progressTimeout": 2000,                // Interval in ms for the progress reports (default: 1000)
-    "allowWebm": false                      // Enable download from WebM sources (default: false)
-});
+const DownloadYTFile = require('yt-dl-playlist')
+const downloaderYT = new DownloadYTFile({ 
+    outputPath: "./media",
+    ffmpegPath: ffmpegPath,
+    maxParallelDownload: 2,
+})
+const cheerio = require('cheerio')
 const db = require('../database/database')
 
 
@@ -50,39 +49,57 @@ module.exports = utilidades = async(client,message) => {
     const groupId = isGroupMsg ? chat.groupMetadata.id : ''
     const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
     const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
-
+    const numero_dono = process.env.NUMERO_DONO.split(",")
     switch(command){
 
      //################## UTILIDADES ########################
      case "!info":
         const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
-        let numero_dono = process.env.NUMERO_DONO.split(",")
-        let msg_info = "*Criador do Bot* : Leal\n"
-        msg_info += "*Criado em* : 21/12/2020\n"
-        msg_info += "*Nome do bot* : LBot v2.0\n"
+        let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+        let msg_info = `*Criador do Bot* : ${info_bot.criador}\n`
+        msg_info += `*Criado em* : ${info_bot.criado_em}\n`
+        msg_info += `*Nome do bot* : ${info_bot.nome}\n`
+        msg_info += `*Online desde* : ${info_bot.iniciado}\n`
+        msg_info += `*Comandos executados* : ${info_bot.cmds_executados}\n`
         msg_info += `*Contato do criador* : wa.me/${numero_dono[0]}\n`
         await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
+        break
+    
+    case "!doar":
+        let msg_doar = `💰 *Pague uma coxinha para o criador :*\n\n`
+        msg_doar += `💳 *Pix* : 21995612287\n`
+        msg_doar += `👤 *Contato do criador* : wa.me/${numero_dono[0]}\n`
+        await client.reply(from,msg_doar,id)
+        break
+    
+    case "!reportar":
+        if(args.length == 1) return client.reply(from,msgs_texto().utilidades.reportar.cmd_erro ,id)
+        let msg_report = "[ 🤖 REPORTAR ⚙️]\n\n"
+        msg_report += `Usuário : ${pushname}\n`
+        msg_report += `Contato: http://wa.me/${sender.id.replace("@c.us","")}\n`
+        msg_report += `Mensagem : ${body.slice(10)}\n`
+        await client.sendText(numero_dono[0]+"@c.us",msg_report)
         break
     
     case "!ddd":
         let ddd_selecionado = ""
         if(quotedMsg){
             let codigo_brasileiro = quotedMsgObj.author.slice(0,2)
-            if(codigo_brasileiro != "55") return client.reply(from, msgs_texto.utilidades.ddd.somente_br ,id)
+            if(codigo_brasileiro != "55") return client.reply(from, msgs_texto().utilidades.ddd.somente_br ,id)
             ddd_selecionado = quotedMsgObj.author.slice(2,4)
         } else if(args.length > 1 && args[1].length == 2){
             ddd_selecionado = args[1]
         } else {
-            return client.reply(from, msgs_texto.utilidades.ddd.cmd_erro, id)
+            return client.reply(from, msgs_texto().utilidades.ddd.cmd_erro, id)
         }
-        const estados = JSON.parse(fs.readFileSync('./lib/ddd.json')).estados
+        const estados = JSON.parse(fs.readFileSync('./database/json/ddd.json')).estados
         estados.forEach(async (estado) =>{
             if(estado.ddd.includes(ddd_selecionado)) return client.reply(from,`📱 Estado : *${estado.nome}* / Região : *${estado.regiao}*`,id)
         })
         break
 
     case "!clima":
-        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.clima.cmd_erro ,id)
+        if(args.length === 1) return client.reply(from, msgs_texto().utilidades.clima.cmd_erro ,id)
         let local_escolhido = body.slice(7).normalize("NFD").replace(/[\u0300-\u036f]/g, '');
         const apiClima3Dias = encodeURI(`http://api.weatherapi.com/v1/forecast.json?key=${process.env.API_CLIMA}&q=${local_escolhido}&days=3&lang=pt`)
         try{
@@ -101,19 +118,19 @@ module.exports = utilidades = async(client,message) => {
                 client.reply(from,msg_clima,id)
             })
         } catch {
-            client.reply(from,msgs_texto.utilidades.clima.erro_resultado,id)
+            client.reply(from,msgs_texto().utilidades.clima.erro_resultado,id)
         }
         
         break
 
     case "!moeda":
-        if(args.length !== 3) return client.reply(from, msgs_texto.utilidades.moeda.cmd_erro, id)
+        if(args.length !== 3) return client.reply(from, msgs_texto().utilidades.moeda.cmd_erro, id)
         const moedas_suportadas = ['dolar','euro','iene']
         args[1] = args[1].toLowerCase()
         args[2] = args[2].replace(",",".")
-        if(!moedas_suportadas.includes(args[1])) return client.reply(from, msgs_texto.utilidades.moeda.nao_suportado, id)
-        if(isNaN(args[2])) return client.reply(from, msgs_texto.utilidades.moeda.valor_invalido , id)
-        if(args[2] > 1000000000000000) return client.reply(from, msgs_texto.utilidades.moeda.valor_limite, id)
+        if(!moedas_suportadas.includes(args[1])) return client.reply(from, msgs_texto().utilidades.moeda.nao_suportado, id)
+        if(isNaN(args[2])) return client.reply(from, msgs_texto().utilidades.moeda.valor_invalido , id)
+        if(args[2] > 1000000000000000) return client.reply(from, msgs_texto().utilidades.moeda.valor_limite, id)
         axios.get("https://economia.awesomeapi.com.br/json/all").then(async (resp)=>{
             let dados_moeda_selecionada = {}
             switch(args[1]){
@@ -139,7 +156,7 @@ module.exports = utilidades = async(client,message) => {
         })
         break
     case "!google":
-        if (args.length === 1) return client.reply(from, msgs_texto.utilidades.google.cmd_erro , id)
+        if (args.length === 1) return client.reply(from, msgs_texto().utilidades.google.cmd_erro , id)
         let q_search = body.slice(8)
         const config_google = {
             host : "google.com.br",
@@ -162,11 +179,11 @@ module.exports = utilidades = async(client,message) => {
 
      case '!rastreio':
         var dataText = '';
-        if (args.length === 1) return client.reply(from, msgs_texto.utilidades.rastreio.cmd_erro, id)
+        if (args.length === 1) return client.reply(from, msgs_texto().utilidades.rastreio.cmd_erro, id)
         codigoRastreio = [body.slice(10)]
-        if(codigoRastreio[0].length != 13) return client.reply(from, msgs_texto.utilidades.rastreio.codigo_invalido ,id)
+        if(codigoRastreio[0].length != 13) return client.reply(from, msgs_texto().utilidades.rastreio.codigo_invalido ,id)
         rastrearEncomendas(codigoRastreio).then((resp) => {
-            if(resp[0].length < 1) return client.reply(from, msgs_texto.utilidades.rastreio.nao_postado ,id)
+            if(resp[0].length < 1) return client.reply(from, msgs_texto().utilidades.rastreio.nao_postado ,id)
             let dados_rastreio = "📦📦*RASTREIO*📦📦\n\n"
             resp[0].forEach(dado =>{
                 let dados_local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
@@ -177,12 +194,45 @@ module.exports = utilidades = async(client,message) => {
         });
         break
     
+    case "!jogosmalacos":
+        axios.get("https://www.futliga.com.br/futliga/servicos/agenda/servicos-agenda-obter-agenda.asp?cboUnidade=1&cboRanking=0&txtDataJogo=&txtNomeEquipe=Uni%C3%A3o+Malacos+Futebol+e+Whisky&hidCodigoEquipe=18901&hidPagina=1")
+        .then((resp)=>{
+            var $ = cheerio.load(resp.data);
+            let resultados = []
+            $(`.apresentacao-jogos-times`).each((i,element)=>{
+                const cheerioElement = $(element)
+                let data = cheerioElement.find("div.row > div > h5:nth-child(1)").text().trim()
+                let local = cheerioElement.find("div.row > div > h5:nth-child(2)").text().trim()
+                let nome_esquerda = cheerioElement.find("div.row.jogo > div.adversario-esquerda > div.nome-equipe > h4 > a").text().trim()
+                let nome_direita = cheerioElement.find("div.row.jogo > div.adversario-direita > div.nome-equipe > h4 > a").text().trim()
+                data = data.split(",")
+                resultados.push({
+                    dia: data[0].trim(),
+                    horario: data[1].trim(),
+                    nome_direita,
+                    nome_esquerda,
+                    local
+                })
+            })
+            msg_jogos = "⚽ *PRÓXIMOS JOGOS MALACOS* ⚽\n"
+            resultados.forEach(resultado=>{
+                msg_jogos += "-------------------------\n"
+                msg_jogos += `Local: ${resultado.local}\n`
+                msg_jogos += `Data: ${resultado.dia.replace("\n","")}, ${resultado.horario} \n`
+                msg_jogos += `Jogo: *${resultado.nome_esquerda}* x ${resultado.nome_direita}\n`
+            })
+            client.reply(from,msg_jogos,id)
+        }).catch(()=>{
+            console.log("Erro site futliga")
+        })
+        break
+    
     case "!play":
-        if(args.length === 1) return client.reply(from,msgs_texto.utilidades.play.cmd_erro,id)
+        if(args.length === 1) return client.reply(from,msgs_texto().utilidades.play.cmd_erro,id)
         let youtube_pesquisa = body.slice(6)
         Youtube.searchOne(youtube_pesquisa).then(resp=>{
             const video = resp
-            if(video.duration > 300000) return client.reply(from,msgs_texto.utilidades.play.limite,id)
+            if(video.duration > 300000) return client.reply(from,msgs_texto().utilidades.play.limite,id)
             client.reply(from,`[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\nTitulo: *${video.title}*\nDuração: *${video.durationFormatted}*`,id)
             //GERANDO NOME ARQUIVO
             let letras = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
@@ -191,21 +241,17 @@ module.exports = utilidades = async(client,message) => {
                 let letra_aleatoria = Math.floor(Math.random() * letras.length)
                 nome_arquivo += letras[letra_aleatoria]
             }
-            //BAIXANDO MUSICA
-            YD.download(video.id, nome_arquivo+".mp3");
-            YD.on("finished", async () =>{
-                try{
-                    await client.sendAudio(from, `./media/${nome_arquivo}.mp3`, id).then(async ()=>{
-                        await fs.unlinkSync(`./media/${nome_arquivo}.mp3`)
-                    })
-                } catch {}
+            downloaderYT.download(video.id,nome_arquivo+".mp3").then(async ()=>{
+                await client.sendAudio(from, `./media/${nome_arquivo}.mp3`, id).then(async ()=>{
+                    await fs.unlinkSync(`./media/${nome_arquivo}.mp3`)
+                })
             })
-            YD.on("error", ()=>{
-                client.reply(from,msgs_texto.utilidades.play.erro_download,id)
+            .catch(()=>{
+                client.reply(from,msgs_texto().utilidades.play.erro_download,id)
             })
         })
         .catch(()=>{
-            client.reply(from,msgs_texto.utilidades.play.erro_pesquisa,id)
+            client.reply(from,msgs_texto().utilidades.play.erro_pesquisa,id)
         })
 
         break
@@ -222,14 +268,14 @@ module.exports = utilidades = async(client,message) => {
                     data_Img += `${args[i]} `
                 }
             } else {
-                return client.reply(from, msgs_texto.utilidades.img.qtd_imagem , id)
+                return client.reply(from, msgs_texto().utilidades.img.qtd_imagem , id)
             }
         } else {
             data_Img = body.slice(5)
         }
 
-        if (data_Img === '') return client.reply(from, msgs_texto.utilidades.img.tema_vazio , id)
-        if (data_Img.length > 500) return client.reply(from, msgs_texto.utilidades.img.tema_longo , id)
+        if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
+        if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
         const results = await google.scrape(data_Img, 30);
         results.forEach(result=>{
             if(!result.url.includes('lookaside')) imgs_validas.push({url: result.url, description: result.description})
@@ -241,7 +287,7 @@ module.exports = utilidades = async(client,message) => {
                 client.sendFileFromUrl(from, imgs_validas[img_index_aleatorio].url , imgs_validas[img_index_aleatorio].description, "", (qtd_Img == 1) ? id : "")
                 imgs_validas.splice(img_index_aleatorio,1)
             }).catch(()=>{
-                client.sendText(from, msgs_texto.utilidades.img.erro_imagem)
+                client.sendText(from, msgs_texto().utilidades.img.erro_imagem)
             })
         }
         break
@@ -317,10 +363,20 @@ module.exports = utilidades = async(client,message) => {
                 await client.sendStickerfromUrl(from, url, { method: 'get' })
                     .catch(err => console.log('ERRO : ', err))
             } else {
-                client.reply(from, msgs_texto.utilidades.sticker.link_invalido , id)
+                client.reply(from, msgs_texto().utilidades.sticker.link_invalido , id)
             }
         } else {
-                client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
+                client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
+        }
+        break
+    
+    case '!simg':
+        if(quotedMsg && quotedMsg.type == "sticker"){
+            const mediaData = await decryptMedia(quotedMsg, uaOverride)
+            const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+            await client.sendFile(from,imageBase64,"sticker.jpg","",quotedMsgObj.id)
+        } else {
+            client.reply(from, msgs_texto().utilidades.simg.cmd_erro, id)
         }
         break
 
@@ -328,7 +384,7 @@ module.exports = utilidades = async(client,message) => {
         if (isMedia) {
             if (mimetype === 'video/mp4' && message.duration < 10 || mimetype === 'image/gif' && message.duration < 10) {
                 const mediaData = await decryptMedia(message, uaOverride)
-                client.reply(from, msgs_texto.geral.espera , id)
+                client.reply(from, msgs_texto().geral.espera , id)
                 const filename = `./media/aswu.${mimetype.split('/')[1]}`
                 await fs.writeFileSync(filename, mediaData)
                 await exec(`gify ${filename} ./media/output.gif --fps=10 --scale=240:240`, async function (error, stdout, stderr) {
@@ -336,16 +392,16 @@ module.exports = utilidades = async(client,message) => {
                     try {
                         await client.sendImageAsSticker(from, `data:image/gif;base64,${gif.toString('base64')}`)
                     } catch (err){
-                        client.reply(from, msgs_texto.utilidades.sticker.video_longo , id)
+                        client.reply(from, msgs_texto().utilidades.sticker.video_longo , id)
                     }
                 })
             } else {
-                client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
+                client.reply(from, msgs_texto().utilidades.sticker.video_invalido, id)
             }
         } else if (quotedMsg){
             if(quotedMsg.type == 'image' && quotedMsg.duration < 10 || quotedMsg && quotedMsg.type == 'video' && quotedMsg.duration < 10){
                 const mediaData = await decryptMedia(quotedMsg, uaOverride)
-                client.reply(from, msgs_texto.geral.espera, id)
+                client.reply(from, msgs_texto().geral.espera, id)
                 const filename = `./media/aswu.${quotedMsg.mimetype.split('/')[1]}`
                 await fs.writeFileSync(filename, mediaData)
                 await exec(`gify ${filename} ./media/output.gif --fps=10 --scale=240:240`, async function (error, stdout, stderr) {
@@ -353,61 +409,28 @@ module.exports = utilidades = async(client,message) => {
                     try {
                         await client.sendImageAsSticker(from, `data:image/gif;base64,${gif.toString('base64')}`)
                     } catch (err){
-                        client.reply(from,msgs_texto.utilidades.sticker.video_longo, id)
+                        client.reply(from,msgs_texto().utilidades.sticker.video_longo, id)
                     }
                 })
             } else {
-                client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
+                client.reply(from, msgs_texto().utilidades.sticker.video_invalido, id)
             }                 
         } else {
-            client.reply(from, msgs_texto.geral.erro, id)
+            client.reply(from, msgs_texto().geral.erro, id)
         }          
         break
-    
-    case '!sgif2':
-        if (isMedia) {
-            if (mimetype === 'video/mp4' && message.duration < 10) {
-                const mediaData = await decryptMedia(message, uaOverride)
-                client.reply(from, msgs_texto.geral.espera, id)
-                const filename = `./media/aswu.${mimetype.split('/')[1]}`
-                await fs.writeFileSync(filename, mediaData)
-                try{
-                    client.sendMp4AsSticker(from, filename, {
-                        fps: 6,
-                        startTime: `00:00:00.0`,
-                        endTime :  `00:00:${message.duration}.0`,
-                        loop: 0
-                    })
-                } catch(err){
-                    client.reply(from, msgs_texto.utilidades.sticker.video_longo, id)
-                }
-            }
-            else {
-                client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
-            }
-        } else if (quotedMsg){
-            if (quotedMsg.mimetype === 'video/mp4' && quotedMsg.duration < 10) {
-                const mediaData = await decryptMedia(quotedMsg, uaOverride)
-                client.reply(from,msgs_texto.geral.espera , id)
-                const filename = `./media/aswu.${quotedMsg.mimetype.split('/')[1]}`
-                await fs.writeFileSync(filename, mediaData)
-                try{
-                    client.sendMp4AsSticker(from, filename, {
-                        fps: 6,
-                        startTime: `00:00:00.0`,
-                        endTime :  `00:00:${quotedMsg.duration}.0`,
-                        loop: 0
-                    })
-                } catch(err){
-                    client.reply(from, msgs_texto.utilidades.sticker.video_longo, id)
-                }
-            }
-            else {
-                client.reply(from,msgs_texto.utilidades.sticker.video_invalido, id)
-            }
-        }   
-        break
 
+    case "!tps":
+        if(args.length == 1) return client.reply(from,msgs_texto().utilidades.tps.cmd_erro,id)
+        if(body.slice(5).length > 40) return client.reply(from,msgs_texto().utilidades.tps.texto_longo,id)
+        await client.reply(from, msgs_texto().utilidades.tps.espera,id)
+        axios.get(`https://st4rz.herokuapp.com/api/ttp?kata=${body.slice(5)}`).then(async(resp)=>{
+            await client.sendImageAsSticker(from, resp.data.result)
+        }).catch(()=>{
+            client.reply(from,msgs_texto().utilidades.tps.erro_api,id)
+        })
+        break
+    
     case '!ssf':
     if (isMedia) {
         try {
@@ -422,14 +445,14 @@ module.exports = utilidades = async(client,message) => {
         } catch(err) {
             switch(err[0].code){
                 case 'insufficient_credits':
-                    client.reply(from,msgs_texto.utilidades.sticker.sem_credito,id)
+                    client.reply(from,msgs_texto().utilidades.sticker.sem_credito,id)
                     break
                 case 'auth_failed':
                     console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
-                    client.reply(from,msgs_texto.utilidades.sticker.autenticacao,id)
+                    client.reply(from,msgs_texto().utilidades.sticker.autenticacao,id)
                     break
                 default:
-                    client.reply(from,msgs_texto.utilidades.sticker.erro_background,id)    
+                    client.reply(from,msgs_texto().utilidades.sticker.erro_background,id)    
             }
         }
     } else if (quotedMsg) {
@@ -445,24 +468,24 @@ module.exports = utilidades = async(client,message) => {
         } catch(err) {
             switch(err[0].code){
                 case 'insufficient_credits':
-                    client.reply(from,msgs_texto.utilidades.sticker.sem_credito,id)
+                    client.reply(from,msgs_texto().utilidades.sticker.sem_credito,id)
                     break
                 case 'auth_failed':
                     console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
-                    client.reply(from,msgs_texto.utilidades.sticker.autenticacao,id)
+                    client.reply(from,msgs_texto().utilidades.sticker.autenticacao,id)
                     break
                 default:
-                    client.reply(from,msgs_texto.utilidades.sticker.erro_background,id)    
+                    client.reply(from,msgs_texto().utilidades.sticker.erro_background,id)    
             }
         }   
     } else {
-        client.reply(from, msgs_texto.geral.erro, id)
+        client.reply(from, msgs_texto().geral.erro, id)
     }
         break
 
     case "!anime":
         if (isMedia && type === 'image') {
-            client.reply(from,msgs_texto.utilidades.anime.espera,id)
+            client.reply(from,msgs_texto().utilidades.anime.espera,id)
             try {
                 var mediaData = await decryptMedia(message, uaOverride)
                 var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
@@ -475,20 +498,20 @@ module.exports = utilidades = async(client,message) => {
                     let titulo = resp.data.docs[0].title_english
                     let similaridade = resp.data.docs[0].similarity * 100
                     similaridade = similaridade.toFixed(2)
-                    if(similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
+                    if(similaridade < 87) return client.reply(from,msgs_texto().utilidades.anime.similaridade,id)
                     is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
                     client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
                     resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
                 }).catch((resp)=>{
-                    if(resp.status == 429) return client.reply(from,msgs_texto.utilidades.anime.limite_solicitacao,id)
-                    if(resp.status == 400) return client.reply(from,msgs_texto.utilidades.anime.sem_resultado,id)
-                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto.utilidades.anime.erro_servidor,id)
+                    if(resp.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
+                    if(resp.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
+                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
                 })
             } catch(err) {
-                client.reply(from,msgs_texto.utilidades.anime.erro_processamento,id)
+                client.reply(from,msgs_texto().utilidades.anime.erro_processamento,id)
             }
         } else if (quotedMsg && quotedMsg.type === 'image') {
-            client.reply(from,msgs_texto.utilidades.anime.espera,id)
+            client.reply(from,msgs_texto().utilidades.anime.espera,id)
             try {
                 var mediaData = await decryptMedia(quotedMsg, uaOverride)
                 var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
@@ -501,31 +524,31 @@ module.exports = utilidades = async(client,message) => {
                     let titulo = resp.data.docs[0].title_english
                     let similaridade = resp.data.docs[0].similarity * 100
                     similaridade = similaridade.toFixed(2)
-                    if(similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
+                    if(similaridade < 87) return client.reply(from,msgs_texto().utilidades.anime.similaridade,id)
                     is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
                     client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
                     resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
                 }).catch((resp)=>{
                     console.log(resp)
-                    if(resp.status == 429) return client.reply(from,msgs_texto.utilidades.anime.limite_solicitacao,id)
-                    if(resp.status == 400) return client.reply(from,msgs_texto.utilidades.anime.sem_resultado,id)
-                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto.utilidades.anime.erro_servidor,id)
+                    if(resp.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
+                    if(resp.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
+                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
                 })
             } catch(err) {
-                client.reply(from,msgs_texto.utilidades.anime.erro_processamento,id)
+                client.reply(from,msgs_texto().utilidades.anime.erro_processamento,id)
             }   
         } else {
-            client.reply(from,msgs_texto.utilidades.anime.cmd_erro, id)
+            client.reply(from,msgs_texto().utilidades.anime.cmd_erro, id)
         }
     break
     
     case "!traduz":
-        if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto.utilidades.traduz.cmd_erro ,id)
+        if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto().utilidades.traduz.cmd_erro ,id)
         translate(quotedMsg.body , {to: 'pt'}).then(async(res) => {
             console.log(res.text)
             await client.reply(from, res.text, quotedMsgObj.id);
         }).catch(() => {
-            client.reply(from, msgs_texto.utilidades.traduz.erro_servidor, id)
+            client.reply(from, msgs_texto().utilidades.traduz.erro_servidor, id)
         });
         break  
     
@@ -533,15 +556,15 @@ module.exports = utilidades = async(client,message) => {
         var dataText = '';
         var id_resp = id
         if (args.length === 1) {
-            return client.reply(from, msgs_texto.utilidades.voz.cmd_erro ,id)
+            return client.reply(from, msgs_texto().utilidades.voz.cmd_erro ,id)
         } else if(quotedMsg !== undefined && quotedMsg.type == 'chat'){
             dataText = (args.length == 2) ? quotedMsg.body : body.slice(8)
         } else {
             dataText = body.slice(8)
         }
 
-        if (dataText === '') return client.reply(from, msgs_texto.utilidades.voz.texto_vazio , id)
-        if (dataText.length > 5000) return client.reply(from, msgs_texto.utilidades.voz.texto_longo, id)
+        if (dataText === '') return client.reply(from, msgs_texto().utilidades.voz.texto_vazio , id)
+        if (dataText.length > 5000) return client.reply(from, msgs_texto().utilidades.voz.texto_longo, id)
         if(quotedMsg !== undefined) id_resp = quotedMsgObj.id
         const ttsEn = require('node-gtts')('en')
         const ttsPt = require('node-gtts')('pt')
@@ -573,7 +596,7 @@ module.exports = utilidades = async(client,message) => {
             })
         } 
           else {
-            client.reply(from, msgs_texto.utilidades.voz.nao_suportado, id)
+            client.reply(from, msgs_texto().utilidades.voz.nao_suportado, id)
         }
         break
 
@@ -588,21 +611,24 @@ module.exports = utilidades = async(client,message) => {
             noticias_msg += '╚═〘 Patrocínio : Malas Boa Viagem 〙'
             client.reply(from, noticias_msg, id)
         } catch {
-            client.reply(from,msgs_texto.utilidades.noticia.autenticacao)
+            client.reply(from,msgs_texto().utilidades.noticia.autenticacao)
         }
         break;
 
     case '!calc':
-        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.calc.cmd_erro ,id)
+        if(args.length === 1) return client.reply(from, msgs_texto().utilidades.calc.cmd_erro ,id)
         let expressao = body.slice(6)
-        if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, msgs_texto.utilidades.calc.carac_invalidos,id)
+        expressao = expressao.replace("x", "*")
+        expressao = expressao.replace("×", "*")
+        expressao = expressao.replace("÷", "/")
+        if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, msgs_texto().utilidades.calc.carac_invalidos,id)
         expressao = expressao.replace(",",".")
         try {
             resultado = eval(expressao)
-            if(isNaN(resultado)) return client.reply(from, msgs_texto.utilidades.calc.divisao_zero,id)
+            if(isNaN(resultado)) return client.reply(from, msgs_texto().utilidades.calc.divisao_zero,id)
             client.reply(from, `🧮 O resultado é *${resultado}* `,id)
         } catch {
-            client.reply(from, msgs_texto.utilidades.calc.erro_calculo,id)
+            client.reply(from, msgs_texto().utilidades.calc.erro_calculo,id)
         }
         break
     }

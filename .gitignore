@@ -18,6 +18,7 @@ media/aswu.mp4
 media/img/noBg.png
 media/output.gif
 media/tts/*.mp3
+media/*.mp3
 
 
 #Ignore DB files

@@ -1,9 +1,11 @@
-const { dns } = require('googleapis/build/src/apis/dns')
+
 const { AsyncNedb } = require('nedb-async')
+const path = require('path')
+const fs = require('fs-extra')
 var db = {}
 db.usuarios = new AsyncNedb({filename : './database/db/usuarios.db'})
 db.grupos = new AsyncNedb({filename : './database/db/grupos.db'})
-const max_comandos_dia = 30
+db.contador = new AsyncNedb({filename : './database/db/contador.db'})
 
 module.exports = {
     // ######################## FUNCOES USUARIO #####################
@@ -11,25 +13,36 @@ module.exports = {
         let usuario = await db.usuarios.asyncFindOne({id_usuario : id_usuario})
         return usuario
     },
+    obterUsuariosVip : async () =>{
+        let usuarios = await db.usuarios.asyncFind({tipo: "vip"})
+        return usuarios
+    },
     verificarRegistro  : async (id_usuario) => {
         db.usuarios.loadDatabase()
         let resp = await db.usuarios.asyncFindOne({id_usuario : id_usuario})
         return (resp != null)
     },
-    registrarUsuarioComum : async(id_usuario) =>{
+    atualizarNome : async(id_usuario,nome) =>{
+        db.usuarios.loadDatabase()
+        await db.usuarios.asyncUpdate({id_usuario}, {$set:{nome}})
+    },
+    registrarUsuarioComum : async(id_usuario, nome) =>{
+        let {limite_diario_usuarios} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
         var cadastro_usuario = {
             id_usuario,
+            nome,
             comandos_total: 0,
             comandos_dia: 0,
-            max_comandos_dia,
+            max_comandos_dia : limite_diario_usuarios,
             tipo: "comum"
         }
         db.usuarios.loadDatabase()
         await db.usuarios.asyncInsert(cadastro_usuario)
     },
-    registrarDono: async(id_usuario)=>{
+    registrarDono: async(id_usuario, nome)=>{
         var cadastro_usuario_dono = {
             id_usuario,
+            nome,
             comandos_total: 0,
             comandos_dia: 0,
             max_comandos_dia : null,
@@ -39,11 +52,13 @@ module.exports = {
         await db.usuarios.asyncInsert(cadastro_usuario_dono)
     },
     alterarTipoUsuario: async(id_usuario, tipo)=>{
-        if(tipo == "comum") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia}}, {upsert: true})
-        if(tipo == "vip") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: null}}, {upsert: true})
+        let {limite_diario_usuarios} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+        if(tipo == "comum") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: limite_diario_usuarios}})
+        if(tipo == "vip") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: null}})
     },
     limparVip: async()=>{
-        db.usuarios.asyncUpdate({tipo : "vip"}, {$set: {tipo: "comum", max_comandos_dia}}, {upsert: true})
+        let {limite_diario_usuarios} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+        db.usuarios.asyncUpdate({tipo : "vip"}, {$set: {tipo: "comum", max_comandos_dia:limite_diario_usuarios}}, {multi: true})
     },
     ultrapassouLimite: async(id_usuario)=>{
         db.usuarios.loadDatabase()
@@ -52,9 +67,13 @@ module.exports = {
         if(usuario.tipo == 'vip') return false
         return (usuario.comandos_dia >= usuario.max_comandos_dia)
     },
-    addContagem: async(id_usuario)=>{
+    addContagemDiaria: async(id_usuario)=>{
         db.usuarios.loadDatabase()
         db.usuarios.asyncUpdate({id_usuario}, {$inc: {comandos_total: 1, comandos_dia: 1}})
+    },
+    addContagemTotal: async(id_usuario)=>{
+        db.usuarios.loadDatabase()
+        db.usuarios.asyncUpdate({id_usuario}, {$inc: {comandos_total: 1}})
     },
     definirLimite: async(limite)=>{
         db.usuarios.loadDatabase()
@@ -70,6 +89,7 @@ module.exports = {
         db.usuarios.loadDatabase()
         db.usuarios.asyncUpdate({id_usuario}, {$set:{comandos_dia : 0}})
     },
+    //###########################################################
 
     // ############### FUNCOES GRUPO #########################
     verificarGrupo: async(id_grupo) =>{
@@ -80,11 +100,13 @@ module.exports = {
     registrarGrupo: async(id_grupo)=>{
         let cadastro_grupo = {
             id_grupo,
-            bemvindo: false,
+            bemvindo: {status: false, msg: ""},
             antifake: false,
             antilink: false,
             antiflood: {status: false , max: 10, msgs: []},
             voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
+            contador: {status:false, inicio: ''},
+            enquete: {status: false, pergunta: "", opcoes: []},
             block_cmds: []
         }
         db.grupos.loadDatabase()
@@ -95,9 +117,9 @@ module.exports = {
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
         return grupo_info
     },
-    alterarBemVindo: async(id_grupo, status = true)=>{
+    alterarBemVindo: async(id_grupo, status, msg = "")=>{
         db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({id_grupo}, {$set:{bemvindo: status}}, {upsert: true})
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"bemvindo.status": status, "bemvindo.msg":msg}})
     },
     alterarAntiFake: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()
@@ -107,10 +129,31 @@ module.exports = {
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{antilink: status}}, {upsert: true})
     },
+    alterarContador: async(id_grupo, status = true)=>{
+        db.grupos.loadDatabase()
+        let data = new Date()
+        let data_atual = (status) ? `${data.getDate()}/${data.getMonth()+1}/${data.getFullYear()} - ${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}` : ''
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"contador.status":status, "contador.inicio":data_atual}})
+    },
     alterarAntiFlood: async(id_grupo, status = true, max = 10)=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.status":status, "antiflood.max":max, "antiflood.msgs": []}})
     },
+    alterarEnquete: async(id_grupo,status, pergunta= "", opcoes=[])=>{
+        db.grupos.loadDatabase()
+        let opcoes_obj = []
+        for(let i = 0 ; i < opcoes.length;i++){
+            opcoes_obj.push({
+                opcao: opcoes[i],
+                digito: i+1,
+                qtd_votos: 0,
+                votos: []
+            })
+        }
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"enquete.status":status, "enquete.pergunta":pergunta, "enquete.opcoes":opcoes_obj}})
+    },
+
+    //ANTIFLOOD GRUPO
     addMsgFlood: async(id_grupo, usuario_msg)=>{
         db.grupos.loadDatabase()
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
@@ -147,14 +190,17 @@ module.exports = {
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({}, 
         {$set: {
-        bemvindo: false,
+        bemvindo: {status: false, msg:""},
         antifake: false,
         antilink: false,
         antiflood: {status: false , max: 10, msgs: []},
         voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
+        contador: {status:false, inicio: ''},
+        enquete: {status: false, pergunta: "", opcoes: []},
         block_cmds: []
         }}, {multi: true})
     },
+    //BLOQUEIO DE COMANDOS
     addBlockedCmd: async(id_grupo, cmds)=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$push: { block_cmds: {$each: cmds} }})
@@ -164,5 +210,87 @@ module.exports = {
         cmds.forEach(async(cmd) =>{
             await db.grupos.asyncUpdate({id_grupo}, {$pull:{block_cmds: cmd}})
         })
-    }
+    },
+
+    //ENQUETE
+    addVotoEnquete: async(id_grupo,id_usuario, digito)=>{
+        db.grupos.loadDatabase()
+        let g_info = await db.grupos.asyncFindOne({id_grupo})
+        let opcoes = g_info.enquete.opcoes
+        let index = digito - 1
+        let opcao = opcoes[index]
+        opcao.qtd_votos = opcao.qtd_votos + 1
+        opcao.votos.push(id_usuario)
+        opcoes[index] = opcao
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"enquete.opcoes":opcoes}})
+    },
+
+    //CONTADOR DE MENSAGENS
+    registrarContagemTodos: async(id_grupo,usuarios)=>{
+        db.contador.loadDatabase()
+        usuarios.forEach(async (usuario)=>{
+            await db.contador.asyncInsert({id_grupo,id_usuario: usuario.id ,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
+        })
+    },
+    registrarContagem: async(id_grupo,id_usuario)=>{
+        db.contador.loadDatabase()
+        db.contador.asyncInsert({id_grupo,id_usuario,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
+    },
+    addContagem: async(id_grupo,id_usuario,tipo_msg)=>{
+        db.contador.loadDatabase()
+        switch(tipo_msg){
+            case "chat":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, texto: 1}})
+                break
+            case "image":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, imagem: 1}})
+                break
+            case "video":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, video: 1}})
+                break
+            case "sticker":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, sticker: 1}})
+                break
+            case "ptt":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, gravacao: 1}})
+                break
+            case "audio":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, audio: 1}})
+                break
+            case "document":
+                db.contador.asyncUpdate({id_grupo,id_usuario}, {$inc:{msg: 1, outro: 1}})
+                break    
+        }
+    },
+    obterAtividade: async(id_grupo,id_usuario)=>{
+        db.contador.loadDatabase()
+        let atividade = await db.contador.asyncFindOne({id_grupo,id_usuario})
+        return atividade
+    },
+    obterUsuariosInativos: async(id_grupo,min)=>{
+        db.contador.loadDatabase()
+        min = parseInt(min)
+        let usuarios_inativos = await db.contador.asyncFind({id_grupo, msg: {$lt: min}},[ ["sort", {msg:-1}]])
+        return usuarios_inativos
+    },
+    obterUsuariosAtivos: async(id_grupo, limite) =>{
+        db.contador.loadDatabase()
+        let usuarios_ativos = await db.contador.asyncFind({id_grupo}, [ ["sort", {msg:-1}] , ['limit', limite] ] )
+        return usuarios_ativos
+    },
+    obterTodasContagensGrupo: async(id_grupo)=>{
+        db.contador.loadDatabase()
+        let contagens = await db.contador.asyncFind({id_grupo})
+        return contagens
+    },
+    removerContagem: async(id_grupo,id_usuario)=>{
+        db.contador.loadDatabase()
+        db.contador.asyncRemove({id_grupo,id_usuario})
+    },
+    removerContagemGrupo: async(id_grupo)=>{
+        db.contador.loadDatabase()
+        db.contador.asyncRemove({id_grupo}, {multi: true})
+    },
+    // ###############################################################################
+
 }

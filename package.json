@@ -11,11 +11,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@open-wa/wa-automate": "^3.1.13",
+    "@open-wa/wa-automate": "^3.1.14",
     "@open-wa/wa-decrypt": "^2.0.1",
     "@vitalets/google-translate-api": "git+https://github.com/vkedwardli/google-translate-api.git",
     "axios": "^0.21.1",
     "chalk": "^4.1.0",
+    "cheerio": "^1.0.0-rc.5",
     "correios-brasil": "^2.1.0",
     "dotenv": "^8.2.0",
     "emoji-regex": "^9.0.0",
@@ -35,8 +36,8 @@
     "serp": "^2.1.0",
     "video-url-link": "^0.1.4",
     "xml2js": "^0.4.23",
-    "youtube-mp3-downloader": "^0.7.6",
-    "youtube-sr": "^2.0.5"
+    "youtube-sr": "^2.0.5",
+    "yt-dl-playlist": "^2.1.0"
   },
   "directories": {
     "lib": "lib"
