@@ -7,7 +7,11 @@ const {botStart} = require('./lib/bot')
 
 const start = async (client = new Client()) => {
         console.log('[SERVIDOR] Servidor iniciado!')
-        await criarEnv()
+        let necessitaCriar = await criarEnv()
+        if(necessitaCriar){
+            console.log("Seus arquivos necessários foram criados, configure seu .env e inicie o aplicativo novamente.")
+            client.kill()
+        }
         const eventosGrupo = require('./lib/eventosGrupo')
         const antiLink= require('./lib/antilink')
         const antiFlood = require('./lib/antiflood')

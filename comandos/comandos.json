@@ -22,8 +22,7 @@
         "!play",
         "!anime",
         "!meusdados",
-        "!reportar",
-        "!doar"
+        "!reportar"
     ],
     "admin_grupo":[
         "!status",
@@ -94,11 +93,12 @@
         "!limparvip",
         "!rtodos",
         "!r",
-        "!verdados"
+        "!verdados",
+        "!desligar",
+        "!alterarcont"
     ],
     "excecoes_contagem": [
         "!meusdados",
-        "!doar",
         "!ajuda",
         "!info",
         "!reportar",

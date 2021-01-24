@@ -50,7 +50,7 @@ module.exports = msgHandler = async (client, message) => {
         if (isBlocked) return
         
         //SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, ADICIONA A CONTAGEM
-        if(isGroupMsg && g_info.contador.status)db.addContagem(groupId,sender.id,type)
+        if(isGroupMsg && g_info.contador.status) await db.addContagem(groupId,sender.id,type)
 
         
         //SE FOR ALGUM COMANDO EXISTENTE
@@ -103,7 +103,7 @@ module.exports = msgHandler = async (client, message) => {
         } else if(lista_comandos.dono_bot.includes(command)){
             await dono_bot(client,message)
         } else {
-            if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite o comando *!ajuda* para mais informações.",id)
+            //if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite o comando *!ajuda* para mais informações.",id)
         }
 
     } catch (err) {

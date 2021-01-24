@@ -254,7 +254,24 @@ module.exports = dono_bot = async(client,message) => {
             } else {
                return client.reply(from, msgs_texto().admin.r.cmd_erro,id)
             }
-            break    
+            break  
+            
+        case "!alterarcont":
+            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(args.length == 1)  return client.reply(from, "[ERRO] Você deve digitar *!alterarcontagem [quantidade] @membro*", id)
+            if(isNaN(args[1]) || args[1] < 0)  return client.reply(from, "[ERRO] Número de mensagens inválido", id)
+            let ac_contador = await db.obterGrupo(groupId)
+            if(!ac_contador.contador.status) return client.reply(from, "[ERRO] Esse comando só funciona com o recurso *contador* ativado.", id)
+            if(quotedMsg){
+                await db.alterarContagemUsuario(groupId, quotedMsgObj.author, args[1])
+                await client.reply(from, "A contagem do usuário foi definida com sucesso", id)
+            } else if (mentionedJidList.length == 1){
+                await db.alterarContagemUsuario(groupId, mentionedJidList[0],args[1])
+                await client.reply(from, "A contagem do usuário foi definida com sucesso", id)
+            } else {
+                await client.reply(from, "[ERRO] Você deve digitar *!alterarcontagem [quantidade] @membro*", id)
+            }
+            break
 
         case "!verdados":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
@@ -360,6 +377,12 @@ module.exports = dono_bot = async(client,message) => {
                 default:
                     client.reply(from,msgs_texto().admin.estado.cmd_erro,id)
             }
+            break
+        case '!desligar':
+            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            await client.reply(from, msgs_texto().admin.desligar.sucesso, id).then(()=>{
+                client.kill()
+            })
             break
     }
 }

@@ -267,6 +267,12 @@ module.exports = {
         let atividade = await db.contador.asyncFindOne({id_grupo,id_usuario})
         return atividade
     },
+    alterarContagemUsuario: async(id_grupo,id_usuario,qtd)=>{
+        db.contador.loadDatabase()
+        let resto = parseInt(qtd % 6)
+        let msgs_cada = parseInt((qtd - resto)/6)
+        await db.contador.asyncUpdate({id_grupo,id_usuario}, {$set:{msg:parseInt(qtd), texto:msgs_cada, imagem:msgs_cada, video:msgs_cada, sticker:msgs_cada, gravacao: msgs_cada, audio:msgs_cada, outro: resto }})
+    },
     obterUsuariosInativos: async(id_grupo,min)=>{
         db.contador.loadDatabase()
         min = parseInt(min)

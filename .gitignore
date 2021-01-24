@@ -7,8 +7,9 @@ node_modules
 #Ignore node-persist
 .node-persist
 
-#Ignore .ev
+#Ignore .env and some files
 .env
+database/json/bot.json
 
 #Ignore .log
 *.log

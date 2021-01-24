@@ -210,7 +210,7 @@ module.exports = admin_grupo = async(client,message) => {
             let mi_usuarios = await db.obterUsuariosInativos(groupId,args[1])
             let qtd_inativos = mi_usuarios.length - 1
             if(qtd_inativos != 0){
-                let msg_inativos = `╔══✪〘🤖 Marcando todos que tem ${args[1]} mensagens ou menos 〙\n\n`
+                let msg_inativos = `╔══✪〘🤖 Marcando todos que tem menos de ${args[1]} mensagens〙\n\n`
                 msg_inativos += `👤 *Membros inativos* : ${qtd_inativos}\n`
                 msg_inativos += `═════════════════\n`
                 mi_usuarios.forEach(usuario =>{
@@ -279,7 +279,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(args[1] != "off"){
                 if(enq_grupo.enquete.status) return client.reply(from, msgs_texto().grupo.enquete.ja_aberta , id)
                 //if((enq_grupo.enquete.opcoes.find(opcao => opcao.votos.includes(sender.id))) != undefined) 
-                let enquete_entrada = body.slice(9).split(",")
+                let enquete_entrada = body.slice(9).split(" ")
                 let pergunta = enquete_entrada.shift()
                 let opcoes = enquete_entrada
                 if(opcoes.length < 2) return client.reply(from, msgs_texto().grupo.enquete.min_opcao , id)
@@ -429,7 +429,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
             if(args.length === 1) return client.reply(from, msgs_texto().grupo.bcmd.cmd_erro ,id)
             let msg_resp = "[🤖 *Bloquear comandos* 🤖]\n\n"
-            let b_cmd_inseridos = body.slice(6).split(",")
+            let b_cmd_inseridos = body.slice(6).split(" ")
             let b_cmd_verificados = []
             const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
             let b_cmd_grupo = await db.obterGrupo(groupId)
@@ -457,7 +457,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
             if(args.length === 1) return client.reply(from,msgs_texto().grupo.dcmd.cmd_erro,id)
             let d_msg_resp = "[🤖 *Desbloquear Comandos* 🤖]\n\n"
-            let d_cmd_inseridos = body.slice(6).split(",")
+            let d_cmd_inseridos = body.slice(6).split(" ")
             let d_cmd_verificados = []
             let d_cmd_grupo = await db.obterGrupo(groupId)
             d_cmd_inseridos.forEach((d_cmd) =>{
@@ -547,7 +547,7 @@ module.exports = admin_grupo = async(client,message) => {
                 await client.removeParticipant(groupId, quotedMsgObj.author).then(async()=>{
                     await client.sendText(from, msgs_texto().grupo.banir.banir_sucesso)
                 }).catch(async ()=>{
-                    await client.reply(from, msgs_texto().grupo.banir.banir_erro)
+                    await client.reply(from, msgs_texto().grupo.banir.banir_erro,id)
                 })        
             } else {
                 for (let i = 0; i < mentionedJidList.length; i++) {

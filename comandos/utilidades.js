@@ -65,13 +65,6 @@ module.exports = utilidades = async(client,message) => {
         await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
         break
     
-    case "!doar":
-        let msg_doar = `💰 *Pague uma coxinha para o criador :*\n\n`
-        msg_doar += `💳 *Pix* : 21995612287\n`
-        msg_doar += `👤 *Contato do criador* : wa.me/${numero_dono[0]}\n`
-        await client.reply(from,msg_doar,id)
-        break
-    
     case "!reportar":
         if(args.length == 1) return client.reply(from,msgs_texto().utilidades.reportar.cmd_erro ,id)
         let msg_report = "[ 🤖 REPORTAR ⚙️]\n\n"
@@ -242,7 +235,7 @@ module.exports = utilidades = async(client,message) => {
                 nome_arquivo += letras[letra_aleatoria]
             }
             downloaderYT.download(video.id,nome_arquivo+".mp3").then(async ()=>{
-                await client.sendAudio(from, `./media/${nome_arquivo}.mp3`, id).then(async ()=>{
+                await client.sendFile(from, `./media/${nome_arquivo}.mp3`, "musica.mp3","", id).then(async ()=>{
                     await fs.unlinkSync(`./media/${nome_arquivo}.mp3`)
                 })
             })
