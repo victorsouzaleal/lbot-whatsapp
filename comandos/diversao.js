@@ -31,11 +31,34 @@ module.exports = diversao = async(client,message) => {
         
         case '!viadometro' :
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            if(!quotedMsg) return client.reply(from, msgs_texto().diversao.viadometro.cmd_erro, id)
             const viadometro_resps = msgs_texto().diversao.viadometro.respostas
             let aleatorio = Math.floor(Math.random() * viadometro_resps.length)
-            if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) aleatorio = 0
-            client.reply(from,`🧩 *VIADÔMETRO* - ${viadometro_resps[aleatorio]}`, quotedMsgObj.id)
+            if(mentionedJidList.length == 1){
+                if(ownerNumber.includes(mentionedJidList[0].replace(/@c.us/g, ''))) aleatorio = 0
+                client.reply(from,`🧩 *VIADÔMETRO* - ${viadometro_resps[aleatorio]}`, id)
+            } else if (mentionedJidList.length > 1){
+                client.reply(from, msgs_texto().diversao.viadometro.apenas_um, id)
+            } else {
+                if(!quotedMsg) return client.reply(from, msgs_texto().diversao.viadometro.cmd_erro, id)
+                if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) aleatorio = 0
+                client.reply(from,`🧩 *VIADÔMETRO* - ${viadometro_resps[aleatorio]}`, quotedMsgObj.id)
+            }
+            break
+        
+        case '!bafometro' :
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            const bafometro_resps = msgs_texto().diversao.bafometro.respostas
+            let bafometro_aleatorio = Math.floor(Math.random() * bafometro_resps.length)
+            if(mentionedJidList.length == 1){
+                if(ownerNumber.includes(mentionedJidList[0].replace(/@c.us/g, ''))) bafometro_aleatorio = 0
+                client.reply(from,`🧩 *BAFÔMETRO* - ${bafometro_resps[bafometro_aleatorio]}`, id)
+            } else if (mentionedJidList.length > 1){
+                client.reply(from, msgs_texto().diversao.bafometro.apenas_um, id)
+            } else {
+                if(!quotedMsg) return client.reply(from, msgs_texto().diversao.bafometro.cmd_erro, id)
+                if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) bafometro_aleatorio = 0
+                client.reply(from,`🧩 *BAFÔMETRO* - ${bafometro_resps[bafometro_aleatorio]}`, quotedMsgObj.id)
+            }
             break
 
         case "!massacote":

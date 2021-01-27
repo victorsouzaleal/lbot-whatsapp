@@ -30,7 +30,6 @@ module.exports = msgHandler = async (client, message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const g_info = isGroupMsg ? await db.obterGrupo(groupId) : ''
-        const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
 
         const msgs = (message) => {
             if (command.startsWith('!')) {
@@ -81,9 +80,9 @@ module.exports = msgHandler = async (client, message) => {
                 } else { //SE ULTRAPASSAR
                     duser  = await db.obterUsuario(sender.id)
                     return client.reply(from, 
-                        (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
-                        : `[❗]  Você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
-                        ,id) 
+                    (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
+                    : `[❗]  Você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
+                    ,id) 
                 }
             } else { //SE ESTIVER NA LISTA DE EXCEÇÕES
                 await db.addContagemTotal(sender.id)

@@ -12,12 +12,6 @@ const path = require('path')
 const {exec} = require('child_process')
 const axios = require('axios')
 const {removeBackgroundFromImageBase64} = require('remove.bg')
-var Scraper = require('images-scraper')
-const google = new Scraper({
-  puppeteer: {
-    headless: true,
-  }
-});
 const serp = require('serp')
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
@@ -29,8 +23,9 @@ const downloaderYT = new DownloadYTFile({
     ffmpegPath: ffmpegPath,
     maxParallelDownload: 2,
 })
-const cheerio = require('cheerio')
 const db = require('../database/database')
+const cheerio = require('cheerio');
+const textToPicture = require('text-to-picture-kazari')
 
 
 module.exports = utilidades = async(client,message) => {
@@ -94,26 +89,15 @@ module.exports = utilidades = async(client,message) => {
     case "!clima":
         if(args.length === 1) return client.reply(from, msgs_texto().utilidades.clima.cmd_erro ,id)
         let local_escolhido = body.slice(7).normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-        const apiClima3Dias = encodeURI(`http://api.weatherapi.com/v1/forecast.json?key=${process.env.API_CLIMA}&q=${local_escolhido}&days=3&lang=pt`)
-        try{
-            await axios.get(apiClima3Dias).then(resp =>{
-                let regiao = resp.data.location.region !== undefined ? `${resp.data.location.region}, ` : ""
-                let msg_clima = `☀️ CONSULTA DE CLIMA ☀️\n\n`
-                msg_clima += `*Local encontrado :* ${resp.data.location.name} - ${regiao} ${resp.data.location.country}\n`
-                msg_clima += `*${resp.data.current.condition.text}* - *${resp.data.current.temp_c}C°* Atualmente\n\n`
-                msg_clima += `═════════════════\n`
-                msg_clima += `Previsão 3 dias 👇 : \n`
-                resp.data.forecast.forecastday.forEach(dia =>{
-                    data_array = dia.date.split("-")
-                    data_formatada = `${data_array[2]}/${data_array[1]}/${data_array[0]}`
-                    msg_clima += `*Dia ${data_formatada}* - Máx: *${dia.day.maxtemp_c}C°* / Min: *${dia.day.mintemp_c}C°* / Média: *${dia.day.avgtemp_c}C°* \n`
-                })
-                client.reply(from,msg_clima,id)
-            })
-        } catch {
+        const fotoClimaUrl = `http://pt.wttr.in/${local_escolhido}.png`
+        const textoClimaUrl = `http://pt.wttr.in/${local_escolhido}?format=Local%20=%20%l+\nClima atual%20=%20%C+%c+\nTemperatura%20=%20%t+\nUmidade%20=%20%h\nVento%20=%20%w\nLua%20agora%20=%20%m\nNascer%20do%20Sol%20=%20%S\nPor%20do%20Sol%20=%20%s`
+        await axios.get(textoClimaUrl).then(async resp =>{
+            let msg_clima = `☀️ CONSULTA DE CLIMA ☀️\n\n`
+            msg_clima += resp.data
+            client.sendFileFromUrl(from,fotoClimaUrl,`${local_escolhido}.png`, msg_clima, id)
+        }).catch(()=>{
             client.reply(from,msgs_texto().utilidades.clima.erro_resultado,id)
-        }
-        
+        })
         break
 
     case "!moeda":
@@ -187,39 +171,6 @@ module.exports = utilidades = async(client,message) => {
         });
         break
     
-    case "!jogosmalacos":
-        axios.get("https://www.futliga.com.br/futliga/servicos/agenda/servicos-agenda-obter-agenda.asp?cboUnidade=1&cboRanking=0&txtDataJogo=&txtNomeEquipe=Uni%C3%A3o+Malacos+Futebol+e+Whisky&hidCodigoEquipe=18901&hidPagina=1")
-        .then((resp)=>{
-            var $ = cheerio.load(resp.data);
-            let resultados = []
-            $(`.apresentacao-jogos-times`).each((i,element)=>{
-                const cheerioElement = $(element)
-                let data = cheerioElement.find("div.row > div > h5:nth-child(1)").text().trim()
-                let local = cheerioElement.find("div.row > div > h5:nth-child(2)").text().trim()
-                let nome_esquerda = cheerioElement.find("div.row.jogo > div.adversario-esquerda > div.nome-equipe > h4 > a").text().trim()
-                let nome_direita = cheerioElement.find("div.row.jogo > div.adversario-direita > div.nome-equipe > h4 > a").text().trim()
-                data = data.split(",")
-                resultados.push({
-                    dia: data[0].trim(),
-                    horario: data[1].trim(),
-                    nome_direita,
-                    nome_esquerda,
-                    local
-                })
-            })
-            msg_jogos = "⚽ *PRÓXIMOS JOGOS MALACOS* ⚽\n"
-            resultados.forEach(resultado=>{
-                msg_jogos += "-------------------------\n"
-                msg_jogos += `Local: ${resultado.local}\n`
-                msg_jogos += `Data: ${resultado.dia.replace("\n","")}, ${resultado.horario} \n`
-                msg_jogos += `Jogo: *${resultado.nome_esquerda}* x ${resultado.nome_direita}\n`
-            })
-            client.reply(from,msg_jogos,id)
-        }).catch(()=>{
-            console.log("Erro site futliga")
-        })
-        break
-    
     case "!play":
         if(args.length === 1) return client.reply(from,msgs_texto().utilidades.play.cmd_erro,id)
         let youtube_pesquisa = body.slice(6)
@@ -248,42 +199,45 @@ module.exports = utilidades = async(client,message) => {
         })
 
         break
-        
+    
     case '!img':
-        let qtd_Img = 1;
-        let data_Img = ""
-        let imgs_validas = []
-
-        if(!isNaN(args[1])){
-            if(args[1] > 0 && args[1] <= 5) {
-                qtd_Img = args[1]
-                for(var i = 2; i < args.length; i++){
-                    data_Img += `${args[i]} `
+            let qtd_Img = 1;
+            let data_Img = ""
+    
+            if(!isNaN(args[1])){
+                if(args[1] > 0 && args[1] <= 5) {
+                    qtd_Img = args[1]
+                    for(var i = 2; i < args.length; i++){
+                        data_Img += `${args[i]} `
+                    }
+                } else {
+                    return client.reply(from, msgs_texto().utilidades.img.qtd_imagem , id)
                 }
             } else {
-                return client.reply(from, msgs_texto().utilidades.img.qtd_imagem , id)
+                data_Img = body.slice(5)
             }
-        } else {
-            data_Img = body.slice(5)
-        }
+    
+            if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
+            if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
+            axios.get(`https://www.ecosia.org/images?q=${data_Img}`).then((resp)=>{
+                var $ = cheerio.load(resp.data);
+                let resultados = []
+                $(".image-result__image").each((i,element)=>{
+                    const cheerioElement = $(element)
+                    const atributoImg = cheerioElement.attr("src")  
+                    resultados.push(atributoImg)
+                })
 
-        if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
-        if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
-        const results = await google.scrape(data_Img, 30);
-        results.forEach(result=>{
-            if(!result.url.includes('lookaside')) imgs_validas.push({url: result.url, description: result.description})
-        })
+                for(let i = 0; i < qtd_Img; i++){
+                    let img_index_aleatorio = Math.floor(Math.random() * 20)
+                    client.sendFileFromUrl(from, resultados[img_index_aleatorio] , "foto.jpg" , "", (qtd_Img == 1) ? id : "")
+                    resultados.splice(img_index_aleatorio,1)
+                }
 
-        for(let i = 0; i < qtd_Img ; i++){
-            let img_index_aleatorio = Math.floor(Math.random() * imgs_validas.length)
-            axios.get(imgs_validas[img_index_aleatorio].url).then(()=> {
-                client.sendFileFromUrl(from, imgs_validas[img_index_aleatorio].url , imgs_validas[img_index_aleatorio].description, "", (qtd_Img == 1) ? id : "")
-                imgs_validas.splice(img_index_aleatorio,1)
             }).catch(()=>{
                 client.sendText(from, msgs_texto().utilidades.img.erro_imagem)
             })
-        }
-        break
+            break
     
     case '!meusdados':
         let meusdados = await db.obterUsuario(sender.id)
@@ -309,6 +263,10 @@ module.exports = utilidades = async(client,message) => {
         client.reply(from, msg_meusdados, id)
         break
 
+    case "!help":
+    case "!menu":
+    case ".menu":
+    case ".help":
     case '!ajuda': //Menu principal
         let dados_user = await db.obterUsuario(sender.id)
         let max_comm = (dados_user.max_comandos_dia == null) ? "Sem limite" : dados_user.max_comandos_dia
@@ -417,11 +375,25 @@ module.exports = utilidades = async(client,message) => {
         if(args.length == 1) return client.reply(from,msgs_texto().utilidades.tps.cmd_erro,id)
         if(body.slice(5).length > 40) return client.reply(from,msgs_texto().utilidades.tps.texto_longo,id)
         await client.reply(from, msgs_texto().utilidades.tps.espera,id)
+        const tps_resultado = await textToPicture.convert({
+            text: body.slice(5).toUpperCase(),
+            source:{
+                width:550,
+                height:550,
+                background: "black"
+            },
+            color: "white",
+            quality: 90
+        })
+        const tpsBase64 = await tps_resultado.getBase64()
+        client.sendImageAsSticker(from, tpsBase64)
+        /*
+        await client.reply(from, msgs_texto().utilidades.tps.espera,id)
         axios.get(`https://st4rz.herokuapp.com/api/ttp?kata=${body.slice(5)}`).then(async(resp)=>{
             await client.sendImageAsSticker(from, resp.data.result)
         }).catch(()=>{
             client.reply(from,msgs_texto().utilidades.tps.erro_api,id)
-        })
+        })*/
         break
     
     case '!ssf':
@@ -522,7 +494,6 @@ module.exports = utilidades = async(client,message) => {
                     client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
                     resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
                 }).catch((resp)=>{
-                    console.log(resp)
                     if(resp.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
                     if(resp.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
                     if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
@@ -538,7 +509,6 @@ module.exports = utilidades = async(client,message) => {
     case "!traduz":
         if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto().utilidades.traduz.cmd_erro ,id)
         translate(quotedMsg.body , {to: 'pt'}).then(async(res) => {
-            console.log(res.text)
             await client.reply(from, res.text, quotedMsgObj.id);
         }).catch(() => {
             client.reply(from, msgs_texto().utilidades.traduz.erro_servidor, id)

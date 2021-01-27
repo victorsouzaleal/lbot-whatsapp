@@ -132,12 +132,23 @@ module.exports = {
     alterarContador: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()
         let data = new Date()
-        let data_atual = (status) ? `${data.getDate()}/${data.getMonth()+1}/${data.getFullYear()} - ${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}` : ''
+        let mes = data.getMonth()+1
+        let dia = (data.getDate().toString().length == 1) ? `0${data.getDate()}` : data.getDate()
+        mes = (mes.toString.length == 1) ? `0${mes}` : mes
+        let minutos = (data.getMinutes().toString().length == 1) ? `0${data.getMinutes()}` : data.getMinutes()
+        let segundos = (data.getSeconds().toString().length == 1) ? `0${data.getSeconds()}` : data.getSeconds()
+        let data_atual = (status) ? `${dia}/${mes}/${data.getFullYear()} - ${data.getHours()}:${minutos}:${segundos}` : ''
         db.grupos.asyncUpdate({id_grupo}, {$set:{"contador.status":status, "contador.inicio":data_atual}})
     },
     alterarAntiFlood: async(id_grupo, status = true, max = 10)=>{
         db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.status":status, "antiflood.max":max, "antiflood.msgs": []}})
+        let arrayMsg = []
+        if(status){
+            for (let i = 0; i < max; i++){
+                arrayMsg.push(`msg${i}`)
+            }
+        }
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.status":status, "antiflood.max":max, "antiflood.msgs": arrayMsg}})
     },
     alterarEnquete: async(id_grupo,status, pergunta= "", opcoes=[])=>{
         db.grupos.loadDatabase()
@@ -157,12 +168,8 @@ module.exports = {
     addMsgFlood: async(id_grupo, usuario_msg)=>{
         db.grupos.loadDatabase()
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
-        let qtd_msg_atuais = grupo_info.antiflood.msgs.length
         let max_msg = grupo_info.antiflood.max
-        if(qtd_msg_atuais >= max_msg) {
-            if(qtd_msg_atuais > max_msg) await db.grupos.asyncUpdate({id_grupo}, {$pop: {"antiflood.msgs" : 1}})
-            await db.grupos.asyncUpdate({id_grupo}, {$pop: {"antiflood.msgs" : -1}})
-        }
+        await db.grupos.asyncUpdate({id_grupo}, {$pop: {"antiflood.msgs" : -1}})
         await db.grupos.asyncUpdate({id_grupo}, {$push: {"antiflood.msgs":usuario_msg}})
         let grupo_info_atualizado  = await db.grupos.asyncFindOne({id_grupo})
         let count = 0
@@ -173,7 +180,13 @@ module.exports = {
     },
     resetMsgFlood: async(id_grupo)=>{
         db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.msgs": []}})
+        let grupo_info = await db.grupos.asyncFindOne({id_grupo})
+        let max_msg = grupo_info.antiflood.max
+        let arrayMsg = []
+        for (let i = 0; i < max_msg; i++){
+            arrayMsg.push(`msg${i}`)
+        }
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.msgs": arrayMsg}})
     },
     alterarVoteban: async(id_grupo, status = true, max = 5, usuario = "")=>{
         db.grupos.loadDatabase()

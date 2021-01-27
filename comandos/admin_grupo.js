@@ -199,7 +199,7 @@ module.exports = admin_grupo = async(client,message) => {
 
             break
         
-        case "!minativos":
+        case "!imarcar":
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
             if(args.length == 1) return client.reply(from, msgs_texto().grupo.minativos.cmd_erro , id)
@@ -222,7 +222,8 @@ module.exports = admin_grupo = async(client,message) => {
                 client.reply(from,msgs_texto().grupo.minativos.sem_inativo,id)
             }
             break
-        case "!binativos":
+            
+        case "!ibanir":
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
             if(args.length == 1) return client.reply(from, msgs_texto().grupo.binativos.cmd_erro, id)
@@ -279,7 +280,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(args[1] != "off"){
                 if(enq_grupo.enquete.status) return client.reply(from, msgs_texto().grupo.enquete.ja_aberta , id)
                 //if((enq_grupo.enquete.opcoes.find(opcao => opcao.votos.includes(sender.id))) != undefined) 
-                let enquete_entrada = body.slice(9).split(" ")
+                let enquete_entrada = body.slice(9).split(",")
                 let pergunta = enquete_entrada.shift()
                 let opcoes = enquete_entrada
                 if(opcoes.length < 2) return client.reply(from, msgs_texto().grupo.enquete.min_opcao , id)
@@ -292,7 +293,7 @@ module.exports = admin_grupo = async(client,message) => {
                 let r_final = "[ 📋 RESULTADO DA ENQUETE 📋]\n\n"
                 r_final += `❔ Pergunta : *${pergunta}* \n\n`
                 opcoes.forEach(opcao =>{
-                    r_final += `▫️ Opção ${opcao.digito} -> ${opcao.opcao} - *${opcao.qtd_votos}* Votos \n\n`
+                    r_final += `▫️ Opção ${opcao.digito} -> ${opcao.opcao.trim()} - *${opcao.qtd_votos}* Votos \n\n`
                 })
                 await db.alterarEnquete(groupId,false)
                 await client.sendText(from, msgs_texto().grupo.enquete.fechada).then(async ()=>{
@@ -321,7 +322,7 @@ module.exports = admin_grupo = async(client,message) => {
             let ver_enq = "[📋 ENQUETE ATUAL 📋]\n\n"
             ver_enq += `❔ Pergunta : *${ver_grupo.enquete.pergunta}* \n\n`
             ver_grupo.enquete.opcoes.forEach(opcao =>{
-                ver_enq += `▫️ Opção *${opcao.digito}* --> ${opcao.opcao} \n\n`
+                ver_enq += `▫️ !votarenquete *${opcao.digito}* --> ${opcao.opcao.trim()} \n\n`
             })
             ver_enq += `Para votar digite *!votarenquete numero-opcao*`
             await client.reply(from,ver_enq,id)
@@ -346,7 +347,6 @@ module.exports = admin_grupo = async(client,message) => {
             let estado = ""
 
             if(!isNaN(args[1])){
-                console.log(args[1] + " " + args[2])
                 if(args[1]>= 5 && args[1] <= 20){
                     max_flood = args[1]
                     estado = args[2]
@@ -529,7 +529,6 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin, id)
             if (!isBotGroupAdmins) return client.reply(from, msgs_texto().permissao.bot_admin, id)
             const add_number = body.slice(5).replace(/\W+/g,"")
-            console.log(`${add_number}@c.us`)
             try {
                 await client.addParticipant(from,`${add_number}@c.us`)
             } catch (err) {

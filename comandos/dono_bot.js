@@ -222,7 +222,6 @@ module.exports = dono_bot = async(client,message) => {
         case "!r":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
             if(quotedMsg){
-                console.log(quotedMsgObj.author)
                 let r_registrado = await db.verificarRegistro(quotedMsgObj.author)
                 if(r_registrado){
                     await db.resetarComandosDiaUsuario(quotedMsgObj.author)
@@ -258,18 +257,22 @@ module.exports = dono_bot = async(client,message) => {
             
         case "!alterarcont":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
-            if(args.length == 1)  return client.reply(from, "[ERRO] Você deve digitar *!alterarcontagem [quantidade] @membro*", id)
-            if(isNaN(args[1]) || args[1] < 0)  return client.reply(from, "[ERRO] Número de mensagens inválido", id)
+            if(args.length == 1)  return client.reply(from, msgs_texto().admin.alterarcont.cmd_erro, id)
+            if(isNaN(args[1]) || args[1] < 0)  return client.reply(from, msgs_texto().admin.alterarcont.num_invalido, id)
             let ac_contador = await db.obterGrupo(groupId)
-            if(!ac_contador.contador.status) return client.reply(from, "[ERRO] Esse comando só funciona com o recurso *contador* ativado.", id)
+            if(!ac_contador.contador.status) return client.reply(from, msgs_texto().admin.alterarcont.erro_contador, id)
             if(quotedMsg){
+                let cont_usuario = await db.obterAtividade(groupId,quotedMsgObj.author)
+                if(cont_usuario == null) return client.reply(from, msgs_texto().admin.alterarcont.fora_grupo,id) 
                 await db.alterarContagemUsuario(groupId, quotedMsgObj.author, args[1])
-                await client.reply(from, "A contagem do usuário foi definida com sucesso", id)
+                await client.reply(from, msgs_texto().admin.alterarcont.sucesso, id)
             } else if (mentionedJidList.length == 1){
+                let cont_usuario = await db.obterAtividade(groupId,mentionedJidList[0])
+                if(cont_usuario == null) return client.reply(from, msgs_texto().admin.alterarcont.fora_grupo,id) 
                 await db.alterarContagemUsuario(groupId, mentionedJidList[0],args[1])
-                await client.reply(from, "A contagem do usuário foi definida com sucesso", id)
+                await client.reply(from, msgs_texto().admin.alterarcont.sucesso, id)
             } else {
-                await client.reply(from, "[ERRO] Você deve digitar *!alterarcontagem [quantidade] @membro*", id)
+                await client.reply(from, msgs_texto().admin.alterarcont.cmd_erro, id)
             }
             break
 
@@ -321,6 +324,7 @@ module.exports = dono_bot = async(client,message) => {
             }
 
             let msg_verdados = `[🤖*VER DADOS DE USO*🤖]\n\n`
+            msg_verdados += (vd_usuario.nome != undefined) ? `Nome : *${vd_usuario.nome}*\n` : ""
             msg_verdados += `Tipo de usuário : *${vd_usuario.tipo }*\n`
             msg_verdados += `Numero Usuário : *${vd_usuario.id_usuario.replace("@c.us","")}*\n`
             msg_verdados += `Comandos usados hoje : *${vd_usuario.comandos_dia}/${max_comandos_vd}*\n`
