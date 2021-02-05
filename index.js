@@ -15,7 +15,7 @@ const start = async (client = new Client()) => {
         let necessitaCriar = await criarArquivosNecessarios()
         if(necessitaCriar){
             console.log("Seus arquivos necessários foram criados, configure seu .env e inicie o aplicativo novamente.")
-            client.kill()
+            return client.kill()
         }
         const eventosGrupo = require('./lib/eventosGrupo')
         const antiLink= require('./lib/antilink')

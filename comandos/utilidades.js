@@ -158,14 +158,14 @@ module.exports = utilidades = async(client,message) => {
         }
         if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
         if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
-        servicos.obterImagens(data_Img,qtd_Img).then((imagens)=>{
+        servicos.obterImagens(data_Img,qtd_Img).then(imagens=>{
             imagens.forEach(imagem =>{
                 client.sendFileFromUrl(from, imagem , "foto.jpg" , "", (qtd_Img == 1) ? id : "").catch(()=>{
-                    client.sendText(from, msgs_texto().utilidades.img.erro_api)
+                    client.sendText(from, msgs_texto().utilidades.img.erro_imagem)
                 })
             })
-        }).catch(()=>{
-            client.sendText(from, msgs_texto().utilidades.img.erro_api)
+        }).catch(msg=>{
+            client.sendText(from, msg)
         })
         break
     
