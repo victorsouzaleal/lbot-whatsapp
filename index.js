@@ -1,20 +1,25 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarEnv} = require('./lib/functions')
+const {criarArquivosNecessarios} = require('./lib/functions')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
 const {recarregarContagem} = require("./lib/recarregarContagem")
 const {botStart} = require('./lib/bot')
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const start = async (client = new Client()) => {
         console.log('[SERVIDOR] Servidor iniciado!')
-        let necessitaCriar = await criarEnv()
+
+        //VERIFICA SE É NECESSÁRIO CRIAR ALGUM TIPO DE ARQUIVO NECESSÁRIO
+        let necessitaCriar = await criarArquivosNecessarios()
         if(necessitaCriar){
             console.log("Seus arquivos necessários foram criados, configure seu .env e inicie o aplicativo novamente.")
             client.kill()
         }
         const eventosGrupo = require('./lib/eventosGrupo')
         const antiLink= require('./lib/antilink')
-        const antiFlood = require('./lib/antiflood')
+        const {antiFlood} = require('./lib/antiflood')
         const cadastrarGrupo = require('./lib/cadastrarGrupo')
 
         //Pegando hora de inicialização do BOT
@@ -42,7 +47,7 @@ const start = async (client = new Client()) => {
             msgHandler(client, message)
         }))
 
-        client.onGlobalParicipantsChanged((async (ev) => {
+        client.onGlobalParticipantsChanged((async (ev) => {
             await cadastrarGrupo(ev,"add")
             await eventosGrupo(client, ev)
         }))

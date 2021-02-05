@@ -2,7 +2,9 @@
 const {admin} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
 const db = require('../database/database')
-const {botMudarLimite} = require('../lib/bot')
+const fs = require("fs-extra")
+const path = require("path")
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario} = require('../lib/bot')
 
 
 module.exports = dono_bot = async(client,message) => {
@@ -13,6 +15,7 @@ module.exports = dono_bot = async(client,message) => {
     const commands = caption || body || ''
     const command = commands.toLowerCase().split(' ')[0] || ''
     const args =  commands.split(' ')
+    const botNumber = await client.getHostNumber()
     const blockNumber = await client.getBlockedIds()
     const groupId = isGroupMsg ? chat.groupMetadata.id : ''
     const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
@@ -22,6 +25,26 @@ module.exports = dono_bot = async(client,message) => {
         case "!admin":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
             client.sendText(from, admin)
+            break
+
+        case "!infocompleta":
+            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
+            let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+            let data = new Date(info_bot.limite_diario.expiracao * 1000)
+            let dia = `0${data.getDate()}`, mes = `0${data.getMonth()+1}`, ano= data.getFullYear(), horas = `0${data.getHours()}`, minutos = `0${data.getMinutes()}`, segundos = `0${data.getSeconds()}`
+            let msg_info = `*Criador do Bot* : ${info_bot.criador}\n`
+            msg_info += `*Criado em* : ${info_bot.criado_em}\n`
+            msg_info += `*Nome do bot* : ${info_bot.nome}\n`
+            msg_info += `*Online desde* : ${info_bot.iniciado}\n`
+            msg_info += "*Limite diário* : "
+            msg_info += (info_bot.limite_diario.status)? ` ✅\n - ${info_bot.limite_diario.qtd} Cmds/dia \n - Reseta *${dia.substr(-2)}/${mes.substr(-2)}/${ano} às ${horas.substr(-2)}:${minutos.substr(-2)}:${segundos.substr(-2)}*\n` : " ❌\n"
+            msg_info += "*Limitador comandos/minuto* : " 
+            msg_info += (info_bot.limite_diario.status) ? ` ✅\n - ${info_bot.limitecomandos.cmds_minuto_max}/minuto \n - Tempo de bloqueio : ${info_bot.limitecomandos.tempo_bloqueio} segundos\n` : " ❌\n"
+            msg_info += `*Quantidade de pessoas bloqueadas* : ${blockNumber.length}\n`
+            msg_info += `*Comandos executados* : ${info_bot.cmds_executados}\n`
+            msg_info += `*Contato do criador* : wa.me/${ownerNumber[0]}\n`
+            client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
             break
             
         case '!entrargrupo':
@@ -140,13 +163,56 @@ module.exports = dono_bot = async(client,message) => {
                 }
             }
             break
+
+        
+        case "!limitediario":
+            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from,msgs_texto().admin.limitediario.cmd_erro,id)
+            let limitediario_estado = args[1]
+            if(limitediario_estado == "on"){
+                if(botInfo().limite_diario.status) return client.reply(from,msgs_texto().admin.limitediario.ja_ativado,id)
+                if(args.length !== 3) return client.reply(from,msgs_texto().admin.limitediario.cmd_erro,id)
+                let qtd_comandos = args[2]
+                if(isNaN(qtd_comandos) || qtd_comandos < 10) return client.reply(from,msgs_texto().admin.limitediario.qtd_invalida,id)
+                botAlterarLimiteDiario(true,qtd_comandos)
+                client.reply(from, msgs_texto().admin.limitediario.ativado,id)
+            } else if(limitediario_estado == "off"){
+                if(!botInfo().limite_diario.status) return client.reply(from,msgs_texto().admin.limitediario.ja_desativado,id)
+                botAlterarLimiteDiario(false)
+                client.reply(from, msgs_texto().admin.limitediario.desativado,id)
+            } else {
+                client.reply(from,msgs_texto().admin.limitediario.cmd_erro,id)
+            }
+            break
+
+        case "!limitador":
+            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from,msgs_texto().admin.limitecomandos.cmd_erro,id)
+            let limitador_estado = args[1]
+            if(limitador_estado == "on"){
+                if(botInfo().limitecomandos.status) return client.reply(from,msgs_texto().admin.limitecomandos.ja_ativado,id)
+                if(args.length !== 4) return client.reply(from,msgs_texto().admin.limitecomandos.cmd_erro,id)
+                let qtd_max_minuto = args[2], tempo_bloqueio = args[3]
+                if(isNaN(qtd_max_minuto) || qtd_max_minuto < 3) return client.reply(from,msgs_texto().admin.limitecomandos.qtd_invalida,id)
+                if(isNaN(tempo_bloqueio) || tempo_bloqueio < 10) return client.reply(from,msgs_texto().admin.limitecomandos.tempo_invalido,id)
+                botAlterarLimitador(true,parseInt(qtd_max_minuto),parseInt(tempo_bloqueio))
+                client.reply(from, msgs_texto().admin.limitecomandos.ativado,id)
+            } else if(limitador_estado == "off"){
+                if(!botInfo().limitecomandos.status) return client.reply(from,msgs_texto().admin.limitecomandos.ja_desativado,id)
+                botAlterarLimitador(false)
+                client.reply(from, msgs_texto().admin.limitecomandos.desativado,id)
+            } else {
+                client.reply(from,msgs_texto().admin.limitecomandos.cmd_erro,id)
+            }
+
+            break
         
         case "!mudarlimite":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto().admin.mudarlimite.erro_limite_diario,id)
             if(args.length === 1) return client.reply(from,msgs_texto().admin.mudarlimite.cmd_erro,id)
             if(isNaN(args[1])) return client.reply(from, msgs_texto().admin.mudarlimite.invalido,id)
-            await botMudarLimite(parseInt(args[1]))
-            await db.definirLimite(args[1])
+            await botQtdLimiteDiario(parseInt(args[1]))
             client.reply(from, `✅ O limite diário de todos os usuários foi definido para ${args[1]} comandos/dia `,id)
             break
         
@@ -214,13 +280,15 @@ module.exports = dono_bot = async(client,message) => {
         
         case "!rtodos":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto().admin.rtodos.erro_limite_diario,id)
             db.resetarComandosDia().then(async()=>{
-                client.reply(from, msgs_texto().admin.rtodos.sucesso,id)
+                await client.reply(from, msgs_texto().admin.rtodos.sucesso,id)
             })
             break
 
         case "!r":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto().admin.r.erro_limite_diario,id)
             if(quotedMsg){
                 let r_registrado = await db.verificarRegistro(quotedMsgObj.author)
                 if(r_registrado){
@@ -255,27 +323,6 @@ module.exports = dono_bot = async(client,message) => {
             }
             break  
             
-        case "!alterarcont":
-            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
-            if(args.length == 1)  return client.reply(from, msgs_texto().admin.alterarcont.cmd_erro, id)
-            if(isNaN(args[1]) || args[1] < 0)  return client.reply(from, msgs_texto().admin.alterarcont.num_invalido, id)
-            let ac_contador = await db.obterGrupo(groupId)
-            if(!ac_contador.contador.status) return client.reply(from, msgs_texto().admin.alterarcont.erro_contador, id)
-            if(quotedMsg){
-                let cont_usuario = await db.obterAtividade(groupId,quotedMsgObj.author)
-                if(cont_usuario == null) return client.reply(from, msgs_texto().admin.alterarcont.fora_grupo,id) 
-                await db.alterarContagemUsuario(groupId, quotedMsgObj.author, args[1])
-                await client.reply(from, msgs_texto().admin.alterarcont.sucesso, id)
-            } else if (mentionedJidList.length == 1){
-                let cont_usuario = await db.obterAtividade(groupId,mentionedJidList[0])
-                if(cont_usuario == null) return client.reply(from, msgs_texto().admin.alterarcont.fora_grupo,id) 
-                await db.alterarContagemUsuario(groupId, mentionedJidList[0],args[1])
-                await client.reply(from, msgs_texto().admin.alterarcont.sucesso, id)
-            } else {
-                await client.reply(from, msgs_texto().admin.alterarcont.cmd_erro, id)
-            }
-            break
-
         case "!verdados":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
             let vd_usuario = {}
@@ -327,8 +374,10 @@ module.exports = dono_bot = async(client,message) => {
             msg_verdados += (vd_usuario.nome != undefined) ? `Nome : *${vd_usuario.nome}*\n` : ""
             msg_verdados += `Tipo de usuário : *${vd_usuario.tipo }*\n`
             msg_verdados += `Numero Usuário : *${vd_usuario.id_usuario.replace("@c.us","")}*\n`
-            msg_verdados += `Comandos usados hoje : *${vd_usuario.comandos_dia}/${max_comandos_vd}*\n`
-            msg_verdados += `Limite diário : *${max_comandos_vd}*\n`
+            if(botInfo().limite_diario.status){
+                msg_verdados += `Comandos usados hoje : *${vd_usuario.comandos_dia}/${max_comandos_vd}*\n`
+                msg_verdados += `Limite diário : *${max_comandos_vd}*\n`
+            }
             msg_verdados += `Total de comandos usados : *${vd_usuario.comandos_total} comandos*\n`
             client.reply(from, msg_verdados, id)
             break

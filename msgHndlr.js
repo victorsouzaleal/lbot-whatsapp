@@ -6,7 +6,7 @@ const moment = require('moment-timezone')
 const color = require('./lib/color')
 const db = require('./database/database')
 moment.tz.setDefault('America/Sao_Paulo')
-const {botInfoUpdate} = require("./lib/bot")
+const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite} = require("./lib/bot")
 
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
@@ -46,17 +46,16 @@ module.exports = msgHandler = async (client, message) => {
         const isBlocked = blockNumber.includes(sender.id)
         if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname))
         if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname), 'in', color(formattedTitle))
-        if (isBlocked) return
+       
+        //SE NÃO FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
+        if (!isGroupMsg && isBlocked) return
         
         //SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, ADICIONA A CONTAGEM
         if(isGroupMsg && g_info.contador.status) await db.addContagem(groupId,sender.id,type)
 
-        
         //SE FOR ALGUM COMANDO EXISTENTE
         if(lista_comandos.utilidades.includes(command) || lista_comandos.admin_grupo.includes(command) || lista_comandos.diversao.includes(command) ||lista_comandos.dono_bot.includes(command)){
-           
             let registrado = await db.verificarRegistro(sender.id)
-
             //SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
             if(!registrado) {
                 if(ownerNumber.includes(sender.id.replace("@c.us", ""))){
@@ -69,25 +68,42 @@ module.exports = msgHandler = async (client, message) => {
             //ATUALIZE NOME DO USUÁRIO 
             await db.atualizarNome(sender.id, pushname)
 
+            //SE FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
+            if (isGroupMsg && isBlocked) return
+
+            //LIMITACAO DE COMANDO POR MINUTO
+            if(botInfo().limitecomandos.status){
+                let usuario = await db.obterUsuario(sender.id)
+                let limiteComando = botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
+                if(limiteComando.comando_bloqueado) {
+                    if(limiteComando.msg != undefined) client.reply(from, limiteComando.msg, id)
+                    return 
+                }
+            }
+            
             //SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
             if(isGroupMsg && g_info.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,`[❗] O comando *${command}* está temporariamente bloqueado neste grupo pelo administrador.`,id)
 
-            //SE O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES
-            if(!lista_comandos.excecoes_contagem.includes(command)){
+            //SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES
+            if(botInfo().limite_diario.status && !lista_comandos.excecoes_contagem.includes(command)){
+                //LIMITADOR DIARIO DE COMANDOS
+                await botVerificarExpiracaoLimite()
                 let ultrapassou = await db.ultrapassouLimite(sender.id)
                 if(!ultrapassou){ //SE NÃO ULTRAPASSAR LIMITE DIARIO
                     await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
                 } else { //SE ULTRAPASSAR
-                    duser  = await db.obterUsuario(sender.id)
                     return client.reply(from, 
-                    (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
-                    : `[❗]  Você ultrapassou seu limite diário de ${duser.max_comandos_dia} comandos por dia.`
+                    (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${botInfo().limite_diario_usuarios} comandos por dia.`
+                    : `[❗]  Você ultrapassou seu limite diário de ${botInfo().limite_diario_usuarios} comandos por dia.`
                     ,id) 
                 }
-            } else { //SE ESTIVER NA LISTA DE EXCEÇÕES
+            } else if(botInfo().limite_diario.status && lista_comandos.excecoes_contagem.includes(command)) {
+                await db.addContagemTotal(sender.id)
+                await botVerificarExpiracaoLimite()
+            } else {
                 await db.addContagemTotal(sender.id)
             }
-
+          
             //ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
             await botInfoUpdate()
         }

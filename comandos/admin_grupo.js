@@ -39,7 +39,7 @@ module.exports = admin_grupo = async(client,message) => {
             status_text += "- Recurso Anti-Fake : "
             status_text += (g_status.antifake) ? " ✅\n" : " ❌\n"
             status_text += "- Recurso Anti-Flood : "
-            status_text += (g_status.antiflood.status) ? ` ✅ Máx: ${g_status.antiflood.max} mensagens\n` : " ❌\n"
+            status_text += (g_status.antiflood.status) ? ` ✅ Máx: *${g_status.antiflood.max}* msgs / *${g_status.antiflood.intervalo}* s \n` : " ❌\n"
             status_text += "- Recurso Contador : "
             status_text += (g_status.contador.status) ? ` ✅ ${g_status.contador.inicio}\n` : " ❌\n"
             status_text += "- Bloqueio de comandos : "
@@ -199,6 +199,28 @@ module.exports = admin_grupo = async(client,message) => {
 
             break
         
+        case "!alterarcont":
+            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
+            if(args.length == 1)  return client.reply(from, msgs_texto().grupo.alterarcont.cmd_erro, id)
+            if(isNaN(args[1]) || args[1] < 0)  return client.reply(from, msgs_texto().grupo.alterarcont.num_invalido, id)
+            let ac_contador = await db.obterGrupo(groupId)
+            if(!ac_contador.contador.status) return client.reply(from, msgs_texto().grupo.alterarcont.erro_contador, id)
+            if(quotedMsg){
+                let cont_usuario = await db.obterAtividade(groupId,quotedMsgObj.author)
+                if(cont_usuario == null) return client.reply(from, msgs_texto().grupo.alterarcont.fora_grupo,id) 
+                await db.alterarContagemUsuario(groupId, quotedMsgObj.author, args[1])
+                await client.reply(from, msgs_texto().grupo.alterarcont.sucesso, id)
+            } else if (mentionedJidList.length == 1){
+                let cont_usuario = await db.obterAtividade(groupId,mentionedJidList[0])
+                if(cont_usuario == null) return client.reply(from, msgs_texto().grupo.alterarcont.fora_grupo,id) 
+                await db.alterarContagemUsuario(groupId, mentionedJidList[0],args[1])
+                await client.reply(from, msgs_texto().grupo.alterarcont.sucesso, id)
+            } else {
+                await client.reply(from, msgs_texto().grupo.alterarcont.cmd_erro, id)
+            }
+            break
+        
         case "!imarcar":
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
@@ -343,23 +365,35 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto().permissao.bot_admin, id)
             if (args.length === 1) return client.reply(from, msgs_texto().grupo.antiflood.cmd_erro, id)
             const afl_status = await db.obterGrupo(groupId)
+            let intervalo = 10
             let max_flood = 10
-            let estado = ""
+            let estado = args[1]
 
-            if(!isNaN(args[1])){
-                if(args[1]>= 5 && args[1] <= 20){
-                    max_flood = args[1]
-                    estado = args[2]
-                } else {
-                    return client.reply(from, msgs_texto().grupo.antiflood.max,id)
+            //VALIDAÇÃO DO ARGUMENTO - INTERVALO
+            if(args.length === 4){
+                if(!isNaN(args[3])){
+                    if(args[3]>=10 && args[3]<=60){
+                        intervalo = args[3]
+                    } else {
+                        return client.reply(from, msgs_texto().grupo.antiflood.intervalo,id)
+                    }
                 }
-            } else {
-                estado = args[1]
+            }
+
+            //VALIDACAO DO ARGUMENTO - QUANTIDADE DE MSG
+            if(args.length >= 3){
+                if(!isNaN(args[2])){
+                    if(args[2]>= 5 && args[2] <= 20){
+                        max_flood = args[2]
+                    } else {
+                        return client.reply(from, msgs_texto().grupo.antiflood.max,id)
+                    }
+                }
             }
             
             if (estado.toLowerCase() === 'on') {
                 if(afl_status.antiflood.status) return client.reply(from, msgs_texto().grupo.antiflood.ja_ligado , id)
-                await db.alterarAntiFlood(groupId,true,max_flood)
+                await db.alterarAntiFlood(groupId,true,max_flood,intervalo)
                 client.reply(from,  msgs_texto().grupo.antiflood.ligado, id)
             } else if (estado.toLowerCase() === 'off') {
                 if(!afl_status.antiflood.status) return client.reply(from, msgs_texto().grupo.antiflood.ja_desligado , id)
@@ -375,7 +409,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(!vb_status.voteban.status) {
                 client.reply(from, msgs_texto().grupo.voteban.sem_votacao, id)
             } else {
-                client.sendTextWithMentions(from, `Atualmente existe um membro em votação : @${vb_status.voteban.usuario}`)
+                client.sendTextWithMentions(from, `Atualmente existe um membro em votação : @${vb_status.voteban.usuario}\n\nDigite *!votar* para votar nestre membro.`)
             }
             break
         
@@ -509,7 +543,7 @@ module.exports = admin_grupo = async(client,message) => {
             }
             hehe += '╚═〘 LBOT v2.0 〙'
             await client.sendTextWithMentions(from, hehe)
-            break
+            break       
 
         case '!bantodos':
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)

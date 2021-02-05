@@ -1,36 +1,15 @@
 //REQUERINDO MÓDULOS
-process.setMaxListeners(0)
-const {segParaHora} = require('../lib/functions')
 const { decryptMedia } = require('@open-wa/wa-decrypt')
-const { rastrearEncomendas } = require('correios-brasil')
-const translate = require('@vitalets/google-translate-api')
 const fs = require('fs-extra')
 const {msg_admin_grupo, msg_comum, msg_comum_grupo} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const get = require('got')
 const path = require('path')
-const {exec} = require('child_process')
-const axios = require('axios')
-const {removeBackgroundFromImageBase64} = require('remove.bg')
-const serp = require('serp')
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-const ffmpeg = require('fluent-ffmpeg');
-ffmpeg.setFfmpegPath(ffmpegPath);
-const Youtube = require('youtube-sr')
-const DownloadYTFile = require('yt-dl-playlist')
-const downloaderYT = new DownloadYTFile({ 
-    outputPath: "./media",
-    ffmpegPath: ffmpegPath,
-    maxParallelDownload: 2,
-})
 const db = require('../database/database')
-const cheerio = require('cheerio');
-const textToPicture = require('text-to-picture-kazari')
-
+const sticker = require("../lib/sticker")
+const servicos = require("../lib/servicos")
+const {botInfo} = require(path.resolve("lib/bot.js"))
 
 module.exports = utilidades = async(client,message) => {
-    const api_remove_bg = process.env.API_REMOVE_BG
-    const api_news = process.env.API_NEWS_ORG
     const { type, id, from, sender, chat, isGroupMsg, caption, isMedia, mimetype, quotedMsg, quotedMsgObj} = message
     let { body } = message
     let { pushname, verifiedName } = sender
@@ -39,7 +18,6 @@ module.exports = utilidades = async(client,message) => {
     const command = commands.toLowerCase().split(' ')[0] || ''
     const args =  commands.split(' ')
     const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
-    const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
     const botNumber = await client.getHostNumber()
     const groupId = isGroupMsg ? chat.groupMetadata.id : ''
     const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
@@ -57,7 +35,7 @@ module.exports = utilidades = async(client,message) => {
         msg_info += `*Online desde* : ${info_bot.iniciado}\n`
         msg_info += `*Comandos executados* : ${info_bot.cmds_executados}\n`
         msg_info += `*Contato do criador* : wa.me/${numero_dono[0]}\n`
-        await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
+        client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
         break
     
     case "!reportar":
@@ -66,7 +44,8 @@ module.exports = utilidades = async(client,message) => {
         msg_report += `Usuário : ${pushname}\n`
         msg_report += `Contato: http://wa.me/${sender.id.replace("@c.us","")}\n`
         msg_report += `Mensagem : ${body.slice(10)}\n`
-        await client.sendText(numero_dono[0]+"@c.us",msg_report)
+        client.sendText(numero_dono[0]+"@c.us",msg_report)
+        client.reply(from,msgs_texto().utilidades.reportar.sucesso,id)
         break
     
     case "!ddd":
@@ -88,156 +67,107 @@ module.exports = utilidades = async(client,message) => {
 
     case "!clima":
         if(args.length === 1) return client.reply(from, msgs_texto().utilidades.clima.cmd_erro ,id)
-        let local_escolhido = body.slice(7).normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-        const fotoClimaUrl = `http://pt.wttr.in/${local_escolhido}.png`
-        const textoClimaUrl = `http://pt.wttr.in/${local_escolhido}?format=Local%20=%20%l+\nClima atual%20=%20%C+%c+\nTemperatura%20=%20%t+\nUmidade%20=%20%h\nVento%20=%20%w\nLua%20agora%20=%20%m\nNascer%20do%20Sol%20=%20%S\nPor%20do%20Sol%20=%20%s`
-        await axios.get(textoClimaUrl).then(async resp =>{
-            let msg_clima = `☀️ CONSULTA DE CLIMA ☀️\n\n`
-            msg_clima += resp.data
-            client.sendFileFromUrl(from,fotoClimaUrl,`${local_escolhido}.png`, msg_clima, id)
-        }).catch(()=>{
-            client.reply(from,msgs_texto().utilidades.clima.erro_resultado,id)
+        servicos.obterClima(body.slice(7)).then(clima=>{
+            client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima.msg, id)
+        }).catch(msg=>{
+            client.reply(from,msg,id)
         })
         break
 
     case "!moeda":
         if(args.length !== 3) return client.reply(from, msgs_texto().utilidades.moeda.cmd_erro, id)
-        const moedas_suportadas = ['dolar','euro','iene']
-        args[1] = args[1].toLowerCase()
-        args[2] = args[2].replace(",",".")
-        if(!moedas_suportadas.includes(args[1])) return client.reply(from, msgs_texto().utilidades.moeda.nao_suportado, id)
-        if(isNaN(args[2])) return client.reply(from, msgs_texto().utilidades.moeda.valor_invalido , id)
-        if(args[2] > 1000000000000000) return client.reply(from, msgs_texto().utilidades.moeda.valor_limite, id)
-        axios.get("https://economia.awesomeapi.com.br/json/all").then(async (resp)=>{
-            let dados_moeda_selecionada = {}
-            switch(args[1]){
-                case 'dolar':
-                    args[1] = (args[2] > 1) ? "Dólares" : "Dólar"
-                    dados_moeda_selecionada = resp.data.USD
-                    break
-                case 'euro':
-                    args[1] = (args[2] > 1) ? "Euros" : "Euro"
-                    dados_moeda_selecionada = resp.data.EUR
-                    break
-                case 'iene':
-                    args[1] = (args[2] > 1) ? "Ienes" : "Iene"
-                    dados_moeda_selecionada = resp.data.JPY
-                    break           
-            }
-            let valor_reais = dados_moeda_selecionada.ask * args[2]
-            valor_reais = valor_reais.toFixed(2).replace(".",",")
-            let dh_atualizacao = dados_moeda_selecionada.create_date.split(" ")
-            let d_atualizacao = dh_atualizacao[0].split("-")
-            let h_atualizacao = dh_atualizacao[1]
-            await client.reply(from, `💵 Atualmente *${args[2]} ${args[1]}* está valendo *R$ ${valor_reais}*\n\nInformação atualizada : *${d_atualizacao[2]}/${d_atualizacao[1]}/${d_atualizacao[0]} às ${h_atualizacao}*`,id)
+        servicos.obterConversaoMoeda(args[1],args[2]).then(res=>{
+            client.reply(from, `💵 Atualmente *${res.valor_inserido} ${res.moeda}* está valendo *R$ ${res.valor_reais}*\n\nInformação atualizada : *${res.data_atualizacao}*`,id)
+        }).catch(msg=>{
+            client.reply(from, msg , id)
         })
         break
+
     case "!google":
         if (args.length === 1) return client.reply(from, msgs_texto().utilidades.google.cmd_erro , id)
-        let q_search = body.slice(8)
-        const config_google = {
-            host : "google.com.br",
-            qs : {
-              q : q_search,
-              filter : 0,
-              pws : 0
-            },
-            num : 3
-        }
-        const resultados_p = await serp.search(config_google)
-        let msg_resultado = `🔎 Resultados da pesquisa de : *${q_search}*🔎\n\n` 
-        resultados_p.forEach((resultado)=>{
-            msg_resultado += `═════════════════\n`
-            msg_resultado += `🔎 ${resultado.title}\n`
-            msg_resultado += `*Link* : ${resultado.url}\n\n`
+        servicos.obterPesquisaGoogle(body.slice(8)).then(resultados=>{
+            let msg_resultado = `🔎 Resultados da pesquisa de : *${body.slice(8)}*🔎\n\n` 
+            resultados.forEach(resultado =>{
+                msg_resultado += `═════════════════\n`
+                msg_resultado += `🔎 ${resultado.title}\n`
+                msg_resultado += `*Link* : ${resultado.url}\n\n`
+            })
+            client.reply(from,msg_resultado,id)
+        }).catch(msg=>{
+            client.reply(from,msg,id)
         })
-        await client.reply(from,msg_resultado,id)
         break
 
      case '!rastreio':
-        var dataText = '';
         if (args.length === 1) return client.reply(from, msgs_texto().utilidades.rastreio.cmd_erro, id)
-        codigoRastreio = [body.slice(10)]
-        if(codigoRastreio[0].length != 13) return client.reply(from, msgs_texto().utilidades.rastreio.codigo_invalido ,id)
-        rastrearEncomendas(codigoRastreio).then((resp) => {
-            if(resp[0].length < 1) return client.reply(from, msgs_texto().utilidades.rastreio.nao_postado ,id)
+        servicos.obterRastreioCorreios(body.slice(10)).then(dados=>{
             let dados_rastreio = "📦📦*RASTREIO*📦📦\n\n"
-            resp[0].forEach(dado =>{
+            dados.forEach(dado =>{
                 let dados_local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
                 dados_rastreio +=  `Status : ${dado.status}\nData : ${dado.data}\nHora : ${dado.hora}\n${dados_local}\n`
                 dados_rastreio +=  `-----------------------------------------\n`
             })
             client.reply(from, dados_rastreio ,id)
-        });
+        }).catch(msg=>{
+            client.reply(from, msg ,id)
+        })
         break
     
     case "!play":
         if(args.length === 1) return client.reply(from,msgs_texto().utilidades.play.cmd_erro,id)
-        let youtube_pesquisa = body.slice(6)
-        Youtube.searchOne(youtube_pesquisa).then(resp=>{
-            const video = resp
-            if(video.duration > 300000) return client.reply(from,msgs_texto().utilidades.play.limite,id)
-            client.reply(from,`[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\nTitulo: *${video.title}*\nDuração: *${video.durationFormatted}*`,id)
-            //GERANDO NOME ARQUIVO
-            let letras = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-            let nome_arquivo = ""
-            for(let i = 0; i < 6; i++){
-                let letra_aleatoria = Math.floor(Math.random() * letras.length)
-                nome_arquivo += letras[letra_aleatoria]
-            }
-            downloaderYT.download(video.id,nome_arquivo+".mp3").then(async ()=>{
-                await client.sendFile(from, `./media/${nome_arquivo}.mp3`, "musica.mp3","", id).then(async ()=>{
-                    await fs.unlinkSync(`./media/${nome_arquivo}.mp3`)
-                })
+        let play_video = await servicos.obterInfoVideo(body.slice(6))
+        if(play_video == null) return client.reply(from,msgs_texto().utilidades.play.nao_encontrado,id)
+        if(play_video.duration > 300000) return client.reply(from,msgs_texto().utilidades.play.limite,id)
+        client.reply(from,`[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\nTitulo: *${play_video.title}*\nDuração: *${play_video.durationFormatted}*`,id)
+        servicos.obterYtMp3(play_video).then(mp3_path =>{
+            client.sendFile(from, mp3_path, "musica.mp3","", id).then(()=>{
+                fs.unlinkSync(mp3_path)
             })
-            .catch(()=>{
-                client.reply(from,msgs_texto().utilidades.play.erro_download,id)
-            })
+        }).catch((msg)=>{
+            client.reply(from,msg,id)
         })
-        .catch(()=>{
-            client.reply(from,msgs_texto().utilidades.play.erro_pesquisa,id)
+        break
+    
+    case "!yt":
+        if(args.length === 1) return client.reply(from,msgs_texto().utilidades.yt.cmd_erro,id)
+        let yt_video = await servicos.obterInfoVideo(body.slice(6))
+        if(yt_video == null) return client.reply(from,msgs_texto().utilidades.yt.nao_encontrado,id)
+        if(yt_video.duration > 300000) return client.reply(from,msgs_texto().utilidades.yt.limite,id)
+        client.reply(from,`[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n\nTitulo: *${yt_video.title}*\nDuração: *${yt_video.durationFormatted}*`,id)
+        servicos.obterYtMp4Url(yt_video).then(video =>{
+            client.sendFile(from, video.download, `${video.titulo}.mp4`,"", id)
+        }).catch(msg=>{
+            client.reply(from,msg,id)
         })
-
         break
     
     case '!img':
-            let qtd_Img = 1;
-            let data_Img = ""
-    
-            if(!isNaN(args[1])){
-                if(args[1] > 0 && args[1] <= 5) {
-                    qtd_Img = args[1]
-                    for(var i = 2; i < args.length; i++){
-                        data_Img += `${args[i]} `
-                    }
-                } else {
-                    return client.reply(from, msgs_texto().utilidades.img.qtd_imagem , id)
+        let qtd_Img = 1;
+        let data_Img = ""
+        if(!isNaN(args[1])){
+            if(args[1] > 0 && args[1] <= 5) {
+                qtd_Img = args[1]
+                for(var i = 2; i < args.length; i++){
+                    data_Img += `${args[i]} `
                 }
             } else {
-                data_Img = body.slice(5)
+                return client.reply(from, msgs_texto().utilidades.img.qtd_imagem , id)
             }
-    
-            if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
-            if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
-            axios.get(`https://www.ecosia.org/images?q=${data_Img}`).then((resp)=>{
-                var $ = cheerio.load(resp.data);
-                let resultados = []
-                $(".image-result__image").each((i,element)=>{
-                    const cheerioElement = $(element)
-                    const atributoImg = cheerioElement.attr("src")  
-                    resultados.push(atributoImg)
+        } else {
+            data_Img = body.slice(5)
+        }
+        if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
+        if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
+        servicos.obterImagens(data_Img,qtd_Img).then((imagens)=>{
+            imagens.forEach(imagem =>{
+                client.sendFileFromUrl(from, imagem , "foto.jpg" , "", (qtd_Img == 1) ? id : "").catch(()=>{
+                    client.sendText(from, msgs_texto().utilidades.img.erro_api)
                 })
-
-                for(let i = 0; i < qtd_Img; i++){
-                    let img_index_aleatorio = Math.floor(Math.random() * 20)
-                    client.sendFileFromUrl(from, resultados[img_index_aleatorio] , "foto.jpg" , "", (qtd_Img == 1) ? id : "")
-                    resultados.splice(img_index_aleatorio,1)
-                }
-
-            }).catch(()=>{
-                client.sendText(from, msgs_texto().utilidades.img.erro_imagem)
             })
-            break
+        }).catch(()=>{
+            client.sendText(from, msgs_texto().utilidades.img.erro_api)
+        })
+        break
     
     case '!meusdados':
         let meusdados = await db.obterUsuario(sender.id)
@@ -257,16 +187,22 @@ module.exports = utilidades = async(client,message) => {
         let msg_meusdados = `[🤖*SEUS DADOS DE USO*🤖]\n\n`
         msg_meusdados += `Tipo de usuário : *${tipo_usuario_dados}*\n`
         msg_meusdados += (pushname != undefined) ? `Nome : *${pushname}*\n` : `Nome : *???*\n`
-        msg_meusdados += `Comandos usados hoje : *${meusdados.comandos_dia}/${max_comandos_md}*\n`
-        msg_meusdados += `Limite diário : *${max_comandos_md}*\n`
+        if(botInfo().limite_diario.status) {
+            msg_meusdados += `Comandos usados hoje : *${meusdados.comandos_dia}/${max_comandos_md}*\n`
+            msg_meusdados += `Limite diário : *${max_comandos_md}*\n`
+        }
         msg_meusdados += `Total de comandos usados : *${meusdados.comandos_total} comandos*\n`
+        if(isGroupMsg){
+            let g_meusdados = await db.obterGrupo(groupId)
+            if(g_meusdados.contador.status){
+                let c_meusdados = await db.obterAtividade(groupId,sender.id)
+                msg_meusdados += `Mensagens neste grupo : *${c_meusdados.msg}* mensagens\n`
+            }   
+        }
         client.reply(from, msg_meusdados, id)
         break
 
-    case "!help":
-    case "!menu":
-    case ".menu":
-    case ".help":
+    case "!help": case "!menu": case ".menu": case ".help":
     case '!ajuda': //Menu principal
         let dados_user = await db.obterUsuario(sender.id)
         let max_comm = (dados_user.max_comandos_dia == null) ? "Sem limite" : dados_user.max_comandos_dia
@@ -282,9 +218,17 @@ module.exports = utilidades = async(client,message) => {
                 tipo_usuario = "👤 Comum"
                 break     
         }
-        let msgs_dados = (pushname != undefined) ? 
-        `Usuário : *${pushname}* -  Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n` :
-        `Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n`
+
+        let msgs_dados = ""
+        if(botInfo().limite_diario.status){
+            msgs_dados = (pushname != undefined) ? 
+            `Usuário : *${pushname}* -  Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n` :
+            `Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n`
+        } else {
+            msgs_dados = (pushname != undefined) ? 
+            `Usuário : *${pushname}*\nTipo de Usuário : *${tipo_usuario}*\n` :
+            `Tipo de Usuário : *${tipo_usuario}*\n`
+        }
         msgs_dados += `═════════════════\n`
         let menu = ""
         if(isGroupMsg){
@@ -300,24 +244,22 @@ module.exports = utilidades = async(client,message) => {
         break
 
     case '!s':
-        if (isMedia && type === 'image') {
-            const mediaData = await decryptMedia(message, uaOverride)
-            const imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
-            await client.sendImageAsSticker(from, imageBase64)
-        } else if (quotedMsg && quotedMsg.type == 'image') {
-            const mediaData = await decryptMedia(quotedMsg, uaOverride)
-            const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
-            await client.sendImageAsSticker(from, imageBase64)
-        } else if (args.length === 2) {
-            const url = args[1]
-            if (url.match(isUrl)) {
-                await client.sendStickerfromUrl(from, url, { method: 'get' })
-                    .catch(err => console.log('ERRO : ', err))
+        if(isMedia || quotedMsg){
+            let dados_s = {}
+            dados_s = {
+                tipo : (isMedia)? type : quotedMsg.type,
+                mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
+                mensagem: (isMedia)? message : quotedMsg
+            }
+            if(dados_s.tipo === "image"){
+                const mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
+                const imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
+                client.sendImageAsSticker(from, imageBase64)
             } else {
-                client.reply(from, msgs_texto().utilidades.sticker.link_invalido , id)
+                return client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
             }
         } else {
-                client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
+            return client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
         }
         break
     
@@ -332,187 +274,122 @@ module.exports = utilidades = async(client,message) => {
         break
 
     case '!sgif':
-        if (isMedia) {
-            if (mimetype === 'video/mp4' && message.duration < 10 || mimetype === 'image/gif' && message.duration < 10) {
-                const mediaData = await decryptMedia(message, uaOverride)
-                client.reply(from, msgs_texto().geral.espera , id)
-                const filename = `./media/aswu.${mimetype.split('/')[1]}`
-                await fs.writeFileSync(filename, mediaData)
-                await exec(`gify ${filename} ./media/output.gif --fps=10 --scale=240:240`, async function (error, stdout, stderr) {
-                    const gif = await fs.readFileSync('./media/output.gif', { encoding: "base64" })
-                    try {
-                        await client.sendImageAsSticker(from, `data:image/gif;base64,${gif.toString('base64')}`)
-                    } catch (err){
-                        client.reply(from, msgs_texto().utilidades.sticker.video_longo , id)
-                    }
-                })
-            } else {
-                client.reply(from, msgs_texto().utilidades.sticker.video_invalido, id)
+        if(isMedia || quotedMsg){
+            let dados_sgif = {}
+            dados_sgif = {
+                mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
+                duracao: (isMedia)? message.duration : quotedMsg.duration,
+                mensagem: (isMedia)? message : quotedMsg
             }
-        } else if (quotedMsg){
-            if(quotedMsg.type == 'image' && quotedMsg.duration < 10 || quotedMsg && quotedMsg.type == 'video' && quotedMsg.duration < 10){
-                const mediaData = await decryptMedia(quotedMsg, uaOverride)
-                client.reply(from, msgs_texto().geral.espera, id)
-                const filename = `./media/aswu.${quotedMsg.mimetype.split('/')[1]}`
-                await fs.writeFileSync(filename, mediaData)
-                await exec(`gify ${filename} ./media/output.gif --fps=10 --scale=240:240`, async function (error, stdout, stderr) {
-                    const gif = await fs.readFileSync('./media/output.gif', { encoding: "base64" })
-                    try {
-                        await client.sendImageAsSticker(from, `data:image/gif;base64,${gif.toString('base64')}`)
-                    } catch (err){
-                        client.reply(from,msgs_texto().utilidades.sticker.video_longo, id)
-                    }
+            if((dados_sgif.mimetype === 'video/mp4' || dados_sgif.mimetype === 'image/gif') && dados_sgif.duracao < 10){
+                const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
+                client.reply(from, msgs_texto().geral.espera , id)
+                sticker.stickerGif(mediaData,dados_sgif.mimetype).then((gifB64)=>{
+                    client.sendImageAsSticker(from, gifB64)
+                }).catch(()=>{
+                    client.reply(from, msgs_texto().utilidades.sticker.video_longo , id)
                 })
-            } else {
-                client.reply(from, msgs_texto().utilidades.sticker.video_invalido, id)
-            }                 
+            }else {
+                return client.reply(from, msgs_texto().utilidades.sticker.video_invalido, id)
+            }
         } else {
-            client.reply(from, msgs_texto().geral.erro, id)
-        }          
+            return client.reply(from, msgs_texto().geral.erro, id)
+        }
         break
 
     case "!tps":
-        if(args.length == 1) return client.reply(from,msgs_texto().utilidades.tps.cmd_erro,id)
+        if(args.length == 1 || quotedMsg || type != "chat") return client.reply(from,msgs_texto().utilidades.tps.cmd_erro,id)
         if(body.slice(5).length > 40) return client.reply(from,msgs_texto().utilidades.tps.texto_longo,id)
         await client.reply(from, msgs_texto().utilidades.tps.espera,id)
-        const tps_resultado = await textToPicture.convert({
-            text: body.slice(5).toUpperCase(),
-            source:{
-                width:550,
-                height:550,
-                background: "black"
-            },
-            color: "white",
-            quality: 90
+        sticker.textoParaSticker(body.slice(5)).then((base64)=>{
+            client.sendImageAsSticker(from, base64)
+        }).catch(msg=>{
+            client.reply(from,msg,id)
         })
-        const tpsBase64 = await tps_resultado.getBase64()
-        client.sendImageAsSticker(from, tpsBase64)
-        /*
-        await client.reply(from, msgs_texto().utilidades.tps.espera,id)
-        axios.get(`https://st4rz.herokuapp.com/api/ttp?kata=${body.slice(5)}`).then(async(resp)=>{
-            await client.sendImageAsSticker(from, resp.data.result)
-        }).catch(()=>{
-            client.reply(from,msgs_texto().utilidades.tps.erro_api,id)
-        })*/
         break
     
     case '!ssf':
-    if (isMedia) {
-        try {
-            var mediaData = await decryptMedia(message, uaOverride)
-            var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
-            var base64img = imageBase64
-            var outFile = './media/img/noBg.png'
-            // Obtenha a api no site remove.bg
-            var result = await removeBackgroundFromImageBase64({ base64img, apiKey: api_remove_bg, size: 'auto', type: 'auto', outFile })
-            await fs.writeFile(outFile, result.base64img)
-            await client.sendImageAsSticker(from, `data:${mimetype};base64,${result.base64img}`)
-        } catch(err) {
-            switch(err[0].code){
-                case 'insufficient_credits':
-                    client.reply(from,msgs_texto().utilidades.sticker.sem_credito,id)
-                    break
-                case 'auth_failed':
-                    console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
-                    client.reply(from,msgs_texto().utilidades.sticker.autenticacao,id)
-                    break
-                default:
-                    client.reply(from,msgs_texto().utilidades.sticker.erro_background,id)    
+        if(isMedia || quotedMsg){
+            let msgDataSsf = {
+                tipo: (isMedia)? type : quotedMsg.type,
+                mimetype: (isMedia)? mimetype : quotedMsg.mimetype,
+                mensagem: (isMedia)? message : quotedMsg
             }
+            if(msgDataSsf.tipo === "image"){
+                var mediaData = await decryptMedia(msgDataSsf.mensagem, uaOverride)
+                var imageBase64 = `data:${msgDataSsf.mimetype};base64,${mediaData.toString('base64')}`
+                sticker.stickerSemFundo(imageBase64,msgDataSsf.mimetype).then(base64 =>{
+                    client.sendImageAsSticker(from, base64)
+                }).catch(err =>{
+                    switch(err){
+                        case 'insufficient_credits':
+                            client.reply(from,msgs_texto().utilidades.sticker.sem_credito,id)
+                            break
+                        case 'auth_failed':
+                            client.reply(from,msgs_texto().utilidades.sticker.autenticacao,id)
+                            break
+                        default:
+                            client.reply(from,msgs_texto().utilidades.sticker.erro_remover,id)    
+                    }
+                })
+            } else {
+                client.reply(from, msgs_texto().utilidades.sticker.ssf_imagem, id)
+            }
+        } else {
+            client.reply(from, msgs_texto().geral.erro, id)
         }
-    } else if (quotedMsg) {
-        try {
-            var mediaData = await decryptMedia(quotedMsg, uaOverride)
-            var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
-            var base64img = imageBase64
-            var outFile = './media/img/noBg.png'
-            // Obtenha a api no site remove.bg
-            var result = await removeBackgroundFromImageBase64({ base64img, apiKey: api_remove_bg, size: 'auto', type: 'auto', outFile })
-            await fs.writeFile(outFile, result.base64img)
-            await client.sendImageAsSticker(from, `data:${quotedMsg.mimetype};base64,${result.base64img}`)
-        } catch(err) {
-            switch(err[0].code){
-                case 'insufficient_credits':
-                    client.reply(from,msgs_texto().utilidades.sticker.sem_credito,id)
-                    break
-                case 'auth_failed':
-                    console.log("[ERRO] Erro na chave API Remove.bg, configure no arquivo .env")
-                    client.reply(from,msgs_texto().utilidades.sticker.autenticacao,id)
-                    break
-                default:
-                    client.reply(from,msgs_texto().utilidades.sticker.erro_background,id)    
-            }
-        }   
-    } else {
-        client.reply(from, msgs_texto().geral.erro, id)
-    }
         break
 
     case "!anime":
-        if (isMedia && type === 'image') {
-            client.reply(from,msgs_texto().utilidades.anime.espera,id)
-            try {
-                var mediaData = await decryptMedia(message, uaOverride)
-                var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
-                axios.post("https://trace.moe/api/search",{
-                    image: imageBase64
-                }).then((resp)=>{
-                    let tempo_inicial = segParaHora(resp.data.docs[0].from)
-                    let tempo_final = segParaHora(resp.data.docs[0].to)
-                    let episodio = resp.data.docs[0].episode
-                    let titulo = resp.data.docs[0].title_english
-                    let similaridade = resp.data.docs[0].similarity * 100
-                    similaridade = similaridade.toFixed(2)
-                    if(similaridade < 87) return client.reply(from,msgs_texto().utilidades.anime.similaridade,id)
-                    is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
-                    client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
-                    resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
-                }).catch((resp)=>{
-                    if(resp.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
-                    if(resp.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
-                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
-                })
-            } catch(err) {
-                client.reply(from,msgs_texto().utilidades.anime.erro_processamento,id)
+        if(isMedia || quotedMsg){
+            let msgDataAnime = {}
+            msgDataAnime = {
+                tipo: (isMedia)? type : quotedMsg.type,
+                mimetype: (isMedia)? mimetype : quotedMsg.mimetype,
+                mensagem: (isMedia)? message : quotedMsg
             }
-        } else if (quotedMsg && quotedMsg.type === 'image') {
-            client.reply(from,msgs_texto().utilidades.anime.espera,id)
-            try {
-                var mediaData = await decryptMedia(quotedMsg, uaOverride)
-                var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
-                axios.post("https://trace.moe/api/search",{
-                    image: imageBase64
-                }).then((resp)=>{
-                    let tempo_inicial = segParaHora(resp.data.docs[0].from)
-                    let tempo_final = segParaHora(resp.data.docs[0].to)
-                    let episodio = resp.data.docs[0].episode
-                    let titulo = resp.data.docs[0].title_english
-                    let similaridade = resp.data.docs[0].similarity * 100
-                    similaridade = similaridade.toFixed(2)
-                    if(similaridade < 87) return client.reply(from,msgs_texto().utilidades.anime.similaridade,id)
-                    is_ep = (episodio != "") ? `Episódio : *${episodio}*\n` : ''
-                    client.sendFileFromUrl(from,`https://media.trace.moe/video/${resp.data.docs[0].anilist_id}/${encodeURIComponent(resp.data.docs[0].filename)}?t=${resp.data.docs[0].at}&token=${resp.data.docs[0].tokenthumb}`,
-                    resp.data.docs[0].filename, `〘 Pesquisa de anime 〙\n\nTítulo: *${titulo}*\n${is_ep}Tempo da cena: *${tempo_inicial} - ${tempo_final}*\nSimilaridade: *${similaridade}%*`, id)
-                }).catch((resp)=>{
-                    if(resp.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
-                    if(resp.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
-                    if(resp.status == 500 || resp.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
+            if(msgDataAnime.tipo === "image"){
+                client.reply(from,msgs_texto().utilidades.anime.espera, id)
+                var mediaData = await decryptMedia(msgDataAnime.mensagem, uaOverride)
+                var imageBase64 = `data:${msgDataAnime.mimetype};base64,${mediaData.toString('base64')}`
+                servicos.obterAnime(imageBase64).then((anime)=>{
+                    if(anime.similaridade < 87) return client.reply(from,msgs_texto().utilidades.anime.similaridade,id)
+                    tem_ep = (anime.episodio != "") ? `Episódio : *${anime.episodio}*\n` : ''
+                    client.sendFileFromUrl(from,anime.link_preview, "anime.mp4", `〘 Pesquisa de anime 〙\n\nTítulo: *${anime.titulo}*\n${tem_ep}Tempo da cena: *${anime.tempo_inicial} - ${anime.tempo_final}*\nSimilaridade: *${anime.similaridade}%*`, id)
+                }).catch((err)=>{
+                    if(err.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
+                    if(err.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
+                    if(err.status == 500 || err.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
                 })
-            } catch(err) {
-                client.reply(from,msgs_texto().utilidades.anime.erro_processamento,id)
-            }   
+            } else {
+                client.reply(from,msgs_texto().utilidades.anime.cmd_erro, id)
+            }
         } else {
             client.reply(from,msgs_texto().utilidades.anime.cmd_erro, id)
         }
-    break
+        break
+
+    case "!animelanc":
+        servicos.obterAnimesLancamentos().then((animes)=>{
+            let msg = "[🇯🇵 Lançamentos atuais de animes 🇯🇵]\n\n"
+            animes.forEach(anime =>{
+                msg += `Nome : *${anime.nome}*\n`,
+                msg += `Episódio : *${anime.episodio}*\n`
+                msg += `Link : ${anime.link}\n\n`
+            })
+            client.reply(from,msg,id)
+        }).catch(()=>{
+            client.reply(from,msgs_texto().utilidades.animelanc.erro_pesquisa,id)
+        })
+        break
     
     case "!traduz":
         if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto().utilidades.traduz.cmd_erro ,id)
-        translate(quotedMsg.body , {to: 'pt'}).then(async(res) => {
-            await client.reply(from, res.text, quotedMsgObj.id);
-        }).catch(() => {
-            client.reply(from, msgs_texto().utilidades.traduz.erro_servidor, id)
-        });
+        servicos.obterTraducao(quotedMsg.body).then(traducao=>{
+            client.reply(from, traducao, quotedMsgObj.id);
+        }).catch(msg=>{
+            client.reply(from, msg, id)
+        })
         break  
     
     case '!voz':
@@ -525,74 +402,38 @@ module.exports = utilidades = async(client,message) => {
         } else {
             dataText = body.slice(8)
         }
-
         if (dataText === '') return client.reply(from, msgs_texto().utilidades.voz.texto_vazio , id)
         if (dataText.length > 5000) return client.reply(from, msgs_texto().utilidades.voz.texto_longo, id)
         if(quotedMsg !== undefined) id_resp = quotedMsgObj.id
-        const ttsEn = require('node-gtts')('en')
-        const ttsPt = require('node-gtts')('pt')
-        const ttsJp = require('node-gtts')('ja')
-        const ttsEs = require('node-gtts')('es')
-        const ttsIt = require('node-gtts')('it')
-        
-        var dataBhs = body.slice(5, 7).toLowerCase()
-        if (dataBhs == 'pt') {
-            ttsPt.save('./media/tts/resPt.mp3', dataText, function () {
-                client.sendPtt(from, './media/tts/resPt.mp3', id_resp)
-            })
-        } else if (dataBhs == 'en') {
-            ttsEn.save('./media/tts/resEn.mp3', dataText, function () {
-                client.sendPtt(from, './media/tts/resEn.mp3', id_resp)
-            })
-        } else if (dataBhs == 'jp') {
-            ttsJp.save('./media/tts/resJp.mp3', dataText, function () {
-                client.sendPtt(from, './media/tts/resJp.mp3', id_resp)
-            })
-        } 
-          else if (dataBhs == 'es') {
-            ttsEs.save('./media/tts/resEs.mp3', dataText, function () {
-                client.sendPtt(from, './media/tts/resEs.mp3', id_resp)
-            })
-        } else if (dataBhs == 'it') {
-            ttsIt.save('./media/tts/resIt.mp3', dataText, function () {
-                client.sendPtt(from, './media/tts/resIt.mp3', id_resp)
-            })
-        } 
-          else {
-            client.reply(from, msgs_texto().utilidades.voz.nao_suportado, id)
-        }
+        var idioma = body.slice(5, 7).toLowerCase()
+        servicos.textoParaVoz(idioma,dataText).then(audio_path=>{
+            client.sendPtt(from, audio_path, id_resp)
+        }).catch(msg=>{
+            client.reply(from, msg, id)
+        })
         break
 
     case '!noticias':
-        try {
-            const resp = await  get.get(`http://newsapi.org/v2/top-headlines?country=br&apiKey=${api_news}`).json()
-            const noticias = resp.articles;
+        servicos.obterNoticias().then(noticias=>{
             let noticias_msg = "╔══✪〘 NOTICIAS 〙✪══\n╠\n"
             noticias.forEach(async(noticia) =>{
                 noticias_msg += `╠➥ 📰🗞️ *${noticia.title}* \n╠\n`
             })
             noticias_msg += '╚═〘 Patrocínio : Malas Boa Viagem 〙'
             client.reply(from, noticias_msg, id)
-        } catch {
-            client.reply(from,msgs_texto().utilidades.noticia.autenticacao)
-        }
+        }).catch(msg=>{
+            client.reply(from,msg,id)
+        })
         break;
 
     case '!calc':
         if(args.length === 1) return client.reply(from, msgs_texto().utilidades.calc.cmd_erro ,id)
         let expressao = body.slice(6)
-        expressao = expressao.replace("x", "*")
-        expressao = expressao.replace("×", "*")
-        expressao = expressao.replace("÷", "/")
-        if(expressao.match(/[a-zA-Z]+/g)) return client.reply(from, msgs_texto().utilidades.calc.carac_invalidos,id)
-        expressao = expressao.replace(",",".")
-        try {
-            resultado = eval(expressao)
-            if(isNaN(resultado)) return client.reply(from, msgs_texto().utilidades.calc.divisao_zero,id)
+        servicos.obterCalculo(expressao).then(resultado=>{
             client.reply(from, `🧮 O resultado é *${resultado}* `,id)
-        } catch {
-            client.reply(from, msgs_texto().utilidades.calc.erro_calculo,id)
-        }
+        }).catch(msg=>{
+            client.reply(from, msg,id)
+        })
         break
     }
 

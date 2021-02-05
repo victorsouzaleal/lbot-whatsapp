@@ -27,13 +27,13 @@ module.exports = {
         await db.usuarios.asyncUpdate({id_usuario}, {$set:{nome}})
     },
     registrarUsuarioComum : async(id_usuario, nome) =>{
-        let {limite_diario_usuarios} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+        let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
         var cadastro_usuario = {
             id_usuario,
             nome,
             comandos_total: 0,
             comandos_dia: 0,
-            max_comandos_dia : limite_diario_usuarios,
+            max_comandos_dia : limite_diario.qtd,
             tipo: "comum"
         }
         db.usuarios.loadDatabase()
@@ -52,13 +52,13 @@ module.exports = {
         await db.usuarios.asyncInsert(cadastro_usuario_dono)
     },
     alterarTipoUsuario: async(id_usuario, tipo)=>{
-        let {limite_diario_usuarios} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-        if(tipo == "comum") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: limite_diario_usuarios}})
+        let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+        if(tipo == "comum") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: limite_diario.qtd}})
         if(tipo == "vip") db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: null}})
     },
     limparVip: async()=>{
-        let {limite_diario_usuarios} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-        db.usuarios.asyncUpdate({tipo : "vip"}, {$set: {tipo: "comum", max_comandos_dia:limite_diario_usuarios}}, {multi: true})
+        let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+        db.usuarios.asyncUpdate({tipo : "vip"}, {$set: {tipo: "comum", max_comandos_dia:limite_diario.qtd}}, {multi: true})
     },
     ultrapassouLimite: async(id_usuario)=>{
         db.usuarios.loadDatabase()
@@ -81,9 +81,7 @@ module.exports = {
     },
     resetarComandosDia: async() =>{
         db.usuarios.loadDatabase()
-        db.usuarios.asyncUpdate({tipo:"comum"}, {$set:{comandos_dia : 0}}, {multi: true, upsert: true})
-        db.usuarios.asyncUpdate({tipo:"vip"}, {$set:{comandos_dia : 0}}, {multi: true, upsert: true})
-        db.usuarios.asyncUpdate({tipo:"dono"}, {$set:{comandos_dia : 0}}, {multi: true, upsert: true})
+        db.usuarios.asyncUpdate({}, {$set:{comandos_dia : 0}}, {multi: true})
     },
     resetarComandosDiaUsuario: async(id_usuario) =>{
         db.usuarios.loadDatabase()
@@ -103,7 +101,7 @@ module.exports = {
             bemvindo: {status: false, msg: ""},
             antifake: false,
             antilink: false,
-            antiflood: {status: false , max: 10, msgs: []},
+            antiflood: {status: false , max: 10, intervalo:10, msgs: []},
             voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
             contador: {status:false, inicio: ''},
             enquete: {status: false, pergunta: "", opcoes: []},
@@ -112,6 +110,22 @@ module.exports = {
         db.grupos.loadDatabase()
         await db.grupos.asyncInsert(cadastro_grupo)
     },
+
+    resetarGrupos: async()=>{
+        db.grupos.loadDatabase()
+        db.grupos.asyncUpdate({}, 
+        {$set: {
+        bemvindo: {status: false, msg:""},
+        antifake: false,
+        antilink: false,
+        antiflood: {status: false , max: 10, intervalo: 10, msgs: []},
+        voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
+        contador: {status:false, inicio: ''},
+        enquete: {status: false, pergunta: "", opcoes: []},
+        block_cmds: []
+        }}, {multi: true})
+    },
+
     obterGrupo: async(id_grupo)=>{
         db.grupos.loadDatabase()
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
@@ -127,28 +141,18 @@ module.exports = {
     },
     alterarAntiLink: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({id_grupo}, {$set:{antilink: status}}, {upsert: true})
+        db.grupos.asyncUpdate({id_grupo}, {$set:{antilink: status}})
     },
     alterarContador: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()
         let data = new Date()
-        let mes = data.getMonth()+1
-        let dia = (data.getDate().toString().length == 1) ? `0${data.getDate()}` : data.getDate()
-        mes = (mes.toString.length == 1) ? `0${mes}` : mes
-        let minutos = (data.getMinutes().toString().length == 1) ? `0${data.getMinutes()}` : data.getMinutes()
-        let segundos = (data.getSeconds().toString().length == 1) ? `0${data.getSeconds()}` : data.getSeconds()
-        let data_atual = (status) ? `${dia}/${mes}/${data.getFullYear()} - ${data.getHours()}:${minutos}:${segundos}` : ''
+        let dia = `0${data.getDate()}`, mes = `0${data.getMonth()+1}`, horas = `0${data.getHours()}`, minutos = `0${data.getMinutes()}`, segundos = `0${data.getSeconds()}`
+        let data_atual = (status) ? `${dia.substr(-2)}/${mes.substr(-2)}/${data.getFullYear()} - ${horas.substr(-2)}:${minutos.substr(-2)}:${segundos.substr(-2)}` : ''
         db.grupos.asyncUpdate({id_grupo}, {$set:{"contador.status":status, "contador.inicio":data_atual}})
     },
-    alterarAntiFlood: async(id_grupo, status = true, max = 10)=>{
+    alterarAntiFlood: async(id_grupo, status = true, max = 10, intervalo=10)=>{
         db.grupos.loadDatabase()
-        let arrayMsg = []
-        if(status){
-            for (let i = 0; i < max; i++){
-                arrayMsg.push(`msg${i}`)
-            }
-        }
-        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.status":status, "antiflood.max":max, "antiflood.msgs": arrayMsg}})
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.status":status, "antiflood.max":parseInt(max), "antiflood.intervalo":parseInt(intervalo),"antiflood.msgs": []}})
     },
     alterarEnquete: async(id_grupo,status, pergunta= "", opcoes=[])=>{
         db.grupos.loadDatabase()
@@ -168,30 +172,50 @@ module.exports = {
     addMsgFlood: async(id_grupo, usuario_msg)=>{
         db.grupos.loadDatabase()
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
-        let max_msg = grupo_info.antiflood.max
-        await db.grupos.asyncUpdate({id_grupo}, {$pop: {"antiflood.msgs" : -1}})
-        await db.grupos.asyncUpdate({id_grupo}, {$push: {"antiflood.msgs":usuario_msg}})
-        let grupo_info_atualizado  = await db.grupos.asyncFindOne({id_grupo})
-        let count = 0
-        grupo_info_atualizado.antiflood.msgs.forEach(msg =>{
-            if (msg == usuario_msg) count++
-        })
-        return count == max_msg
-    },
-    resetMsgFlood: async(id_grupo)=>{
-        db.grupos.loadDatabase()
-        let grupo_info = await db.grupos.asyncFindOne({id_grupo})
-        let max_msg = grupo_info.antiflood.max
-        let arrayMsg = []
-        for (let i = 0; i < max_msg; i++){
-            arrayMsg.push(`msg${i}`)
+        let timestamp_atual = Math.round(new Date().getTime()/1000)
+
+        //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
+        for(let i = 0; i < grupo_info.antiflood.msgs.length; i++){
+            if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)
+             
         }
-        db.grupos.asyncUpdate({id_grupo}, {$set:{"antiflood.msgs": arrayMsg}})
+        
+        //PESQUISA O INDICE DO USUARIO
+        let usuarioIndex = grupo_info.antiflood.msgs.findIndex(usuario=> usuario.id_usuario == usuario_msg)
+
+        //SE O USUARIO JÁ ESTIVER NA LISTA
+        if(usuarioIndex != -1){
+            //INCREMENTA A CONTAGEM
+            grupo_info.antiflood.msgs[usuarioIndex].qtd++
+            let max_msg = grupo_info.antiflood.max
+            if(grupo_info.antiflood.msgs[usuarioIndex].qtd >= max_msg){
+                grupo_info.antiflood.msgs.splice(usuarioIndex,1)
+                //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
+                await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
+                return true
+            } else{
+                //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
+                await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
+                return false
+            }
+        } else {
+            //ADICIONA O USUARIO NA LISTA
+            grupo_info.antiflood.msgs.push({
+                id_usuario: usuario_msg,
+                expiracao: timestamp_atual + grupo_info.antiflood.intervalo,
+                qtd: 1
+            })
+            //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
+            await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
+            return false
+        }
     },
+
     alterarVoteban: async(id_grupo, status = true, max = 5, usuario = "")=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{"voteban.status":status, "voteban.max":max, "voteban.usuario":usuario, "voteban.votos":0, "voteban.votou":[]}})
     },
+
     addVoto: async(id_grupo, id_usuario)=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$inc:{"voteban.votos": 1}})
@@ -199,20 +223,7 @@ module.exports = {
         let grupo_info_atualizado  = await db.grupos.asyncFindOne({id_grupo})
         return (grupo_info_atualizado.voteban.max == grupo_info_atualizado.voteban.votos)
     },
-    resetarGrupos: async()=>{
-        db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({}, 
-        {$set: {
-        bemvindo: {status: false, msg:""},
-        antifake: false,
-        antilink: false,
-        antiflood: {status: false , max: 10, msgs: []},
-        voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
-        contador: {status:false, inicio: ''},
-        enquete: {status: false, pergunta: "", opcoes: []},
-        block_cmds: []
-        }}, {multi: true})
-    },
+
     //BLOQUEIO DE COMANDOS
     addBlockedCmd: async(id_grupo, cmds)=>{
         db.grupos.loadDatabase()

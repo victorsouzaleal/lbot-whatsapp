@@ -96,7 +96,9 @@ Na primeira inicialização o script criará os arquivos necessários para o fun
 |       ✅        |   Limpar todos os chats              |
 |       ✅        |   Broadcast - Anuncio Geral                     |
 |       ✅        |   Bloquear/Desbloquear usuário                     |
-|       ✅        |   Sistema VIP/ Comandos diários             |
+|       ✅        |   Sistema Comum/VIP         |
+|       ✅        |   Limitador comandos diários (por usuário)            |
+|       ✅        |   Limitador de comandos por minuto (por usuário)          |
 |       ✅        |   Sair do grupo                     |
 |       ✅        |   Limpar somente chat de contatos                 |
 |       ✅        |   Obter lista de usuários bloqueados                |
