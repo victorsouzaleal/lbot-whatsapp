@@ -10,10 +10,12 @@ db.contador = new AsyncNedb({filename : './database/db/contador.db'})
 module.exports = {
     // ######################## FUNCOES USUARIO #####################
     obterUsuario : async (id_usuario) =>{
+        db.usuarios.loadDatabase()
         let usuario = await db.usuarios.asyncFindOne({id_usuario : id_usuario})
         return usuario
     },
     obterUsuariosVip : async () =>{
+        db.usuarios.loadDatabase()
         let usuarios = await db.usuarios.asyncFind({tipo: "vip"})
         return usuarios
     },
@@ -27,6 +29,7 @@ module.exports = {
         await db.usuarios.asyncUpdate({id_usuario}, {$set:{nome}})
     },
     registrarUsuarioComum : async(id_usuario, nome) =>{
+        db.usuarios.loadDatabase()
         let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
         var cadastro_usuario = {
             id_usuario,
@@ -36,7 +39,6 @@ module.exports = {
             max_comandos_dia : limite_diario.qtd,
             tipo: "comum"
         }
-        db.usuarios.loadDatabase()
         await db.usuarios.asyncInsert(cadastro_usuario)
     },
     registrarDono: async(id_usuario, nome)=>{

@@ -7,7 +7,7 @@ module.exports = options = (headless, start) => {
         restartOnCrash: start,
         cacheEnabled: false,
         useChrome: true,
-        stickerServerEndpoint: false,
+        stickerServerEndpoint: true,
         killProcessOnBrowserClose: true,
         throwErrorOnTosBlock: false,
         chromiumArgs: [

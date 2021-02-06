@@ -254,7 +254,7 @@ module.exports = utilidades = async(client,message) => {
             if(dados_s.tipo === "image"){
                 const mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
                 const imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
-                client.sendImageAsSticker(from, imageBase64)
+                client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true})
             } else {
                 return client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
             }
@@ -285,7 +285,7 @@ module.exports = utilidades = async(client,message) => {
                 const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
                 client.reply(from, msgs_texto().geral.espera , id)
                 sticker.stickerGif(mediaData,dados_sgif.mimetype).then((gifB64)=>{
-                    client.sendImageAsSticker(from, gifB64)
+                    client.sendImageAsSticker(from, gifB64,{author: "LBOT", pack: "LBOT Sticker Animado", keepScale: true})
                 }).catch(()=>{
                     client.reply(from, msgs_texto().utilidades.sticker.video_longo , id)
                 })
@@ -302,7 +302,7 @@ module.exports = utilidades = async(client,message) => {
         if(body.slice(5).length > 40) return client.reply(from,msgs_texto().utilidades.tps.texto_longo,id)
         await client.reply(from, msgs_texto().utilidades.tps.espera,id)
         sticker.textoParaSticker(body.slice(5)).then((base64)=>{
-            client.sendImageAsSticker(from, base64)
+            client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true})
         }).catch(msg=>{
             client.reply(from,msg,id)
         })
@@ -319,7 +319,7 @@ module.exports = utilidades = async(client,message) => {
                 var mediaData = await decryptMedia(msgDataSsf.mensagem, uaOverride)
                 var imageBase64 = `data:${msgDataSsf.mimetype};base64,${mediaData.toString('base64')}`
                 sticker.stickerSemFundo(imageBase64,msgDataSsf.mimetype).then(base64 =>{
-                    client.sendImageAsSticker(from, base64)
+                    client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true})
                 }).catch(err =>{
                     switch(err){
                         case 'insufficient_credits':

@@ -409,7 +409,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(!vb_status.voteban.status) {
                 client.reply(from, msgs_texto().grupo.voteban.sem_votacao, id)
             } else {
-                client.sendTextWithMentions(from, `Atualmente existe um membro em votação : @${vb_status.voteban.usuario}\n\nDigite *!votar* para votar nestre membro.`)
+                client.sendTextWithMentions(from, `🗳️ Atualmente existe um membro em votação : @${vb_status.voteban.usuario}\n\nDigite *!votar* para votar nestre membro.`)
             }
             break
         
@@ -419,12 +419,12 @@ module.exports = admin_grupo = async(client,message) => {
             if(!votar_status.voteban.status) return client.reply(from, msgs_texto().grupo.voteban.sem_votacao , id)
             if(votar_status.voteban.votou.indexOf(sender.id) != -1) return client.reply(from, msgs_texto().grupo.voteban.ja_votou ,id)
             let voteban  = await db.addVoto(groupId,sender.id)
-            await client.reply(from, `[VOTE BAN] Você votou com sucesso no membro em votação. (${votar_status.voteban.votos + 1}/${votar_status.voteban.max} Votos)`,id)
+            await client.sendTextWithMentions(from, `[VOTE BAN] ✅ Olá @${sender.id}, você votou com sucesso no membro em votação @${votar_status.voteban.usuario.replace("@c.us","")}. (${votar_status.voteban.votos + 1}/${votar_status.voteban.max} Votos)`)
             if(voteban){
                 if (isBotGroupAdmins) {
                     await client.removeParticipant(from, votar_status.voteban.usuario)
                     .then(()=>{
-                        client.sendTextWithMentions(from, `[VOTE BAN] O membro @${votar_status.voteban.usuario} que estava em votação foi banido com sucesso. VIVA A DEMOCRACIA!`)
+                        client.sendTextWithMentions(from, `[VOTE BAN] ✅ O membro @${votar_status.voteban.usuario} que estava em votação foi banido com sucesso. VIVA A DEMOCRACIA!`)
                     }).catch(()=>{
                         client.sendText(from, msgs_texto().grupo.voteban.erro_ban)
                     })
@@ -434,7 +434,8 @@ module.exports = admin_grupo = async(client,message) => {
                 await db.alterarVoteban(groupId,false)
             }
 
-            break   
+            break
+
         case "!vb":
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
             if (!isBotGroupAdmins) return client.reply(from,msgs_texto().permissao.bot_admin, id)
@@ -448,10 +449,10 @@ module.exports = admin_grupo = async(client,message) => {
                 if(isNaN(args[3])) return client.reply(from, msgs_texto().grupo.voteban.erro_num_votos ,id)
                 if(args[3] < 3 || args[3]> 30) return client.reply(from, msgs_texto().grupo.voteban.limit_num_votos ,id)
                 await db.alterarVoteban(groupId,true,args[3],mentionedJidList[0])
-                client.sendTextWithMentions(from, `[VOTE BAN] Uma votação foi aberta para expulsar o membro @${mentionedJidList[0]}. (0/${args[3]} Votos)\n\nO comando *!votar* foi habilitado.`)
+                client.sendTextWithMentions(from, `[VOTE BAN] 🗳️ Uma votação foi aberta para expulsar o membro @${mentionedJidList[0]}. (0/${args[3]} Votos)\n\nO comando *!votar* foi habilitado.`)
             } else if(args[1] == "off"){
                 if (!vtb_status.voteban.status) return client.reply(from,msgs_texto().grupo.voteban.sem_votacao,id)
-                client.sendTextWithMentions(from, `[VOTE BAN] A votação para expulsar @${vtb_status.voteban.usuario} foi encerrada.`)
+                client.sendTextWithMentions(from, `[VOTE BAN] 🗳️ A votação para expulsar @${vtb_status.voteban.usuario} foi encerrada.`)
                 await db.alterarVoteban(groupId,false)
             } else {
                 client.reply(from,msgs_texto().grupo.voteban.cmd_erro,id)
@@ -615,12 +616,15 @@ module.exports = admin_grupo = async(client,message) => {
             await client.demoteParticipant(groupId, mentionedJidList[0])
             await client.sendTextWithMentions(from, `✅ Sucesso! O membro @${mentionedJidList[0]} foi rebaixado para MEMBRO.`)
             break
+
         case '!apg':
             if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin, id)
             if (!quotedMsg) return client.reply(from, msgs_texto().grupo.apagar.cmd_erro, id)
             if (!quotedMsgObj.fromMe) return client.reply(from, msgs_texto().grupo.apagar.minha_msg, id)
-            client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
+            client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false).catch(()=>{
+                client.reply(from, "A mensagem que você quer apagar não é recente", id)
+            })
             break
 
         case '!f':

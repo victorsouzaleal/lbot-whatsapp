@@ -6,7 +6,7 @@ const moment = require('moment-timezone')
 const color = require('./lib/color')
 const db = require('./database/database')
 moment.tz.setDefault('America/Sao_Paulo')
-const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite} = require("./lib/bot")
+const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,botLimitarMensagensPv} = require("./lib/bot")
 
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
@@ -44,17 +44,18 @@ module.exports = msgHandler = async (client, message) => {
         const time = moment(t * 1000).format('DD/MM HH:mm:ss')
         const blockNumber = await client.getBlockedIds()
         const isBlocked = blockNumber.includes(sender.id)
+        const comandoExiste = (lista_comandos.utilidades.includes(command) || lista_comandos.admin_grupo.includes(command) || lista_comandos.diversao.includes(command) ||lista_comandos.dono_bot.includes(command)) 
         if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname))
         if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname), 'in', color(formattedTitle))
        
         //SE NÃO FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
         if (!isGroupMsg && isBlocked) return
-        
+
         //SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, ADICIONA A CONTAGEM
         if(isGroupMsg && g_info.contador.status) await db.addContagem(groupId,sender.id,type)
 
         //SE FOR ALGUM COMANDO EXISTENTE
-        if(lista_comandos.utilidades.includes(command) || lista_comandos.admin_grupo.includes(command) || lista_comandos.diversao.includes(command) ||lista_comandos.dono_bot.includes(command)){
+        if(comandoExiste){
             let registrado = await db.verificarRegistro(sender.id)
             //SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
             if(!registrado) {
@@ -69,8 +70,10 @@ module.exports = msgHandler = async (client, message) => {
             await db.atualizarNome(sender.id, pushname)
 
             //SE FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
-            if (isGroupMsg && isBlocked) return
-
+            if (isGroupMsg && isBlocked) {
+                return
+            }
+            
             //LIMITACAO DE COMANDO POR MINUTO
             if(botInfo().limitecomandos.status){
                 let usuario = await db.obterUsuario(sender.id)
@@ -106,6 +109,21 @@ module.exports = msgHandler = async (client, message) => {
           
             //ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
             await botInfoUpdate()
+
+        } else {// SE NÃO FOR UM COMANDO EXISTENTE
+
+            //SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
+            if(!isGroupMsg && botInfo().limitarmensagens.status){
+                let u = await db.obterUsuario(sender.id)
+                let tipo_usuario_pv = (u != null) ? u.tipo : "comum"
+                let limitarMensagens = botLimitarMensagensPv(sender.id, tipo_usuario_pv)
+                if(limitarMensagens.bloquear_usuario) {
+                    client.sendText(sender.id, limitarMensagens.msg).then(async()=>{
+                        await client.contactBlock(sender.id)
+                    })
+                    return 
+                }
+            }
         }
 
         //APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
@@ -118,7 +136,7 @@ module.exports = msgHandler = async (client, message) => {
         } else if(lista_comandos.dono_bot.includes(command)){
             await dono_bot(client,message)
         } else {
-            //if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite o comando *!ajuda* para mais informações.",id)
+            if(!isGroupMsg) return client.reply(from, "[❗] Parece que você não digitou corretamente o comando ou não sabe como usá-los, digite o comando *!ajuda* para mais informações.",id)
         }
 
     } catch (err) {

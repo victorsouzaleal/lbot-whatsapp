@@ -4,7 +4,7 @@ const {msgs_texto} = require('../lib/msgs')
 const db = require('../database/database')
 const fs = require("fs-extra")
 const path = require("path")
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario} = require('../lib/bot')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv} = require('../lib/bot')
 
 
 module.exports = dono_bot = async(client,message) => {
@@ -38,11 +38,13 @@ module.exports = dono_bot = async(client,message) => {
             msg_info += `*Nome do bot* : ${info_bot.nome}\n`
             msg_info += `*Online desde* : ${info_bot.iniciado}\n`
             msg_info += "*Limite diário* : "
-            msg_info += (info_bot.limite_diario.status)? ` ✅\n - ${info_bot.limite_diario.qtd} Cmds/dia \n - Reseta *${dia.substr(-2)}/${mes.substr(-2)}/${ano} às ${horas.substr(-2)}:${minutos.substr(-2)}:${segundos.substr(-2)}*\n` : " ❌\n"
-            msg_info += "*Limitador comandos/minuto* : " 
-            msg_info += (info_bot.limite_diario.status) ? ` ✅\n - ${info_bot.limitecomandos.cmds_minuto_max}/minuto \n - Tempo de bloqueio : ${info_bot.limitecomandos.tempo_bloqueio} segundos\n` : " ❌\n"
-            msg_info += `*Quantidade de pessoas bloqueadas* : ${blockNumber.length}\n`
-            msg_info += `*Comandos executados* : ${info_bot.cmds_executados}\n`
+            msg_info += (info_bot.limite_diario.status)? ` ✅\n - *${info_bot.limite_diario.qtd}* Cmds/dia por usuário\n - Reseta *${dia.substr(-2)}/${mes.substr(-2)}/${ano} às ${horas.substr(-2)}:${minutos.substr(-2)}:${segundos.substr(-2)}*\n` : " ❌\n"
+            msg_info += "*Taxa máxima comandos/minuto* : " 
+            msg_info += (info_bot.limitecomandos.status) ? ` ✅\n - *${info_bot.limitecomandos.cmds_minuto_max}* Cmds/minuto por usuário\n - Tempo de bloqueio : *${info_bot.limitecomandos.tempo_bloqueio}* segundos\n` : " ❌\n"
+            msg_info += "*Taxa máxima de mensagens privadas* : "
+            msg_info += (info_bot.limitarmensagens.status) ? ` ✅\n - *${info_bot.limitarmensagens.max}* Msgs a cada *${info_bot.limitarmensagens.intervalo}* s por usuário\n` : " ❌\n"
+            msg_info += `*Quantidade de pessoas bloqueadas* : *${blockNumber.length}* pessoas\n`
+            msg_info += `*Comandos executados* : *${info_bot.cmds_executados}* Cmds\n`
             msg_info += `*Contato do criador* : wa.me/${ownerNumber[0]}\n`
             client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
             break
@@ -185,7 +187,7 @@ module.exports = dono_bot = async(client,message) => {
             }
             break
 
-        case "!limitador":
+        case "!taxalimite":
             if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
             if(args.length === 1) return client.reply(from,msgs_texto().admin.limitecomandos.cmd_erro,id)
             let limitador_estado = args[1]
@@ -203,6 +205,28 @@ module.exports = dono_bot = async(client,message) => {
                 client.reply(from, msgs_texto().admin.limitecomandos.desativado,id)
             } else {
                 client.reply(from,msgs_texto().admin.limitecomandos.cmd_erro,id)
+            }
+
+            break
+        
+        case "!limitarmsgs":
+            if (!isOwner) return client.reply(from, msgs_texto().permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from,msgs_texto().admin.limitarmsgs.cmd_erro,id)
+            let limitarmsgs_estado = args[1]
+            if(limitarmsgs_estado == "on"){
+                if(botInfo().limitarmensagens.status) return client.reply(from,msgs_texto().admin.limitarmsgs.ja_ativado,id)
+                if(args.length !== 4) return client.reply(from,msgs_texto().admin.limitarmsgs.cmd_erro,id)
+                let max_msg = args[2], msgs_intervalo = args[3]
+                if(isNaN(max_msg) || max_msg < 3) return client.reply(from,msgs_texto().admin.limitarmsgs.qtd_invalida,id)
+                if(isNaN(msgs_intervalo) || msgs_intervalo < 10) return client.reply(from,msgs_texto().admin.limitarmsgs.tempo_invalido,id)
+                botAlterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
+                client.reply(from, msgs_texto().admin.limitarmsgs.ativado,id)
+            } else if(limitarmsgs_estado == "off"){
+                if(!botInfo().limitarmensagens.status) return client.reply(from,msgs_texto().admin.limitarmsgs.ja_desativado,id)
+                botAlterarLimitarMensagensPv(false)
+                client.reply(from, msgs_texto().admin.limitarmsgs.desativado,id)
+            } else {
+                client.reply(from,msgs_texto().admin.limitarmsgs.cmd_erro,id)
             }
 
             break
@@ -420,12 +444,15 @@ module.exports = dono_bot = async(client,message) => {
             switch(args[1]){
                 case 'online':
                     client.setMyStatus("< 🟢 Online />")
+                    client.reply(from,msgs_texto().admin.estado.sucesso,id)
                     break
                 case 'offline':
                     client.setMyStatus("< 🔴 Offline />")
+                    client.reply(from,msgs_texto().admin.estado.sucesso,id)
                     break    
                 case 'manutencao':
                     client.setMyStatus("< 🟡 Manutenção />")
+                    client.reply(from,msgs_texto().admin.estado.sucesso,id)
                     break
                 default:
                     client.reply(from,msgs_texto().admin.estado.cmd_erro,id)
