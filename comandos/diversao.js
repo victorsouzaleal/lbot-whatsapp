@@ -21,41 +21,41 @@ module.exports = diversao = async(client,message) => {
 
     switch(command){
         case '!detector' :
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            if(!quotedMsg) return client.reply(from, msgs_texto().diversao.detector.cmd_erro , id)
-            await client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto().diversao.detector.espera, id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if(!quotedMsg) return client.reply(from, msgs_texto.diversao.detector.cmd_erro , id)
+            await client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto.diversao.detector.espera, id)
             const imgs_detector = ['verdade.png','vaipra.png','mentiroso.png','meengana.png','kao.png','incerteza.png','estresse.png','conversapraboi.png']
             let aleatorio_detector = Math.floor(Math.random() * imgs_detector.length)
             await client.sendFile(from, `./media/img/detector/${imgs_detector[aleatorio_detector]}`, 'detector.png', "", quotedMsgObj.id)
             break
         
         case '!viadometro' :
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            const viadometro_resps = msgs_texto().diversao.viadometro.respostas
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            const viadometro_resps = msgs_texto.diversao.viadometro.respostas
             let aleatorio = Math.floor(Math.random() * viadometro_resps.length)
             if(mentionedJidList.length == 1){
                 if(ownerNumber.includes(mentionedJidList[0].replace(/@c.us/g, ''))) aleatorio = 0
                 client.reply(from,`🧩 *VIADÔMETRO* - ${viadometro_resps[aleatorio]}`, id)
             } else if (mentionedJidList.length > 1){
-                client.reply(from, msgs_texto().diversao.viadometro.apenas_um, id)
+                client.reply(from, msgs_texto.diversao.viadometro.apenas_um, id)
             } else {
-                if(!quotedMsg) return client.reply(from, msgs_texto().diversao.viadometro.cmd_erro, id)
+                if(!quotedMsg) return client.reply(from, msgs_texto.diversao.viadometro.cmd_erro, id)
                 if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) aleatorio = 0
                 client.reply(from,`🧩 *VIADÔMETRO* - ${viadometro_resps[aleatorio]}`, quotedMsgObj.id)
             }
             break
         
         case '!bafometro' :
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            const bafometro_resps = msgs_texto().diversao.bafometro.respostas
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            const bafometro_resps = msgs_texto.diversao.bafometro.respostas
             let bafometro_aleatorio = Math.floor(Math.random() * bafometro_resps.length)
             if(mentionedJidList.length == 1){
                 if(ownerNumber.includes(mentionedJidList[0].replace(/@c.us/g, ''))) bafometro_aleatorio = 0
                 client.reply(from,`🧩 *BAFÔMETRO* - ${bafometro_resps[bafometro_aleatorio]}`, id)
             } else if (mentionedJidList.length > 1){
-                client.reply(from, msgs_texto().diversao.bafometro.apenas_um, id)
+                client.reply(from, msgs_texto.diversao.bafometro.apenas_um, id)
             } else {
-                if(!quotedMsg) return client.reply(from, msgs_texto().diversao.bafometro.cmd_erro, id)
+                if(!quotedMsg) return client.reply(from, msgs_texto.diversao.bafometro.cmd_erro, id)
                 if(ownerNumber.includes(quotedMsgObj.author.replace(/@c.us/g, ''))) bafometro_aleatorio = 0
                 client.reply(from,`🧩 *BAFÔMETRO* - ${bafometro_resps[bafometro_aleatorio]}`, quotedMsgObj.id)
             }
@@ -75,21 +75,21 @@ module.exports = diversao = async(client,message) => {
 
         case '!roletrando':
         case '!roletarussa':
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
-            if (!isBotGroupAdmins) return client.reply(from,msgs_texto().permissao.bot_admin, id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+            if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
             let membros_id = await client.getGroupMembersId(groupId)
             membros_id.splice(membros_id.indexOf(groupOwner),1)
             membros_id.splice(membros_id.indexOf(botNumber+'@c.us'),1)
             let membro_id_index = Math.floor(Math.random() * membros_id.length)
-            await client.reply(from, msgs_texto().diversao.roletarussa.espera , id)
+            await client.reply(from, msgs_texto.diversao.roletarussa.espera , id)
             await client.sendTextWithMentions(from,`🔫 Você foi o escolhido @${membros_id[membro_id_index].replace(/@c.us/g, '')}, até a próxima!`).then(async ()=>{
                 await client.removeParticipant(groupId, membros_id[membro_id_index])
             })
             break
         
         case '!casal':
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             let casal_membros_id = await client.getGroupMembersId(groupId)
             const p1_index = Math.floor(Math.random() * casal_membros_id.length)
             const pessoa1 = casal_membros_id[p1_index]
@@ -100,9 +100,9 @@ module.exports = diversao = async(client,message) => {
             break
 
         case '!gadometro':
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, msgs_texto().diversao.gadometro.cmd_erro , id) 
-            const gadometro_resps = msgs_texto().diversao.gadometro.respostas 
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, msgs_texto.diversao.gadometro.cmd_erro , id) 
+            const gadometro_resps = msgs_texto.diversao.gadometro.respostas 
             let gado_aleatorio = Math.floor(Math.random() * gadometro_resps.length)
             let alvo = ''
 
@@ -121,8 +121,8 @@ module.exports = diversao = async(client,message) => {
             break
 
         case '!top5':
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            if(args.length === 1) return client.reply(from,msgs_texto().diversao.top5.cmd_erro , id)
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if(args.length === 1) return client.reply(from,msgs_texto.diversao.top5.cmd_erro , id)
             let tema_ranking = body.slice(6)
             let ranking_membros_id = await client.getGroupMembersId(groupId)
             let msg_top5 = `╔══✪〘🏆 TOP 5 ${tema_ranking} 🏆 〙\n╠\n`
@@ -150,9 +150,9 @@ module.exports = diversao = async(client,message) => {
             break
 
         case '!par':
-            if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
-            if(mentionedJidList.length !== 2) return client.reply(from, msgs_texto().diversao.par.cmd_erro , id)
-            const par_resps = msgs_texto().diversao.par.respostas
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if(mentionedJidList.length !== 2) return client.reply(from, msgs_texto.diversao.par.cmd_erro , id)
+            const par_resps = msgs_texto.diversao.par.respostas
             let par_aleatorio = Math.floor(Math.random() * par_resps.length)
             client.sendTextWithMentions(from, `👩‍❤️‍👨 PAR - @${mentionedJidList[0].replace(/@c.us/g, '')} & @${mentionedJidList[1].replace(/@c.us/g, '')}\n\n${par_resps[par_aleatorio]}`)
             break

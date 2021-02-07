@@ -20,6 +20,8 @@ media/img/noBg.png
 media/output.gif
 media/tts/*.mp3
 media/*.mp3
+media/audios/editados/*.mp3
+media/audios/originais/*.mp3
 
 
 #Ignore DB files

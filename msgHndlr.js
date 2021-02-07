@@ -96,8 +96,8 @@ module.exports = msgHandler = async (client, message) => {
                     await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
                 } else { //SE ULTRAPASSAR
                     return client.reply(from, 
-                    (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${botInfo().limite_diario_usuarios} comandos por dia.`
-                    : `[❗]  Você ultrapassou seu limite diário de ${botInfo().limite_diario_usuarios} comandos por dia.`
+                    (pushname != undefined) ? `[❗]  ${pushname} - você ultrapassou seu limite diário de ${botInfo().limite_diario.qtd} comandos por dia.`
+                    : `[❗]  Você ultrapassou seu limite diário de ${botInfo().limite_diario.qtd} comandos por dia.`
                     ,id) 
                 }
             } else if(botInfo().limite_diario.status && lista_comandos.excecoes_contagem.includes(command)) {

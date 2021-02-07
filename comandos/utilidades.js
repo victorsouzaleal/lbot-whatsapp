@@ -39,25 +39,25 @@ module.exports = utilidades = async(client,message) => {
         break
     
     case "!reportar":
-        if(args.length == 1) return client.reply(from,msgs_texto().utilidades.reportar.cmd_erro ,id)
+        if(args.length == 1) return client.reply(from,msgs_texto.utilidades.reportar.cmd_erro ,id)
         let msg_report = "[ 🤖 REPORTAR ⚙️]\n\n"
         msg_report += `Usuário : ${pushname}\n`
         msg_report += `Contato: http://wa.me/${sender.id.replace("@c.us","")}\n`
         msg_report += `Mensagem : ${body.slice(10)}\n`
         client.sendText(numero_dono[0]+"@c.us",msg_report)
-        client.reply(from,msgs_texto().utilidades.reportar.sucesso,id)
+        client.reply(from,msgs_texto.utilidades.reportar.sucesso,id)
         break
     
     case "!ddd":
         let ddd_selecionado = ""
         if(quotedMsg){
             let codigo_brasileiro = quotedMsgObj.author.slice(0,2)
-            if(codigo_brasileiro != "55") return client.reply(from, msgs_texto().utilidades.ddd.somente_br ,id)
+            if(codigo_brasileiro != "55") return client.reply(from, msgs_texto.utilidades.ddd.somente_br ,id)
             ddd_selecionado = quotedMsgObj.author.slice(2,4)
         } else if(args.length > 1 && args[1].length == 2){
             ddd_selecionado = args[1]
         } else {
-            return client.reply(from, msgs_texto().utilidades.ddd.cmd_erro, id)
+            return client.reply(from, msgs_texto.utilidades.ddd.cmd_erro, id)
         }
         const estados = JSON.parse(fs.readFileSync('./database/json/ddd.json')).estados
         estados.forEach(async (estado) =>{
@@ -65,8 +65,69 @@ module.exports = utilidades = async(client,message) => {
         })
         break
 
+    case "!audio":
+        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.audio.cmd_erro, id)
+        if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
+            const mediaData = await decryptMedia(quotedMsg, uaOverride)
+            let timestamp = Math.round(new Date().getTime()/1000)
+            fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
+            let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
+            servicos.obterAudioEditado(caminho, args[1]).then(audio_caminho=>{
+                client.sendFile(from, audio_caminho, "audio.mp3","", id).then(()=>{
+                    fs.unlinkSync(audio_caminho)
+                    fs.unlinkSync(caminho)
+                })
+            }).catch(msg=>{
+                fs.unlinkSync(caminho)
+                client.reply(from, msg, id)
+            })
+        } else {
+            client.reply(from, msgs_texto.utilidades.audio.cmd_erro, id)
+        }
+        break
+    
+    case "!audiograve":
+        if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
+            const mediaData = await decryptMedia(quotedMsg, uaOverride)
+            console.log(quotedMsg.mimetype)
+            let timestamp = Math.round(new Date().getTime()/1000)
+            fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
+            let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
+            servicos.obterAudioEditado(caminho, "grave").then(audio_caminho=>{
+                client.sendFile(from, audio_caminho, "audiograve.mp3","", id).then(()=>{
+                    fs.unlinkSync(audio_caminho)
+                    fs.unlinkSync(caminho)
+                })
+            }).catch(()=>{
+                console.log("Erro")
+            })
+        } else {
+            return client.reply(from, "[ERRO] Você deve responder a um audio com *!audiograve*", id)
+        }
+        break
+
+    case "!audioagudo":
+        if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
+            const mediaData = await decryptMedia(quotedMsg, uaOverride)
+            console.log(quotedMsg.mimetype)
+            let timestamp = Math.round(new Date().getTime()/1000)
+            fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
+            let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
+            servicos.obterAudioEditado(caminho, "agudo").then(audio_caminho=>{
+                client.sendFile(from, audio_caminho, "audioagudo.mp3","", id).then(()=>{
+                    fs.unlinkSync(audio_caminho)
+                    fs.unlinkSync(caminho)
+                })
+            }).catch(()=>{
+                console.log("Erro")
+            })
+        } else {
+            return client.reply(from, "[ERRO] Você deve responder a um audio com *!audiograve*", id)
+        }
+        break
+
     case "!clima":
-        if(args.length === 1) return client.reply(from, msgs_texto().utilidades.clima.cmd_erro ,id)
+        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.clima.cmd_erro ,id)
         servicos.obterClima(body.slice(7)).then(clima=>{
             client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima.msg, id)
         }).catch(msg=>{
@@ -75,7 +136,7 @@ module.exports = utilidades = async(client,message) => {
         break
 
     case "!moeda":
-        if(args.length !== 3) return client.reply(from, msgs_texto().utilidades.moeda.cmd_erro, id)
+        if(args.length !== 3) return client.reply(from, msgs_texto.utilidades.moeda.cmd_erro, id)
         servicos.obterConversaoMoeda(args[1],args[2]).then(res=>{
             client.reply(from, `💵 Atualmente *${res.valor_inserido} ${res.moeda}* está valendo *R$ ${res.valor_reais}*\n\nInformação atualizada : *${res.data_atualizacao}*`,id)
         }).catch(msg=>{
@@ -84,7 +145,7 @@ module.exports = utilidades = async(client,message) => {
         break
 
     case "!google":
-        if (args.length === 1) return client.reply(from, msgs_texto().utilidades.google.cmd_erro , id)
+        if (args.length === 1) return client.reply(from, msgs_texto.utilidades.google.cmd_erro , id)
         servicos.obterPesquisaGoogle(body.slice(8)).then(resultados=>{
             let msg_resultado = `🔎 Resultados da pesquisa de : *${body.slice(8)}*🔎\n\n` 
             resultados.forEach(resultado =>{
@@ -99,7 +160,7 @@ module.exports = utilidades = async(client,message) => {
         break
 
      case '!rastreio':
-        if (args.length === 1) return client.reply(from, msgs_texto().utilidades.rastreio.cmd_erro, id)
+        if (args.length === 1) return client.reply(from, msgs_texto.utilidades.rastreio.cmd_erro, id)
         servicos.obterRastreioCorreios(body.slice(10)).then(dados=>{
             let dados_rastreio = "📦📦*RASTREIO*📦📦\n\n"
             dados.forEach(dado =>{
@@ -114,10 +175,10 @@ module.exports = utilidades = async(client,message) => {
         break
     
     case "!play":
-        if(args.length === 1) return client.reply(from,msgs_texto().utilidades.play.cmd_erro,id)
+        if(args.length === 1) return client.reply(from,msgs_texto.utilidades.play.cmd_erro,id)
         let play_video = await servicos.obterInfoVideo(body.slice(6))
-        if(play_video == null) return client.reply(from,msgs_texto().utilidades.play.nao_encontrado,id)
-        if(play_video.duration > 300000) return client.reply(from,msgs_texto().utilidades.play.limite,id)
+        if(play_video == null) return client.reply(from,msgs_texto.utilidades.play.nao_encontrado,id)
+        if(play_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.play.limite,id)
         client.reply(from,`[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\nTitulo: *${play_video.title}*\nDuração: *${play_video.durationFormatted}*`,id)
         servicos.obterYtMp3(play_video).then(mp3_path =>{
             client.sendFile(from, mp3_path, "musica.mp3","", id).then(()=>{
@@ -129,10 +190,10 @@ module.exports = utilidades = async(client,message) => {
         break
     
     case "!yt":
-        if(args.length === 1) return client.reply(from,msgs_texto().utilidades.yt.cmd_erro,id)
+        if(args.length === 1) return client.reply(from,msgs_texto.utilidades.yt.cmd_erro,id)
         let yt_video = await servicos.obterInfoVideo(body.slice(6))
-        if(yt_video == null) return client.reply(from,msgs_texto().utilidades.yt.nao_encontrado,id)
-        if(yt_video.duration > 300000) return client.reply(from,msgs_texto().utilidades.yt.limite,id)
+        if(yt_video == null) return client.reply(from,msgs_texto.utilidades.yt.nao_encontrado,id)
+        if(yt_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.yt.limite,id)
         client.reply(from,`[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n\nTitulo: *${yt_video.title}*\nDuração: *${yt_video.durationFormatted}*`,id)
         servicos.obterYtMp4Url(yt_video).then(video =>{
             client.sendFile(from, video.download, `${video.titulo}.mp4`,"", id)
@@ -142,6 +203,7 @@ module.exports = utilidades = async(client,message) => {
         break
     
     case '!img':
+        if(quotedMsg || type != "chat") return client.reply(from, msgs_texto.utilidades.img.cmd_erro , id)
         let qtd_Img = 1;
         let data_Img = ""
         if(!isNaN(args[1])){
@@ -151,17 +213,17 @@ module.exports = utilidades = async(client,message) => {
                     data_Img += `${args[i]} `
                 }
             } else {
-                return client.reply(from, msgs_texto().utilidades.img.qtd_imagem , id)
+                return client.reply(from, msgs_texto.utilidades.img.qtd_imagem , id)
             }
         } else {
             data_Img = body.slice(5)
         }
-        if (data_Img === '') return client.reply(from, msgs_texto().utilidades.img.tema_vazio , id)
-        if (data_Img.length > 500) return client.reply(from, msgs_texto().utilidades.img.tema_longo , id)
+        if (data_Img === '') return client.reply(from, msgs_texto.utilidades.img.tema_vazio , id)
+        if (data_Img.length > 500) return client.reply(from, msgs_texto.utilidades.img.tema_longo , id)
         servicos.obterImagens(data_Img,qtd_Img).then(imagens=>{
             imagens.forEach(imagem =>{
                 client.sendFileFromUrl(from, imagem , "foto.jpg" , "", (qtd_Img == 1) ? id : "").catch(()=>{
-                    client.sendText(from, msgs_texto().utilidades.img.erro_imagem)
+                    client.sendText(from, msgs_texto.utilidades.img.erro_imagem)
                 })
             })
         }).catch(msg=>{
@@ -256,10 +318,10 @@ module.exports = utilidades = async(client,message) => {
                 const imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
                 client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true})
             } else {
-                return client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
+                return client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
             }
         } else {
-            return client.reply(from, msgs_texto().utilidades.sticker.cmd_erro , id)
+            return client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
         }
         break
     
@@ -269,7 +331,7 @@ module.exports = utilidades = async(client,message) => {
             const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
             await client.sendFile(from,imageBase64,"sticker.jpg","",quotedMsgObj.id)
         } else {
-            client.reply(from, msgs_texto().utilidades.simg.cmd_erro, id)
+            client.reply(from, msgs_texto.utilidades.simg.cmd_erro, id)
         }
         break
 
@@ -283,24 +345,24 @@ module.exports = utilidades = async(client,message) => {
             }
             if((dados_sgif.mimetype === 'video/mp4' || dados_sgif.mimetype === 'image/gif') && dados_sgif.duracao < 10){
                 const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
-                client.reply(from, msgs_texto().geral.espera , id)
+                client.reply(from, msgs_texto.geral.espera , id)
                 sticker.stickerGif(mediaData,dados_sgif.mimetype).then((gifB64)=>{
                     client.sendImageAsSticker(from, gifB64,{author: "LBOT", pack: "LBOT Sticker Animado", keepScale: true})
                 }).catch(()=>{
-                    client.reply(from, msgs_texto().utilidades.sticker.video_longo , id)
+                    client.reply(from, msgs_texto.utilidades.sticker.video_longo , id)
                 })
             }else {
-                return client.reply(from, msgs_texto().utilidades.sticker.video_invalido, id)
+                return client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
             }
         } else {
-            return client.reply(from, msgs_texto().geral.erro, id)
+            return client.reply(from, msgs_texto.geral.erro, id)
         }
         break
 
     case "!tps":
-        if(args.length == 1 || quotedMsg || type != "chat") return client.reply(from,msgs_texto().utilidades.tps.cmd_erro,id)
-        if(body.slice(5).length > 40) return client.reply(from,msgs_texto().utilidades.tps.texto_longo,id)
-        await client.reply(from, msgs_texto().utilidades.tps.espera,id)
+        if(args.length == 1 || quotedMsg || type != "chat") return client.reply(from,msgs_texto.utilidades.tps.cmd_erro,id)
+        if(body.slice(5).length > 40) return client.reply(from,msgs_texto.utilidades.tps.texto_longo,id)
+        await client.reply(from, msgs_texto.utilidades.tps.espera,id)
         sticker.textoParaSticker(body.slice(5)).then((base64)=>{
             client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true})
         }).catch(msg=>{
@@ -323,20 +385,20 @@ module.exports = utilidades = async(client,message) => {
                 }).catch(err =>{
                     switch(err){
                         case 'insufficient_credits':
-                            client.reply(from,msgs_texto().utilidades.sticker.sem_credito,id)
+                            client.reply(from,msgs_texto.utilidades.sticker.sem_credito,id)
                             break
                         case 'auth_failed':
-                            client.reply(from,msgs_texto().utilidades.sticker.autenticacao,id)
+                            client.reply(from,msgs_texto.utilidades.sticker.autenticacao,id)
                             break
                         default:
-                            client.reply(from,msgs_texto().utilidades.sticker.erro_remover,id)    
+                            client.reply(from,msgs_texto.utilidades.sticker.erro_remover,id)    
                     }
                 })
             } else {
-                client.reply(from, msgs_texto().utilidades.sticker.ssf_imagem, id)
+                client.reply(from, msgs_texto.utilidades.sticker.ssf_imagem, id)
             }
         } else {
-            client.reply(from, msgs_texto().geral.erro, id)
+            client.reply(from, msgs_texto.geral.erro, id)
         }
         break
 
@@ -349,23 +411,23 @@ module.exports = utilidades = async(client,message) => {
                 mensagem: (isMedia)? message : quotedMsg
             }
             if(msgDataAnime.tipo === "image"){
-                client.reply(from,msgs_texto().utilidades.anime.espera, id)
+                client.reply(from,msgs_texto.utilidades.anime.espera, id)
                 var mediaData = await decryptMedia(msgDataAnime.mensagem, uaOverride)
                 var imageBase64 = `data:${msgDataAnime.mimetype};base64,${mediaData.toString('base64')}`
                 servicos.obterAnime(imageBase64).then((anime)=>{
-                    if(anime.similaridade < 87) return client.reply(from,msgs_texto().utilidades.anime.similaridade,id)
+                    if(anime.similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
                     tem_ep = (anime.episodio != "") ? `Episódio : *${anime.episodio}*\n` : ''
                     client.sendFileFromUrl(from,anime.link_preview, "anime.mp4", `〘 Pesquisa de anime 〙\n\nTítulo: *${anime.titulo}*\n${tem_ep}Tempo da cena: *${anime.tempo_inicial} - ${anime.tempo_final}*\nSimilaridade: *${anime.similaridade}%*`, id)
                 }).catch((err)=>{
-                    if(err.status == 429) return client.reply(from,msgs_texto().utilidades.anime.limite_solicitacao,id)
-                    if(err.status == 400) return client.reply(from,msgs_texto().utilidades.anime.sem_resultado,id)
-                    if(err.status == 500 || err.status == 503) return client.reply(from,msgs_texto().utilidades.anime.erro_servidor,id)
+                    if(err.status == 429) return client.reply(from,msgs_texto.utilidades.anime.limite_solicitacao,id)
+                    if(err.status == 400) return client.reply(from,msgs_texto.utilidades.anime.sem_resultado,id)
+                    if(err.status == 500 || err.status == 503) return client.reply(from,msgs_texto.utilidades.anime.erro_servidor,id)
                 })
             } else {
-                client.reply(from,msgs_texto().utilidades.anime.cmd_erro, id)
+                client.reply(from,msgs_texto.utilidades.anime.cmd_erro, id)
             }
         } else {
-            client.reply(from,msgs_texto().utilidades.anime.cmd_erro, id)
+            client.reply(from,msgs_texto.utilidades.anime.cmd_erro, id)
         }
         break
 
@@ -379,14 +441,22 @@ module.exports = utilidades = async(client,message) => {
             })
             client.reply(from,msg,id)
         }).catch(()=>{
-            client.reply(from,msgs_texto().utilidades.animelanc.erro_pesquisa,id)
+            client.reply(from,msgs_texto.utilidades.animelanc.erro_pesquisa,id)
         })
         break
     
     case "!traduz":
-        if(quotedMsg == undefined || quotedMsg.type != "chat") return client.reply(from, msgs_texto().utilidades.traduz.cmd_erro ,id)
-        servicos.obterTraducao(quotedMsg.body).then(traducao=>{
-            client.reply(from, traducao, quotedMsgObj.id);
+        let texto_traducao = ""
+        if(quotedMsg != undefined && quotedMsg.type == "chat"){
+            texto_traducao = quotedMsg.body
+        } else if(quotedMsg == undefined && type == "chat" ){
+            if(args.length === 1) return client.reply(from, msgs_texto.utilidades.traduz.cmd_erro ,id)
+            texto_traducao = body.slice(8)
+        } else {
+            return client.reply(from, msgs_texto.utilidades.traduz.cmd_erro ,id)
+        }
+        servicos.obterTraducao(texto_traducao).then(traducao=>{
+            client.reply(from, traducao, id);
         }).catch(msg=>{
             client.reply(from, msg, id)
         })
@@ -396,14 +466,14 @@ module.exports = utilidades = async(client,message) => {
         var dataText = '';
         var id_resp = id
         if (args.length === 1) {
-            return client.reply(from, msgs_texto().utilidades.voz.cmd_erro ,id)
+            return client.reply(from, msgs_texto.utilidades.voz.cmd_erro ,id)
         } else if(quotedMsg !== undefined && quotedMsg.type == 'chat'){
             dataText = (args.length == 2) ? quotedMsg.body : body.slice(8)
         } else {
             dataText = body.slice(8)
         }
-        if (dataText === '') return client.reply(from, msgs_texto().utilidades.voz.texto_vazio , id)
-        if (dataText.length > 5000) return client.reply(from, msgs_texto().utilidades.voz.texto_longo, id)
+        if (dataText === '') return client.reply(from, msgs_texto.utilidades.voz.texto_vazio , id)
+        if (dataText.length > 5000) return client.reply(from, msgs_texto.utilidades.voz.texto_longo, id)
         if(quotedMsg !== undefined) id_resp = quotedMsgObj.id
         var idioma = body.slice(5, 7).toLowerCase()
         servicos.textoParaVoz(idioma,dataText).then(audio_path=>{
@@ -427,7 +497,7 @@ module.exports = utilidades = async(client,message) => {
         break;
 
     case '!calc':
-        if(args.length === 1) return client.reply(from, msgs_texto().utilidades.calc.cmd_erro ,id)
+        if(args.length === 1) return client.reply(from, msgs_texto.utilidades.calc.cmd_erro ,id)
         let expressao = body.slice(6)
         servicos.obterCalculo(expressao).then(resultado=>{
             client.reply(from, `🧮 O resultado é *${resultado}* `,id)

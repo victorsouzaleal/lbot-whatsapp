@@ -2,7 +2,7 @@
   "name": "lbot-whatsapp",
   "version": "1.1.0",
   "description": "Bot para uso no Whatsapp com diversas funções úteis",
-  "main": "index.js",
+  "main": "index",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,11 +21,13 @@
     "dotenv": "^8.2.0",
     "emoji-regex": "^9.0.0",
     "ffmpeg": "0.0.4",
+    "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^9.0.1",
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
     "nedb-async": "^0.1.6",
     "node-gtts": "^2.0.2",
+    "pretty-num": "^0.5.0",
     "remove.bg": "^1.3.0",
     "request": "^2.88.2",
     "serp": "^2.1.0",
