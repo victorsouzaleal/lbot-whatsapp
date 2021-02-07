@@ -3,6 +3,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const {msg_admin_grupo, msg_comum, msg_comum_grupo} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
+const {preencherTexto} = require("../lib/functions")
 const path = require('path')
 const db = require('../database/database')
 const sticker = require("../lib/sticker")
@@ -29,22 +30,14 @@ module.exports = utilidades = async(client,message) => {
      case "!info":
         const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
         let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-        let msg_info = `*Criador do Bot* : ${info_bot.criador}\n`
-        msg_info += `*Criado em* : ${info_bot.criado_em}\n`
-        msg_info += `*Nome do bot* : ${info_bot.nome}\n`
-        msg_info += `*Online desde* : ${info_bot.iniciado}\n`
-        msg_info += `*Comandos executados* : ${info_bot.cmds_executados}\n`
-        msg_info += `*Contato do criador* : wa.me/${numero_dono[0]}\n`
-        client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
+        let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,numero_dono[0])
+        client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",info_resposta,id)
         break
     
     case "!reportar":
         if(args.length == 1) return client.reply(from,msgs_texto.utilidades.reportar.cmd_erro ,id)
-        let msg_report = "[ 🤖 REPORTAR ⚙️]\n\n"
-        msg_report += `Usuário : ${pushname}\n`
-        msg_report += `Contato: http://wa.me/${sender.id.replace("@c.us","")}\n`
-        msg_report += `Mensagem : ${body.slice(10)}\n`
-        client.sendText(numero_dono[0]+"@c.us",msg_report)
+        let reportar_resposta = preencherTexto(msgs_texto.utilidades.reportar.resposta,pushname,sender.id.replace("@c.us",""),body.slice(10))
+        client.sendText(numero_dono[0]+"@c.us",reportar_resposta)
         client.reply(from,msgs_texto.utilidades.reportar.sucesso,id)
         break
     
@@ -61,7 +54,8 @@ module.exports = utilidades = async(client,message) => {
         }
         const estados = JSON.parse(fs.readFileSync('./database/json/ddd.json')).estados
         estados.forEach(async (estado) =>{
-            if(estado.ddd.includes(ddd_selecionado)) return client.reply(from,`📱 Estado : *${estado.nome}* / Região : *${estado.regiao}*`,id)
+            let ddd_resposta = preencherTexto(msgs_texto.utilidades.ddd.resposta,estado.nome,estado.regiao)
+            if(estado.ddd.includes(ddd_selecionado)) return client.reply(from,ddd_resposta,id)
         })
         break
 
@@ -85,51 +79,12 @@ module.exports = utilidades = async(client,message) => {
             client.reply(from, msgs_texto.utilidades.audio.cmd_erro, id)
         }
         break
-    
-    case "!audiograve":
-        if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
-            const mediaData = await decryptMedia(quotedMsg, uaOverride)
-            console.log(quotedMsg.mimetype)
-            let timestamp = Math.round(new Date().getTime()/1000)
-            fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
-            let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
-            servicos.obterAudioEditado(caminho, "grave").then(audio_caminho=>{
-                client.sendFile(from, audio_caminho, "audiograve.mp3","", id).then(()=>{
-                    fs.unlinkSync(audio_caminho)
-                    fs.unlinkSync(caminho)
-                })
-            }).catch(()=>{
-                console.log("Erro")
-            })
-        } else {
-            return client.reply(from, "[ERRO] Você deve responder a um audio com *!audiograve*", id)
-        }
-        break
-
-    case "!audioagudo":
-        if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
-            const mediaData = await decryptMedia(quotedMsg, uaOverride)
-            console.log(quotedMsg.mimetype)
-            let timestamp = Math.round(new Date().getTime()/1000)
-            fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
-            let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
-            servicos.obterAudioEditado(caminho, "agudo").then(audio_caminho=>{
-                client.sendFile(from, audio_caminho, "audioagudo.mp3","", id).then(()=>{
-                    fs.unlinkSync(audio_caminho)
-                    fs.unlinkSync(caminho)
-                })
-            }).catch(()=>{
-                console.log("Erro")
-            })
-        } else {
-            return client.reply(from, "[ERRO] Você deve responder a um audio com *!audiograve*", id)
-        }
-        break
 
     case "!clima":
         if(args.length === 1) return client.reply(from, msgs_texto.utilidades.clima.cmd_erro ,id)
         servicos.obterClima(body.slice(7)).then(clima=>{
-            client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima.msg, id)
+            let clima_resposta = preencherTexto(msgs_texto.utilidades.clima.resposta,clima.msg)
+            client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima_resposta, id)
         }).catch(msg=>{
             client.reply(from,msg,id)
         })
@@ -138,7 +93,8 @@ module.exports = utilidades = async(client,message) => {
     case "!moeda":
         if(args.length !== 3) return client.reply(from, msgs_texto.utilidades.moeda.cmd_erro, id)
         servicos.obterConversaoMoeda(args[1],args[2]).then(res=>{
-            client.reply(from, `💵 Atualmente *${res.valor_inserido} ${res.moeda}* está valendo *R$ ${res.valor_reais}*\n\nInformação atualizada : *${res.data_atualizacao}*`,id)
+            let moeda_resposta = preencherTexto(msgs_texto.utilidades.moeda.resposta,res.valor_inserido,res.moeda,res.valor_reais,res.data_atualizacao)
+            client.reply(from, moeda_resposta ,id)
         }).catch(msg=>{
             client.reply(from, msg , id)
         })
@@ -147,13 +103,12 @@ module.exports = utilidades = async(client,message) => {
     case "!google":
         if (args.length === 1) return client.reply(from, msgs_texto.utilidades.google.cmd_erro , id)
         servicos.obterPesquisaGoogle(body.slice(8)).then(resultados=>{
-            let msg_resultado = `🔎 Resultados da pesquisa de : *${body.slice(8)}*🔎\n\n` 
+            let google_resposta = preencherTexto(msgs_texto.utilidades.google.resposta_titulo,body.slice(8))
             resultados.forEach(resultado =>{
-                msg_resultado += `═════════════════\n`
-                msg_resultado += `🔎 ${resultado.title}\n`
-                msg_resultado += `*Link* : ${resultado.url}\n\n`
+                google_resposta += "═════════════════\n"
+                google_resposta += preencherTexto(msgs_texto.utilidades.google.resposta_itens,resultado.title,resultado.url)
             })
-            client.reply(from,msg_resultado,id)
+            client.reply(from,google_resposta,id)
         }).catch(msg=>{
             client.reply(from,msg,id)
         })
@@ -162,13 +117,13 @@ module.exports = utilidades = async(client,message) => {
      case '!rastreio':
         if (args.length === 1) return client.reply(from, msgs_texto.utilidades.rastreio.cmd_erro, id)
         servicos.obterRastreioCorreios(body.slice(10)).then(dados=>{
-            let dados_rastreio = "📦📦*RASTREIO*📦📦\n\n"
+            let rastreio_resposta = msgs_texto.utilidades.rastreio.resposta_titulo
             dados.forEach(dado =>{
                 let dados_local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
-                dados_rastreio +=  `Status : ${dado.status}\nData : ${dado.data}\nHora : ${dado.hora}\n${dados_local}\n`
-                dados_rastreio +=  `-----------------------------------------\n`
+                rastreio_resposta += preencherTexto(msgs_texto.utilidades.rastreio.resposta_itens,dado.status,dado.data,dado.hora,dados_local)
+                rastreio_resposta += "-----------------------------------------\n"
             })
-            client.reply(from, dados_rastreio ,id)
+            client.reply(from, rastreio_resposta ,id)
         }).catch(msg=>{
             client.reply(from, msg ,id)
         })
@@ -179,7 +134,8 @@ module.exports = utilidades = async(client,message) => {
         let play_video = await servicos.obterInfoVideo(body.slice(6))
         if(play_video == null) return client.reply(from,msgs_texto.utilidades.play.nao_encontrado,id)
         if(play_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.play.limite,id)
-        client.reply(from,`[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\nTitulo: *${play_video.title}*\nDuração: *${play_video.durationFormatted}*`,id)
+        let play_espera = preencherTexto(msgs_texto.utilidades.play.espera,play_video.title,play_video.durationFormatted)
+        client.reply(from,play_espera,id)
         servicos.obterYtMp3(play_video).then(mp3_path =>{
             client.sendFile(from, mp3_path, "musica.mp3","", id).then(()=>{
                 fs.unlinkSync(mp3_path)
@@ -194,7 +150,8 @@ module.exports = utilidades = async(client,message) => {
         let yt_video = await servicos.obterInfoVideo(body.slice(6))
         if(yt_video == null) return client.reply(from,msgs_texto.utilidades.yt.nao_encontrado,id)
         if(yt_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.yt.limite,id)
-        client.reply(from,`[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n\nTitulo: *${yt_video.title}*\nDuração: *${yt_video.durationFormatted}*`,id)
+        let yt_espera = preencherTexto(msgs_texto.utilidades.yt.espera,yt_video.title,yt_video.durationFormatted)
+        client.reply(from,yt_espera,id)
         servicos.obterYtMp4Url(yt_video).then(video =>{
             client.sendFile(from, video.download, `${video.titulo}.mp4`,"", id)
         }).catch(msg=>{
@@ -246,22 +203,21 @@ module.exports = utilidades = async(client,message) => {
                 tipo_usuario_dados = "👤 Comum"
                 break    
         }
-        let msg_meusdados = `[🤖*SEUS DADOS DE USO*🤖]\n\n`
-        msg_meusdados += `Tipo de usuário : *${tipo_usuario_dados}*\n`
-        msg_meusdados += (pushname != undefined) ? `Nome : *${pushname}*\n` : `Nome : *???*\n`
+        let nome_usuario = (pushname != undefined) ? pushname : `Não obtido`
+        let meusdados_resposta = preencherTexto(msgs_texto.utilidades.meusdados.resposta_geral,tipo_usuario_dados,nome_usuario,meusdados.comandos_total)
+        
         if(botInfo().limite_diario.status) {
-            msg_meusdados += `Comandos usados hoje : *${meusdados.comandos_dia}/${max_comandos_md}*\n`
-            msg_meusdados += `Limite diário : *${max_comandos_md}*\n`
+            meusdados_resposta += preencherTexto(msgs_texto.utilidades.meusdados.resposta_limite_diario,meusdados.comandos_dia,max_comandos_md,max_comandos_md)
         }
-        msg_meusdados += `Total de comandos usados : *${meusdados.comandos_total} comandos*\n`
+
         if(isGroupMsg){
             let g_meusdados = await db.obterGrupo(groupId)
             if(g_meusdados.contador.status){
                 let c_meusdados = await db.obterAtividade(groupId,sender.id)
-                msg_meusdados += `Mensagens neste grupo : *${c_meusdados.msg}* mensagens\n`
+                meusdados_resposta += preencherTexto(msgs_texto.utilidades.meusdados.resposta_grupo,c_meusdados.msg)
             }   
         }
-        client.reply(from, msg_meusdados, id)
+        client.reply(from, meusdados_resposta, id)
         break
 
     case "!help": case "!menu": case ".menu": case ".help":
@@ -282,14 +238,11 @@ module.exports = utilidades = async(client,message) => {
         }
 
         let msgs_dados = ""
+        let ajuda_usuario = (pushname != undefined) ? pushname : "Sem Nome"
         if(botInfo().limite_diario.status){
-            msgs_dados = (pushname != undefined) ? 
-            `Usuário : *${pushname}* -  Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n` :
-            `Limite : *${dados_user.comandos_dia}/${max_comm}*\nTipo de Usuário : *${tipo_usuario}*\n`
+            msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_limite_diario,ajuda_usuario,dados_user.comandos_dia,max_comm,tipo_usuario)
         } else {
-            msgs_dados = (pushname != undefined) ? 
-            `Usuário : *${pushname}*\nTipo de Usuário : *${tipo_usuario}*\n` :
-            `Tipo de Usuário : *${tipo_usuario}*\n`
+            msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_comum,ajuda_usuario,tipo_usuario)
         }
         msgs_dados += `═════════════════\n`
         let menu = ""
@@ -416,8 +369,9 @@ module.exports = utilidades = async(client,message) => {
                 var imageBase64 = `data:${msgDataAnime.mimetype};base64,${mediaData.toString('base64')}`
                 servicos.obterAnime(imageBase64).then((anime)=>{
                     if(anime.similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
-                    tem_ep = (anime.episodio != "") ? `Episódio : *${anime.episodio}*\n` : ''
-                    client.sendFileFromUrl(from,anime.link_preview, "anime.mp4", `〘 Pesquisa de anime 〙\n\nTítulo: *${anime.titulo}*\n${tem_ep}Tempo da cena: *${anime.tempo_inicial} - ${anime.tempo_final}*\nSimilaridade: *${anime.similaridade}%*`, id)
+                    anime.episodio =  (anime.episodio != "") ? anime.episodio : "---"
+                    anime_resp = preencherTexto(msgs_texto.utilidades.anime.resposta,anime.titulo,anime.episodio,anime.tempo_inicial,anime.tempo_final,anime.similaridade)
+                    client.sendFileFromUrl(from,anime.link_preview, "anime.mp4", anime_resp, id)
                 }).catch((err)=>{
                     if(err.status == 429) return client.reply(from,msgs_texto.utilidades.anime.limite_solicitacao,id)
                     if(err.status == 400) return client.reply(from,msgs_texto.utilidades.anime.sem_resultado,id)
@@ -433,13 +387,11 @@ module.exports = utilidades = async(client,message) => {
 
     case "!animelanc":
         servicos.obterAnimesLancamentos().then((animes)=>{
-            let msg = "[🇯🇵 Lançamentos atuais de animes 🇯🇵]\n\n"
+            let animelanc_resposta = msgs_texto.utilidades.animelanc.resposta_titulo
             animes.forEach(anime =>{
-                msg += `Nome : *${anime.nome}*\n`,
-                msg += `Episódio : *${anime.episodio}*\n`
-                msg += `Link : ${anime.link}\n\n`
+                animelanc_resposta += preencherTexto(msgs_texto.utilidades.animelanc.resposta_itens,anime.nome,anime.episodio,anime.link)
             })
-            client.reply(from,msg,id)
+            client.reply(from,animelanc_resposta,id)
         }).catch(()=>{
             client.reply(from,msgs_texto.utilidades.animelanc.erro_pesquisa,id)
         })
@@ -485,12 +437,11 @@ module.exports = utilidades = async(client,message) => {
 
     case '!noticias':
         servicos.obterNoticias().then(noticias=>{
-            let noticias_msg = "╔══✪〘 NOTICIAS 〙✪══\n╠\n"
+            let noticias_resposta = msgs_texto.utilidades.noticia.resposta_titulo
             noticias.forEach(async(noticia) =>{
-                noticias_msg += `╠➥ 📰🗞️ *${noticia.title}* \n╠\n`
+                noticias_resposta += preencherTexto(msgs_texto.utilidades.noticia.resposta_itens,noticia.title)
             })
-            noticias_msg += '╚═〘 Patrocínio : Malas Boa Viagem 〙'
-            client.reply(from, noticias_msg, id)
+            client.reply(from,noticias_resposta, id)
         }).catch(msg=>{
             client.reply(from,msg,id)
         })
@@ -500,7 +451,8 @@ module.exports = utilidades = async(client,message) => {
         if(args.length === 1) return client.reply(from, msgs_texto.utilidades.calc.cmd_erro ,id)
         let expressao = body.slice(6)
         servicos.obterCalculo(expressao).then(resultado=>{
-            client.reply(from, `🧮 O resultado é *${resultado}* `,id)
+            let calc_resposta = preencherTexto(msgs_texto.utilidades.calc.resposta,resultado)
+            client.reply(from,calc_resposta,id)
         }).catch(msg=>{
             client.reply(from, msg,id)
         })
