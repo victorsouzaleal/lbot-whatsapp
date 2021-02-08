@@ -1,5 +1,5 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosNecessarios} = require('./lib/functions')
+const {criarArquivosNecessarios} = require('./lib/util')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
 const {recarregarContagem} = require("./lib/recarregarContagem")
