@@ -1,6 +1,7 @@
 //REQUERINDO MODULOS
 const {admin} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
+const {preencherTexto} = require('../lib/util')
 const db = require('../database/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -33,20 +34,12 @@ module.exports = dono_bot = async(client,message) => {
             let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
             let data = new Date(info_bot.limite_diario.expiracao * 1000)
             let dia = `0${data.getDate()}`, mes = `0${data.getMonth()+1}`, ano= data.getFullYear(), horas = `0${data.getHours()}`, minutos = `0${data.getMinutes()}`, segundos = `0${data.getSeconds()}`
-            let msg_info = `*Criador do Bot* : ${info_bot.criador}\n`
-            msg_info += `*Criado em* : ${info_bot.criado_em}\n`
-            msg_info += `*Nome do bot* : ${info_bot.nome}\n`
-            msg_info += `*Online desde* : ${info_bot.iniciado}\n`
-            msg_info += "*Limite diário* : "
-            msg_info += (info_bot.limite_diario.status)? ` ✅\n - *${info_bot.limite_diario.qtd}* Cmds/dia por usuário\n - Reseta *${dia.substr(-2)}/${mes.substr(-2)}/${ano} às ${horas.substr(-2)}:${minutos.substr(-2)}:${segundos.substr(-2)}*\n` : " ❌\n"
-            msg_info += "*Taxa máxima comandos/minuto* : " 
-            msg_info += (info_bot.limitecomandos.status) ? ` ✅\n - *${info_bot.limitecomandos.cmds_minuto_max}* Cmds/minuto por usuário\n - Tempo de bloqueio : *${info_bot.limitecomandos.tempo_bloqueio}* segundos\n` : " ❌\n"
-            msg_info += "*Taxa máxima de mensagens privadas* : "
-            msg_info += (info_bot.limitarmensagens.status) ? ` ✅\n - *${info_bot.limitarmensagens.max}* Msgs a cada *${info_bot.limitarmensagens.intervalo}* s por usuário\n` : " ❌\n"
-            msg_info += `*Quantidade de pessoas bloqueadas* : *${blockNumber.length}* pessoas\n`
-            msg_info += `*Comandos executados* : *${info_bot.cmds_executados}* Cmds\n`
-            msg_info += `*Contato do criador* : wa.me/${ownerNumber[0]}\n`
-            client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",msg_info,id)
+            let infocompleta_resposta = preencherTexto(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado)
+            infocompleta_resposta += (info_bot.limite_diario.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, dia.substr(-2), mes.substr(-2), ano, horas.substr(-2), minutos.substr(-2), segundos.substr(-2)) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
+            infocompleta_resposta += (info_bot.limitecomandos.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
+            infocompleta_resposta += (info_bot.limitarmensagens.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
+            infocompleta_resposta += preencherTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber[0])
+            client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
             break
             
         case '!entrargrupo':
@@ -76,11 +69,11 @@ module.exports = dono_bot = async(client,message) => {
 
         case '!listablock':
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            let msg_block = `🤖 Esse é o total de pessoas bloqueadas \nTotal : ${blockNumber.length}\n`
+            let listablock_resposta = preencherTexto(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
             for (let i of blockNumber) {
-                msg_block += `➸ @${i.replace(/@c.us/g,'')}\n`
+                listablock_resposta += preencherTexto(msgs_texto.admin.listablock.resposta_itens, i.replace(/@c.us/g,''))
             }
-            client.sendTextWithMentions(from, msg_block, id)
+            client.sendTextWithMentions(from, listablock_resposta, id)
             break
 
         case '!limpartudo':
@@ -107,11 +100,11 @@ module.exports = dono_bot = async(client,message) => {
             break
 
         case '!sairgrupos':
-        if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-            const allChats = await client.getAllChatIds()
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             const allGroups = await client.getAllGroups()
             for (let gclist of allGroups) {
-                await client.sendText(gclist.contact.id, `🤖 Estou saindo dos grupos, total de grupos : ${allChats.length}`)
+                let total_grupos_resposta = preencherTexto(msgs_texto.admin.sairtodos.resposta, allGroups.length)
+                await client.sendText(gclist.contact.id, total_grupos_resposta)
                 await client.leaveGroup(gclist.contact.id)
             }
             client.reply(from, msgs_texto.admin.sairtodos.sair_sucesso, id)
@@ -131,13 +124,13 @@ module.exports = dono_bot = async(client,message) => {
 
             for (let user_b of usuarios_bloq){
                 if(ownerNumber.includes(user_b.replace(/@c.us/g, ''))){
-                    await client.sendTextWithMentions(from, `[❗] O Usuário @${user_b.replace(/@c.us/g, '')} é dono do BOT, não foi possivel bloquear.`)
+                    await client.sendTextWithMentions(from, preencherTexto(msgs_texto.admin.bloquear.erro_dono, user_b.replace(/@c.us/g, '')))
                 } else {
                     if(blockNumber.includes(user_b)) {
-                        await client.sendTextWithMentions(from, `[❗] O Usuário @${user_b.replace(/@c.us/g, '')} já está *bloqueado*.`)
+                        await client.sendTextWithMentions(from, preencherTexto(msgs_texto.admin.bloquear.ja_bloqueado, user_b.replace(/@c.us/g, '')))
                     } else {
                         await client.contactBlock(user_b)
-                        await client.sendTextWithMentions(from, `✅ O Usuário @${user_b.replace(/@c.us/g, '')} foi *bloqueado* com sucesso`)
+                        await client.sendTextWithMentions(from, preencherTexto(msgs_texto.admin.bloquear.sucesso, user_b.replace(/@c.us/g, '')))
                     }
                 }
                 
@@ -158,10 +151,10 @@ module.exports = dono_bot = async(client,message) => {
 
             for (let user_d of usuarios_desbloq){
                 if(!blockNumber.includes(user_d)) {
-                    await client.sendTextWithMentions(from, `[❗] O Usuário @${user_d.replace(/@c.us/g,'')} já está *desbloqueado*.`)
+                    await client.sendTextWithMentions(from, preencherTexto(msgs_texto.admin.desbloquear.ja_desbloqueado, user_d.replace(/@c.us/g,'')))
                 } else {
                     await client.contactUnblock(user_d)
-                    await client.sendTextWithMentions(from, `✅ O Usuário @${user_d.replace(/@c.us/g,'')} foi *desbloqueado* com sucesso`)
+                    await client.sendTextWithMentions(from, preencherTexto(msgs_texto.admin.desbloquear.sucesso, user_d.replace(/@c.us/g,'')))
                 }
             }
             break
@@ -237,7 +230,7 @@ module.exports = dono_bot = async(client,message) => {
             if(args.length === 1) return client.reply(from,msgs_texto.admin.mudarlimite.cmd_erro,id)
             if(isNaN(args[1])) return client.reply(from, msgs_texto.admin.mudarlimite.invalido,id)
             await botQtdLimiteDiario(parseInt(args[1]))
-            client.reply(from, `✅ O limite diário de todos os usuários foi definido para ${args[1]} comandos/dia `,id)
+            client.reply(from, preencherTexto(msgs_texto.admin.mudarlimite.sucesso, args[1]),id)
             break
         
         case "!tipo":
@@ -249,7 +242,7 @@ module.exports = dono_bot = async(client,message) => {
                     let c_registrado = await db.verificarRegistro(quotedMsgObj.author)
                     if(c_registrado){
                         await db.alterarTipoUsuario(quotedMsgObj.author, args[1])
-                        return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
+                        return client.reply(from, preencherTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()),id)
                     } else {
                         return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
                     }
@@ -258,7 +251,7 @@ module.exports = dono_bot = async(client,message) => {
                     let c_registrado = await db.verificarRegistro(mentionedJidList[0])
                     if(c_registrado){
                         await db.alterarTipoUsuario(mentionedJidList[0], args[1])
-                        return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
+                        return client.reply(from, preencherTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()), id)
                     } else {
                         return client.reply(from,msgs_texto.admin.tipo.nao_registrado,id)
                     }
@@ -272,7 +265,7 @@ module.exports = dono_bot = async(client,message) => {
                     let c_registrado = await db.verificarRegistro(numero_usuario+"@c.us")
                     if(c_registrado){
                         await db.alterarTipoUsuario(numero_usuario+"@c.us", args[1])
-                        return client.reply(from, `✅ O tipo desse usuário foi definido para ${args[1].toUpperCase()}`,id)
+                        return client.reply(from, preencherTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()), id)
                     } else {
                         return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
                     }
@@ -294,12 +287,12 @@ module.exports = dono_bot = async(client,message) => {
             if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
             let u_vips = await db.obterUsuariosVip()
             if(u_vips.length == 0) return client.reply(from, msgs_texto.admin.vervips.sem_vips, id)
-            let msg_vips = "[⭐ USUÁRIOS VIP's ⭐]\n\n"
+            let vervips_resposta = msgs_texto.admin.vervips.resposta_titulo
             u_vips.forEach(u=>{
                 let vip_nome = (u.nome != undefined) ? u.nome : ""
-                msg_vips += `➸ ⭐ ${vip_nome}  @${u.id_usuario.replace(/@c.us/g,'')} - ${u.comandos_total} Cmds\n`
+                vervips_resposta += preencherTexto(msgs_texto.admin.vervips.resposta_itens, vip_nome, u.id_usuario.replace(/@c.us/g,''), u.comandos_total)
             })
-            await client.sendTextWithMentions(from,msg_vips)
+            await client.sendTextWithMentions(from,vervips_resposta)
             break
         
         case "!rtodos":
@@ -394,16 +387,13 @@ module.exports = dono_bot = async(client,message) => {
                     break    
             }
 
-            let msg_verdados = `[🤖*VER DADOS DE USO*🤖]\n\n`
-            msg_verdados += (vd_usuario.nome != undefined) ? `Nome : *${vd_usuario.nome}*\n` : ""
-            msg_verdados += `Tipo de usuário : *${vd_usuario.tipo }*\n`
-            msg_verdados += `Numero Usuário : *${vd_usuario.id_usuario.replace("@c.us","")}*\n`
+            let vd_nome =  (vd_usuario.nome != undefined) ? vd_usuario.nome : "Ainda não obtido"
+            let verdados_resposta = preencherTexto(msgs_texto.admin.verdados.resposta_superior, vd_nome, vd_usuario.tipo, vd_usuario.id_usuario.replace("@c.us",""))
             if(botInfo().limite_diario.status){
-                msg_verdados += `Comandos usados hoje : *${vd_usuario.comandos_dia}/${max_comandos_vd}*\n`
-                msg_verdados += `Limite diário : *${max_comandos_vd}*\n`
+                verdados_resposta += preencherTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, vd_usuario.comandos_dia, max_comandos_vd, max_comandos_vd)
             }
-            msg_verdados += `Total de comandos usados : *${vd_usuario.comandos_total} comandos*\n`
-            client.reply(from, msg_verdados, id)
+            verdados_resposta += preencherTexto(msgs_texto.admin.verdados.resposta_inferior, vd_usuario.comandos_total)
+            client.reply(from, verdados_resposta, id)
             break
 
         case '!bc':
@@ -413,7 +403,7 @@ module.exports = dono_bot = async(client,message) => {
             const chats_bc = await client.getAllChatIds()
             for (let id_chat of chats_bc) {
                 var chat_bc_info = await client.getChatById(id_chat)
-                if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, `[🤖 LBOT v2.0 ANÚNCIA]\n\n${msg_bc}`)
+                if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, preencherTexto(msgs_texto.admin.bc.anuncio, msg_bc))
             }
             client.reply(from, msgs_texto.admin.bc.bc_sucesso , id)
             break
@@ -426,7 +416,7 @@ module.exports = dono_bot = async(client,message) => {
             for (let id_chat of chats_bcgrupos) {
                 if(id_chat.match(/@g.us/g)){
                     var chat_bcgrupos_info = await client.getChatById(id_chat)
-                    if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, `[🤖LBOT v2.0 ANÚNCIA]\n\n${msg_bcgrupos}`)
+                    if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, preencherTexto(msgs_texto.admin.bcgrupos.anuncio, msg_bcgrupos))
                 }
             }
             client.reply(from, msgs_texto.admin.bcgrupos.bc_sucesso , id)

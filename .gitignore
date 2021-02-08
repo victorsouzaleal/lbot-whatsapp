@@ -15,9 +15,9 @@ database/json/bot.json
 *.log
 
 #Ignore media files
-media/aswu.mp4
+media/*.mp4
 media/img/noBg.png
-media/output.gif
+media/*.gif
 media/tts/*.mp3
 media/*.mp3
 media/audios/editados/*.mp3
