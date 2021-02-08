@@ -48,15 +48,19 @@ module.exports = utilidades = async(client,message) => {
             if(codigo_brasileiro != "55") return client.reply(from, msgs_texto.utilidades.ddd.somente_br ,id)
             ddd_selecionado = quotedMsgObj.author.slice(2,4)
         } else if(args.length > 1 && args[1].length == 2){
+            if(args[1].length != 2) return client.reply(from, msgs_texto.utilidades.ddd.erro_ddd ,id)
             ddd_selecionado = args[1]
         } else {
             return client.reply(from, msgs_texto.utilidades.ddd.cmd_erro, id)
         }
         const estados = JSON.parse(fs.readFileSync('./database/json/ddd.json')).estados
-        estados.forEach(async (estado) =>{
-            let ddd_resposta = preencherTexto(msgs_texto.utilidades.ddd.resposta,estado.nome,estado.regiao)
-            if(estado.ddd.includes(ddd_selecionado)) return client.reply(from,ddd_resposta,id)
-        })
+        const procurarDdd = estados.findIndex(estado => estado.ddd.includes(ddd_selecionado))
+        if(procurarDdd != -1){
+            let ddd_resposta = preencherTexto(msgs_texto.utilidades.ddd.resposta,estados[procurarDdd].nome,estados[procurarDdd].regiao)
+            client.reply(from,ddd_resposta,id)
+        } else {
+            client.reply(from, msgs_texto.utilidades.ddd.erro_ddd ,id)
+        }
         break
 
     case "!audio":
@@ -203,7 +207,7 @@ module.exports = utilidades = async(client,message) => {
                 tipo_usuario_dados = "👤 Comum"
                 break    
         }
-        let nome_usuario = (pushname != undefined) ? pushname : `Não obtido`
+        let nome_usuario = (pushname != undefined) ? pushname : `Ainda não obtido`
         let meusdados_resposta = preencherTexto(msgs_texto.utilidades.meusdados.resposta_geral,tipo_usuario_dados,nome_usuario,meusdados.comandos_total)
         
         if(botInfo().limite_diario.status) {
@@ -238,7 +242,7 @@ module.exports = utilidades = async(client,message) => {
         }
 
         let msgs_dados = ""
-        let ajuda_usuario = (pushname != undefined) ? pushname : "Sem Nome"
+        let ajuda_usuario = (pushname != undefined) ? pushname : "Ainda não obtido"
         if(botInfo().limite_diario.status){
             msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_limite_diario,ajuda_usuario,dados_user.comandos_dia,max_comm,tipo_usuario)
         } else {
@@ -313,7 +317,7 @@ module.exports = utilidades = async(client,message) => {
         break
 
     case "!tps":
-        if(args.length == 1 || quotedMsg || type != "chat") return client.reply(from,msgs_texto.utilidades.tps.cmd_erro,id)
+        if(args.length == 1 || type != "chat") return client.reply(from,msgs_texto.utilidades.tps.cmd_erro,id)
         if(body.slice(5).length > 40) return client.reply(from,msgs_texto.utilidades.tps.texto_longo,id)
         await client.reply(from, msgs_texto.utilidades.tps.espera,id)
         sticker.textoParaSticker(body.slice(5)).then((base64)=>{

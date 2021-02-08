@@ -113,7 +113,7 @@ module.exports = diversao = async(client,message) => {
             }else{
                 id_resposta_gadometro = quotedMsgObj.id, alvo_gadometro = quotedMsgObj.author.replace(/@c.us/g, '')
             }
-            if(ownerNumber.includes(alvo_bafometro)) gado_aleatorio = 0
+            if(ownerNumber.includes(alvo_gadometro)) gado_aleatorio = 0
             let gadometro_resposta = preencherTexto(msgs_texto.diversao.gadometro.resposta, gadometro_resps[gado_aleatorio])
             client.reply(from,gadometro_resposta, id_resposta_gadometro)       
             break

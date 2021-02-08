@@ -1,5 +1,6 @@
 //REQUERINDO MODULOS
 const {msgs_texto} = require('../lib/msgs')
+const {preencherTexto} = require('../lib/util')
 const destravas = require("../lib/destravas")
 const db = require('../database/database')
 const fs = require('fs-extra')
@@ -27,24 +28,19 @@ module.exports = admin_grupo = async(client,message) => {
             let foto_grupo = await client.getProfilePicFromServer(groupId)
             await client.sendFile(from, foto_grupo, "foto-grupo.jpg", grupo_info.description)
             break
+            
         case '!status':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             const g_status = await db.obterGrupo(groupId)
-            let status_text = `[ 🤖 S T A T U S   D O   G R U P O 🤖 ]\n\n`
-            status_text += "- Recurso Boas Vindas : "
-            status_text += (g_status.bemvindo.status) ? " ✅\n" : " ❌\n"
-            status_text += "- Recurso Anti-Link : "
-            status_text += (g_status.antilink) ? " ✅\n" : " ❌\n"
-            status_text += "- Recurso Anti-Fake : "
-            status_text += (g_status.antifake) ? " ✅\n" : " ❌\n"
-            status_text += "- Recurso Anti-Flood : "
-            status_text += (g_status.antiflood.status) ? ` ✅ Máx: *${g_status.antiflood.max}* msgs / *${g_status.antiflood.intervalo}* s \n` : " ❌\n"
-            status_text += "- Recurso Contador : "
-            status_text += (g_status.contador.status) ? ` ✅ ${g_status.contador.inicio}\n` : " ❌\n"
-            status_text += "- Bloqueio de comandos : "
-            status_text += (g_status.block_cmds.length != 0) ? ` ✅ *${g_status.block_cmds.toString()}*\n` : " ❌\n"
-            client.sendText(from,status_text)
+            let status_resposta = msgs_texto.grupo.status.resposta_titulo
+            status_resposta += (g_status.bemvindo.status) ? msgs_texto.grupo.status.resposta_variavel.bemvindo.on : msgs_texto.grupo.status.resposta_variavel.bemvindo.off
+            status_resposta += (g_status.antilink) ? msgs_texto.grupo.status.resposta_variavel.antilink.on : msgs_texto.grupo.status.resposta_variavel.antilink.off
+            status_resposta += (g_status.antifake) ? msgs_texto.grupo.status.resposta_variavel.antifake.on : msgs_texto.grupo.status.resposta_variavel.antifake.off
+            status_resposta += (g_status.antiflood.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, g_status.antiflood.max, g_status.antiflood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
+            status_resposta += (g_status.contador.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, g_status.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
+            status_resposta += (g_status.block_cmds.length != 0) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.on, g_status.block_cmds.toString()) : msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.off
+            client.sendText(from,status_resposta)
             break
 
         case '!bv':
@@ -185,18 +181,8 @@ module.exports = admin_grupo = async(client,message) => {
                return client.reply(from, msgs_texto.grupo.atividade.cmd_erro,id)
             }
 
-            let msg_atividade = `🤖 *Atividade do usuário* 🤖\n\n`
-            msg_atividade += `📱 *Total de mensagens* : ${atividade_usuario.msg}\n`
-            msg_atividade += `═════════════════\n`
-            msg_atividade += `🔤 Textos enviados : ${atividade_usuario.texto}\n`
-            msg_atividade += `📸 Imagens enviadas : ${atividade_usuario.imagem}\n`
-            msg_atividade += `🎥 Videos enviados : ${atividade_usuario.video}\n`
-            msg_atividade += `🖼️ Figurinhas enviadas : ${atividade_usuario.sticker}\n`
-            msg_atividade += `🎙️ Gravaçôes enviadas : ${atividade_usuario.gravacao}\n`
-            msg_atividade += `🎧 Arquivo de aúdio enviados : ${atividade_usuario.audio}\n`
-            msg_atividade += `🧩 Outros : ${atividade_usuario.outro}\n`
-            client.reply(from,msg_atividade,id)
-
+            let atividade_resposta = preencherTexto(msgs_texto.grupo.atividade.resposta, atividade_usuario.msg, atividade_usuario.texto, atividade_usuario.imagem, atividade_usuario.video, atividade_usuario.sticker, atividade_usuario.gravacao, atividade_usuario.audio, atividade_usuario.outro)
+            client.reply(from,atividade_resposta,id)
             break
         
         case "!alterarcont":
@@ -232,14 +218,13 @@ module.exports = admin_grupo = async(client,message) => {
             let mi_usuarios = await db.obterUsuariosInativos(groupId,args[1])
             let qtd_inativos = mi_usuarios.length - 1
             if(qtd_inativos != 0){
-                let msg_inativos = `╔══✪〘🤖 Marcando todos que tem menos de ${args[1]} mensagens〙\n\n`
-                msg_inativos += `👤 *Membros inativos* : ${qtd_inativos}\n`
-                msg_inativos += `═════════════════\n`
+                let imarcar_resposta = preencherTexto(msgs_texto.grupo.minativos.resposta_titulo, args[1], qtd_inativos)
+                imarcar_resposta += `═════════════════\n`
                 mi_usuarios.forEach(usuario =>{
-                    if(usuario.id_usuario != botNumber+"@c.us") msg_inativos += `╠➥ @${usuario.id_usuario.replace(/@c.us/g, '')} - *${usuario.msg}* Msgs\n`   
+                    if(usuario.id_usuario != botNumber+"@c.us") imarcar_resposta += preencherTexto(msgs_texto.grupo.minativos.resposta_itens, usuario.id_usuario.replace(/@c.us/g, ''), usuario.msg)
                 })
-                msg_inativos += '╚═〘 LBOT v2.0 〙'
-                client.sendTextWithMentions(from,msg_inativos)
+                imarcar_resposta += '╚═〘 LBOT® 〙'
+                client.sendTextWithMentions(from,imarcar_resposta)
             } else {
                 client.reply(from,msgs_texto.grupo.minativos.sem_inativo,id)
             }
@@ -258,7 +243,7 @@ module.exports = admin_grupo = async(client,message) => {
                 bi_usuarios.forEach(async usuario =>{
                     if(usuario.id_usuario != botNumber+"@c.us") await client.removeParticipant(from,usuario.id_usuario)
                 })
-                client.reply(from,`🤖✅ ${bi_usuarios.length - 1} Membros com menos de ${args[1]} mensagens foram banidos.`,id)
+                client.reply(from,preencherTexto(msgs_texto.grupo.binativos.sucesso, bi_usuarios.length - 1, args[1]),id)
             } else {
                 client.reply(from,msgs_texto.grupo.binativos.sem_inativo,id)
             }
@@ -273,7 +258,7 @@ module.exports = admin_grupo = async(client,message) => {
             let ta_contador = await db.obterGrupo(groupId)
             if(!ta_contador.contador.status) return client.reply(from, msgs_texto.grupo.topativos.erro_contador , id)
             let top_ativos = await db.obterUsuariosAtivos(groupId,args[1])
-            let msg_top_ativos = `╔══✪〘🏆 TOP ${args[1]} ATIVOS 🏆 〙\n╠\n`
+            let topativos_resposta = preencherTexto(msgs_texto.grupo.topativos.resposta_titulo, args[1])
             for (let i = 0 ; i < top_ativos.length ; i++){
                 let medalha = ''
                 switch(i+1){
@@ -289,9 +274,10 @@ module.exports = admin_grupo = async(client,message) => {
                     default:
                         medalha = ''
                 }
-                msg_top_ativos += `╠➥ ${medalha} ${i+1}° Lugar @${top_ativos[i].id_usuario.replace(/@c.us/g, '')} - *${top_ativos[i].msg}* Msgs\n`
+                topativos_resposta += preencherTexto(msgs_texto.grupo.topativos.resposta_itens, medalha, i+1, top_ativos[i].id_usuario.replace(/@c.us/g, ''), top_ativos[i].msg)   
             }
-            await client.sendTextWithMentions(from,msg_top_ativos)
+            topativos_resposta += '╠\n╚═〘 LBOT® 〙'
+            await client.sendTextWithMentions(from,topativos_resposta)
             break
         
         case "!enquete":
@@ -301,7 +287,6 @@ module.exports = admin_grupo = async(client,message) => {
             let enq_grupo = await db.obterGrupo(groupId)
             if(args[1] != "off"){
                 if(enq_grupo.enquete.status) return client.reply(from, msgs_texto.grupo.enquete.ja_aberta , id)
-                //if((enq_grupo.enquete.opcoes.find(opcao => opcao.votos.includes(sender.id))) != undefined) 
                 let enquete_entrada = body.slice(9).split(",")
                 let pergunta = enquete_entrada.shift()
                 let opcoes = enquete_entrada
@@ -312,14 +297,13 @@ module.exports = admin_grupo = async(client,message) => {
                 if(!enq_grupo.enquete.status) return client.reply(from, msgs_texto.grupo.enquete.ja_fechada , id)
                 let pergunta = enq_grupo.enquete.pergunta
                 let opcoes = enq_grupo.enquete.opcoes
-                let r_final = "[ 📋 RESULTADO DA ENQUETE 📋]\n\n"
-                r_final += `❔ Pergunta : *${pergunta}* \n\n`
+                let enquete_resultado = preencherTexto(msgs_texto.grupo.enquete.resultado_titulo, pergunta)
                 opcoes.forEach(opcao =>{
-                    r_final += `▫️ Opção ${opcao.digito} -> ${opcao.opcao.trim()} - *${opcao.qtd_votos}* Votos \n\n`
+                    enquete_resultado += preencherTexto(msgs_texto.grupo.enquete.resultado_itens, opcao.digito, opcao.opcao.trim(), opcao.qtd_votos)
                 })
                 await db.alterarEnquete(groupId,false)
                 await client.sendText(from, msgs_texto.grupo.enquete.fechada).then(async ()=>{
-                    await client.sendText(from,r_final)
+                    await client.sendText(from,enquete_resultado)
                 })
             }
             break
@@ -341,13 +325,12 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             let ver_grupo = await db.obterGrupo(groupId)
             if(!ver_grupo.enquete.status) return client.reply(from, msgs_texto.grupo.verenquete.sem_enquete , id)
-            let ver_enq = "[📋 ENQUETE ATUAL 📋]\n\n"
-            ver_enq += `❔ Pergunta : *${ver_grupo.enquete.pergunta}* \n\n`
+            let verenquete_resposta = preencherTexto(msgs_texto.grupo.verenquete.resposta_titulo, ver_grupo.enquete.pergunta)
             ver_grupo.enquete.opcoes.forEach(opcao =>{
-                ver_enq += `▫️ !votarenquete *${opcao.digito}* --> ${opcao.opcao.trim()} \n\n`
+                verenquete_resposta += preencherTexto(msgs_texto.grupo.verenquete.resposta_itens, opcao.digito, opcao.opcao.trim())
             })
-            ver_enq += `Para votar digite *!votarenquete numero-opcao*`
-            await client.reply(from,ver_enq,id)
+            verenquete_resposta += msgs_texto.grupo.verenquete.resposta_inferior
+            await client.reply(from,verenquete_resposta,id)
             break
 
         case "!destravar":
@@ -409,7 +392,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(!vb_status.voteban.status) {
                 client.reply(from, msgs_texto.grupo.voteban.sem_votacao, id)
             } else {
-                client.sendTextWithMentions(from, `🗳️ Atualmente existe um membro em votação : @${vb_status.voteban.usuario}\n\nDigite *!votar* para votar nestre membro.`)
+                client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.votacao_resposta, vb_status.voteban.usuario))
             }
             break
         
@@ -419,12 +402,12 @@ module.exports = admin_grupo = async(client,message) => {
             if(!votar_status.voteban.status) return client.reply(from, msgs_texto.grupo.voteban.sem_votacao , id)
             if(votar_status.voteban.votou.indexOf(sender.id) != -1) return client.reply(from, msgs_texto.grupo.voteban.ja_votou ,id)
             let voteban  = await db.addVoto(groupId,sender.id)
-            await client.sendTextWithMentions(from, `[VOTE BAN] ✅ Olá @${sender.id}, você votou com sucesso no membro em votação @${votar_status.voteban.usuario.replace("@c.us","")}. (${votar_status.voteban.votos + 1}/${votar_status.voteban.max} Votos)`)
+            await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.voto_sucesso, sender.id, votar_status.voteban.usuario.replace("@c.us",""), votar_status.voteban.votos + 1, votar_status.voteban.max))
             if(voteban){
                 if (isBotGroupAdmins) {
                     await client.removeParticipant(from, votar_status.voteban.usuario)
                     .then(()=>{
-                        client.sendTextWithMentions(from, `[VOTE BAN] ✅ O membro @${votar_status.voteban.usuario} que estava em votação foi banido com sucesso. VIVA A DEMOCRACIA!`)
+                        client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.ban_resposta, votar_status.voteban.usuario))
                     }).catch(()=>{
                         client.sendText(from, msgs_texto.grupo.voteban.erro_ban)
                     })
@@ -449,10 +432,10 @@ module.exports = admin_grupo = async(client,message) => {
                 if(isNaN(args[3])) return client.reply(from, msgs_texto.grupo.voteban.erro_num_votos ,id)
                 if(args[3] < 3 || args[3]> 30) return client.reply(from, msgs_texto.grupo.voteban.limit_num_votos ,id)
                 await db.alterarVoteban(groupId,true,args[3],mentionedJidList[0])
-                client.sendTextWithMentions(from, `[VOTE BAN] 🗳️ Uma votação foi aberta para expulsar o membro @${mentionedJidList[0]}. (0/${args[3]} Votos)\n\nO comando *!votar* foi habilitado.`)
+                client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.votacao_aberta_resposta, mentionedJidList[0], args[3]))
             } else if(args[1] == "off"){
                 if (!vtb_status.voteban.status) return client.reply(from,msgs_texto.grupo.voteban.sem_votacao,id)
-                client.sendTextWithMentions(from, `[VOTE BAN] 🗳️ A votação para expulsar @${vtb_status.voteban.usuario} foi encerrada.`)
+                client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.votacao_encerrada_resposta, vtb_status.voteban.usuario))
                 await db.alterarVoteban(groupId,false)
             } else {
                 client.reply(from,msgs_texto.grupo.voteban.cmd_erro,id)
@@ -463,48 +446,41 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if(args.length === 1) return client.reply(from, msgs_texto.grupo.bcmd.cmd_erro ,id)
-            let msg_resp = "[🤖 *Bloquear comandos* 🤖]\n\n"
-            let b_cmd_inseridos = body.slice(6).split(" ")
-            let b_cmd_verificados = []
+            let b_cmd_inseridos = body.slice(6).split(" "), b_cmd_verificados = [], b_cmd_grupo = await db.obterGrupo(groupId), bcmd_resposta = msgs_texto.grupo.bcmd.resposta_titulo
             const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
-            let b_cmd_grupo = await db.obterGrupo(groupId)
             b_cmd_inseridos.forEach(b_cmd =>{
                 if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd)){
                     if(b_cmd_grupo.block_cmds.includes(b_cmd)){
-                        msg_resp+= `- Comando *${b_cmd}* já está bloqueado.\n`
+                        bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, b_cmd)
                     } else {
                         b_cmd_verificados.push(b_cmd)
-                        msg_resp+= `- Comando *${b_cmd}* bloqueado com sucesso.\n`
+                        bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.bloqueado_sucesso, b_cmd)
                     }
-                    
                 } else if (lista_comandos.admin_grupo.includes(b_cmd) || lista_comandos.dono_bot.includes(b_cmd) ){
-                    msg_resp+= `- Comando *${b_cmd}* não pode ser bloqueado (Comando ADMIN).\n`
+                    bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.comando_admin, b_cmd)
                 } else {
-                    msg_resp+= `- Comando *${b_cmd}* não existe.\n`
+                    bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.nao_existe, b_cmd)
                 }
             })
             if(b_cmd_verificados.length != 0) await db.addBlockedCmd(groupId, b_cmd_verificados)
-            client.reply(from, msg_resp, id)
+            client.reply(from, bcmd_resposta, id)
             break
         
         case "!dcmd":
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if(args.length === 1) return client.reply(from,msgs_texto.grupo.dcmd.cmd_erro,id)
-            let d_msg_resp = "[🤖 *Desbloquear Comandos* 🤖]\n\n"
-            let d_cmd_inseridos = body.slice(6).split(" ")
-            let d_cmd_verificados = []
-            let d_cmd_grupo = await db.obterGrupo(groupId)
+            let d_cmd_inseridos = body.slice(6).split(" "), d_cmd_verificados = [], d_cmd_grupo = await db.obterGrupo(groupId), dcmd_resposta = msgs_texto.grupo.dcmd.resposta_titulo
             d_cmd_inseridos.forEach((d_cmd) =>{
                 if(d_cmd_grupo.block_cmds.includes(d_cmd)) {
                     d_cmd_verificados.push(d_cmd)
-                    d_msg_resp += `- Comando *${d_cmd}* foi desbloqueado.\n`
+                    dcmd_resposta += preencherTexto(msgs_texto.grupo.dcmd.resposta_variavel.desbloqueado_sucesso, d_cmd)
                 } else {
-                    d_msg_resp += `- Comando *${d_cmd}* já esta desbloqueado ou nunca foi bloqueado.\n`
+                    dcmd_resposta += preencherTexto(msgs_texto.grupo.dcmd.resposta_variavel.ja_desbloqueado, d_cmd)
                 }
             })
             if(d_cmd_verificados.length != 0) await db.removeBlockedCmd(groupId, d_cmd_verificados)
-            client.reply(from, d_msg_resp, id)
+            client.reply(from, dcmd_resposta, id)
             break
 
         case '!link':
@@ -512,7 +488,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
             if (isGroupMsg) {
                 const inviteLink = await client.getGroupInviteLink(groupId);
-                client.sendLinkWithAutoPreview(from, inviteLink, `\nLink do grupo : *${name}*`)
+                client.sendLinkWithAutoPreview(from, inviteLink, preencherTexto(msgs_texto.grupo.link.resposta, name))
             } else {
             	client.reply(from, msgs_texto.permissao.grupo , id)
             }
@@ -520,30 +496,29 @@ module.exports = admin_grupo = async(client,message) => {
 
         case '!adms':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-            let mimin = ''
-            for (let admon of groupAdmins) {
-                mimin += `➸ @${admon.replace(/@c.us/g, '')}\n` 
+            let adms_resposta = msgs_texto.grupo.adms.resposta_titulo
+            for (let adm of groupAdmins) {
+                adms_resposta += preencherTexto(msgs_texto.grupo.adms.resposta_itens, adm.replace(/@c.us/g, ''))
             }
-            await client.sendTextWithMentions(from, mimin)
+            await client.sendTextWithMentions(from, adms_resposta)
             break
 
         case "!dono":
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             const Owner_ = chat.groupMetadata.owner
-            await client.sendTextWithMentions(from, `🤖 O Dono do grupo é : @${Owner_}`)
+            await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.dono.resposta, Owner_))
             break
 
         case '!mt':
             if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
             if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
             const groupMem = await client.getGroupMembers(groupId)
-            let hehe =  (args.length > 1) ? `╔══✪〘${body.slice(4)}〙✪══\n` : '╔══✪〘🤖 Marcando Todos 〙✪══\n'
+            let mt_resposta = (args.length > 1) ? preencherTexto(msgs_texto.grupo.mt.resposta_titulo_variavel, body.slice(4)) : msgs_texto.grupo.mt.resposta_titulo_comum
             for (let i = 0; i < groupMem.length; i++) {
-                hehe += '╠➥'
-                hehe += `@${groupMem[i].id.replace(/@c.us/g, '')}\n`
+                mt_resposta += preencherTexto(msgs_texto.grupo.mt.resposta_itens, groupMem[i].id.replace(/@c.us/g, ''))
             }
-            hehe += '╚═〘 LBOT v2.0 〙'
-            await client.sendTextWithMentions(from, hehe)
+            mt_resposta += '╚═〘 LBOT®〙'
+            await client.sendTextWithMentions(from, mt_resposta)
             break       
 
         case '!bantodos':
@@ -603,7 +578,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (mentionedJidList.length >= 2) return client.reply(from, msgs_texto.grupo.promover.limite_membro, id)
             if (groupAdmins.includes(mentionedJidList[0])) return client.reply(from, msgs_texto.grupo.promover.admin, id)
             await client.promoteParticipant(groupId, mentionedJidList[0])
-            await client.sendTextWithMentions(from, `✅ Sucesso! O membro @${mentionedJidList[0]} virou ADMINISTRADOR.`)
+            await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.promover.sucesso, mentionedJidList[0]))
             break
 
         case '!rebaixar':
@@ -614,7 +589,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (mentionedJidList.length >= 2) return client.reply(from, msgs_texto.grupo.rebaixar.limite_membro, id)
             if (!groupAdmins.includes(mentionedJidList[0])) return client.reply(from, msgs_texto.grupo.rebaixar.admin, id)
             await client.demoteParticipant(groupId, mentionedJidList[0])
-            await client.sendTextWithMentions(from, `✅ Sucesso! O membro @${mentionedJidList[0]} foi rebaixado para MEMBRO.`)
+            await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.rebaixar.sucesso, mentionedJidList[0]))
             break
 
         case '!apg':
@@ -623,7 +598,7 @@ module.exports = admin_grupo = async(client,message) => {
             if (!quotedMsg) return client.reply(from, msgs_texto.grupo.apagar.cmd_erro, id)
             if (!quotedMsgObj.fromMe) return client.reply(from, msgs_texto.grupo.apagar.minha_msg, id)
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false).catch(()=>{
-                client.reply(from, "A mensagem que você quer apagar não é recente", id)
+                client.reply(from, msgs_texto.grupo.apagar.nao_recente , id)
             })
             break
 
