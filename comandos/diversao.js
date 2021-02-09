@@ -1,7 +1,8 @@
 //REQUERINDO MODULOS
 const fs = require('fs-extra')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto} = require("../lib/util")
+const {preencherTexto, primeiraLetraMaiuscula} = require("../lib/util")
+const path = require("path")
 
 module.exports = diversao = async(client,message) => {
     const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj,mentionedJidList} = message
@@ -60,6 +61,47 @@ module.exports = diversao = async(client,message) => {
             if(ownerNumber.includes(alvo_bafometro)) bafometro_aleatorio = 0
             let bafometro_resposta = preencherTexto(msgs_texto.diversao.bafometro.resposta,bafometro_resps[bafometro_aleatorio])
             client.reply(from,bafometro_resposta, id_resposta_bafometro)
+            break
+
+        case "!caracoroa":
+            let lados = ["cara","coroa"], lado_aleatorio = Math.floor(Math.random() * lados.length)
+            client.reply(from,msgs_texto.diversao.caracoroa.espera,id).then(()=>{
+                let caracoroa_resposta = preencherTexto(msgs_texto.diversao.caracoroa.resposta, primeiraLetraMaiuscula(lados[lado_aleatorio]))
+                client.sendFile(from, path.resolve(`media/img/geral/${lados[lado_aleatorio]}.png`), `${lados[lado_aleatorio]}.png`, caracoroa_resposta, id)
+            })
+            break
+
+        case "!ppt":
+            let ppt = ["pedra","papel","tesoura"], ppt_aleatorio = Math.floor(Math.random() * ppt.length)
+            if(args.length === 1) return client.reply(from, msgs_texto.diversao.ppt.cmd_erro, id)
+            if(!ppt.includes(args[1].toLowerCase())) return client.reply(from, msgs_texto.diversao.ppt.opcao_erro, id)
+            let escolha_bot = ppt[ppt_aleatorio], icone_escolha_bot = null, escolha_usuario = args[1].toLowerCase(), icone_escolha_usuario = null, vitoria_usuario = null
+
+            if(escolha_bot == "pedra"){
+                icone_escolha_bot = "✊"
+                if(escolha_usuario == "pedra") vitoria_usuario = null, icone_escolha_usuario = "✊"
+                if(escolha_usuario == "tesoura") vitoria_usuario = false, icone_escolha_usuario = "✌️"
+                if(escolha_usuario == "papel") vitoria_usuario = true, icone_escolha_usuario = "✋"
+            } else if(escolha_bot == "papel"){
+                icone_escolha_bot = "✋"
+                if(escolha_usuario == "pedra") vitoria_usuario = false, icone_escolha_usuario = "✊"
+                if(escolha_usuario == "tesoura") vitoria_usuario = true, icone_escolha_usuario = "✌️"
+                if(escolha_usuario == "papel") vitoria_usuario = null, icone_escolha_usuario = "✋"
+            } else  {
+                icone_escolha_bot = "✌️"
+                if(escolha_usuario == "pedra") vitoria_usuario = true, icone_escolha_usuario = "✊"
+                if(escolha_usuario == "tesoura") vitoria_usuario = null, icone_escolha_usuario = "✌️"
+                if(escolha_usuario == "papel") vitoria_usuario = false, icone_escolha_usuario = "✋"
+            }
+
+            if(vitoria_usuario == true) {
+                client.reply(from, preencherTexto(msgs_texto.diversao.ppt.resposta.vitoria, icone_escolha_usuario, icone_escolha_bot), id)
+            } else if(vitoria_usuario == false){
+                client.reply(from, preencherTexto(msgs_texto.diversao.ppt.resposta.derrota, icone_escolha_usuario, icone_escolha_bot), id)
+            } else {
+                client.reply(from, preencherTexto(msgs_texto.diversao.ppt.resposta.empate, icone_escolha_usuario, icone_escolha_bot), id)
+            }
+
             break
 
         case "!massacote":

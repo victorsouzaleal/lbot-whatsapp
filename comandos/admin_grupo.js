@@ -562,7 +562,7 @@ module.exports = admin_grupo = async(client,message) => {
                 for (let i = 0; i < mentionedJidList.length; i++) {
                     if (groupAdmins.includes(mentionedJidList[i])) return client.reply(from, msgs_texto.grupo.banir.banir_admin, id)
                     await client.removeParticipant(groupId, mentionedJidList[i]).then(async()=>{
-                        await client.sendText(from, msgs_texto.grupo.banir.banir_sucesso)
+                        if(mentionedJidList.length === 1) await client.sendText(from, msgs_texto.grupo.banir.banir_sucesso)
                     }).catch(async ()=>{
                         await client.reply(from,  msgs_texto.grupo.banir.banir_erro, id)
                     })
