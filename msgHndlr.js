@@ -73,6 +73,9 @@ module.exports = msgHandler = async (client, message) => {
             if (isGroupMsg && isBlocked) {
                 return
             }
+
+             //SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
+            if(isGroupMsg && !isGroupAdmins && g_info.mutar) return
             
             //LIMITACAO DE COMANDO POR MINUTO
             if(botInfo().limitecomandos.status){

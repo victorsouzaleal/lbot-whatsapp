@@ -162,6 +162,15 @@ module.exports = utilidades = async(client,message) => {
             client.reply(from,msg,id)
         })
         break
+
+    case "!tw":
+        if(args.length === 1) return client.reply(from,msgs_texto.utilidades.tw.cmd_erro,id)
+        servicos.obterMediaTwitter(args[1]).then(link=>{
+            client.sendFile(from, link, `twittervid.mp4`,"", id)
+        }).catch(msg=>{
+            client.reply(from,msg,id)
+        })
+        break
     
     case '!img':
         if(quotedMsg || type != "chat") return client.reply(from, msgs_texto.utilidades.img.cmd_erro , id)

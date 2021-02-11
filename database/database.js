@@ -100,9 +100,10 @@ module.exports = {
     registrarGrupo: async(id_grupo)=>{
         let cadastro_grupo = {
             id_grupo,
+            mutar: false,
             bemvindo: {status: false, msg: ""},
             antifake: false,
-            antilink: false,
+            antilink: {status: false, filtros:{youtube: false, whatsapp:false, facebook:false, twitter:false}},
             antiflood: {status: false , max: 10, intervalo:10, msgs: []},
             voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
             contador: {status:false, inicio: ''},
@@ -117,9 +118,10 @@ module.exports = {
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({}, 
         {$set: {
+        mutar: false,
         bemvindo: {status: false, msg:""},
         antifake: false,
-        antilink: false,
+        antilink: {status: false, filtros:{youtube: false, whatsapp:false, facebook:false, twitter:false}},
         antiflood: {status: false , max: 10, intervalo: 10, msgs: []},
         voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
         contador: {status:false, inicio: ''},
@@ -141,9 +143,25 @@ module.exports = {
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{antifake: status}}, {upsert: true})
     },
-    alterarAntiLink: async(id_grupo, status = true)=>{
+    alterarMutar: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({id_grupo}, {$set:{antilink: status}})
+        db.grupos.asyncUpdate({id_grupo}, {$set:{mutar: status}})
+    },
+    alterarAntiLink: async(id_grupo, status = true, filtros = [])=>{
+        db.grupos.loadDatabase()
+        let filtros_obj = {
+            youtube: false,
+            whatsapp: false,
+            facebook: false,
+            twitter: false
+        }
+        filtros.forEach(filtro =>{
+            if(filtro == "youtube") filtros_obj.youtube = true
+            if(filtro == "whatsapp") filtros_obj.whatsapp = true
+            if(filtro == "facebook") filtros_obj.facebook = true
+            if(filtro == "twitter") filtros_obj.twitter = true
+        })
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"antilink.status": status, "antilink.filtros":filtros_obj}})
     },
     alterarContador: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()

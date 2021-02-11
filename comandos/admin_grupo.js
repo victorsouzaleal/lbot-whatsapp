@@ -35,7 +35,15 @@ module.exports = admin_grupo = async(client,message) => {
             const g_status = await db.obterGrupo(groupId)
             let status_resposta = msgs_texto.grupo.status.resposta_titulo
             status_resposta += (g_status.bemvindo.status) ? msgs_texto.grupo.status.resposta_variavel.bemvindo.on : msgs_texto.grupo.status.resposta_variavel.bemvindo.off
-            status_resposta += (g_status.antilink) ? msgs_texto.grupo.status.resposta_variavel.antilink.on : msgs_texto.grupo.status.resposta_variavel.antilink.off
+            status_resposta += (g_status.mutar) ? msgs_texto.grupo.status.resposta_variavel.mutar.on : msgs_texto.grupo.status.resposta_variavel.mutar.off
+            //Anti-Link
+            let al_filtros = ""
+            if(g_status.antilink.filtros.youtube) al_filtros += msgs_texto.grupo.status.resposta_variavel.antilink.filtros.youtube
+            if(g_status.antilink.filtros.whatsapp) al_filtros += msgs_texto.grupo.status.resposta_variavel.antilink.filtros.whatsapp
+            if(g_status.antilink.filtros.facebook) al_filtros += msgs_texto.grupo.status.resposta_variavel.antilink.filtros.facebook
+            if(g_status.antilink.filtros.twitter) al_filtros += msgs_texto.grupo.status.resposta_variavel.antilink.filtros.twitter
+            status_resposta += (g_status.antilink.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.antilink.on, al_filtros) : msgs_texto.grupo.status.resposta_variavel.antilink.off
+            //
             status_resposta += (g_status.antifake) ? msgs_texto.grupo.status.resposta_variavel.antifake.on : msgs_texto.grupo.status.resposta_variavel.antifake.off
             status_resposta += (g_status.antiflood.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, g_status.antiflood.max, g_status.antiflood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
             status_resposta += (g_status.contador.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, g_status.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
@@ -78,6 +86,7 @@ module.exports = admin_grupo = async(client,message) => {
             }
             break
 
+
         case '!alink':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
@@ -86,14 +95,15 @@ module.exports = admin_grupo = async(client,message) => {
                 const al_status = await db.obterGrupo(groupId)
 
                 if (args[1].toLowerCase() === 'on') {
-                    if(!al_status.antilink){
-                        await db.alterarAntiLink(groupId)
+                    if(!al_status.antilink.status){
+                        let filtros = body.slice(10).toLowerCase().split(" ")
+                        await db.alterarAntiLink(groupId,true, filtros)
                         client.reply(from, msgs_texto.grupo.antilink.ligado, id)
                     } else {
                         client.reply(from, msgs_texto.grupo.antilink.ja_ligado , id)
                     } 
                 } else if (args[1].toLowerCase() === 'off') {
-                    if(al_status.antilink){
+                    if(al_status.antilink.status){
                         await db.alterarAntiLink(groupId,false)
                         client.reply(from, msgs_texto.grupo.antilink.desligado, id)
                     } else {
@@ -133,6 +143,30 @@ module.exports = admin_grupo = async(client,message) => {
                 }
             } else {
                 client.reply(from,  msgs_texto.grupo.antifake.cmd_erro , id)
+            }
+            break
+
+        case "!mutar":
+            if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+            if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+            if (args.length === 1) return client.reply(from, msgs_texto.grupo.mutar.cmd_erro, id)
+            const mutar_status = await db.obterGrupo(groupId)
+            if (args[1].toLowerCase() === 'on') {
+                if(!mutar_status.mutar){
+                    await db.alterarMutar(groupId)
+                    client.reply(from,  msgs_texto.grupo.mutar.ligado, id)
+                } else {
+                    client.reply(from, msgs_texto.grupo.mutar.ja_ligado , id)
+                } 
+            } else if (args[1].toLowerCase() === 'off') {
+                if(mutar_status.mutar){
+                    await db.alterarMutar(groupId,false)
+                    client.reply(from,  msgs_texto.grupo.mutar.desligado, id)
+                } else {
+                    client.reply(from, msgs_texto.grupo.mutar.ja_desligado , id)
+                }
+            } else {
+                client.reply(from,  msgs_texto.grupo.mutar.cmd_erro , id)
             }
             break
 
