@@ -7,6 +7,9 @@ db.usuarios = new AsyncNedb({filename : './database/db/usuarios.db'})
 db.grupos = new AsyncNedb({filename : './database/db/grupos.db'})
 db.contador = new AsyncNedb({filename : './database/db/contador.db'})
 
+//DEFININDO CAMPOS UNICOS 
+db.contador.ensureIndex({fieldName: "id_unico", unique: true})
+
 module.exports = {
     // ######################## FUNCOES USUARIO #####################
     obterUsuario : async (id_usuario) =>{
@@ -40,6 +43,7 @@ module.exports = {
             tipo: "comum"
         }
         await db.usuarios.asyncInsert(cadastro_usuario)
+
     },
     registrarDono: async(id_usuario, nome)=>{
         var cadastro_usuario_dono = {
@@ -52,6 +56,7 @@ module.exports = {
         }
         db.usuarios.loadDatabase()
         await db.usuarios.asyncInsert(cadastro_usuario_dono)
+
     },
     alterarTipoUsuario: async(id_usuario, tipo)=>{
         let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
@@ -273,12 +278,18 @@ module.exports = {
     registrarContagemTodos: async(id_grupo,usuarios)=>{
         db.contador.loadDatabase()
         usuarios.forEach(async (usuario)=>{
-            await db.contador.asyncInsert({id_grupo,id_usuario: usuario.id ,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
+           let id_unico = `${id_grupo}-${usuario.id}`
+           db.contador.asyncInsert({id_grupo,id_usuario: usuario.id, id_unico, msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0}).catch(()=>{
+                console.log("Usuario já está registrado no contador")
+           })
         })
     },
     registrarContagem: async(id_grupo,id_usuario)=>{
         db.contador.loadDatabase()
-        db.contador.asyncInsert({id_grupo,id_usuario,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
+        let id_unico = `${id_grupo}-${id_usuario}`
+        db.contador.asyncInsert({id_grupo,id_usuario,id_unico,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0}).catch(()=>{
+            console.log("Usuario já está registrado no contador")
+        })
     },
     addContagem: async(id_grupo,id_usuario,tipo_msg)=>{
         db.contador.loadDatabase()

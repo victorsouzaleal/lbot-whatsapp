@@ -165,6 +165,7 @@ module.exports = utilidades = async(client,message) => {
 
     case "!tw":
         if(args.length === 1) return client.reply(from,msgs_texto.utilidades.tw.cmd_erro,id)
+        client.reply(from,msgs_texto.utilidades.tw.espera,id)
         servicos.obterMediaTwitter(args[1]).then(link=>{
             client.sendFile(from, link, `twittervid.mp4`,"", id)
         }).catch(msg=>{

@@ -251,7 +251,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(!mi_contador.contador.status) return client.reply(from, msgs_texto.grupo.minativos.erro_contador, id)
             let mi_usuarios = await db.obterUsuariosInativos(groupId,args[1])
             let qtd_inativos = mi_usuarios.length - 1
-            if(qtd_inativos != 0){
+            if(qtd_inativos > 0){
                 let imarcar_resposta = preencherTexto(msgs_texto.grupo.minativos.resposta_titulo, args[1], qtd_inativos)
                 imarcar_resposta += `═════════════════\n`
                 mi_usuarios.forEach(usuario =>{
@@ -436,7 +436,7 @@ module.exports = admin_grupo = async(client,message) => {
             if(!votar_status.voteban.status) return client.reply(from, msgs_texto.grupo.voteban.sem_votacao , id)
             if(votar_status.voteban.votou.indexOf(sender.id) != -1) return client.reply(from, msgs_texto.grupo.voteban.ja_votou ,id)
             let voteban  = await db.addVoto(groupId,sender.id)
-            await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.voto_sucesso, sender.id, votar_status.voteban.usuario.replace("@c.us",""), votar_status.voteban.votos + 1, votar_status.voteban.max))
+            await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.voto_sucesso, sender.id, votar_status.voteban.usuario.replace("@c.us",""), eval(votar_status.voteban.votos + 1), votar_status.voteban.max))
             if(voteban){
                 if (isBotGroupAdmins) {
                     await client.removeParticipant(from, votar_status.voteban.usuario)

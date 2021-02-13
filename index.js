@@ -1,7 +1,9 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosNecessarios} = require('./lib/util')
+const {criarArquivosNecessarios, preencherTexto} = require('./lib/util')
+const color = require('./lib/color')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
+const {msgs_texto} = require("./lib/msgs")
 const {recarregarContagem} = require("./lib/recarregarContagem")
 const {botStart} = require('./lib/bot')
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
@@ -10,12 +12,13 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const start = async (client = new Client()) => {
         console.log('[SERVIDOR] Servidor iniciado!')
-
         //VERIFICA SE É NECESSÁRIO CRIAR ALGUM TIPO DE ARQUIVO NECESSÁRIO
         let necessitaCriar = await criarArquivosNecessarios()
         if(necessitaCriar){
-            console.log("Seus arquivos necessários foram criados, configure seu .env e inicie o aplicativo novamente.")
-            return client.kill()
+            console.log('\x1b[1;31m~\x1b[1;37m>', color("[ARQUIVOS]","gray"), color(msgs_texto.geral.arquivos_criados))
+            setTimeout(()=>{
+                return client.kill()
+            },10000)
         }
         const eventosGrupo = require('./lib/eventosGrupo')
         const antiLink= require('./lib/antilink')
@@ -57,15 +60,15 @@ const start = async (client = new Client()) => {
             let totalMem = chat.groupMetadata.participants.length
             const minMem = 1
             if (totalMem < minMem) { 
-            	client.sendText(chat.id, `O grupo precisa de no mínimo ${minMem} para o bot ser convidado(Atualmente tem ${totalMem})`).then(() => client.leaveGroup(chat.id)).then(() => client.deleteChat(chat.id))
+            	client.sendText(chat.id, preencherTexto(msgs_texto.geral.min_membros, minMem, totalMem)).then(() => client.leaveGroup(chat.id)).then(() => client.deleteChat(chat.id))
             } else {
-                client.sendText(chat.groupMetadata.id, `Saudações *${chat.contact.name}* se tiverem alguma dúvida só digitar *!ajuda*`)
+                client.sendText(chat.groupMetadata.id, preencherTexto(msgs_texto.geral.entrada_grupo, chat.contact.name))
             }
         }))
 
         // listening on Incoming Call
         client.onIncomingCall(( async (call) => {
-            await client.sendText(call.peerJid, 'Não posso receber ligações, você sera bloqueado.').then(async ()=>{
+            await client.sendText(call.peerJid, msgs_texto.geral.sem_ligacoes).then(async ()=>{
                 client.contactBlock(call.peerJid)
             })
         }))

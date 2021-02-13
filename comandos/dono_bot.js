@@ -5,7 +5,7 @@ const {preencherTexto} = require('../lib/util')
 const db = require('../database/database')
 const fs = require("fs-extra")
 const path = require("path")
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv} = require('../lib/bot')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botBloquearComando, botDesbloquearComando} = require('../lib/bot')
 
 
 module.exports = dono_bot = async(client,message) => {
@@ -38,6 +38,7 @@ module.exports = dono_bot = async(client,message) => {
             infocompleta_resposta += (info_bot.limite_diario.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, dia.substr(-2), mes.substr(-2), ano, horas.substr(-2), minutos.substr(-2), segundos.substr(-2)) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
             infocompleta_resposta += (info_bot.limitecomandos.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
             infocompleta_resposta += (info_bot.limitarmensagens.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
+            infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
             infocompleta_resposta += preencherTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber[0])
             client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
             break
@@ -83,6 +84,45 @@ module.exports = dono_bot = async(client,message) => {
                 await client.deleteChat(dchat.id)
             }
             client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
+            break
+        
+        case "!bcmdglobal":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from, msgs_texto.admin.bcmdglobal.cmd_erro ,id)
+            let b_cmd_inseridos = body.slice(12).split(" "), b_cmd_verificados = [], b_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), bcmd_resposta = msgs_texto.admin.bcmdglobal.resposta_titulo
+            const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
+            b_cmd_inseridos.forEach(b_cmd =>{
+                if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd)){
+                    if(b_cmd_global.bloqueio_cmds.includes(b_cmd)){
+                        bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, b_cmd)
+                    } else {
+                        b_cmd_verificados.push(b_cmd)
+                        bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, b_cmd)
+                    }
+                } else if (lista_comandos.admin_grupo.includes(b_cmd) || lista_comandos.dono_bot.includes(b_cmd) ){
+                    bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.comando_admin, b_cmd)
+                } else {
+                    bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, b_cmd)
+                }
+            })
+            if(b_cmd_verificados.length != 0) botBloquearComando(b_cmd_verificados)
+            client.reply(from, bcmd_resposta, id)
+            break
+        
+        case "!dcmdglobal":
+            if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+            if(args.length === 1) return client.reply(from,msgs_texto.admin.dcmdglobal.cmd_erro,id)
+            let d_cmd_inseridos = body.slice(12).split(" "), d_cmd_verificados = [], d_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), dcmd_resposta = msgs_texto.admin.dcmdglobal.resposta_titulo
+            d_cmd_inseridos.forEach((d_cmd) =>{
+                if(d_cmd_global.bloqueio_cmds.includes(d_cmd)) {
+                    d_cmd_verificados.push(d_cmd)
+                    dcmd_resposta += preencherTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, d_cmd)
+                } else {
+                    dcmd_resposta += preencherTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.ja_desbloqueado, d_cmd)
+                }
+            })
+            if(d_cmd_verificados.length != 0)  botDesbloquearComando(d_cmd_verificados)
+            client.reply(from, dcmd_resposta, id)
             break
 
         case '!limpar':
