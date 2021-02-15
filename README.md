@@ -22,6 +22,7 @@ Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem 
 ## Clone este projeto :
 ```bash
 > git clone https://github.com/Victorsouza02/lbot-whatsapp.git
+> cd lbot-whatsapp
 ```
 
 ## Instale as dependências :
@@ -32,7 +33,6 @@ Antes de executar o comando abaixo, tenha certeza que você está
 no diretório do projeto que você clonou!
 
 ```bash
-> cd lbot-whatsapp
 > npm install gify-cli -g
 > npm i
 ```
@@ -41,7 +41,7 @@ Dentro da pasta do projeto após ter realizado todos os passos anteriores, execu
 ```bash
 > npm start
 ```
-Se for a sua primeira vez executando e ainda não tiver configurado o arquivo .env, siga para o passo abaixo.
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular e ainda não tiver configurado o arquivo .env, siga para o passo abaixo.
 
 ### Configuração do arquivo .env :
 Na primeira inicialização o script criará os arquivos necessários para o funcionamento, após inicializar ele irá pedir para você configurar o .env na raiz do projeto. Vá até o .env e configure ele com o seu número de Whatsapp e as chaves de API necessárias para alguns comandos.

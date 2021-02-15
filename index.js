@@ -20,77 +20,79 @@ const start = async (client = new Client()) => {
             setTimeout(()=>{
                 return client.kill()
             },10000)
-        }
-        const eventosGrupo = require('./lib/eventosGrupo')
-        const antiLink= require('./lib/antilink')
-        const {antiFlood} = require('./lib/antiflood')
-        const cadastrarGrupo = require('./lib/cadastrarGrupo')
+        } else {
+            const eventosGrupo = require('./lib/eventosGrupo')
+            const antiLink= require('./lib/antilink')
+            const {antiFlood} = require('./lib/antiflood')
+            const cadastrarGrupo = require('./lib/cadastrarGrupo')
 
-        //Pegando hora de inicialização do BOT
-        botStart().then(resp=>{
-            console.log(color(resp))
-        })
+            //Pegando hora de inicialização do BOT
+            botStart().then(resp=>{
+                console.log(color(resp))
+            })
 
-        //Cadastrar grupos
-        cadastrarGrupo("","inicio",client).then(resp=>{
-            console.log(color(resp))
-
-            //Atualizando a lista de participantes dos grupos
-            atualizarParticipantesInicio(client).then(resp=>{
+            //Cadastrar grupos
+            cadastrarGrupo("","inicio",client).then(resp=>{
                 console.log(color(resp))
 
-                //Recarregando contagem enquanto bot estava off
-                recarregarContagem(client).then(resp=>{
+                //Atualizando a lista de participantes dos grupos
+                atualizarParticipantesInicio(client).then(resp=>{
                     console.log(color(resp))
 
-                    //Verificando se os campos do .env foram modificados e envia para o console
-                    verificarConfigEnv()
-                    console.log('[SERVIDOR] Servidor iniciado!')
-                    
-                    // Forçando para continuar na sessão atual
-                    client.onStateChanged((state) => {
-                        console.log('[Cliente Status]', state)
-                        if (state === 'CONFLICT' || state === 'UNLAUNCHED') client.forceRefocus()
-                    })
+                    //Recarregando contagem enquanto bot estava off
+                    recarregarContagem(client).then(resp=>{
+                        console.log(color(resp))
 
-                    // Ouvindo mensagens
-                    client.onMessage((async (message) => {
-                        client.getAmountOfLoadedMessages()
-                        .then((msg) => {
-                            if (msg >= 3000) {
-                                client.cutMsgCache()
+                        //Verificando se os campos do .env foram modificados e envia para o console
+                        verificarConfigEnv()
+                        console.log('[SERVIDOR] Servidor iniciado!')
+                        
+                        // Forçando para continuar na sessão atual
+                        client.onStateChanged((state) => {
+                            console.log('[Cliente Status]', state)
+                            if (state === 'CONFLICT' || state === 'UNLAUNCHED') client.forceRefocus()
+                        })
+
+                        // Ouvindo mensagens
+                        client.onMessage((async (message) => {
+                            client.getAmountOfLoadedMessages()
+                            .then((msg) => {
+                                if (msg >= 3000) {
+                                    client.cutMsgCache()
+                                }
+                            })
+                            antiLink(client,message)
+                            antiFlood(client,message)
+                            msgHandler(client, message)
+                        }))
+
+                        client.onGlobalParticipantsChanged((async (ev) => {
+                            await eventosGrupo(client, ev)
+                        }))
+                        
+                        client.onAddedToGroup((async (chat) => {
+                            await cadastrarGrupo(chat.id, "added", client)
+                            let totalMem = chat.groupMetadata.participants.length
+                            const minMem = 1
+                            if (totalMem < minMem) { 
+                                client.sendText(chat.id, preencherTexto(msgs_texto.geral.min_membros, minMem, totalMem)).then(() => client.leaveGroup(chat.id)).then(() => client.deleteChat(chat.id))
+                            } else {
+                                client.sendText(chat.groupMetadata.id, preencherTexto(msgs_texto.geral.entrada_grupo, chat.contact.name))
                             }
-                        })
-                        antiLink(client,message)
-                        antiFlood(client,message)
-                        msgHandler(client, message)
-                    }))
+                        }))
 
-                    client.onGlobalParticipantsChanged((async (ev) => {
-                        await eventosGrupo(client, ev)
-                    }))
-                    
-                    client.onAddedToGroup((async (chat) => {
-                        await cadastrarGrupo(chat.id, "added", client)
-                        let totalMem = chat.groupMetadata.participants.length
-                        const minMem = 1
-                        if (totalMem < minMem) { 
-                            client.sendText(chat.id, preencherTexto(msgs_texto.geral.min_membros, minMem, totalMem)).then(() => client.leaveGroup(chat.id)).then(() => client.deleteChat(chat.id))
-                        } else {
-                            client.sendText(chat.groupMetadata.id, preencherTexto(msgs_texto.geral.entrada_grupo, chat.contact.name))
-                        }
-                    }))
+                        // listening on Incoming Call
+                        client.onIncomingCall(( async (call) => {
+                            await client.sendText(call.peerJid, msgs_texto.geral.sem_ligacoes).then(async ()=>{
+                                client.contactBlock(call.peerJid)
+                            })
+                        }))
 
-                    // listening on Incoming Call
-                    client.onIncomingCall(( async (call) => {
-                        await client.sendText(call.peerJid, msgs_texto.geral.sem_ligacoes).then(async ()=>{
-                            client.contactBlock(call.peerJid)
-                        })
-                    }))
-
+                    })
                 })
             })
-        })
+        }
+        
     }
 
 create(options(true, start))
