@@ -7,8 +7,6 @@ db.usuarios = new AsyncNedb({filename : './database/db/usuarios.db'})
 db.grupos = new AsyncNedb({filename : './database/db/grupos.db'})
 db.contador = new AsyncNedb({filename : './database/db/contador.db'})
 
-//DEFININDO CAMPOS UNICOS 
-db.contador.ensureIndex({fieldName: "id_unico", unique: true})
 
 module.exports = {
     // ######################## FUNCOES USUARIO #####################
@@ -102,9 +100,10 @@ module.exports = {
         let resp = await db.grupos.asyncFindOne({id_grupo})
         return (resp != null)
     },
-    registrarGrupo: async(id_grupo)=>{
+    registrarGrupo: async(id_grupo, participantes)=>{
         let cadastro_grupo = {
             id_grupo,
+            participantes,
             mutar: false,
             bemvindo: {status: false, msg: ""},
             antifake: false,
@@ -140,6 +139,31 @@ module.exports = {
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
         return grupo_info
     },
+
+    obterParticipantesGrupo: async (id_grupo)=>{
+        db.grupos.loadDatabase()
+        let grupo = await db.grupos.asyncFindOne({id_grupo})
+        if(grupo == null) return false
+        return grupo.participantes
+    },
+
+    atualizarParticipantesAdd: async (id_grupo, participantes_array)=>{
+        db.grupos.loadDatabase()    
+        await db.grupos.asyncUpdate({id_grupo}, {$push: { participantes: {$each: participantes_array} } })
+    },
+    atualizarParticipantesRemover : async(id_grupo, participantes_array)=>{
+        db.grupos.loadDatabase()    
+        participantes_array.forEach(async participante =>{
+            await db.grupos.asyncUpdate({id_grupo}, { $pull: { participantes : participante } })
+        })
+        
+    },
+    participanteExiste: async (id_grupo, id_usuario)=>{
+        db.grupos.loadDatabase()
+        let grupo = await db.grupos.asyncFindOne({id_grupo})
+        return (grupo != null && grupo.participantes.includes(id_usuario))
+    },
+
     alterarBemVindo: async(id_grupo, status, msg = "")=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{"bemvindo.status": status, "bemvindo.msg":msg}})
@@ -279,17 +303,22 @@ module.exports = {
         db.contador.loadDatabase()
         usuarios.forEach(async (usuario)=>{
            let id_unico = `${id_grupo}-${usuario.id}`
-           db.contador.asyncInsert({id_grupo,id_usuario: usuario.id, id_unico, msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0}).catch(()=>{
-                console.log("Usuario já está registrado no contador")
-           })
+           db.contador.asyncInsert({id_grupo,id_usuario: usuario.id, id_unico, msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
         })
+    },
+    existeUsuarioContador: async(id_grupo,id_usuario)=>{
+        db.contador.loadDatabase()
+        let id_unico = `${id_grupo}-${id_usuario}`
+        let contador = await db.contador.asyncFindOne({id_unico})
+        if(contador == null) {
+            db.contador.asyncInsert({id_grupo,id_usuario,id_unico,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
+        }
+
     },
     registrarContagem: async(id_grupo,id_usuario)=>{
         db.contador.loadDatabase()
         let id_unico = `${id_grupo}-${id_usuario}`
-        db.contador.asyncInsert({id_grupo,id_usuario,id_unico,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0}).catch(()=>{
-            console.log("Usuario já está registrado no contador")
-        })
+        db.contador.asyncInsert({id_grupo,id_usuario,id_unico,msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
     },
     addContagem: async(id_grupo,id_usuario,tipo_msg)=>{
         db.contador.loadDatabase()

@@ -4,6 +4,7 @@ require('dotenv').config()
 const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const color = require('./lib/color')
+const cadastrarGrupo = require('./lib/cadastrarGrupo')
 const db = require('./database/database')
 moment.tz.setDefault('America/Sao_Paulo')
 const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,botLimitarMensagensPv} = require("./lib/bot")
@@ -51,16 +52,23 @@ module.exports = msgHandler = async (client, message) => {
         const isBlocked = blockNumber.includes(sender.id)
         const comandoExiste = (lista_comandos.utilidades.includes(command) || lista_comandos.admin_grupo.includes(command) || lista_comandos.diversao.includes(command) ||lista_comandos.dono_bot.includes(command)) 
        
-        //1.0 - SE NÃO FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
+
+        //1.0 SE O GRUPO NÃO FOR CADASTRADO
+        if(isGroupMsg && g_info == null) await cadastrarGrupo(message,"msg",client)
+
+        //2.0 - SE NÃO FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
         if (!isGroupMsg && isBlocked) return
 
-        //2.0- SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, ADICIONA A CONTAGEM
-        if(isGroupMsg && g_info.contador.status) await db.addContagem(groupId,sender.id,type)
+        //3.0- SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, VERIFICA SE O USUARIO EXISTE NO CONTADOR , REGISTRA ELE E ADICIONA A CONTAGEM
+        if(isGroupMsg && g_info.contador.status) {
+            await db.existeUsuarioContador(groupId,sender.id)
+            await db.addContagem(groupId,sender.id,type)
+        }
 
-        //3.0 - SE FOR ALGUM COMANDO EXISTENTE
+        //4.0 - SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
             let registrado = await db.verificarRegistro(sender.id)
-            //3.0.1 - SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
+            //4.0.1 - SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
             if(!registrado) {
                 if(ownerNumber.includes(sender.id.replace("@c.us", ""))){
                     await db.registrarDono(sender.id, pushname)
@@ -69,18 +77,18 @@ module.exports = msgHandler = async (client, message) => {
                 }
             }
 
-            //3.0.2 - ATUALIZE NOME DO USUÁRIO 
+            //4.0.2 - ATUALIZE NOME DO USUÁRIO 
             await db.atualizarNome(sender.id, pushname)
 
-            //3.0.3 - SE FOR MENSAGEM DE GRUPO E USUARIO FOR BLOQUEADO RETORNE
+            //4.0.3 - SE FOR MENSAGEM DE GRUPO E USUARIO FOR BLOQUEADO RETORNE
             if (isGroupMsg && isBlocked) {
                 return
             }
 
-            //3.0.4 - SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
+            //4.0.4 - SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
             if(isGroupMsg && !isGroupAdmins && g_info.mutar) return
             
-            //3.0.5 - LIMITACAO DE COMANDO POR MINUTO
+            //4.0.5 - LIMITACAO DE COMANDO POR MINUTO
             if(botInfo().limitecomandos.status){
                 let usuario = await db.obterUsuario(sender.id)
                 let limiteComando = botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
@@ -92,15 +100,15 @@ module.exports = msgHandler = async (client, message) => {
             
 
 
-            //3.0.6 - BLOQUEIO GLOBAL DE COMANDOS
+            //4.0.6 - BLOQUEIO GLOBAL DE COMANDOS
             if(botInfo().bloqueio_cmds.includes(command) && !isOwner){
                 return client.reply(from, preencherTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
             }
             
-            //3.0.7 - SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
+            //4.0.7 - SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
             if(isGroupMsg && g_info.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,preencherTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
 
-            //3.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES
+            //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES
             if(botInfo().limite_diario.status && !lista_comandos.excecoes_contagem.includes(command)){
                 //LIMITADOR DIARIO DE COMANDOS
                 await botVerificarExpiracaoLimite()
@@ -118,11 +126,11 @@ module.exports = msgHandler = async (client, message) => {
                 await db.addContagemTotal(sender.id)
             }
           
-            //3.0.9 - ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
+            //4.0.9 - ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
             await botInfoUpdate()
 
-        } else { // 4.0 SE NÃO FOR UM COMANDO EXISTENTE
-            //4.0.1 - SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
+        } else { // 5.0 SE NÃO FOR UM COMANDO EXISTENTE
+            //5.0.1 - SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
             if(!isGroupMsg && botInfo().limitarmensagens.status){
                 let u = await db.obterUsuario(sender.id)
                 let tipo_usuario_pv = (u != null) ? u.tipo : "comum"
@@ -136,7 +144,7 @@ module.exports = msgHandler = async (client, message) => {
             }
         }
 
-        //5.0 - APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
+        //6.0 - APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
         if(lista_comandos.utilidades.includes(command)){
             await utilidades(client,message)
             const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
