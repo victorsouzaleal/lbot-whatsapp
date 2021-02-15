@@ -1,5 +1,5 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosNecessarios, preencherTexto} = require('./lib/util')
+const {criarArquivosNecessarios, preencherTexto,verificarConfigEnv} = require('./lib/util')
 const {atualizarParticipantesInicio} = require("./lib/atualizarParticipantes")
 const cadastrarGrupo = require("./lib/cadastrarGrupo")
 const color = require('./lib/color')
@@ -34,12 +34,17 @@ const start = async (client = new Client()) => {
         //Cadastrar grupos
         cadastrarGrupo("","inicio",client).then(resp=>{
             console.log(color(resp))
+
             //Atualizando a lista de participantes dos grupos
             atualizarParticipantesInicio(client).then(resp=>{
                 console.log(color(resp))
+
                 //Recarregando contagem enquanto bot estava off
                 recarregarContagem(client).then(resp=>{
                     console.log(color(resp))
+
+                    //Verificando se os campos do .env foram modificados e envia para o console
+                    verificarConfigEnv()
                     console.log('[SERVIDOR] Servidor iniciado!')
                     
                     // Forçando para continuar na sessão atual
