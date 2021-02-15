@@ -8,6 +8,7 @@
 <a href="https://github.com/Victorsouza02"><img title="Autor" src="https://img.shields.io/badge/Autor-Victorsouza02-blue.svg?style=for-the-badge&logo=github"></a>
 </p>
 <p align="center">
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FVictorsouza02%2Flbot-whatsapp&count_bg=%231D8ED9&title_bg=%23454545&icon=github.svg&icon_color=%23E7E7E7&title=visualizacoes&edge_flat=true"/></a>
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouza02/lbot-whatsapp?label=vers%C3%A3o&style=flat-square"></a>
 <a href="#"><img title="Tamanho" src="https://img.shields.io/github/repo-size/victorsouza02/lbot-whatsapp?label=tamanho&style=flat-square"></a>
 <a href="https://github.com/Victorsouza02/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouza02?label=seguidores&style=flat-square"></a>
