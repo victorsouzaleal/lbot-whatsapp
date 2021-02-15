@@ -8,11 +8,12 @@
 <a href="https://github.com/Victorsouza02"><img title="Autor" src="https://img.shields.io/badge/Author-Victorsouza02-blue.svg?style=for-the-badge&logo=github"></a>
 </p>
 <p align="center">
-<a href="https://github.com/Victorsouza02/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/Victorsouza02?color=red&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/Victorsouza02/lbot-whatsapp?color=red&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/lbot-whatsapp/network/members"><img title="Forks" src="https://img.shields.io/github/forks/Victorsouza02/lbot-whatsapp?color=red&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/Victorsouza02/lbot-whatsapp?label=Acompanhando&color=blue&style=flat-square"></a>
-<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/ATUALIZADO-SIM-blue.svg"/></a>
+<a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouza02/lbot-whatsapp?label=vers%C3%A3o&style=flat-square"></a>
+<a href="#"><img title="Tamanho" src="https://img.shields.io/github/repo-size/victorsouza02/lbot-whatsapp?label=tamanho&style=flat-square"></a>
+<a href="https://github.com/Victorsouza02/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouza02?label=seguidores&style=flat-square"></a>
+<a href="https://github.com/Victorsouza02/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouza02/lbot-whatsapp?label=estrelas&style=flat-square"></a>
+<a href="https://github.com/Victorsouza02/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/Victorsouza02/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
+<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Sim-blue.svg"/></a>
 </p>
 
 ## Sobre o projeto :
