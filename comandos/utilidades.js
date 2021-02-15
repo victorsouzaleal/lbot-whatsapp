@@ -30,7 +30,7 @@ module.exports = utilidades = async(client,message) => {
      case "!info":
         const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
         let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-        let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,numero_dono[0])
+        let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,numero_dono[0],process.env.npm_package_version)
         client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",info_resposta,id)
         break
     

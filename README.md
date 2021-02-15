@@ -5,7 +5,7 @@
 <a href="#"><img title="LBot-WhatsApp" src="https://img.shields.io/badge/LBot%20WhatsApp-green?colorA=%23ff0000&colorB=%23017e40&style=for-the-badge"></a>
 </p>
 <p align="center">
-<a href="https://github.com/Victorsouza02"><img title="Autor" src="https://img.shields.io/badge/Author-Victorsouza02-blue.svg?style=for-the-badge&logo=github"></a>
+<a href="https://github.com/Victorsouza02"><img title="Autor" src="https://img.shields.io/badge/Autor-Victorsouza02-blue.svg?style=for-the-badge&logo=github"></a>
 </p>
 <p align="center">
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouza02/lbot-whatsapp?label=vers%C3%A3o&style=flat-square"></a>
@@ -64,12 +64,9 @@ Na primeira inicialização o script criará os arquivos necessários para o fun
 ## Funcionamento :
 Apos tudo configurado corretamente, estes são os comandos iniciais que dão acesso a todos os outros.
 
-    -!ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
-    -!admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
+    !ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
+    !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
  
-
-
-
 
 ## Recursos Principais :
 

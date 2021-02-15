@@ -1,7 +1,6 @@
 const { create, Client } = require('@open-wa/wa-automate')
 const {criarArquivosNecessarios, preencherTexto,verificarConfigEnv} = require('./lib/util')
 const {atualizarParticipantesInicio} = require("./lib/atualizarParticipantes")
-const cadastrarGrupo = require("./lib/cadastrarGrupo")
 const color = require('./lib/color')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
