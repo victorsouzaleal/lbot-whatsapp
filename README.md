@@ -56,6 +56,8 @@ Na primeira inicialização o script criará os arquivos necessários para o fun
     API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
     # CHAVE DO SCALESERP (PESQUISA DE IMAGENS)
     API_SCALE_SERP = recebe a chave da conta que você criar no site scaleserp.com 
+    # CHAVE DO AVESAPI (PESQUISA WEB GOOGLE)
+    API_AVESAPI = recebe a chave da conta que você criar no site avesapi.com 
     # CHAVES DO TWITTER (DOWNLOAD VIDEOS DO TWITTER)
     twitter_consumer_key = recebe sua consumer_key obtida no https://developer.twitter.com/
     twitter_consumer_secret= recebe sua consumer_secret obtida no https://developer.twitter.com/

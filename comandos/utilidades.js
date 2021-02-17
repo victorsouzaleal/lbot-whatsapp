@@ -112,7 +112,7 @@ module.exports = utilidades = async(client,message) => {
                 let google_resposta = preencherTexto(msgs_texto.utilidades.google.resposta_titulo,body.slice(8))
                 for(let resultado of resultados){
                     google_resposta += "═════════════════\n"
-                    google_resposta += preencherTexto(msgs_texto.utilidades.google.resposta_itens,resultado.title,resultado.link)
+                    google_resposta += preencherTexto(msgs_texto.utilidades.google.resposta_itens,resultado.titulo,resultado.link,resultado.descricao)
                 }
                 client.reply(from,google_resposta,id)
             }).catch(err =>{
