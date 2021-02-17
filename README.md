@@ -54,15 +54,18 @@ Na primeira inicialização o script criará os arquivos necessários para o fun
     API_REMOVE_BG = recebe a chave da conta que você criar no site remove.bg
     # CHAVE DO NEWSAPI (NOTICIAS ATUAIS)
     API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
-    # CHAVE DO SCALESERP (PESQUISA DE IMAGENS)
-    API_SCALE_SERP = recebe a chave da conta que você criar no site scaleserp.com 
-    # CHAVE DO AVESAPI (PESQUISA WEB GOOGLE)
-    API_AVESAPI = recebe a chave da conta que você criar no site avesapi.com 
+    # CHAVE DO RAPIDAPI (PESQUISA DE IMAGENS/WEB)
+    API_RAPIDAPI = recebe a chave da conta que você criar no site rapidapi.com 
     # CHAVES DO TWITTER (DOWNLOAD VIDEOS DO TWITTER)
     twitter_consumer_key = recebe sua consumer_key obtida no https://developer.twitter.com/
     twitter_consumer_secret= recebe sua consumer_secret obtida no https://developer.twitter.com/
     twitter_access_token= recebe seu access_token obtido no https://developer.twitter.com/
     twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
+
+Onde pegar a chave API do RemoveBG? https://www.remove.bg/ <br>
+Onde pegar a chave API do NewsAPI? https://newsapi.org/ <br>
+Onde pegar a chave do RapidAPI? Crie uma conta em https://rapidapi.com/ e obtenha a chave acessando a dashboard da sua aplicação <br>
+Onde pegar a chave do Twitter? Cadastre sua conta em https://developer.twitter.com/ e obtenha as chaves <br>
 
 ## Funcionamento :
 Apos tudo configurado corretamente, estes são os comandos iniciais que dão acesso a todos os outros.
@@ -73,9 +76,10 @@ Apos tudo configurado corretamente, estes são os comandos iniciais que dão ace
 
 ## Recursos Principais :
 
+</br>
 
 ### Criação
-#
+
 | Criador de Sticker |                Recursos        |
 | :-----------: | :--------------------------------: |
 |       ✅       | Foto para Sticker     |
@@ -87,7 +91,6 @@ Apos tudo configurado corretamente, estes são os comandos iniciais que dão ace
 
 
 ### Utilidades Gerais
-#
 
 | Utilitários |                     Recursos            |
 | :------------: | :---------------------------------------------: |
@@ -99,15 +102,16 @@ Apos tudo configurado corretamente, estes são os comandos iniciais que dão ace
 |       ✅        |   Consulta de Clima/Previsão do Tempo            |
 |       ✅        |   Conversão de Moedas           |
 |       ✅        |   Calculadora básica           |
-|       ✅        |   Pesquisa de imagens                  |
-|       ✅        |   Pesquisa de anime                  |
+|       ✅        |   Pesquisa Imagens                  |
+|       ✅        |   Pesquisa Web                  |
+|       ✅        |   Detector Anime                  |
 |       ✅        |   Lançamentos recentes  - Animes                 |
 |       ✅        |   Rastreamento Correios                  |
 |       ✅        |   Noticias Atuais                 |
 |       ✅        |   Tradutor                |
 
 ### Administração de Grupo
-#
+
 | Apenas Grupo  |                     Recursos             |
 | :------------: | :---------------------------------------------: |
 |       ✅        |   Promover usuário                  |
@@ -134,7 +138,7 @@ Apos tudo configurado corretamente, estes são os comandos iniciais que dão ace
 |       ✅        |   Apagar mensagens do bot  |
 
 ### Administração de Dono
-#
+
 | Apenas Dono do Bot  |              Recurso           |
 | :------------: | :---------------------------------------------: |
 |       ✅        |   Entrar em um grupo                 |
