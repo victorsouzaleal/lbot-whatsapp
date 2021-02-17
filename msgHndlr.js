@@ -52,7 +52,6 @@ module.exports = msgHandler = async (client, message) => {
         const isBlocked = blockNumber.includes(sender.id)
         const comandoExiste = (lista_comandos.utilidades.includes(command) || lista_comandos.admin_grupo.includes(command) || lista_comandos.diversao.includes(command) ||lista_comandos.dono_bot.includes(command)) 
        
-
         //1.0 SE O GRUPO NÃO FOR CADASTRADO
         if(isGroupMsg && g_info == null) await cadastrarGrupo(message,"msg",client)
 

@@ -152,11 +152,10 @@ module.exports = {
         await db.grupos.asyncUpdate({id_grupo}, {$push: { participantes: {$each: participantes_array} } })
     },
     atualizarParticipantesRemover : async(id_grupo, participantes_array)=>{
-        db.grupos.loadDatabase()    
-        participantes_array.forEach(async participante =>{
+        db.grupos.loadDatabase()
+        for(let participante of participantes_array){
             await db.grupos.asyncUpdate({id_grupo}, { $pull: { participantes : participante } })
-        })
-        
+        }    
     },
     participanteExiste: async (id_grupo, id_usuario)=>{
         db.grupos.loadDatabase()
@@ -184,12 +183,14 @@ module.exports = {
             facebook: false,
             twitter: false
         }
-        filtros.forEach(filtro =>{
+
+        for(let filtro of filtros){
             if(filtro == "youtube") filtros_obj.youtube = true
             if(filtro == "whatsapp") filtros_obj.whatsapp = true
             if(filtro == "facebook") filtros_obj.facebook = true
             if(filtro == "twitter") filtros_obj.twitter = true
-        })
+        }
+
         db.grupos.asyncUpdate({id_grupo}, {$set:{"antilink.status": status, "antilink.filtros":filtros_obj}})
     },
     alterarContador: async(id_grupo, status = true)=>{
@@ -219,44 +220,48 @@ module.exports = {
 
     //ANTIFLOOD GRUPO
     addMsgFlood: async(id_grupo, usuario_msg)=>{
-        db.grupos.loadDatabase()
-        let grupo_info = await db.grupos.asyncFindOne({id_grupo})
-        let timestamp_atual = Math.round(new Date().getTime()/1000)
-
-        //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
-        for(let i = 0; i < grupo_info.antiflood.msgs.length; i++){
-            if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)
-             
-        }
-        
-        //PESQUISA O INDICE DO USUARIO
-        let usuarioIndex = grupo_info.antiflood.msgs.findIndex(usuario=> usuario.id_usuario == usuario_msg)
-
-        //SE O USUARIO JÁ ESTIVER NA LISTA
-        if(usuarioIndex != -1){
-            //INCREMENTA A CONTAGEM
-            grupo_info.antiflood.msgs[usuarioIndex].qtd++
-            let max_msg = grupo_info.antiflood.max
-            if(grupo_info.antiflood.msgs[usuarioIndex].qtd >= max_msg){
-                grupo_info.antiflood.msgs.splice(usuarioIndex,1)
-                //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
-                await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
-                return true
-            } else{
+        try{
+            db.grupos.loadDatabase()
+            let grupo_info = await db.grupos.asyncFindOne({id_grupo})
+            let timestamp_atual = Math.round(new Date().getTime()/1000)
+            
+            //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
+            for(let i = 0; i < grupo_info.antiflood.msgs.length; i++){
+                if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)
+                 
+            }
+            
+            //PESQUISA O INDICE DO USUARIO
+            let usuarioIndex = grupo_info.antiflood.msgs.findIndex(usuario=> usuario.id_usuario == usuario_msg)
+    
+            //SE O USUARIO JÁ ESTIVER NA LISTA
+            if(usuarioIndex != -1){
+                //INCREMENTA A CONTAGEM
+                grupo_info.antiflood.msgs[usuarioIndex].qtd++
+                let max_msg = grupo_info.antiflood.max
+                if(grupo_info.antiflood.msgs[usuarioIndex].qtd >= max_msg){
+                    grupo_info.antiflood.msgs.splice(usuarioIndex,1)
+                    //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
+                    await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
+                    return true
+                } else{
+                    //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
+                    await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
+                    return false
+                }
+            } else {
+                //ADICIONA O USUARIO NA LISTA
+                grupo_info.antiflood.msgs.push({
+                    id_usuario: usuario_msg,
+                    expiracao: timestamp_atual + grupo_info.antiflood.intervalo,
+                    qtd: 1
+                })
                 //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
                 await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
                 return false
             }
-        } else {
-            //ADICIONA O USUARIO NA LISTA
-            grupo_info.antiflood.msgs.push({
-                id_usuario: usuario_msg,
-                expiracao: timestamp_atual + grupo_info.antiflood.intervalo,
-                qtd: 1
-            })
-            //ATUALIZAÇÃO DOS DADOS NO BANCO E RETORNO
-            await db.grupos.asyncUpdate({id_grupo}, {$set: {"antiflood.msgs": grupo_info.antiflood.msgs}})
-            return false
+        } catch(err){
+            throw new Error(err)
         }
     },
 
@@ -280,9 +285,9 @@ module.exports = {
     },
     removeBlockedCmd: async(id_grupo, cmds)=>{
         db.grupos.loadDatabase()
-        cmds.forEach(async(cmd) =>{
+        for(let cmd of cmds){
             await db.grupos.asyncUpdate({id_grupo}, {$pull:{block_cmds: cmd}})
-        })
+        }
     },
 
     //ENQUETE
@@ -301,10 +306,10 @@ module.exports = {
     //CONTADOR DE MENSAGENS
     registrarContagemTodos: async(id_grupo,usuarios)=>{
         db.contador.loadDatabase()
-        usuarios.forEach(async (usuario)=>{
-           let id_unico = `${id_grupo}-${usuario.id}`
-           db.contador.asyncInsert({id_grupo,id_usuario: usuario.id, id_unico, msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
-        })
+        for(let usuario of usuarios){
+            let id_unico = `${id_grupo}-${usuario.id}`
+            await db.contador.asyncInsert({id_grupo,id_usuario: usuario.id, id_unico, msg:0,imagem:0,gravacao:0,audio:0,sticker:0,video:0,outro:0,texto:0})
+        }
     },
     existeUsuarioContador: async(id_grupo,id_usuario)=>{
         db.contador.loadDatabase()
