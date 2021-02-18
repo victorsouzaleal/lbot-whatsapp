@@ -82,6 +82,7 @@
     "dono_bot":[
         "!sair",
         "!bcmdglobal",
+        "!env",
         "!dcmdglobal",
         "!sairgrupos",
         "!vervips",

@@ -8,6 +8,9 @@
 <a href="https://github.com/Victorsouza02"><img title="Autor" src="https://img.shields.io/badge/Autor-Victorsouza02-blue.svg?style=for-the-badge&logo=github"></a>
 </p>
 <p align="center">
+<a href="https://www.codefactor.io/repository/github/victorsouza02/lbot-whatsapp"><img src="https://www.codefactor.io/repository/github/victorsouza02/lbot-whatsapp/badge" alt="CodeFactor" /></a>
+</p>
+<p align="center">
 <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FVictorsouza02%2Flbot-whatsapp&count_bg=%231D8ED9&title_bg=%23454545&icon=github.svg&icon_color=%23E7E7E7&title=visualizacoes&edge_flat=true"/></a>
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouza02/lbot-whatsapp?label=vers%C3%A3o&style=flat-square"></a>
 <a href="#"><img title="Tamanho" src="https://img.shields.io/github/repo-size/victorsouza02/lbot-whatsapp?label=tamanho&style=flat-square"></a>
@@ -21,13 +24,13 @@
 
 Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem diversas funções interessantes para uso individual ou em grupo. Espero que façam bom uso.
 
-## Clone este projeto :
+## 1 - Clone este projeto :
 ```bash
 > git clone https://github.com/Victorsouza02/lbot-whatsapp.git
 > cd lbot-whatsapp
 ```
 
-## Instale as dependências :
+## 2 - Instale as dependências :
 
 ### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 ### VOCÊ DEVE TER O GIT E O NODE INSTALADOS EM SEU COMPUTADOR
@@ -38,41 +41,52 @@ no diretório do projeto que você clonou!
 > npm install gify-cli -g
 > npm i
 ```
-### Uso :
+### 3 - Uso :
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
 ```bash
 > npm start
 ```
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular e ainda não tiver configurado o arquivo .env, siga para o passo abaixo.
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal SEU número de telefone COM código do país no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
 
-### Configuração do arquivo .env :
-Na primeira inicialização o script criará os arquivos necessários para o funcionamento, após inicializar ele irá pedir para você configurar o .env na raiz do projeto. Vá até o .env e configure ele com o seu número de Whatsapp e as chaves de API necessárias para alguns comandos.
+## 4 - Funcionamento :
+Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
 
-    # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
-    NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
-    # CHAVE DO REMOVEBG (REMOVER FUNDO DE IMAGENS)
-    API_REMOVE_BG = recebe a chave da conta que você criar no site remove.bg
-    # CHAVE DO NEWSAPI (NOTICIAS ATUAIS)
-    API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
-    # CHAVE DO RAPIDAPI (PESQUISA DE IMAGENS/WEB)
-    API_RAPIDAPI = recebe a chave da conta que você criar no site rapidapi.com 
-    # CHAVES DO TWITTER (DOWNLOAD VIDEOS DO TWITTER)
-    twitter_consumer_key = recebe sua consumer_key obtida no https://developer.twitter.com/
-    twitter_consumer_secret= recebe sua consumer_secret obtida no https://developer.twitter.com/
-    twitter_access_token= recebe seu access_token obtido no https://developer.twitter.com/
-    twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
+    !ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
+    !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
+
+Pronto! Seu bot já está funcionando!!</br></br>
+Obs: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet), !noticias (ver noticias atuais) e !tw (download de videos do twitter) vá para o passo 5 - Configuração do arquivo .env
+ 
+
+### 5 - Configuração do arquivo .env :
+1° Metodo (Por Comando)  - Com o bot ligado digite o comando !env para ver o que pode ser configurado :
+ - ex: !env removebg [chave] - Edita chave do RemoveBG </br>
+ - ex: !env newsorg [chave] - Edita chave do NewsORG </br>
+ - ex: !env rapidapi [chave] - Edita chave do RapidAPI </br>
+ - ex: !env twitter [twitter_consumer_key] [twitter_consumer_secret] [twitter_access_token] [twitter_access_token_secret] - Edita as chaves do Twitter </br>
+
+2° Metodo (Editando .env)  - Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
+
+        # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
+        NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
+        # CHAVE DO REMOVEBG (REMOVER FUNDO DE IMAGENS)
+        API_REMOVE_BG = recebe a chave da conta que você criar no site remove.bg
+        # CHAVE DO NEWSAPI (NOTICIAS ATUAIS)
+        API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
+        # CHAVE DO RAPIDAPI (PESQUISA DE IMAGENS/WEB)
+        API_RAPIDAPI = recebe a chave da conta que você criar no site rapidapi.com 
+        # CHAVES DO TWITTER (DOWNLOAD VIDEOS DO TWITTER)
+        twitter_consumer_key = recebe sua consumer_key obtida no https://developer.twitter.com/
+        twitter_consumer_secret= recebe sua consumer_secret obtida no https://developer.twitter.com/
+        twitter_access_token= recebe seu access_token obtido no https://developer.twitter.com/
+        twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
 
 Onde pegar a chave API do RemoveBG? https://www.remove.bg/ <br>
 Onde pegar a chave API do NewsAPI? https://newsapi.org/ <br>
 Onde pegar a chave do RapidAPI? Crie uma conta em https://rapidapi.com/ e obtenha a chave acessando a dashboard da sua aplicação <br>
 Onde pegar a chave do Twitter? Cadastre sua conta em https://developer.twitter.com/ e obtenha as chaves <br>
 
-## Funcionamento :
-Apos tudo configurado corretamente, estes são os comandos iniciais que dão acesso a todos os outros.
 
-    !ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
-    !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
- 
 
 ## Recursos Principais :
 

@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 const {admin} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto} = require('../lib/util')
+const {preencherTexto, editarEnv} = require('../lib/util')
 const db = require('../database/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -323,6 +323,44 @@ module.exports = dono_bot = async(client,message) => {
                 await db.limparVip()
                 client.reply(from,msgs_texto.admin.limparvip.sucesso,id)
                 break
+
+            case "!env":
+                if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
+                if(args.length <= 2) return client.reply(from, msgs_texto.admin.env.cmd_erro ,id)
+                let resposta = {
+                    api_removebg : null,
+                    api_newsorg : null,
+                    api_rapidapi : null,
+                    api_twitter_ck : null,
+                    api_twitter_cks : null,
+                    api_twitter_at : null,
+                    api_twitter_ats : null
+                }
+
+                switch(args[1]){
+                    case "removebg":
+                        if(args.length < 3) return client.reply(from, msgs_texto.admin.env.chave_erro,id)
+                        resposta.api_removebg = args[2]
+                        break
+                    case "newsorg":
+                        if(args.length < 3) return client.reply(from, msgs_texto.admin.env.chave_erro,id)
+                        resposta.api_newsorg = args[2]
+                        break
+                    case "rapidapi":
+                        if(args.length < 3) return client.reply(from, msgs_texto.admin.env.chave_erro ,id)
+                        resposta.api_rapidapi = args[2]
+                        break
+                    case "twitter":
+                        if(args.length < 6) return client.reply(from,msgs_texto.admin.env.chave_erro ,id)
+                        resposta.api_twitter_ck = args[2]
+                        resposta.api_twitter_cks = args[3]
+                        resposta.api_twitter_at = args[4]
+                        resposta.api_twitter_ats = args[5]
+                        break
+                }
+                editarEnv(resposta)
+                client.reply(from, msgs_texto.admin.env.resposta ,id)
+                break
             
             case "!vervips":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
@@ -497,7 +535,7 @@ module.exports = dono_bot = async(client,message) => {
                 break
         }
     } catch(err){
-        throw new Error(err)
+        throw err
     }
     
 }
