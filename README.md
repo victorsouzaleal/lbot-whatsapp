@@ -41,7 +41,7 @@ no diretório do projeto que você clonou!
 > npm install gify-cli -g
 > npm i
 ```
-### 3 - Uso :
+## 3 - Uso :
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
 ```bash
 > npm start
@@ -54,18 +54,18 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
     !ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
     !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
 
-Pronto! Seu bot já está funcionando!!</br></br>
-Obs: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet), !noticias (ver noticias atuais) e !tw (download de videos do twitter) vá para o passo 5 - Configuração do arquivo .env
+### Pronto! Seu bot já está funcionando!!
+#### Obs: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet), !noticias (ver noticias atuais) e !tw (download de videos do twitter) vá para o passo 5 - Configuração do arquivo .env
  
 
-### 5 - Configuração do arquivo .env :
-1° Metodo (Por Comando)  - Com o bot ligado digite o comando !env para ver o que pode ser configurado :
+## 5 - Configuração do arquivo .env :
+### 1° Metodo (Por Comando)  - Com o bot ligado digite o comando !env para ver o que pode ser configurado :
  - ex: !env removebg [chave] - Edita chave do RemoveBG </br>
  - ex: !env newsorg [chave] - Edita chave do NewsORG </br>
  - ex: !env rapidapi [chave] - Edita chave do RapidAPI </br>
  - ex: !env twitter [twitter_consumer_key] [twitter_consumer_secret] [twitter_access_token] [twitter_access_token_secret] - Edita as chaves do Twitter </br>
 
-2° Metodo (Editando .env)  - Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
+### 2° Metodo (Editando .env)  - Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
 
         # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
         NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
