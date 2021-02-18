@@ -116,7 +116,7 @@ module.exports = msgHandler = async (client, message) => {
                     await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
                 } else { //3.0.8.2 - SE ULTRAPASSAR LIMITE DIARIO
                     pushname = (pushname != undefined) ? pushname : ""
-                    return client.reply(from, preencherTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, pushname, botInfo().limite_diario.qtd, id))
+                    return client.reply(from, preencherTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, pushname, botInfo().limite_diario.qtd),id)
                 }
             } else if(botInfo().limite_diario.status && lista_comandos.excecoes_contagem.includes(command)) {
                 await db.addContagemTotal(sender.id)

@@ -1,7 +1,6 @@
 //REQUERINDO MODULOS
 const {msgs_texto} = require('../lib/msgs')
 const {preencherTexto} = require('../lib/util')
-const destravas = require("../lib/destravas")
 const db = require('../database/database')
 const fs = require('fs-extra')
 
@@ -366,15 +365,6 @@ module.exports = admin_grupo = async(client,message) => {
                 }
                 verenquete_resposta += msgs_texto.grupo.verenquete.resposta_inferior
                 await client.reply(from,verenquete_resposta,id)
-                break
-
-            case "!destravar":
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-                let lista_destravas = destravas.destravas()
-                for(let destrava of lista_destravas){
-                    client.sendText(from,destrava)
-                }
                 break
             
             case '!aflood':
