@@ -94,7 +94,9 @@ module.exports = {
     },
     //###########################################################
 
-    // ############### FUNCOES GRUPO #########################
+    // ##################### FUNCOES GRUPO #########################
+
+    //### GERAL
     verificarGrupo: async(id_grupo) =>{
         db.grupos.loadDatabase()
         let resp = await db.grupos.asyncFindOne({id_grupo})
@@ -139,7 +141,9 @@ module.exports = {
         let grupo_info = await db.grupos.asyncFindOne({id_grupo})
         return grupo_info
     },
+    //###
 
+    // ### PARTICIPANTES 
     obterParticipantesGrupo: async (id_grupo)=>{
         db.grupos.loadDatabase()
         let grupo = await db.grupos.asyncFindOne({id_grupo})
@@ -147,22 +151,30 @@ module.exports = {
         return grupo.participantes
     },
 
-    atualizarParticipantesAdd: async (id_grupo, participantes_array)=>{
+    atualizarParticipantes: async(id_grupo, participantes_array)=>{
         db.grupos.loadDatabase()    
-        await db.grupos.asyncUpdate({id_grupo}, {$push: { participantes: {$each: participantes_array} } })
+        await db.grupos.asyncUpdate({id_grupo}, {$set:{participantes: participantes_array}})
     },
-    atualizarParticipantesRemover : async(id_grupo, participantes_array)=>{
-        db.grupos.loadDatabase()
-        for(let participante of participantes_array){
-            await db.grupos.asyncUpdate({id_grupo}, { $pull: { participantes : participante } })
-        }    
+
+    adicionarParticipante: async(id_grupo, participante)=>{
+        db.grupos.loadDatabase()    
+        await db.grupos.asyncUpdate({id_grupo}, {$push: { participantes: participante} })
     },
+
+    removerParticipante: async(id_grupo, participante)=>{
+        db.grupos.loadDatabase()    
+        await db.grupos.asyncUpdate({id_grupo}, { $pull: { participantes : participante } })
+    },
+
     participanteExiste: async (id_grupo, id_usuario)=>{
         db.grupos.loadDatabase()
         let grupo = await db.grupos.asyncFindOne({id_grupo})
         return (grupo != null && grupo.participantes.includes(id_usuario))
     },
 
+    //###
+
+    //### ALTERAR RECURSOS
     alterarBemVindo: async(id_grupo, status, msg = "")=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{"bemvindo.status": status, "bemvindo.msg":msg}})
@@ -217,8 +229,9 @@ module.exports = {
         }
         db.grupos.asyncUpdate({id_grupo}, {$set:{"enquete.status":status, "enquete.pergunta":pergunta, "enquete.opcoes":opcoes_obj}})
     },
+    //###
 
-    //ANTIFLOOD GRUPO
+    // ### ANTIFLOOD GRUPO
     addMsgFlood: async(id_grupo, usuario_msg)=>{
         try{
             db.grupos.loadDatabase()
@@ -265,6 +278,7 @@ module.exports = {
         }
     },
 
+    //### VOTEBAN
     alterarVoteban: async(id_grupo, status = true, max = 5, usuario = "")=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{"voteban.status":status, "voteban.max":max, "voteban.usuario":usuario, "voteban.votos":0, "voteban.votou":[]}})
@@ -277,8 +291,9 @@ module.exports = {
         let grupo_info_atualizado  = await db.grupos.asyncFindOne({id_grupo})
         return (grupo_info_atualizado.voteban.max == grupo_info_atualizado.voteban.votos)
     },
+    //###
 
-    //BLOQUEIO DE COMANDOS
+    //### BLOQUEIO DE COMANDOS
     addBlockedCmd: async(id_grupo, cmds)=>{
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$push: { block_cmds: {$each: cmds} }})
@@ -289,8 +304,9 @@ module.exports = {
             await db.grupos.asyncUpdate({id_grupo}, {$pull:{block_cmds: cmd}})
         }
     },
+    //###
 
-    //ENQUETE
+    // ### ENQUETE
     addVotoEnquete: async(id_grupo,id_usuario, digito)=>{
         db.grupos.loadDatabase()
         let g_info = await db.grupos.asyncFindOne({id_grupo})
@@ -302,8 +318,9 @@ module.exports = {
         opcoes[index] = opcao
         db.grupos.asyncUpdate({id_grupo}, {$set:{"enquete.opcoes":opcoes}})
     },
+    //###
 
-    //CONTADOR DE MENSAGENS
+    //### CONTADOR DE MENSAGENS
     registrarContagemTodos: async(id_grupo,usuarios)=>{
         db.contador.loadDatabase()
         for(let usuario of usuarios){
@@ -386,6 +403,8 @@ module.exports = {
         db.contador.loadDatabase()
         db.contador.asyncRemove({id_grupo}, {multi: true})
     },
-    // ###############################################################################
+    // ###
+
+    // ######################################################################
 
 }

@@ -113,6 +113,7 @@ module.exports = admin_grupo = async(client,message) => {
                         client.reply(from, msgs_texto.grupo.antilink.cmd_erro, id)
                     }
                     break
+                    
             case '!rlink':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)

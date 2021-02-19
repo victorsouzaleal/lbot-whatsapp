@@ -60,10 +60,10 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 
 ## 5 - Configuração do arquivo .env :
 ### 1° Metodo (Por Comando)  - Com o bot ligado digite o comando !env para ver o que pode ser configurado :
- - ex: !env removebg [chave] - Edita chave do RemoveBG </br>
- - ex: !env newsorg [chave] - Edita chave do NewsORG </br>
- - ex: !env rapidapi [chave] - Edita chave do RapidAPI </br>
- - ex: !env twitter [twitter_consumer_key] [twitter_consumer_secret] [twitter_access_token] [twitter_access_token_secret] - Edita as chaves do Twitter </br>
+ - !env removebg [chave] - Edita chave do RemoveBG </br>
+ - !env newsorg [chave] - Edita chave do NewsORG </br>
+ - !env rapidapi [chave] - Edita chave do RapidAPI </br>
+ - !env twitter [twitter_consumer_key] [twitter_consumer_secret] [twitter_access_token] [twitter_access_token_secret] - Edita as chaves do Twitter </br>
 
 ### 2° Metodo (Editando .env)  - Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
 
@@ -87,8 +87,6 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 
 
 ## Recursos Principais :
-
-</br>
 
 ### Criação
 

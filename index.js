@@ -1,6 +1,6 @@
 const { create, Client } = require('@open-wa/wa-automate')
 const {criarArquivosNecessarios, preencherTexto,verificarConfigEnv, editarEnv} = require('./lib/util')
-const {atualizarParticipantesInicio} = require("./lib/atualizarParticipantes")
+const {atualizarParticipantes} = require("./lib/atualizarParticipantes")
 const color = require('./lib/color')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
@@ -31,7 +31,7 @@ const start = async (client = new Client()) => {
                 //Cadastro de grupos
                 console.log(color(await cadastrarGrupo("","inicio",client)))
                 //Atualização dos participantes dos grupos
-                console.log(color(await atualizarParticipantesInicio(client)))
+                console.log(color(await atualizarParticipantes(client)))
                 //Atualização da contagem de mensagens
                 console.log(color(await recarregarContagem(client)))
                 //Verificando se os campos do .env foram modificados e envia para o console
