@@ -55,7 +55,7 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
     !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
 
 ### Pronto! Seu bot já está funcionando!!
-#### Obs: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet), !noticias (ver noticias atuais) e !tw (download de videos do twitter) vá para o passo 5 - Configuração do arquivo .env
+#### Obs: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet) e !noticias (ver noticias atuais) vá para o passo 5.
  
 
 ## 5 - Configuração do arquivo .env :
@@ -82,7 +82,9 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
         twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
 
 
-#### Informações detalhadas sobre como obter as chaves [Clique AQUI](CHAVESAPI.md)
+#### Obs: As chaves do Twitter agora já vem configuradas de ínicio, só mude elas se você achar necessário.
+
+#### Informações detalhadas sobre como obter as chaves do RemoveBG, NewsAPI e RapidAPI :  [Clique AQUI](CHAVESAPI.md)
 
 
 
