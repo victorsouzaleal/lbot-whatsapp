@@ -81,10 +81,8 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
         twitter_access_token= recebe seu access_token obtido no https://developer.twitter.com/
         twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
 
-Onde pegar a chave API do RemoveBG? https://www.remove.bg/ <br>
-Onde pegar a chave API do NewsAPI? https://newsapi.org/ <br>
-Onde pegar a chave do RapidAPI? Crie uma conta em https://rapidapi.com/ e obtenha a chave acessando a dashboard da sua aplicação <br>
-Onde pegar a chave do Twitter? Cadastre sua conta em https://developer.twitter.com/ e obtenha as chaves <br>
+
+#### Informações detalhadas sobre como obter as chaves [Clique AQUI](CHAVESAPI.md)
 
 
 
