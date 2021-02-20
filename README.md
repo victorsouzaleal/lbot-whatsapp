@@ -172,10 +172,22 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 Tenha certeza que todas as depêndencias necessárias estão instaladas
 https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md
 
+#### Linux
+
 Corrigir travamento no Linux , instale o  google chrome stable:
 ```bash
 > wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 > sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+
+Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
+```bash
+> npm i --unsafe-perm
+```
+
+Caso seu comando !sgif (criar stickers animados) não funcione
+```bash
+> sudo apt-get install ffmpeg graphicsmagick
 ```
 
 ### Dúvidas?

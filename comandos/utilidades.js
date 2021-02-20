@@ -323,7 +323,8 @@ module.exports = utilidades = async(client,message) => {
                     client.reply(from, msgs_texto.geral.espera , id)
                     sticker.stickerGif(mediaData,dados_sgif.mimetype).then((gifB64)=>{
                         client.sendImageAsSticker(from, gifB64,{author: "LBOT", pack: "LBOT Sticker Animado", keepScale: true})
-                    }).catch(()=>{
+                    }).catch((error)=>{
+                        consoleErro(error,"STICKER GIF")
                         client.reply(from, msgs_texto.utilidades.sticker.video_longo , id)
                     })
                 }else {
