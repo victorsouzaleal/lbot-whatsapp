@@ -108,7 +108,7 @@ module.exports = {
             participantes,
             mutar: false,
             bemvindo: {status: false, msg: ""},
-            antifake: false,
+            antifake: {status: false, ddi_liberados:[]},
             antilink: {status: false, filtros:{youtube: false, whatsapp:false, facebook:false, twitter:false}},
             antiflood: {status: false , max: 10, intervalo:10, msgs: []},
             voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
@@ -126,7 +126,7 @@ module.exports = {
         {$set: {
         mutar: false,
         bemvindo: {status: false, msg:""},
-        antifake: false,
+        antifake: {status: false, ddi_liberados:[]},
         antilink: {status: false, filtros:{youtube: false, whatsapp:false, facebook:false, twitter:false}},
         antiflood: {status: false , max: 10, intervalo: 10, msgs: []},
         voteban: {status: false, max: 5, usuario: "", votos:0, votou:[]},
@@ -179,9 +179,9 @@ module.exports = {
         db.grupos.loadDatabase()
         db.grupos.asyncUpdate({id_grupo}, {$set:{"bemvindo.status": status, "bemvindo.msg":msg}})
     },
-    alterarAntiFake: async(id_grupo, status = true)=>{
+    alterarAntiFake: async(id_grupo, status = true, ddi=[])=>{
         db.grupos.loadDatabase()
-        db.grupos.asyncUpdate({id_grupo}, {$set:{antifake: status}}, {upsert: true})
+        db.grupos.asyncUpdate({id_grupo}, {$set:{"antifake.status": status, "antifake.ddi_liberados": ddi}})
     },
     alterarMutar: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()

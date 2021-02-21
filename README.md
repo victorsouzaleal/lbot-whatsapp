@@ -38,9 +38,9 @@ Antes de executar o comando abaixo, tenha certeza que você está
 no diretório do projeto que você clonou!
 
 ```bash
-> npm install gify-cli -g
 > npm i
 ```
+
 ## 3 - Uso :
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
 ```bash
@@ -185,10 +185,6 @@ Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
 > npm i --unsafe-perm
 ```
 
-Caso seu comando !sgif (criar stickers animados) não funcione
-```bash
-> sudo apt-get install ffmpeg graphicsmagick
-```
 
 ### Dúvidas?
 Entre em contato comigo pelo WhatsApp : https://wa.me/5521995612287

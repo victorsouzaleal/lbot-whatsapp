@@ -320,11 +320,9 @@ module.exports = utilidades = async(client,message) => {
                 }
                 if((dados_sgif.mimetype === 'video/mp4' || dados_sgif.mimetype === 'image/gif') && dados_sgif.duracao < 10){
                     const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
+                    const sgifB64 = `data:${dados_sgif.mimetype};base64,${mediaData.toString('base64')}`
                     client.reply(from, msgs_texto.geral.espera , id)
-                    sticker.stickerGif(mediaData,dados_sgif.mimetype).then((gifB64)=>{
-                        client.sendImageAsSticker(from, gifB64,{author: "LBOT", pack: "LBOT Sticker Animado", keepScale: true})
-                    }).catch((error)=>{
-                        consoleErro(error,"STICKER GIF")
+                    client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false}).catch(()=>{
                         client.reply(from, msgs_texto.utilidades.sticker.video_longo , id)
                     })
                 }else {
