@@ -107,20 +107,22 @@ module.exports = msgHandler = async (client, message) => {
             //4.0.7 - SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
             if(isGroupMsg && g_info.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,preencherTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
 
-            //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES
-            if(botInfo().limite_diario.status && !lista_comandos.excecoes_contagem.includes(command)){
-                //LIMITADOR DIARIO DE COMANDOS
-                await botVerificarExpiracaoLimite()
-                let ultrapassou = await db.ultrapassouLimite(sender.id)
-                if(!ultrapassou){ // 3.0.8.1 - SE NÃO ULTRAPASSAR LIMITE DIARIO
-                    await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
-                } else { //3.0.8.2 - SE ULTRAPASSAR LIMITE DIARIO
-                    pushname = (pushname != undefined) ? pushname : ""
-                    return client.reply(from, preencherTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, pushname, botInfo().limite_diario.qtd),id)
+            //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/ADMINISTRACAO/DONO
+            if(botInfo().limite_diario.status){
+                if(!lista_comandos.excecoes_contagem.includes(command) && !lista_comandos.dono_bot.includes(command) && !lista_comandos.admin_grupo.includes(command)){
+                    //LIMITADOR DIARIO DE COMANDOS
+                    await botVerificarExpiracaoLimite()
+                    let ultrapassou = await db.ultrapassouLimite(sender.id)
+                    if(!ultrapassou){ // 4.0.8.1 - SE NÃO ULTRAPASSAR LIMITE DIARIO
+                        await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
+                    } else { //4.0.8.2 - SE ULTRAPASSAR LIMITE DIARIO
+                        pushname = (pushname != undefined) ? pushname : ""
+                        return client.reply(from, preencherTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, pushname, botInfo().limite_diario.qtd),id)
+                    }
+                } else {
+                    await db.addContagemTotal(sender.id)
+                    await botVerificarExpiracaoLimite()
                 }
-            } else if(botInfo().limite_diario.status && lista_comandos.excecoes_contagem.includes(command)) {
-                await db.addContagemTotal(sender.id)
-                await botVerificarExpiracaoLimite()
             } else {
                 await db.addContagemTotal(sender.id)
             }
