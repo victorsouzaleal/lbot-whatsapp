@@ -291,7 +291,10 @@ module.exports = utilidades = async(client,message) => {
                 if(dados_s.tipo === "image"){
                     const mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
                     const imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
-                    client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true})
+                    client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true}).catch(err=>{
+                        consoleErro(err.message, "STICKER")
+                        client.reply(from, msgs_texto.utilidades.sticker.erro_s , id)
+                    })
                 } else {
                     return client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
                 }
@@ -322,8 +325,9 @@ module.exports = utilidades = async(client,message) => {
                     const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
                     const sgifB64 = `data:${dados_sgif.mimetype};base64,${mediaData.toString('base64')}`
                     client.reply(from, msgs_texto.geral.espera , id)
-                    client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false}).catch(()=>{
-                        client.reply(from, msgs_texto.utilidades.sticker.video_longo , id)
+                    client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false}).catch((err)=>{
+                        consoleErro(err.message,"STICKER GIF")
+                        client.reply(from, msgs_texto.utilidades.sticker.erro_sgif , id)
                     })
                 }else {
                     return client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
