@@ -24,6 +24,9 @@
 
 Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem diversas funções interessantes para uso individual ou em grupo. Espero que façam bom uso.
 
+### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
+### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
+
 ## 1 - Clone este projeto :
 ```bash
 > git clone https://github.com/Victorsouza02/lbot-whatsapp.git
@@ -32,14 +35,47 @@ Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem 
 
 ## 2 - Instale as dependências :
 
-### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
-### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
+### Windows
 Antes de executar o comando abaixo, tenha certeza que você está 
 no diretório do projeto que você clonou!
 
 ```bash
 > npm i
 ```
+
+#### SOLUÇÃO DE PROBLEMAS - WINDOWS :
+Só faça os passos abaixo se você tiver algum erro :
+
+Se você receber algum erro relacionado ao YoutubeDL, abra uma nova janela do CMD como ADMINISTRADOR e execute este comando. :
+```bash
+> npm i -g windows-build-tools
+```
+
+Se houver um erro na inicialização e você não tiver o Google Chrome instalado, faça a instalação : https://www.google.com/intl/pt-BR/chrome/
+
+
+### Linux
+Antes de executar o comando abaixo, tenha certeza que você está 
+no diretório do projeto que você clonou!
+
+```bash
+> npm i
+```
+
+#### SOLUÇÃO DE PROBLEMAS - LINUX :
+Só faça os passos abaixo se você tiver algum erro :
+
+Corrigir travamento no Linux , instale o  google chrome stable:
+```bash
+> wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+> sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+
+Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
+```bash
+> npm i --unsafe-perm
+```
+
 
 ## 3 - Uso :
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
@@ -166,24 +202,6 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 |       ✅        |   Limpar somente chat de contatos                 |
 |       ✅        |   Obter lista de usuários bloqueados                |
 |       ✅        |   Modificar status atual do bot                |
-
-
-### Solucão de problemas
-Tenha certeza que todas as depêndencias necessárias estão instaladas
-https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md
-
-#### Linux
-
-Corrigir travamento no Linux , instale o  google chrome stable:
-```bash
-> wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-> sudo apt install ./google-chrome-stable_current_amd64.deb
-```
-
-Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
-```bash
-> npm i --unsafe-perm
-```
 
 
 ### Dúvidas?
