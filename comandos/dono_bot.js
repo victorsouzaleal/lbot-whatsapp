@@ -24,8 +24,8 @@ module.exports = dono_bot = async(client,message) => {
         const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
         const isGuia = (args.length == 1) ? false : args[1] == "guia"
 
-
         switch(command){
+
             case "!admin":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
@@ -258,7 +258,6 @@ module.exports = dono_bot = async(client,message) => {
                 } else {
                     client.reply(from,erroComandoMsg(command),id)
                 }
-
                 break
             
             case "!limitarmsgs":
@@ -281,7 +280,6 @@ module.exports = dono_bot = async(client,message) => {
                 } else {
                     client.reply(from,erroComandoMsg(command),id)
                 }
-
                 break
             
             case "!mudarlimite":
@@ -305,7 +303,7 @@ module.exports = dono_bot = async(client,message) => {
                     } else if(mentionedJidList.length === 1){
                         usuario_tipo = mentionedJidList[0]
                     } else if(args.length > 2){
-                        usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")
+                        usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")+"@c.us"
                     } else {
                         return client.reply(from, erroComandoMsg(command),id)
                     }
@@ -433,35 +431,22 @@ module.exports = dono_bot = async(client,message) => {
             case "!verdados":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
-                let vd_usuario = {}
+                let vd_usuario_consultado = "", vd_usuario = {}
                 if(quotedMsg){
-                    let vd_registrado = await db.verificarRegistro(quotedMsgObj.author)
-                    if(vd_registrado){
-                        vd_usuario = await db.obterUsuario(quotedMsgObj.author)
-                    } else {
-                        return client.reply(from,msgs_texto.admin.verdados.nao_registrado,id)
-                    }
-                } else if (mentionedJidList.length === 1){
-                    let vd_registrado = await db.verificarRegistro(mentionedJidList[0])
-                    if(vd_registrado){
-                        vd_usuario = await db.obterUsuario(mentionedJidList[0])
-                    } else {
-                        return client.reply(from, msgs_texto.admin.verdados.nao_registrado,id)
-                    }
+                    vd_usuario_consultado = quotedMsgObj.author
+                } else if(mentionedJidList.length === 1){
+                    vd_usuario_consultado = mentionedJidList[0]
                 } else if(args.length >= 1){
-                    let vd_numero_usuario = ""
-                    for (let i = 1; i < args.length; i++){
-                        vd_numero_usuario += args[i]
-                    }
-                    vd_numero_usuario = vd_numero_usuario.replace(/\W+/g,"")
-                    let vd_registrado = await db.verificarRegistro(vd_numero_usuario+"@c.us")
-                    if(vd_registrado){
-                        vd_usuario = await db.obterUsuario(vd_numero_usuario+"@c.us")
-                    } else {
-                        return client.reply(from, msgs_texto.admin.verdados.nao_registrado,id)
-                    }
+                    vd_usuario_consultado =  args.slice(1).join("").replace(/\W+/g,"")+"@c.us"
                 } else {
                     return client.reply(from, erroComandoMsg(command),id)
+                }
+
+                let vd_registrado = await db.verificarRegistro(vd_usuario_consultado)
+                if(vd_registrado){
+                    vd_usuario = await db.obterUsuario(vd_usuario_consultado)
+                } else {
+                    return client.reply(from,msgs_texto.admin.verdados.nao_registrado,id)
                 }
 
                 let max_comandos_vd = (vd_usuario.max_comandos_dia == null) ? "Sem limite" : vd_usuario.max_comandos_dia
@@ -543,6 +528,7 @@ module.exports = dono_bot = async(client,message) => {
                         client.reply(from, erroComandoMsg(command), id)
                 }
                 break
+
             case '!desligar':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)

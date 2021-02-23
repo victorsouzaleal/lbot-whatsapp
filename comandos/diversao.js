@@ -21,8 +21,8 @@ module.exports = diversao = async(client,message) => {
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
         const groupOwner = isGroupMsg ? chat.groupMetadata.owner : ''
 
-
         switch(command){
+            
             case '!detector' :
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if(!quotedMsg) return client.reply(from, msgs_texto.diversao.detector.cmd_erro , id)
