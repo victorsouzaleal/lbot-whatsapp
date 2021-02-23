@@ -20,7 +20,7 @@ module.exports = diversao = async(client,message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
         const groupOwner = isGroupMsg ? chat.groupMetadata.owner : ''
-        const isGroupOwner = sender.id === groupOwner
+
 
         switch(command){
             case '!detector' :

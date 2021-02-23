@@ -10,7 +10,7 @@ const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario,
 
 module.exports = dono_bot = async(client,message) => {
     try{
-        const {id, from, sender, type, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
+        const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
         let { body } = message
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
@@ -299,41 +299,26 @@ module.exports = dono_bot = async(client,message) => {
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 if(args[1].toLowerCase() == "comum" || args[1].toLowerCase() == "vip"){
+                    let usuario_tipo = ""
                     if(quotedMsg){
-                        if(ownerNumber.includes(quotedMsgObj.author.replace("@c.us",""))) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
-                        let c_registrado = await db.verificarRegistro(quotedMsgObj.author)
+                        usuario_tipo = quotedMsgObj.author
+                    } else if(mentionedJidList.length === 1){
+                        usuario_tipo = mentionedJidList[0]
+                    } else if(args.length > 2){
+                        usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")
+                    } else {
+                        return client.reply(from, erroComandoMsg(command),id)
+                    }
+
+                    if(ownerNumber.includes(usuario_tipo.replace("@c.us",""))) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
+                        let c_registrado = await db.verificarRegistro(usuario_tipo)
                         if(c_registrado){
-                            await db.alterarTipoUsuario(quotedMsgObj.author, args[1])
+                            await db.alterarTipoUsuario(usuario_tipo, args[1])
                             return client.reply(from, preencherTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()),id)
                         } else {
                             return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
-                        }
-                    } else if (mentionedJidList.length === 1){
-                        if(ownerNumber.includes(mentionedJidList[0].replace("@c.us",""))) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
-                        let c_registrado = await db.verificarRegistro(mentionedJidList[0])
-                        if(c_registrado){
-                            await db.alterarTipoUsuario(mentionedJidList[0], args[1])
-                            return client.reply(from, preencherTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()), id)
-                        } else {
-                            return client.reply(from,msgs_texto.admin.tipo.nao_registrado,id)
-                        }
-                    } else if(args.length >= 2){
-                        let numero_usuario = ""
-                        for (let i = 2; i < args.length; i++){
-                            numero_usuario += args[i]
-                        }
-                        numero_usuario = numero_usuario.replace(/\W+/g,"")
-                        if(ownerNumber.includes(numero_usuario)) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
-                        let c_registrado = await db.verificarRegistro(numero_usuario+"@c.us")
-                        if(c_registrado){
-                            await db.alterarTipoUsuario(numero_usuario+"@c.us", args[1])
-                            return client.reply(from, preencherTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()), id)
-                        } else {
-                            return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
-                        }
-                    } else {
-                        client.reply(from, erroComandoMsg(command),id)
                     }
+
                 } else {
                     client.reply(from, msgs_texto.admin.tipo.tipos_disponiveis,id)
                 }

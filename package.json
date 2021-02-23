@@ -33,7 +33,7 @@
     "request": "^2.88.2",
     "sharp": "^0.27.1",
     "twit": "^2.2.11",
-    "youtube-dl": "^3.1.0",
+    "youtube-dl": "^3.5.0",
     "youtube-sr": "^2.0.5",
     "yt-dl-playlist": "^2.1.0"
   },

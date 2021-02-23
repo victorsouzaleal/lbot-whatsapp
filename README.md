@@ -33,7 +33,7 @@ Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem 
 ## 2 - Instale as dependências :
 
 ### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
-### VOCÊ DEVE TER O GIT E O NODE INSTALADOS EM SEU COMPUTADOR
+### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
 Antes de executar o comando abaixo, tenha certeza que você está 
 no diretório do projeto que você clonou!
 
