@@ -48,7 +48,7 @@ Dentro da pasta do projeto após ter realizado todos os passos anteriores, execu
 ```bash
 > npm start
 ```
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal SEU número de telefone COM código do país no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal **SEU** número de telefone **COM CÓDIGO DO PAÍS** no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
 
 ## 4 - Funcionamento :
 Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
@@ -57,7 +57,7 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
     !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
 
 ### Pronto! Seu bot já está funcionando!!
-#### Obs: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet) e !noticias (ver noticias atuais) vá para o passo 5.
+**Obs**: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet) e !noticias (ver noticias atuais) vá para o passo 5.
  
 
 ## 5 - Configuração do arquivo .env :
@@ -84,9 +84,9 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
         twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
 
 
-#### Obs: As chaves do Twitter agora já vem configuradas de ínicio, só mude elas se você achar necessário.
+**Obs**: As chaves do Twitter agora já vem configuradas de ínicio, só mude elas se você achar necessário.
 
-#### Informações detalhadas sobre como obter as chaves do RemoveBG, NewsAPI e RapidAPI :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do RemoveBG, NewsAPI e RapidAPI** :  [Clique AQUI](CHAVESAPI.md)
 
 
 
@@ -175,30 +175,25 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 #### SOLUÇÃO DE PROBLEMAS - WINDOWS :
 Só faça os passos abaixo se você tiver algum erro :
 
-Se você receber algum erro relacionado ao YoutubeDL, abra uma nova janela do CMD como ADMINISTRADOR e execute este comando. :
-```bash
-> npm i -g windows-build-tools
-```
-
-Se houver um erro na inicialização e você não tiver o Google Chrome instalado, faça a instalação : https://www.google.com/intl/pt-BR/chrome/
+- Se houver um erro na inicialização e você não tiver o Google Chrome instalado, faça a instalação : https://www.google.com/intl/pt-BR/chrome/
 
 
 #### SOLUÇÃO DE PROBLEMAS - LINUX :
 Só faça os passos abaixo se você tiver algum erro :
 
-Corrigir travamento no Linux , instale o  google chrome stable:
-```bash
-> wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-> sudo apt install ./google-chrome-stable_current_amd64.deb
-```
+- Corrigir travamento no Linux , instale o  google chrome stable:
+    ```bash
+    > wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    > sudo apt install ./google-chrome-stable_current_amd64.deb
+    ```
 
-Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
-```bash
-> npm i --unsafe-perm
-```
+- Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
+    ```bash
+    > npm i --unsafe-perm
+    ```
 
 
-#### Obs: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/Victorsouza02/lbot-whatsapp#8---d%C3%BAvidas)
+**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/Victorsouza02/lbot-whatsapp#8---d%C3%BAvidas)
 
 
 ## 8 - Dúvidas?
