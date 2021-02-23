@@ -34,8 +34,6 @@ Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem 
 ```
 
 ## 2 - Instale as dependências :
-
-### Windows
 Antes de executar o comando abaixo, tenha certeza que você está 
 no diretório do projeto que você clonou!
 
@@ -43,39 +41,7 @@ no diretório do projeto que você clonou!
 > npm i
 ```
 
-#### SOLUÇÃO DE PROBLEMAS - WINDOWS :
-Só faça os passos abaixo se você tiver algum erro :
-
-Se você receber algum erro relacionado ao YoutubeDL, abra uma nova janela do CMD como ADMINISTRADOR e execute este comando. :
-```bash
-> npm i -g windows-build-tools
-```
-
-Se houver um erro na inicialização e você não tiver o Google Chrome instalado, faça a instalação : https://www.google.com/intl/pt-BR/chrome/
-
-
-### Linux
-Antes de executar o comando abaixo, tenha certeza que você está 
-no diretório do projeto que você clonou!
-
-```bash
-> npm i
-```
-
-#### SOLUÇÃO DE PROBLEMAS - LINUX :
-Só faça os passos abaixo se você tiver algum erro :
-
-Corrigir travamento no Linux , instale o  google chrome stable:
-```bash
-> wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-> sudo apt install ./google-chrome-stable_current_amd64.deb
-```
-
-Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
-```bash
-> npm i --unsafe-perm
-```
-
+#### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/Victorsouza02/lbot-whatsapp#7---solucão-de-problemas)
 
 ## 3 - Uso :
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
@@ -124,7 +90,7 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 
 
 
-## Recursos Principais :
+## 6 - Recursos Principais :
 
 ### Criação
 
@@ -204,9 +170,37 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 |       ✅        |   Modificar status atual do bot                |
 
 
-### Dúvidas?
+## 7 - Solução de Problemas :
+
+#### SOLUÇÃO DE PROBLEMAS - WINDOWS :
+Só faça os passos abaixo se você tiver algum erro :
+
+Se você receber algum erro relacionado ao YoutubeDL, abra uma nova janela do CMD como ADMINISTRADOR e execute este comando. :
+```bash
+> npm i -g windows-build-tools
+```
+
+Se houver um erro na inicialização e você não tiver o Google Chrome instalado, faça a instalação : https://www.google.com/intl/pt-BR/chrome/
+
+
+#### SOLUÇÃO DE PROBLEMAS - LINUX :
+Só faça os passos abaixo se você tiver algum erro :
+
+Corrigir travamento no Linux , instale o  google chrome stable:
+```bash
+> wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+> sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+
+Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
+```bash
+> npm i --unsafe-perm
+```
+
+
+## 8 - Dúvidas?
 Entre em contato comigo pelo WhatsApp : https://wa.me/5521995612287
 
-## Agradecimentos
+## 9 - Agradecimentos
 * [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
 * [`MhankBarBar/whatsapp-bot`](https://github.com/MhankBarBar/whatsapp-bot)
