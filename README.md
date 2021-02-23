@@ -41,7 +41,7 @@ no diretório do projeto que você clonou!
 > npm i
 ```
 
-#### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/Victorsouza02/lbot-whatsapp#7---solucão-de-problemas)
+#### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/Victorsouza02/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
 
 ## 3 - Uso :
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
@@ -196,6 +196,9 @@ Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
 ```bash
 > npm i --unsafe-perm
 ```
+
+
+#### Obs: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/Victorsouza02/lbot-whatsapp#8---d%C3%BAvidas)
 
 
 ## 8 - Dúvidas?
