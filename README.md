@@ -86,7 +86,7 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 
 **Obs**: As chaves do Twitter agora já vem configuradas de ínicio, só mude elas se você achar necessário.
 
-**Informações detalhadas sobre como obter as chaves do RemoveBG, NewsAPI e RapidAPI** :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias) e RapidAPI(Pesquisa Imagens/Web)** :  [Clique AQUI](CHAVESAPI.md)
 
 
 
@@ -163,7 +163,7 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 |       ✅        |   Sistema Comum/VIP         |
 |       ✅        |   Limitador comandos diários (por usuário)            |
 |       ✅        |   Limitador de comandos por minuto (por usuário)          |
-|       ✅       | Limitador de mensagens (Anti-flood)
+|       ✅       | Limitador de mensagens privadas (Anti-flood)
 |       ✅        |   Sair do grupo                     |
 |       ✅        |   Limpar somente chat de contatos                 |
 |       ✅        |   Obter lista de usuários bloqueados                |
