@@ -56,7 +56,10 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
     !ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
     !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
 
+Todos os comandos agora tem um guia ao digitar **!comando guia**
+
 ### Pronto! Seu bot já está funcionando!!
+
 **Obs**: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet) e !noticias (ver noticias atuais) vá para o passo 5.
  
 

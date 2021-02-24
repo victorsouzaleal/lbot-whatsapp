@@ -1,9 +1,9 @@
 //REQUERINDO MÓDULOS
 const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
-const {msg_admin_grupo, msg_comum, msg_comum_grupo} = require('../lib/menu')
+const {ajuda} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, consoleErro, erroComandoMsg} = require("../lib/util")
+const {preencherTexto, erroComandoMsg} = require("../lib/util")
 const path = require('path')
 const db = require('../database/database')
 const sticker = require("../lib/sticker")
@@ -197,7 +197,7 @@ module.exports = utilidades = async(client,message) => {
             } else {
                 data_Img = body.slice(5)
             }
-            if (data_Img === '') return client.reply(from, msgs_texto.utilidades.img.tema_vazio , id)
+            if (data_Img === '') return client.reply(from, erroComandoMsg(command), id)
             if (data_Img.length > 500) return client.reply(from, msgs_texto.utilidades.img.tema_longo , id)
             servicos.obterImagens(data_Img,qtd_Img).then(imagens=>{
                 for(let imagem of imagens){
@@ -267,16 +267,7 @@ module.exports = utilidades = async(client,message) => {
                 msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_comum,ajuda_usuario,tipo_usuario)
             }
             msgs_dados += `═════════════════\n`
-            let menu = ""
-            if(isGroupMsg){
-                if(isGroupAdmins){
-                    menu = msg_admin_grupo
-                } else {
-                    menu = msg_comum_grupo
-                }
-            } else {
-                menu = msg_comum
-            }
+            let menu = ajuda(isGroupAdmins,isGroupMsg)
             client.sendText(from, msgs_dados+menu)
             break
 
