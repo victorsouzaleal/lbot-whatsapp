@@ -15,7 +15,7 @@ const admin_grupo = require('./comandos/admin_grupo')
 const utilidades = require('./comandos/utilidades')
 const diversao = require('./comandos/diversao')
 const dono_bot = require('./comandos/dono_bot')
-const { preencherTexto } = require('./lib/util')
+const { preencherTexto, guiaComandoMsg } = require('./lib/util')
 const { msgs_texto } = require('./lib/msgs')
 
 
@@ -29,13 +29,14 @@ module.exports = msgHandler = async (client, message) => {
         pushname = pushname || verifiedName
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
+        const args =  commands.split(' ')
         const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
         const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const g_info = isGroupMsg ? await db.obterGrupo(groupId) : ''
-        
+        const isGuia = (args.length == 1) ? false : args[1] == "guia"
 
         const msgs = (message) => {
             if (command.startsWith('!')) {
@@ -109,7 +110,7 @@ module.exports = msgHandler = async (client, message) => {
 
             //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/ADMINISTRACAO/DONO
             if(botInfo().limite_diario.status){
-                if(!lista_comandos.excecoes_contagem.includes(command) && !lista_comandos.dono_bot.includes(command) && !lista_comandos.admin_grupo.includes(command)){
+                if(!lista_comandos.excecoes_contagem.includes(command) && !lista_comandos.dono_bot.includes(command) && !lista_comandos.admin_grupo.includes(command) && !isGuia){
                     //LIMITADOR DIARIO DE COMANDOS
                     await botVerificarExpiracaoLimite()
                     let ultrapassou = await db.ultrapassouLimite(sender.id)
@@ -147,20 +148,24 @@ module.exports = msgHandler = async (client, message) => {
 
         //6.0 - APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
         if(lista_comandos.utilidades.includes(command)){
+            if(isGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
             await utilidades(client,message)
             const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
             if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta+"s")})`)
             if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
         } else if (lista_comandos.admin_grupo.includes(command)){
+            if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
             await admin_grupo(client,message)
             const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
             if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - ADMINISTRAÇÃO]","yellow"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
         } else if(lista_comandos.diversao.includes(command)){
+            if(isGuia) return client.reply(from, guiaComandoMsg("diversao", command), id)
             await diversao(client,message)
             const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
             if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>',color("[PRIVADO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta+"s")})`)
             if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
         } else if(lista_comandos.dono_bot.includes(command)){
+            if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
             await dono_bot(client,message)
             const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
             if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - DONO]","white"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta+"s")})`)

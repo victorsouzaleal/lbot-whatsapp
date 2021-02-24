@@ -3,7 +3,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const {msg_admin_grupo, msg_comum, msg_comum_grupo} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, consoleErro} = require("../lib/util")
+const {preencherTexto, consoleErro, erroComandoMsg} = require("../lib/util")
 const path = require('path')
 const db = require('../database/database')
 const sticker = require("../lib/sticker")
@@ -37,7 +37,7 @@ module.exports = utilidades = async(client,message) => {
             break
         
         case "!reportar":
-            if(args.length == 1) return client.reply(from,msgs_texto.utilidades.reportar.cmd_erro ,id)
+            if(args.length == 1) return client.reply(from, erroComandoMsg(command) ,id)
             let reportar_resposta = preencherTexto(msgs_texto.utilidades.reportar.resposta,pushname,sender.id.replace("@c.us",""),body.slice(10))
             client.sendText(numero_dono[0]+"@c.us",reportar_resposta)
             client.reply(from,msgs_texto.utilidades.reportar.sucesso,id)
@@ -53,7 +53,7 @@ module.exports = utilidades = async(client,message) => {
                 if(args[1].length != 2) return client.reply(from, msgs_texto.utilidades.ddd.erro_ddd ,id)
                 ddd_selecionado = args[1]
             } else {
-                return client.reply(from, msgs_texto.utilidades.ddd.cmd_erro, id)
+                return client.reply(from, erroComandoMsg(command), id)
             }
             const estados = JSON.parse(fs.readFileSync('./database/json/ddd.json')).estados
             const procurarDdd = estados.findIndex(estado => estado.ddd.includes(ddd_selecionado))
@@ -66,7 +66,7 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!audio":
-            if(args.length === 1) return client.reply(from, msgs_texto.utilidades.audio.cmd_erro, id)
+            if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
             if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
                 const mediaData = await decryptMedia(quotedMsg, uaOverride)
                 let timestamp = Math.round(new Date().getTime()/1000)
@@ -82,12 +82,12 @@ module.exports = utilidades = async(client,message) => {
                     client.reply(from, err.message, id)
                 })
             } else {
-                client.reply(from, msgs_texto.utilidades.audio.cmd_erro, id)
+                client.reply(from, erroComandoMsg(command), id)
             }
             break
 
         case "!clima":
-            if(args.length === 1) return client.reply(from, msgs_texto.utilidades.clima.cmd_erro ,id)
+            if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
             servicos.obterClima(body.slice(7)).then(clima=>{
                 let clima_resposta = preencherTexto(msgs_texto.utilidades.clima.resposta,clima.msg)
                 client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima_resposta, id)
@@ -97,7 +97,7 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!moeda":
-            if(args.length !== 3) return client.reply(from, msgs_texto.utilidades.moeda.cmd_erro, id)
+            if(args.length !== 3) return client.reply(from, erroComandoMsg(command), id)
             servicos.obterConversaoMoeda(args[1],args[2]).then(res=>{
                 let moeda_resposta = preencherTexto(msgs_texto.utilidades.moeda.resposta,res.valor_inserido,res.moeda,res.valor_reais,res.data_atualizacao)
                 client.reply(from, moeda_resposta ,id)
@@ -107,7 +107,7 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!pesquisa":
-            if (args.length === 1) return client.reply(from, msgs_texto.utilidades.pesquisa.cmd_erro , id)
+            if (args.length === 1) return client.reply(from, erroComandoMsg(command) , id)
             servicos.obterPesquisa(body.slice(10)).then(resultados=>{
                 let google_resposta = preencherTexto(msgs_texto.utilidades.pesquisa.resposta_titulo,body.slice(10))
                 for(let resultado of resultados){
@@ -121,7 +121,7 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case '!rastreio':
-            if (args.length === 1) return client.reply(from, msgs_texto.utilidades.rastreio.cmd_erro, id)
+            if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
             servicos.obterRastreioCorreios(body.slice(10)).then(dados=>{
                 let rastreio_resposta = msgs_texto.utilidades.rastreio.resposta_titulo
                 for(let dado of dados){
@@ -136,7 +136,7 @@ module.exports = utilidades = async(client,message) => {
             break
         
         case "!play":
-            if(args.length === 1) return client.reply(from,msgs_texto.utilidades.play.cmd_erro,id)
+            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             servicos.obterInfoVideo(body.slice(6)).then(play_video =>{
                 if(play_video == null) return client.reply(from,msgs_texto.utilidades.play.nao_encontrado,id)
                 if(play_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.play.limite,id)
@@ -155,7 +155,7 @@ module.exports = utilidades = async(client,message) => {
             break
         
         case "!yt":
-            if(args.length === 1) return client.reply(from,msgs_texto.utilidades.yt.cmd_erro,id)    
+            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)    
             servicos.obterInfoVideo(body.slice(4)).then(yt_video => {
                 if(yt_video == null) return client.reply(from,msgs_texto.utilidades.yt.nao_encontrado,id)
                 if(yt_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.yt.limite,id)
@@ -172,7 +172,7 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!tw":
-            if(args.length === 1) return client.reply(from,msgs_texto.utilidades.tw.cmd_erro,id)
+            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             client.reply(from,msgs_texto.utilidades.tw.espera,id)
             servicos.obterMediaTwitter(args[1]).then(link=>{
                 client.sendFile(from, link, `twittervid.mp4`,"", id)
@@ -182,7 +182,7 @@ module.exports = utilidades = async(client,message) => {
             break
         
         case '!img':
-            if(quotedMsg || type != "chat") return client.reply(from, msgs_texto.utilidades.img.cmd_erro , id)
+            if(quotedMsg || type != "chat") return client.reply(from, erroComandoMsg(command) , id)
             let qtd_Img = 1;
             let data_Img = ""
             if(!isNaN(args[1])){
@@ -295,10 +295,10 @@ module.exports = utilidades = async(client,message) => {
                         client.reply(from, msgs_texto.utilidades.sticker.erro_s , id)
                     })
                 } else {
-                    return client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
+                    return client.reply(from, erroComandoMsg(command) , id)
                 }
             } else {
-                return client.reply(from, msgs_texto.utilidades.sticker.cmd_erro , id)
+                return client.reply(from, erroComandoMsg(command) , id)
             }
             break
         
@@ -308,7 +308,7 @@ module.exports = utilidades = async(client,message) => {
                 const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
                 await client.sendFile(from,imageBase64,"sticker.jpg","",quotedMsgObj.id)
             } else {
-                client.reply(from, msgs_texto.utilidades.simg.cmd_erro, id)
+                client.reply(from, erroComandoMsg(command), id)
             }
             break
 
@@ -336,7 +336,7 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!tps":
-            if(args.length == 1 || type != "chat") return client.reply(from,msgs_texto.utilidades.tps.cmd_erro,id)
+            if(args.length == 1 || type != "chat") return client.reply(from,erroComandoMsg(command),id)
             if(body.slice(5).length > 40) return client.reply(from,msgs_texto.utilidades.tps.texto_longo,id)
             await client.reply(from, msgs_texto.utilidades.tps.espera,id)
             sticker.textoParaSticker(body.slice(5)).then((base64)=>{
@@ -390,10 +390,10 @@ module.exports = utilidades = async(client,message) => {
                         client.reply(from,err.message,id)
                     })
                 } else {
-                    client.reply(from,msgs_texto.utilidades.anime.cmd_erro, id)
+                    client.reply(from,erroComandoMsg(command), id)
                 }
             } else {
-                client.reply(from,msgs_texto.utilidades.anime.cmd_erro, id)
+                client.reply(from,erroComandoMsg(command), id)
             }
             break
 
@@ -414,10 +414,10 @@ module.exports = utilidades = async(client,message) => {
             if(quotedMsg != undefined && quotedMsg.type == "chat"){
                 texto_traducao = quotedMsg.body
             } else if(quotedMsg == undefined && type == "chat" ){
-                if(args.length === 1) return client.reply(from, msgs_texto.utilidades.traduz.cmd_erro ,id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
                 texto_traducao = body.slice(8)
             } else {
-                return client.reply(from, msgs_texto.utilidades.traduz.cmd_erro ,id)
+                return client.reply(from, erroComandoMsg(command) ,id)
             }
             servicos.obterTraducao(texto_traducao).then(traducao=>{
                 client.reply(from, traducao, id);
@@ -430,7 +430,7 @@ module.exports = utilidades = async(client,message) => {
             var dataText = '';
             var id_resp = id
             if (args.length === 1) {
-                return client.reply(from, msgs_texto.utilidades.voz.cmd_erro ,id)
+                return client.reply(from, erroComandoMsg(command) ,id)
             } else if(quotedMsg !== undefined && quotedMsg.type == 'chat'){
                 dataText = (args.length == 2) ? quotedMsg.body : body.slice(8)
             } else {
@@ -461,7 +461,7 @@ module.exports = utilidades = async(client,message) => {
             break;
 
         case '!calc':
-            if(args.length === 1) return client.reply(from, msgs_texto.utilidades.calc.cmd_erro ,id)
+            if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
             let expressao = body.slice(6)
             servicos.obterCalculo(expressao).then(resultado=>{
                 let calc_resposta = preencherTexto(msgs_texto.utilidades.calc.resposta,resultado)

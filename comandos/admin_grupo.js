@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, erroComandoMsg, guiaComandoMsg} = require('../lib/util')
+const {preencherTexto, erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
 const fs = require('fs-extra')
 
@@ -19,22 +19,24 @@ module.exports = admin_grupo = async(client,message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
-        const isGuia = (args.length == 1) ? false : args[1] == "guia"
 
         switch(command){
             //##################### ADMINISTRAÇÃO GRUPO #########################
             case '!regras':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let grupo_info = await client.getGroupInfo(groupId)
+                if(grupo_info.description == undefined) grupo_info.description = msgs_texto.grupo.regras.sem_descrição
                 let foto_grupo = await client.getProfilePicFromServer(groupId)
-                await client.sendFile(from, foto_grupo, "foto-grupo.jpg", grupo_info.description)
+                if(foto_grupo != undefined){
+                    client.sendFile(from, foto_grupo, "foto-grupo.jpg", grupo_info.description)
+                } else {
+                    client.sendText(from, grupo_info.description)
+                }
                 break
                 
             case '!status':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const g_status = await db.obterGrupo(groupId)
                 let status_resposta = msgs_texto.grupo.status.resposta_titulo
                 //Bem-vindo
@@ -63,8 +65,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
-
                 const bv_status = await db.obterGrupo(groupId)
 
                 if (args[1].toLowerCase() === 'on') {
@@ -102,8 +102,6 @@ module.exports = admin_grupo = async(client,message) => {
                     if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                     if (args.length === 1) return client.reply(from,erroComandoMsg(command), id)
-                    if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
-
                     const al_status = await db.obterGrupo(groupId)
 
                     if (args[1].toLowerCase() === 'on') {
@@ -130,7 +128,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 client.revokeGroupInviteLink(groupId).then(()=>{client.reply(from, msgs_texto.grupo.rlink.sucesso ,id)}).catch(()=>{client.reply(from, msgs_texto.grupo.rlink.erro ,id)})
                 break        
 
@@ -139,7 +136,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const af_status = await db.obterGrupo(groupId)
 
                 if (args[1].toLowerCase() === 'on') {
@@ -166,7 +162,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const mutar_status = await db.obterGrupo(groupId)
                 if (args[1].toLowerCase() === 'on') {
                     if(!mutar_status.mutar){
@@ -191,7 +186,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (args.length === 1) return client.reply(from,erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const cont_status = await db.obterGrupo(groupId)
                 const membros_atuais = await client.getGroupMembers(groupId)
                 if (args[1].toLowerCase() === 'on') {
@@ -218,7 +212,6 @@ module.exports = admin_grupo = async(client,message) => {
             case "!atividade":
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let atv_contador = await db.obterGrupo(groupId)
                 if(!atv_contador.contador.status) return client.reply(from, msgs_texto.grupo.atividade.erro_contador , id)
                 let atividade_usuario = null
@@ -242,7 +235,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length == 1)  return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if(isNaN(args[1]) || args[1] < 0)  return client.reply(from, msgs_texto.grupo.alterarcont.num_invalido, id)
                 let ac_contador = await db.obterGrupo(groupId)
                 if(!ac_contador.contador.status) return client.reply(from, msgs_texto.grupo.alterarcont.erro_contador, id)
@@ -265,7 +257,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command) , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if(isNaN(args[1])) return client.reply(from, msgs_texto.grupo.minativos.erro_qtd , id)
                 if(args[1] < 1 || args[1] > 50) return client.reply(from, msgs_texto.grupo.minativos.limite_qtd, id)
                 let mi_contador = await db.obterGrupo(groupId)
@@ -289,7 +280,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if(isNaN(args[1])) return client.reply(from, msgs_texto.grupo.binativos.erro_qtd , id)
                 if(args[1] < 1 || args[1] > 50) return client.reply(from, msgs_texto.grupo.binativos.limite_qtd , id)
                 let bi_contador = await db.obterGrupo(groupId)
@@ -309,7 +299,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command) , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if(isNaN(args[1])) return client.reply(from, msgs_texto.grupo.topativos.erro_qtd , id)
                 if(args[1] < 1 || args[1] > 50) return client.reply(from, msgs_texto.grupo.topativos.limite_qtd , id)
                 let ta_contador = await db.obterGrupo(groupId)
@@ -341,7 +330,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command) , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let enq_grupo = await db.obterGrupo(groupId)
                 if(args[1] != "off"){
                     if(enq_grupo.enquete.status) return client.reply(from, msgs_texto.grupo.enquete.ja_aberta , id)
@@ -371,7 +359,6 @@ module.exports = admin_grupo = async(client,message) => {
                 let ve_grupo = await db.obterGrupo(groupId)
                 if(!ve_grupo.enquete.status) return client.reply(from, msgs_texto.grupo.votarenquete.sem_enquete , id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command) , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if(isNaN(args[1])) return client.reply(from, msgs_texto.grupo.votarenquete.opcao_erro , id)
                 if((ve_grupo.enquete.opcoes.find(opcao => opcao.votos.includes(sender.id))) != undefined)  return client.reply(from, msgs_texto.grupo.votarenquete.ja_votou , id)
                 if((ve_grupo.enquete.opcoes.find(opcao => opcao.digito == args[1])) == undefined)  return client.reply(from, msgs_texto.grupo.votarenquete.opcao_invalida , id)
@@ -382,7 +369,6 @@ module.exports = admin_grupo = async(client,message) => {
             
             case '!verenquete':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let ver_grupo = await db.obterGrupo(groupId)
                 if(!ver_grupo.enquete.status) return client.reply(from, msgs_texto.grupo.verenquete.sem_enquete , id)
                 let verenquete_resposta = preencherTexto(msgs_texto.grupo.verenquete.resposta_titulo, ver_grupo.enquete.pergunta)
@@ -398,7 +384,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const afl_status = await db.obterGrupo(groupId)
                 let intervalo = 10
                 let max_flood = 10
@@ -440,7 +425,6 @@ module.exports = admin_grupo = async(client,message) => {
                 break
             
             case "!votacao":
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const vb_status = await db.obterGrupo(groupId)
                 if(!vb_status.voteban.status) {
                     client.reply(from, msgs_texto.grupo.voteban.sem_votacao, id)
@@ -451,7 +435,6 @@ module.exports = admin_grupo = async(client,message) => {
             
             case '!votar':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const votar_status = await db.obterGrupo(groupId)
                 if(!votar_status.voteban.status) return client.reply(from, msgs_texto.grupo.voteban.sem_votacao , id)
                 if(votar_status.voteban.votou.indexOf(sender.id) != -1) return client.reply(from, msgs_texto.grupo.voteban.ja_votou ,id)
@@ -478,7 +461,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const vtb_status = await db.obterGrupo(groupId)
                 if(args[1] == "on"){
                     if(vtb_status.voteban.status) return client.reply(from, msgs_texto.grupo.voteban.ja_aberto ,id)
@@ -501,7 +483,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let b_cmd_inseridos = body.slice(6).split(" "), b_cmd_verificados = [], b_cmd_grupo = await db.obterGrupo(groupId), bcmd_resposta = msgs_texto.grupo.bcmd.resposta_titulo
                 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
                 for(let b_cmd of b_cmd_inseridos){
@@ -526,7 +507,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let d_cmd_inseridos = body.slice(6).split(" "), d_cmd_verificados = [], d_cmd_grupo = await db.obterGrupo(groupId), dcmd_resposta = msgs_texto.grupo.dcmd.resposta_titulo
                 for(let d_cmd of d_cmd_inseridos){
                     if(d_cmd_grupo.block_cmds.includes(d_cmd)) {
@@ -543,7 +523,6 @@ module.exports = admin_grupo = async(client,message) => {
             case '!link':
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if (isGroupMsg) {
                     const inviteLink = await client.getGroupInviteLink(groupId);
                     client.sendLinkWithAutoPreview(from, inviteLink, preencherTexto(msgs_texto.grupo.link.resposta, name))
@@ -554,7 +533,6 @@ module.exports = admin_grupo = async(client,message) => {
 
             case '!adms':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 let adms_resposta = msgs_texto.grupo.adms.resposta_titulo
                 for (let adm of groupAdmins) {
                     adms_resposta += preencherTexto(msgs_texto.grupo.adms.resposta_itens, adm.replace(/@c.us/g, ''))
@@ -564,7 +542,6 @@ module.exports = admin_grupo = async(client,message) => {
 
             case "!dono":
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const Owner_ = chat.groupMetadata.owner
                 await client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.dono.resposta, Owner_))
                 break
@@ -572,7 +549,6 @@ module.exports = admin_grupo = async(client,message) => {
             case '!mt':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const groupMem = await client.getGroupMembers(groupId)
                 let mt_resposta = (args.length > 1) ? preencherTexto(msgs_texto.grupo.mt.resposta_titulo_variavel, body.slice(4)) : msgs_texto.grupo.mt.resposta_titulo_comum
                 for (let i = 0; i < groupMem.length; i++) {
@@ -587,7 +563,6 @@ module.exports = admin_grupo = async(client,message) => {
                 const isGroupOwner = sender.id === chat.groupMetadata.owner
                 if (!isGroupOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_grupo, id)           
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 const allMem = await client.getGroupMembers(groupId)
                 for (let i = 0; i < allMem.length; i++) {
                     if (!groupAdmins.includes(allMem[i].id)) await client.removeParticipant(groupId, allMem[i].id)
@@ -600,7 +575,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 
                 const add_number = body.slice(5).replace(/\W+/g,"")
                 try {
@@ -614,7 +588,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if (mentionedJidList.length === 0){
                     if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
                     if (groupAdmins.includes(quotedMsgObj.author)) return client.reply(from, msgs_texto.grupo.banir.banir_admin, id)
@@ -639,7 +612,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo , id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if (mentionedJidList.length === 0) return client.reply(from, erroComandoMsg(command), id)
                 if (mentionedJidList.length >= 2) return client.reply(from, msgs_texto.grupo.promover.limite_membro, id)
                 if (groupAdmins.includes(mentionedJidList[0])) return client.reply(from, msgs_texto.grupo.promover.admin, id)
@@ -651,7 +623,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if (mentionedJidList.length === 0) return client.reply(from, erroComandoMsg(command), id)
                 if (mentionedJidList.length >= 2) return client.reply(from, msgs_texto.grupo.rebaixar.limite_membro, id)
                 if (!groupAdmins.includes(mentionedJidList[0])) return client.reply(from, msgs_texto.grupo.rebaixar.admin, id)
@@ -662,7 +633,6 @@ module.exports = admin_grupo = async(client,message) => {
             case '!apg':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if (!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
                 if (!quotedMsgObj.fromMe) return client.reply(from, msgs_texto.grupo.apagar.minha_msg, id)
                 client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false).catch(()=>{
@@ -674,7 +644,6 @@ module.exports = admin_grupo = async(client,message) => {
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
                 if(args.length === 1) return client.reply(from,erroComandoMsg(command), id)
                 client.setGroupToAdminsOnly(groupId,(args[1] == "on") ? true : false)
                 break

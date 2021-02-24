@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 const fs = require('fs-extra')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, primeiraLetraMaiuscula} = require("../lib/util")
+const {preencherTexto, primeiraLetraMaiuscula, erroComandoMsg} = require("../lib/util")
 const path = require("path")
 
 module.exports = diversao = async(client,message) => {
@@ -22,10 +22,9 @@ module.exports = diversao = async(client,message) => {
         const groupOwner = isGroupMsg ? chat.groupMetadata.owner : ''
 
         switch(command){
-            
             case '!detector' :
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg) return client.reply(from, msgs_texto.diversao.detector.cmd_erro , id)
+                if(!quotedMsg) return client.reply(from, erroComandoMsg(command) , id)
                 await client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto.diversao.detector.espera, id)
                 const imgs_detector = ['verdade.png','vaipra.png','mentiroso.png','meengana.png','kao.png','incerteza.png','estresse.png','conversapraboi.png']
                 let aleatorio_detector = Math.floor(Math.random() * imgs_detector.length)
@@ -34,7 +33,7 @@ module.exports = diversao = async(client,message) => {
             
             case '!viadometro' :
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg && mentionedJidList.length == 0) return client.reply(from, msgs_texto.diversao.viadometro.cmd_erro, id)
+                if(!quotedMsg && mentionedJidList.length == 0) return client.reply(from, erroComandoMsg(command), id)
                 if(mentionedJidList.length > 1) client.reply(from, msgs_texto.diversao.viadometro.apenas_um, id)
                 const viadometro_resps = msgs_texto.diversao.viadometro.respostas
                 let aleatorio = Math.floor(Math.random() * viadometro_resps.length),id_resposta_viadometro = null,alvo_viadometro = null
@@ -50,7 +49,7 @@ module.exports = diversao = async(client,message) => {
             
             case '!bafometro' :
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg && mentionedJidList.length == 0) return client.reply(from, msgs_texto.diversao.bafometro.cmd_erro, id)
+                if(!quotedMsg && mentionedJidList.length == 0) return client.reply(from, erroComandoMsg(command), id)
                 if (mentionedJidList.length > 1) return client.reply(from, msgs_texto.diversao.bafometro.apenas_um, id)
                 const bafometro_resps = msgs_texto.diversao.bafometro.respostas
                 let bafometro_aleatorio = Math.floor(Math.random() * bafometro_resps.length), id_resposta_bafometro = null, alvo_bafometro = null
@@ -74,7 +73,7 @@ module.exports = diversao = async(client,message) => {
 
             case "!ppt":
                 let ppt = ["pedra","papel","tesoura"], ppt_aleatorio = Math.floor(Math.random() * ppt.length)
-                if(args.length === 1) return client.reply(from, msgs_texto.diversao.ppt.cmd_erro, id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 if(!ppt.includes(args[1].toLowerCase())) return client.reply(from, msgs_texto.diversao.ppt.opcao_erro, id)
                 let escolha_bot = ppt[ppt_aleatorio], icone_escolha_bot = null, escolha_usuario = args[1].toLowerCase(), icone_escolha_usuario = null, vitoria_usuario = null
 
@@ -117,7 +116,6 @@ module.exports = diversao = async(client,message) => {
                 client.sendFileFromUrl(from, url_malacos_img, 'malacos.jpeg', 'Somos o problema', id)
                 break
 
-            case '!roletrando':
             case '!roletarussa':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
@@ -147,7 +145,7 @@ module.exports = diversao = async(client,message) => {
 
             case '!gadometro':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, msgs_texto.diversao.gadometro.cmd_erro , id)
+                if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, erroComandoMsg(command) , id)
                 if(mentionedJidList.length > 1) return client.reply(from, msgs_texto.diversao.gadometro.apenas_um , id)
                 const gadometro_resps = msgs_texto.diversao.gadometro.respostas 
                 let gado_aleatorio = Math.floor(Math.random() * gadometro_resps.length), id_resposta_gadometro = null, alvo_gadometro = null
@@ -163,7 +161,7 @@ module.exports = diversao = async(client,message) => {
 
             case '!top5':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(args.length === 1) return client.reply(from,msgs_texto.diversao.top5.cmd_erro , id)
+                if(args.length === 1) return client.reply(from,erroComandoMsg(command), id)
                 let tema_ranking = body.slice(6)
                 let ranking_membros_id = await client.getGroupMembersId(groupId)
                 if(ranking_membros_id.length < 5) return client.reply(from,msgs_texto.diversao.top5.erro_membros , id)
@@ -193,7 +191,7 @@ module.exports = diversao = async(client,message) => {
 
             case '!par':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(mentionedJidList.length !== 2) return client.reply(from, msgs_texto.diversao.par.cmd_erro , id)
+                if(mentionedJidList.length !== 2) return client.reply(from, erroComandoMsg(command) , id)
                 const par_resps = msgs_texto.diversao.par.respostas
                 let par_aleatorio = Math.floor(Math.random() * par_resps.length)
                 let par_resposta = preencherTexto(msgs_texto.diversao.par.resposta, mentionedJidList[0].replace(/@c.us/g, ''), mentionedJidList[1].replace(/@c.us/g, ''), par_resps[par_aleatorio])

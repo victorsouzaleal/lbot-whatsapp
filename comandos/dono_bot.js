@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 const {admin} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, editarEnv,erroComandoMsg,guiaComandoMsg} = require('../lib/util')
+const {preencherTexto, editarEnv,erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -22,19 +22,16 @@ module.exports = dono_bot = async(client,message) => {
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
         const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
-        const isGuia = (args.length == 1) ? false : args[1] == "guia"
 
         switch(command){
 
             case "!admin":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 client.sendText(from, admin)
                 break
 
             case "!infocompleta":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
                 let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 let data = new Date(info_bot.limite_diario.expiracao * 1000)
@@ -51,7 +48,6 @@ module.exports = dono_bot = async(client,message) => {
             case '!entrargrupo':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if (args.length < 2) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 const link = args[1]
                 const tGr = await client.getAllGroups()
                 const isLink = link.match(/(https:\/\/chat.whatsapp.com)/gi)
@@ -69,7 +65,6 @@ module.exports = dono_bot = async(client,message) => {
             case '!sair':
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if(!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot , id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 await client.sendText(from, msgs_texto.admin.sair.sair_sucesso).then(async () =>{
                     await client.leaveGroup(groupId)
                 }) 
@@ -77,7 +72,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case '!listablock':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let listablock_resposta = preencherTexto(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
                 for (let i of blockNumber) {
                     listablock_resposta += preencherTexto(msgs_texto.admin.listablock.resposta_itens, i.replace(/@c.us/g,''))
@@ -87,7 +81,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case '!limpartudo':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 const allChatz = await client.getAllChats()
                 for (let dchat of allChatz) {
                     await client.deleteChat(dchat.id)
@@ -98,7 +91,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!bcmdglobal":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let b_cmd_inseridos = body.slice(12).split(" "), b_cmd_verificados = [], b_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), bcmd_resposta = msgs_texto.admin.bcmdglobal.resposta_titulo
                 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
                 for(let b_cmd of b_cmd_inseridos){
@@ -122,7 +114,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!dcmdglobal":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let d_cmd_inseridos = body.slice(12).split(" "), d_cmd_verificados = [], d_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), dcmd_resposta = msgs_texto.admin.dcmdglobal.resposta_titulo
                 for(let d_cmd of d_cmd_inseridos){
                     if(d_cmd_global.bloqueio_cmds.includes(d_cmd)) {
@@ -138,7 +129,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case '!limpar':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 const all_chats = await client.getAllChats()
                 for (let dchat of all_chats) {
                     if(dchat.id.match(/@c.us/g) && dchat.id != sender.id) await client.deleteChat(dchat.id)
@@ -148,14 +138,12 @@ module.exports = dono_bot = async(client,message) => {
                 
             case '!rconfig':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 await db.resetarGrupos()
                 client.reply(from,msgs_texto.admin.rconfig.reset_sucesso,id)
                 break
 
             case '!sairgrupos':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 const allGroups = await client.getAllGroups()
                 for (let gclist of allGroups) {
                     let total_grupos_resposta = preencherTexto(msgs_texto.admin.sairtodos.resposta, allGroups.length)
@@ -167,7 +155,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case "!bloquear":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let usuarios_bloq = []
                 if (mentionedJidList.length === 0){
                     if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
@@ -195,7 +182,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case "!desbloquear":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let usuarios_desbloq = []
                 if (mentionedJidList.length === 0){
                     if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
@@ -220,7 +206,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!limitediario":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let limitediario_estado = args[1]
                 if(limitediario_estado == "on"){
                     if(botInfo().limite_diario.status) return client.reply(from,msgs_texto.admin.limitediario.ja_ativado,id)
@@ -241,7 +226,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!taxalimite":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let limitador_estado = args[1]
                 if(limitador_estado == "on"){
                     if(botInfo().limitecomandos.status) return client.reply(from,msgs_texto.admin.limitecomandos.ja_ativado,id)
@@ -263,7 +247,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!limitarmsgs":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let limitarmsgs_estado = args[1]
                 if(limitarmsgs_estado == "on"){
                     if(botInfo().limitarmensagens.status) return client.reply(from,msgs_texto.admin.limitarmsgs.ja_ativado,id)
@@ -284,7 +267,6 @@ module.exports = dono_bot = async(client,message) => {
             
             case "!mudarlimite":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.mudarlimite.erro_limite_diario,id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
                 if(isNaN(args[1])) return client.reply(from, msgs_texto.admin.mudarlimite.invalido,id)
@@ -295,7 +277,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!tipo":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 if(args[1].toLowerCase() == "comum" || args[1].toLowerCase() == "vip"){
                     let usuario_tipo = ""
                     if(quotedMsg){
@@ -324,7 +305,6 @@ module.exports = dono_bot = async(client,message) => {
             
             case "!limparvip":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 await db.limparVip()
                 client.reply(from,msgs_texto.admin.limparvip.sucesso,id)
                 break
@@ -332,7 +312,6 @@ module.exports = dono_bot = async(client,message) => {
             case "!env":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length <= 2) return client.reply(from, erroComandoMsg(command) ,id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let resposta = {
                     api_removebg : null,
                     api_newsorg : null,
@@ -370,7 +349,6 @@ module.exports = dono_bot = async(client,message) => {
             
             case "!vervips":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let u_vips = await db.obterUsuariosVip()
                 if(u_vips.length == 0) return client.reply(from, msgs_texto.admin.vervips.sem_vips, id)
                 let vervips_resposta = msgs_texto.admin.vervips.resposta_titulo
@@ -383,7 +361,6 @@ module.exports = dono_bot = async(client,message) => {
             
             case "!rtodos":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.rtodos.erro_limite_diario,id)
                 db.resetarComandosDia().then(async()=>{
                     await client.reply(from, msgs_texto.admin.rtodos.sucesso,id)
@@ -392,7 +369,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case "!r":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.r.erro_limite_diario,id)
                 if(quotedMsg){
                     let r_registrado = await db.verificarRegistro(quotedMsgObj.author)
@@ -430,7 +406,6 @@ module.exports = dono_bot = async(client,message) => {
                 
             case "!verdados":
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let vd_usuario_consultado = "", vd_usuario = {}
                 if(quotedMsg){
                     vd_usuario_consultado = quotedMsgObj.author
@@ -475,7 +450,6 @@ module.exports = dono_bot = async(client,message) => {
             case '!bc':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let msg_bc = body.slice(4)
                 const chats_bc = await client.getAllChatIds()
                 for (let id_chat of chats_bc) {
@@ -488,7 +462,6 @@ module.exports = dono_bot = async(client,message) => {
             case '!bcgrupos':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let msg_bcgrupos = body.slice(10)
                 const chats_bcgrupos = await client.getAllChatIds()
                 for (let id_chat of chats_bcgrupos) {
@@ -502,7 +475,6 @@ module.exports = dono_bot = async(client,message) => {
             
             case '!print':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 let print = await client.getSnapshot()
                 await client.sendFile(from,print,"print.png",'Captura de Tela',id)
                 break
@@ -510,7 +482,6 @@ module.exports = dono_bot = async(client,message) => {
             case '!estado':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
                 if(args.length != 2)  return client.reply(from,erroComandoMsg(command),id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 switch(args[1]){
                     case 'online':
                         client.setMyStatus("< 🟢 Online />")
@@ -531,7 +502,6 @@ module.exports = dono_bot = async(client,message) => {
 
             case '!desligar':
                 if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
-                if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
                 await client.reply(from, msgs_texto.admin.desligar.sucesso, id).then(()=>{
                     client.kill()
                 })
