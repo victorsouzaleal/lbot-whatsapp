@@ -24,7 +24,8 @@
         "!anime",
         "!animelanc",
         "!meusdados",
-        "!reportar"
+        "!reportar",
+        "!qualmusica"
     ],
     "admin_grupo":[
         "!status",
@@ -80,7 +81,6 @@
     "dono_bot":[
         "!sair",
         "!bcmdglobal",
-        "!env",
         "!dcmdglobal",
         "!sairgrupos",
         "!vervips",

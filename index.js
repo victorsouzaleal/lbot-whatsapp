@@ -1,5 +1,5 @@
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosNecessarios, preencherTexto,verificarConfigEnv, editarEnv} = require('./lib/util')
+const {criarArquivosNecessarios, preencherTexto,verificarConfigEnv} = require('./lib/util')
 const {atualizarParticipantes} = require("./lib/atualizarParticipantes")
 const color = require('./lib/color')
 const options = require('./options')

@@ -44,10 +44,13 @@ no diretório do projeto que você clonou!
 #### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/Victorsouza02/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
 
 ## 3 - Uso :
+
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
+
 ```bash
 > npm start
 ```
+
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal **SEU** número de telefone **COM CÓDIGO DO PAÍS** no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
 
 ## 4 - Funcionamento :
@@ -60,36 +63,35 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ### Pronto! Seu bot já está funcionando!!
 
-**Obs**: Se você deseja utilizar os comandos !ssf (remover fundo), !img (pesquisar imagem), !pesquisar (pesquisar na internet) e !noticias (ver noticias atuais) vá para o passo 5.
+**Obs**: Se você deseja utilizar os comandos **!ssf** (remover fundo), **!img** (pesquisar imagem), **!pesquisar** (pesquisar na internet), **!noticias** (noticias atuais) e **!qualmusica**(reconhecimento de músicas) vá para o **passo 5**.
  
 
 ## 5 - Configuração do arquivo .env :
-### 1° Metodo (Por Comando)  - Com o bot ligado digite o comando !env para ver o que pode ser configurado :
- - !env removebg [chave] - Edita chave do RemoveBG </br>
- - !env newsorg [chave] - Edita chave do NewsORG </br>
- - !env rapidapi [chave] - Edita chave do RapidAPI </br>
- - !env twitter [twitter_consumer_key] [twitter_consumer_secret] [twitter_access_token] [twitter_access_token_secret] - Edita as chaves do Twitter </br>
 
-### 2° Metodo (Editando .env)  - Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
+#### Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
 
         # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
         NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
-        # CHAVE DO REMOVEBG (REMOVER FUNDO DE IMAGENS)
+        # REMOVEBG - REMOVER FUNDO 
         API_REMOVE_BG = recebe a chave da conta que você criar no site remove.bg
-        # CHAVE DO NEWSAPI (NOTICIAS ATUAIS)
+        # NEWSAPI - NOTICIAS 
         API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
-        # CHAVE DO RAPIDAPI (PESQUISA DE IMAGENS/WEB)
+        # RAPIDAPI - PESQUISA DE IMAGENS/WEB
         API_RAPIDAPI = recebe a chave da conta que você criar no site rapidapi.com 
-        # CHAVES DO TWITTER (DOWNLOAD VIDEOS DO TWITTER)
+        # TWITTER - DOWNLOAD VIDEOS DO TWITTER
         twitter_consumer_key = recebe sua consumer_key obtida no https://developer.twitter.com/
         twitter_consumer_secret= recebe sua consumer_secret obtida no https://developer.twitter.com/
         twitter_access_token= recebe seu access_token obtido no https://developer.twitter.com/
         twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
+        # ACRCLOUD - RECONHECIMENTO DE MÚSICAS
+        acr_host= recebe seu endereço de host obtido no https://acrcloud.com/
+        acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
+        acr_access_secret= recebe seu access_secret obtido no https://acrcloud.com/
 
 
 **Obs**: As chaves do Twitter agora já vem configuradas de ínicio, só mude elas se você achar necessário.
 
-**Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias) e RapidAPI(Pesquisa Imagens/Web)** :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas)** :  [Clique AQUI](CHAVESAPI.md)
 
 
 
@@ -112,6 +114,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | Utilitários |                     Recursos            |
 | :------------: | :---------------------------------------------: |
 |       ✅        |   Texto para voz                   |
+|       ✅        |   Reconhecimento de músicas                 |
 |       ✅        |   Download de aúdio (Youtube)    |
 |       ✅        |   Download de videos (Youtube)            |
 |       ✅        |   Download de videos (Twitter)            |

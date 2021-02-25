@@ -22,6 +22,7 @@ media/tts/*.mp3
 media/*.mp3
 media/audios/editados/*.mp3
 media/audios/originais/*.mp3
+media/videos/*.mp4
 
 
 #Ignore DB files

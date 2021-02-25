@@ -3,12 +3,12 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const {ajuda} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, erroComandoMsg} = require("../lib/util")
+const {preencherTexto, erroComandoMsg, consoleErro} = require("../lib/util")
 const path = require('path')
 const db = require('../database/database')
 const sticker = require("../lib/sticker")
 const servicos = require("../lib/servicos")
-const color = require('../lib/color')
+const {converterMp4Mp3} = require("../lib/conversor")
 const {botInfo} = require(path.resolve("lib/bot.js"))
 
 module.exports = utilidades = async(client,message) => {
@@ -84,6 +84,53 @@ module.exports = utilidades = async(client,message) => {
             } else {
                 client.reply(from, erroComandoMsg(command), id)
             }
+            break
+
+        case "!qualmusica":
+            let qualmusica_msg = ""
+            if(quotedMsg){
+                qualmusica_msg = quotedMsg
+            } else {
+                qualmusica_msg = message
+            }
+
+            let timestamp = Math.round(new Date().getTime()/1000), caminho_musica = null, caminho_video = null
+
+            if(qualmusica_msg.type == "audio" || qualmusica_msg.type == "ptt"){
+              const mediaData = await decryptMedia(qualmusica_msg, uaOverride)
+              caminho_musica = path.resolve(`media/audios/originais/audioqualmusica-${timestamp}.mp3`)
+              fs.writeFileSync(caminho_musica, mediaData, "base64");
+              servicos.obterReconhecimentoAudio(caminho_musica).then(resp=>{
+                fs.unlinkSync(caminho_musica)
+                client.reply(from, preencherTexto(msgs_texto.utilidades.qualmusica.resposta, resp.titulo, resp.produtora, resp.duracao, resp.lancamento, resp.album, resp.artistas), id)
+              }).catch(err=>{
+                fs.unlinkSync(caminho_musica)
+                client.reply(from, err.message, id)
+              })
+            } else if(qualmusica_msg.mimetype == "video/mp4"){
+              console.log(qualmusica_msg.mimetype)
+              const mediaData = await decryptMedia(qualmusica_msg, uaOverride)
+              caminho_video = path.resolve(`media/videos/videoqualmusica-${timestamp}.mp4`)
+              fs.writeFileSync(caminho_video, mediaData, "base64")
+              //CONVERTER O VIDEO MP4 PARA AUDIO MP3
+              converterMp4Mp3(caminho_video).then(async caminho =>{
+                fs.unlinkSync(caminho_video)
+                caminho_musica = caminho
+                servicos.obterReconhecimentoAudio(caminho_musica).then(resp=>{
+                    fs.unlinkSync(caminho_musica)
+                    client.reply(from, preencherTexto(msgs_texto.utilidades.qualmusica.resposta, resp.titulo, resp.produtora, resp.duracao, resp.lancamento, resp.album, resp.artistas), id)
+                }).catch(err=>{
+                    fs.unlinkSync(caminho_musica)
+                    client.reply(from, err.message, id)
+                })
+              }).catch(()=>{
+                 fs.unlinkSync(caminho_video)
+                 client.reply(from, msgs_texto.utilidades.qualmusica.erro_conversao, id)
+              })
+            } else {
+                client.reply(from, erroComandoMsg(command), id)
+            }
+        
             break
 
         case "!clima":

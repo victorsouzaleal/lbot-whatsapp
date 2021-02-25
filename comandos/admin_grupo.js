@@ -475,7 +475,7 @@ module.exports = admin_grupo = async(client,message) => {
                     client.sendTextWithMentions(from, preencherTexto(msgs_texto.grupo.voteban.votacao_encerrada_resposta, vtb_status.voteban.usuario))
                     await db.alterarVoteban(groupId,false)
                 } else {
-                    client.reply(from,msgs_texto.grupo.voteban.cmd_erro,id)
+                    client.reply(from,erroComandoMsg(command),id)
                 }
                 break
 

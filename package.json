@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "Bot para uso no Whatsapp com diversas funções úteis",
   "main": "index",
   "scripts": {
@@ -11,9 +11,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@open-wa/wa-automate": "^3.6.5",
+    "@open-wa/wa-automate": "^3.6.10",
     "@open-wa/wa-decrypt": "^3.0.1",
-    "@vitalets/google-translate-api": "^5.0.0",
+    "@vitalets/google-translate-api": "git+https://github.com/vkedwardli/google-translate-api.git",
+    "acrcloud": "^1.4.0",
     "axios": "^0.21.1",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.5",
@@ -22,6 +23,7 @@
     "emoji-regex": "^9.0.0",
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2",
+    "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
