@@ -30,6 +30,7 @@
     "admin_grupo":[
         "!status",
         "!regras",
+        "!destravar",
         "!add",
         "!ban",
         "!promover",

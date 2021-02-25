@@ -1,6 +1,4 @@
-
 //REQUERINDO MODULOS
-require('dotenv').config()
 const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const color = require('./lib/color')

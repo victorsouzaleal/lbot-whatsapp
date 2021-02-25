@@ -25,10 +25,11 @@ module.exports = diversao = async(client,message) => {
             case '!detector' :
                 if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
                 if(!quotedMsg) return client.reply(from, erroComandoMsg(command) , id)
-                await client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto.diversao.detector.espera, id)
                 const imgs_detector = ['verdade.png','vaipra.png','mentiroso.png','meengana.png','kao.png','incerteza.png','estresse.png','conversapraboi.png']
                 let aleatorio_detector = Math.floor(Math.random() * imgs_detector.length)
-                await client.sendFile(from, `./media/img/detector/${imgs_detector[aleatorio_detector]}`, 'detector.png', "", quotedMsgObj.id)
+                client.sendFile(from, './media/img/detector/calibrando.png', 'detector.png', msgs_texto.diversao.detector.espera, id).then(()=>{
+                    client.sendFile(from, `./media/img/detector/${imgs_detector[aleatorio_detector]}`, 'detector.png', "", quotedMsgObj.id)
+                })
                 break
             
             case '!viadometro' :
@@ -124,10 +125,11 @@ module.exports = diversao = async(client,message) => {
                 membros_id.splice(membros_id.indexOf(groupOwner),1)
                 membros_id.splice(membros_id.indexOf(botNumber+'@c.us'),1)
                 let membro_id_index = Math.floor(Math.random() * membros_id.length)
-                await client.reply(from, msgs_texto.diversao.roletarussa.espera , id)
                 let roleta_resposta = preencherTexto(msgs_texto.diversao.roletarussa.resposta,membros_id[membro_id_index].replace(/@c.us/g, ''))
-                await client.sendTextWithMentions(from, roleta_resposta).then(async ()=>{
-                    await client.removeParticipant(groupId, membros_id[membro_id_index])
+                client.reply(from, msgs_texto.diversao.roletarussa.espera , id).then(()=>{
+                    client.sendTextWithMentions(from, roleta_resposta).then(()=>{
+                        client.removeParticipant(groupId, membros_id[membro_id_index])
+                    })
                 })
                 break
             
@@ -186,7 +188,7 @@ module.exports = diversao = async(client,message) => {
                     top5_resposta += preencherTexto(msgs_texto.diversao.top5.resposta_itens, medalha, i+1, m_atual.replace(/@c.us/g, ''))
                     ranking_membros_id.splice(ranking_membros_id.indexOf(m_atual),1)                
                 }
-                await client.sendTextWithMentions(from, top5_resposta)
+                client.sendTextWithMentions(from, top5_resposta)
                 break
 
             case '!par':
@@ -195,7 +197,7 @@ module.exports = diversao = async(client,message) => {
                 const par_resps = msgs_texto.diversao.par.respostas
                 let par_aleatorio = Math.floor(Math.random() * par_resps.length)
                 let par_resposta = preencherTexto(msgs_texto.diversao.par.resposta, mentionedJidList[0].replace(/@c.us/g, ''), mentionedJidList[1].replace(/@c.us/g, ''), par_resps[par_aleatorio])
-                await client.sendTextWithMentions(from, par_resposta)
+                client.sendTextWithMentions(from, par_resposta)
                 break
 
             case "!fch":
@@ -216,7 +218,7 @@ module.exports = diversao = async(client,message) => {
                 }
 
                 let fch_resposta = preencherTexto(msgs_texto.diversao.fch.resposta, carta_preta_escolhida)
-                await client.reply(from, fch_resposta, id)
+                client.reply(from, fch_resposta, id)
                 break    
         }
     } catch(err){

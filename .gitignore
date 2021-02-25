@@ -1,20 +1,21 @@
-# Ignore node_modules folder
+# Ignorar node_modules
 node_modules
 
-# Ignore Session data
+# Ignorar Session data
 *.data.json
 
-#Ignore node-persist
+#Ignorar node-persist
 .node-persist
 
-#Ignore .env and some files
-.env
-database/json/bot.json
+#Ignorar .env
+*.env
 
-#Ignore .log
+
+#Ignorar logs
 *.log
+logs/session/*
 
-#Ignore media files
+#Ignorar arquivos de mídia
 media/*.mp4
 media/img/noBg.png
 media/*.gif
@@ -25,6 +26,6 @@ media/audios/originais/*.mp3
 media/videos/*.mp4
 
 
-#Ignore DB files
+#Ignorar DB e etc
 database/db/*.db
-
+database/json/bot.json

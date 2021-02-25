@@ -1,5 +1,6 @@
 //REQUERINDO MODULOS
 const {msgs_texto} = require('../lib/msgs')
+const jspaste = require("jspaste")
 const {preencherTexto, erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
 const fs = require('fs-extra')
@@ -59,6 +60,16 @@ module.exports = admin_grupo = async(client,message) => {
                 //Bloqueio de CMDS
                 status_resposta += (g_status.block_cmds.length != 0) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.on, g_status.block_cmds.toString()) : msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.off
                 client.sendText(from,status_resposta)
+                break
+
+            case "!destravar":
+                if (!isGroupMsg) return client.reply(from, msgs_texto().permissao.grupo, id)
+                if (!isGroupAdmins) return client.reply(from, msgs_texto().permissao.apenas_admin , id)
+                let lista_destravas = await jspaste.obtener("k8qe")
+                lista_destravas = lista_destravas.data.split(",")
+                lista_destravas.forEach(destrava =>{
+                    client.sendText(from,destrava)
+                })
                 break
 
             case '!bv':

@@ -137,6 +137,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Promover usuário                  |
 |       ✅        |   Rebaixar usuário                |
 |       ✅        |   Remover usuário                     |
+|       ✅        |   Destravar Grupo                    |
 |       ✅        |   Adicionar usuário                      |
 |       ✅        |   Marcar todos              |
 |       ✅        |   Obter link do grupo               |

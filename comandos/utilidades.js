@@ -3,7 +3,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const {ajuda} = require('../lib/menu')
 const {msgs_texto} = require('../lib/msgs')
-const {preencherTexto, erroComandoMsg, consoleErro} = require("../lib/util")
+const {preencherTexto, erroComandoMsg} = require("../lib/util")
 const path = require('path')
 const db = require('../database/database')
 const sticker = require("../lib/sticker")
@@ -97,6 +97,7 @@ module.exports = utilidades = async(client,message) => {
             let timestamp = Math.round(new Date().getTime()/1000), caminho_musica = null, caminho_video = null
 
             if(qualmusica_msg.type == "audio" || qualmusica_msg.type == "ptt"){
+              client.reply(from, msgs_texto.utilidades.qualmusica.espera, id)
               const mediaData = await decryptMedia(qualmusica_msg, uaOverride)
               caminho_musica = path.resolve(`media/audios/originais/audioqualmusica-${timestamp}.mp3`)
               fs.writeFileSync(caminho_musica, mediaData, "base64");
@@ -108,7 +109,7 @@ module.exports = utilidades = async(client,message) => {
                 client.reply(from, err.message, id)
               })
             } else if(qualmusica_msg.mimetype == "video/mp4"){
-              console.log(qualmusica_msg.mimetype)
+              client.reply(from, msgs_texto.utilidades.qualmusica.espera, id)
               const mediaData = await decryptMedia(qualmusica_msg, uaOverride)
               caminho_video = path.resolve(`media/videos/videoqualmusica-${timestamp}.mp4`)
               fs.writeFileSync(caminho_video, mediaData, "base64")

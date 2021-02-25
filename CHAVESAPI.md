@@ -78,7 +78,7 @@ Abra a aba de **Projects** e clique em **Audio & Video Recognition**
 Agora clique em **Create Project** e depois preencha os dados como mostrado abaixo:
 <img src="https://i.imgur.com/530RtLA.png"/>
 
-Nessa tela agora você tem seu **acr_host**, **acr_access_key** e **acr_access_secret** respectivamente, copie eles e coloque nos campos designados no .env do Bot.
+Nessa tela agora você tem seu **acr_host**, **acr_access_key** e **acr_access_secret** respectivamente, copie eles e coloque-os no .env do Bot.
 
 <img src="https://i.imgur.com/BA8aUA5.png"/>
 
