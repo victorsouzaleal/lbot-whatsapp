@@ -89,7 +89,7 @@ module.exports = msgHandler = async (client, message) => {
             //4.0.5 - LIMITACAO DE COMANDO POR MINUTO
             if(botInfo().limitecomandos.status){
                 let usuario = await db.obterUsuario(sender.id)
-                let limiteComando = botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
+                let limiteComando = await botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
                 if(limiteComando.comando_bloqueado) {
                     if(limiteComando.msg != undefined) client.reply(from, limiteComando.msg, id)
                     return 
