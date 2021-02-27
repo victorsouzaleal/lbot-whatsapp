@@ -54,7 +54,8 @@ module.exports = admin_grupo = async(client,message) => {
                 //Anti-fake
                 status_resposta += (g_status.antifake.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.antifake.on, g_status.antifake.ddi_liberados.toString()) : msgs_texto.grupo.status.resposta_variavel.antifake.off
                 //Anti-flood
-                status_resposta += (g_status.antiflood.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, g_status.antiflood.max, g_status.antiflood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
+                let infoAntiFlood = db.grupoInfoAntiFlood(groupId)
+                status_resposta += (g_status.antiflood) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, infoAntiFlood.max, infoAntiFlood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
                 //Contador
                 status_resposta += (g_status.contador.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, g_status.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
                 //Bloqueio de CMDS
@@ -423,11 +424,11 @@ module.exports = admin_grupo = async(client,message) => {
                 }
                 
                 if (estado.toLowerCase() === 'on') {
-                    if(afl_status.antiflood.status) return client.reply(from, msgs_texto.grupo.antiflood.ja_ligado , id)
+                    if(afl_status.antiflood) return client.reply(from, msgs_texto.grupo.antiflood.ja_ligado , id)
                     await db.alterarAntiFlood(groupId,true,max_flood,intervalo)
                     client.reply(from,  msgs_texto.grupo.antiflood.ligado, id)
                 } else if (estado.toLowerCase() === 'off') {
-                    if(!afl_status.antiflood.status) return client.reply(from, msgs_texto.grupo.antiflood.ja_desligado , id)
+                    if(!afl_status.antiflood) return client.reply(from, msgs_texto.grupo.antiflood.ja_desligado , id)
                     await db.alterarAntiFlood(groupId,false)
                     client.reply(from,  msgs_texto.grupo.antiflood.desligado, id)
                 } else {

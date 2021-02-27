@@ -32,3 +32,4 @@ media/videos/*.mp4
 #Ignorar DB e etc
 database/db/*.db
 database/json/bot.json
+database/json/antiflood.json
