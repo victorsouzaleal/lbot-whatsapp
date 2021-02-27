@@ -5,18 +5,18 @@
 <a href="#"><img title="LBot-WhatsApp" src="https://img.shields.io/badge/LBot%20WhatsApp-green?colorA=%23ff0000&colorB=%23017e40&style=for-the-badge"></a>
 </p>
 <p align="center">
-<a href="https://github.com/Victorsouza02"><img title="Autor" src="https://img.shields.io/badge/Autor-Victorsouza02-blue.svg?style=for-the-badge&logo=github"></a>
+<a href="https://github.com/victorsouzaleal"><img title="Autor" src="https://img.shields.io/badge/Autor-victorsouzaleal-blue.svg?style=for-the-badge&logo=github"></a>
 </p>
 <p align="center">
-<a href="https://www.codefactor.io/repository/github/victorsouza02/lbot-whatsapp"><img src="https://www.codefactor.io/repository/github/victorsouza02/lbot-whatsapp/badge" alt="CodeFactor" /></a>
+<a href="https://www.codefactor.io/repository/github/victorsouzaleal/lbot-whatsapp"><img src="https://www.codefactor.io/repository/github/victorsouzaleal/lbot-whatsapp/badge" alt="CodeFactor" /></a>
 </p>
 <p align="center">
-<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FVictorsouza02%2Flbot-whatsapp&count_bg=%231D8ED9&title_bg=%23454545&icon=github.svg&icon_color=%23E7E7E7&title=visualizacoes&edge_flat=true"/></a>
-<a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouza02/lbot-whatsapp?label=vers%C3%A3o&style=flat-square"></a>
-<a href="#"><img title="Tamanho" src="https://img.shields.io/github/repo-size/victorsouza02/lbot-whatsapp?label=tamanho&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouza02?label=seguidores&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouza02/lbot-whatsapp?label=estrelas&style=flat-square"></a>
-<a href="https://github.com/Victorsouza02/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/Victorsouza02/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fvictorsouzaleal%2Flbot-whatsapp&count_bg=%231D8ED9&title_bg=%23454545&icon=github.svg&icon_color=%23E7E7E7&title=visualizacoes&edge_flat=true"/></a>
+<a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouzaleal/lbot-whatsapp?label=vers%C3%A3o&style=flat-square"></a>
+<a href="#"><img title="Tamanho" src="https://img.shields.io/github/repo-size/victorsouzaleal/lbot-whatsapp?label=tamanho&style=flat-square"></a>
+<a href="https://github.com/victorsouzaleal/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouzaleal?label=seguidores&style=flat-square"></a>
+<a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat-square"></a>
+<a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Sim-blue.svg"/></a>
 </p>
 
@@ -29,7 +29,7 @@ Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem 
 
 ## 1 - Clone este projeto :
 ```bash
-> git clone https://github.com/Victorsouza02/lbot-whatsapp.git
+> git clone https://github.com/victorsouzaleal/lbot-whatsapp.git
 > cd lbot-whatsapp
 ```
 
@@ -41,7 +41,7 @@ no diretório do projeto que você clonou!
 > npm i
 ```
 
-#### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/Victorsouza02/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
+#### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/victorsouzaleal/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
 
 ## 3 - Uso :
 
@@ -200,7 +200,7 @@ Só faça os passos abaixo se você tiver algum erro :
     ```
 
 
-**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/Victorsouza02/lbot-whatsapp#8---d%C3%BAvidas)
+**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal/lbot-whatsapp#8---d%C3%BAvidas)
 
 
 ## 8 - Dúvidas?
