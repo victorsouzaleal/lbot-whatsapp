@@ -134,10 +134,10 @@ module.exports = msgHandler = async (client, message) => {
             if(!isGroupMsg && botInfo().limitarmensagens.status){
                 let u = await db.obterUsuario(sender.id)
                 let tipo_usuario_pv = (u != null) ? u.tipo : "comum"
-                let limitarMensagens = botLimitarMensagensPv(sender.id, tipo_usuario_pv)
+                let limitarMensagens = await botLimitarMensagensPv(sender.id, tipo_usuario_pv)
                 if(limitarMensagens.bloquear_usuario) {
-                    client.sendText(sender.id, limitarMensagens.msg).then(async()=>{
-                        await client.contactBlock(sender.id)
+                    client.sendText(sender.id, limitarMensagens.msg).then(()=>{
+                        client.contactBlock(sender.id)
                     })
                     return 
                 }
