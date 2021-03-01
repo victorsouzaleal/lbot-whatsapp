@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 const fs = require('fs-extra')
-const {msgs_texto} = require('../lib/msgs')
+const msgs_texto = require('../lib/msgs')
 const {preencherTexto, primeiraLetraMaiuscula, erroComandoMsg} = require("../lib/util")
 const path = require("path")
 

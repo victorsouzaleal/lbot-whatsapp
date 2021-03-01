@@ -2,12 +2,13 @@
 require('dotenv').config()
 const { create, Client } = require('@open-wa/wa-automate')
 const {criarArquivosNecessarios, preencherTexto} = require('./lib/util')
-const {atualizarParticipantes} = require("./lib/atualizarParticipantes")
+const {verificacaoListaNegraGeral} = require(`./lib/listaNegra`)
+const {atualizarParticipantes} = require("./lib/controleParticipantes")
 const color = require('./lib/color')
 const options = require('./options')
 const msgHandler = require('./msgHndlr')
-const {msgs_texto} = require("./lib/msgs")
-const {recarregarContagem} = require("./lib/recarregarContagem")
+const msgs_texto = require("./lib/msgs")
+const recarregarContagem = require("./lib/recarregarContagem")
 const {botStart} = require('./lib/bot')
 const {verificarEnv} = require('./lib/env')
 
@@ -22,14 +23,16 @@ const start = async (client = new Client()) => {
             },10000)
         } else {
             const eventosGrupo = require('./lib/eventosGrupo')
-            const antiLink= require('./lib/antilink')
-            const {antiFlood} = require('./lib/antiflood')
+            const antiLink = require('./lib/antiLink')
+            const antiFlood = require('./lib/antiFlood')
             const cadastrarGrupo = require('./lib/cadastrarGrupo')
 
             //Pegando hora de inicialização do BOT
             console.log(color(await botStart()))
             //Cadastro de grupos
             console.log(color(await cadastrarGrupo("","inicio",client)))
+            //Verificar lista negra dos grupos
+            console.log(color(await verificacaoListaNegraGeral(client)))
             //Atualização dos participantes dos grupos
             console.log(color(await atualizarParticipantes(client)))
             //Atualização da contagem de mensagens

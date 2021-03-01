@@ -30,6 +30,9 @@
     "admin_grupo":[
         "!status",
         "!regras",
+        "!blista",
+        "!dlista",
+        "!listanegra",
         "!destravar",
         "!add",
         "!ban",

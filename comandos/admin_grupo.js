@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-const {msgs_texto} = require('../lib/msgs')
+const msgs_texto = require('../lib/msgs')
 const jspaste = require("jspaste")
 const {preencherTexto, erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
@@ -60,6 +60,8 @@ module.exports = admin_grupo = async(client,message) => {
                 status_resposta += (g_status.contador.status) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, g_status.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
                 //Bloqueio de CMDS
                 status_resposta += (g_status.block_cmds.length != 0) ? preencherTexto(msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.on, g_status.block_cmds.toString()) : msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.off
+                //Lista Negra
+                status_resposta += preencherTexto(msgs_texto.grupo.status.resposta_variavel.listanegra, g_status.lista_negra.length)
                 client.sendText(from,status_resposta)
                 break
 
@@ -108,6 +110,34 @@ module.exports = admin_grupo = async(client,message) => {
                 }
                 break
 
+            case "!blista":
+                if(args.length == 1) return client.reply(from, erroComandoMsg(command), id)
+                let blista_numero = body.slice(8).trim().replace(/\W+/g,"")
+                if(blista_numero.length == 0) return client.reply(from, msgs_texto.grupo.blista.numero_vazio , id)
+                let blista_grupo_lista = await db.obterListaNegra(groupId), blista_id_usuario = blista_numero+"@c.us"
+                if(blista_grupo_lista.includes(blista_id_usuario)) return client.reply(from, msgs_texto.grupo.blista.ja_listado, id)
+                await db.adicionarListaNegra(groupId,blista_id_usuario)
+                client.reply(from, msgs_texto.grupo.blista.sucesso, id)
+                break
+            
+            case "!dlista":
+                if(args.length == 1) return client.reply(from, erroComandoMsg(command), id)
+                let dlista_numero = body.slice(8).trim().replace(/\W+/g,"")
+                if(dlista_numero.length == 0) return client.reply(from, msgs_texto.grupo.dlista.numero_vazio, id)
+                let dlista_grupo_lista = await db.obterListaNegra(groupId), dlista_id_usuario = dlista_numero+"@c.us"
+                if(!dlista_grupo_lista.includes(dlista_id_usuario)) return client.reply(from, msgs_texto.grupo.dlista.nao_listado, id)
+                await db.removerListaNegra(groupId,dlista_id_usuario)
+                client.reply(from, msgs_texto.grupo.dlista.sucesso, id)
+                break
+            
+            case "!listanegra":
+                let lista_negra_grupo = await db.obterListaNegra(groupId), resposta_listanegra = msgs_texto.grupo.listanegra.resposta_titulo
+                if(lista_negra_grupo.length == 0) return client.reply(from, msgs_texto.grupo.listanegra.lista_vazia, id)
+                for(let usuario_lista of lista_negra_grupo){
+                    resposta_listanegra += preencherTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace("@c.us", ""))
+                }
+                client.sendTextWithMentions(from, resposta_listanegra)
+                break
 
             case '!alink':
                     if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
@@ -662,7 +692,7 @@ module.exports = admin_grupo = async(client,message) => {
             
         }
     } catch(err){
-        throw new Error(err)
+        throw err
     }
     
 }

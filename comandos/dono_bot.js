@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 const {admin} = require('../lib/menu')
-const {msgs_texto} = require('../lib/msgs')
+const msgs_texto = require('../lib/msgs')
 const {preencherTexto,erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
 const fs = require("fs-extra")

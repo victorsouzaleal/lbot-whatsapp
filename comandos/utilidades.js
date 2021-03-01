@@ -2,7 +2,7 @@
 const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const {ajuda} = require('../lib/menu')
-const {msgs_texto} = require('../lib/msgs')
+const msgs_texto = require('../lib/msgs')
 const {preencherTexto, erroComandoMsg, consoleErro} = require("../lib/util")
 const path = require('path')
 const db = require('../database/database')

@@ -14,7 +14,7 @@ const utilidades = require('./comandos/utilidades')
 const diversao = require('./comandos/diversao')
 const dono_bot = require('./comandos/dono_bot')
 const { preencherTexto, guiaComandoMsg } = require('./lib/util')
-const { msgs_texto } = require('./lib/msgs')
+const msgs_texto = require('./lib/msgs')
 
 
 module.exports = msgHandler = async (client, message) => {

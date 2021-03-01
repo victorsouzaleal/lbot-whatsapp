@@ -144,6 +144,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Redefinir link do grupo               |
 |       ✅        |   Obter lista de administradores               |
 |       ✅        |   Obter dono do grupo              |
+|       ✅        |   Lista Negra  |
 |       ✅        |   Mutar Grupo
 |       ✅        |   Bem Vindo  |
 |       ✅        |   Anti Fake (números estrangeiros)|
@@ -188,8 +189,8 @@ Só faça os passos abaixo se você tiver algum erro :
 #### SOLUÇÃO DE PROBLEMAS - LINUX :
 Só faça os passos abaixo se você tiver algum erro :
 
-- Corrigir travamento no Linux , instale o  google chrome stable:
-    ```bash
+- Se houve algum problema na inicialização do script:
+   ```bash
     > wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     > sudo apt install ./google-chrome-stable_current_amd64.deb
     ```
