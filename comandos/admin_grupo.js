@@ -111,6 +111,9 @@ module.exports = admin_grupo = async(client,message) => {
                 break
 
             case "!blista":
+                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command), id)
                 let blista_numero = body.slice(8).trim().replace(/\W+/g,"")
                 if(blista_numero.length == 0) return client.reply(from, msgs_texto.grupo.blista.numero_vazio , id)
@@ -121,6 +124,9 @@ module.exports = admin_grupo = async(client,message) => {
                 break
             
             case "!dlista":
+                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command), id)
                 let dlista_numero = body.slice(8).trim().replace(/\W+/g,"")
                 if(dlista_numero.length == 0) return client.reply(from, msgs_texto.grupo.dlista.numero_vazio, id)
@@ -131,12 +137,16 @@ module.exports = admin_grupo = async(client,message) => {
                 break
             
             case "!listanegra":
+                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 let lista_negra_grupo = await db.obterListaNegra(groupId), resposta_listanegra = msgs_texto.grupo.listanegra.resposta_titulo
                 if(lista_negra_grupo.length == 0) return client.reply(from, msgs_texto.grupo.listanegra.lista_vazia, id)
                 for(let usuario_lista of lista_negra_grupo){
-                    resposta_listanegra += preencherTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace("@c.us", ""))
+                    resposta_listanegra += preencherTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace(/@c.us/g, ''))
                 }
-                client.sendTextWithMentions(from, resposta_listanegra)
+                resposta_listanegra += '╚═〘 LBOT®〙'
+                await client.sendTextWithMentions(from, resposta_listanegra)
                 break
 
             case '!alink':
