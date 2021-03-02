@@ -20,8 +20,8 @@ module.exports = dono_bot = async(client,message) => {
         const botNumber = await client.getHostNumber()
         const blockNumber = await client.getBlockedIds()
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
-        const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
-        const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
+        const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
+        const isOwner = ownerNumber == sender.id.replace(/@c.us/g, '')
         if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
 
         switch(command){
@@ -39,7 +39,7 @@ module.exports = dono_bot = async(client,message) => {
                 infocompleta_resposta += (info_bot.limitecomandos.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
                 infocompleta_resposta += (info_bot.limitarmensagens.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                 infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
-                infocompleta_resposta += preencherTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber[0])
+                infocompleta_resposta += preencherTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber)
                 client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
                 break
                 
@@ -154,7 +154,7 @@ module.exports = dono_bot = async(client,message) => {
                 }
 
                 for (let user_b of usuarios_bloq){
-                    if(ownerNumber.includes(user_b.replace(/@c.us/g, ''))){
+                    if(ownerNumber == user_b.replace(/@c.us/g, '')){
                         await client.sendTextWithMentions(from, preencherTexto(msgs_texto.admin.bloquear.erro_dono, user_b.replace(/@c.us/g, '')))
                     } else {
                         if(blockNumber.includes(user_b)) {
@@ -271,7 +271,7 @@ module.exports = dono_bot = async(client,message) => {
                         return client.reply(from, erroComandoMsg(command),id)
                     }
 
-                    if(ownerNumber.includes(usuario_tipo.replace("@c.us",""))) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
+                    if(ownerNumber == usuario_tipo.replace("@c.us","")) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
                         let c_registrado = await db.verificarRegistro(usuario_tipo)
                         if(c_registrado){
                             await db.alterarTipoUsuario(usuario_tipo, args[1])

@@ -25,21 +25,21 @@ module.exports = utilidades = async(client,message) => {
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
-        const numero_dono = process.env.NUMERO_DONO.split(",")
+        const ownerNumber = process.env.NUMERO_DONO.trim()
         switch(command){
 
         //################## UTILIDADES ########################
         case "!info":
             const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
             let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-            let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,numero_dono[0],process.env.npm_package_version)
+            let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,ownerNumber,process.env.npm_package_version)
             client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",info_resposta,id)
             break
         
         case "!reportar":
             if(args.length == 1) return client.reply(from, erroComandoMsg(command) ,id)
             let reportar_resposta = preencherTexto(msgs_texto.utilidades.reportar.resposta,pushname,sender.id.replace("@c.us",""),body.slice(10))
-            client.sendText(numero_dono[0]+"@c.us",reportar_resposta)
+            client.sendText(ownerNumber+"@c.us",reportar_resposta)
             client.reply(from,msgs_texto.utilidades.reportar.sucesso,id)
             break
         

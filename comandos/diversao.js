@@ -13,7 +13,7 @@ module.exports = diversao = async(client,message) => {
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
-        const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
+        const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
         const botNumber = await client.getHostNumber()
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
@@ -43,7 +43,7 @@ module.exports = diversao = async(client,message) => {
                 } else {
                     id_resposta_viadometro = quotedMsgObj.id, alvo_viadometro = quotedMsgObj.author.replace(/@c.us/g, '')
                 }
-                if(ownerNumber.includes(alvo_viadometro)) aleatorio = 0
+                if(ownerNumber == alvo_viadometro) aleatorio = 0
                 let viadometro_resposta = preencherTexto(msgs_texto.diversao.viadometro.resposta,viadometro_resps[aleatorio])
                 client.reply(from,viadometro_resposta, id_resposta_viadometro)
                 break
@@ -59,7 +59,7 @@ module.exports = diversao = async(client,message) => {
                 } else {
                     id_resposta_bafometro = quotedMsgObj.id, alvo_bafometro = quotedMsgObj.author.replace(/@c.us/g, '')
                 }
-                if(ownerNumber.includes(alvo_bafometro)) bafometro_aleatorio = 0
+                if(ownerNumber == alvo_bafometro) bafometro_aleatorio = 0
                 let bafometro_resposta = preencherTexto(msgs_texto.diversao.bafometro.resposta,bafometro_resps[bafometro_aleatorio])
                 client.reply(from,bafometro_resposta, id_resposta_bafometro)
                 break
@@ -156,7 +156,7 @@ module.exports = diversao = async(client,message) => {
                 }else{
                     id_resposta_gadometro = quotedMsgObj.id, alvo_gadometro = quotedMsgObj.author.replace(/@c.us/g, '')
                 }
-                if(ownerNumber.includes(alvo_gadometro)) gado_aleatorio = 0
+                if(ownerNumber == alvo_gadometro) gado_aleatorio = 0
                 let gadometro_resposta = preencherTexto(msgs_texto.diversao.gadometro.resposta, gadometro_resps[gado_aleatorio])
                 client.reply(from,gadometro_resposta, id_resposta_gadometro)       
                 break

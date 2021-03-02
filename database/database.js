@@ -41,7 +41,6 @@ module.exports = {
             tipo: "comum"
         }
         await db.usuarios.asyncInsert(cadastro_usuario)
-
     },
     registrarDono: async(id_usuario, nome)=>{
         var cadastro_usuario_dono = {

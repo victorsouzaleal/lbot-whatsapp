@@ -28,8 +28,8 @@ module.exports = msgHandler = async (client, message) => {
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
-        const ownerNumber = process.env.NUMERO_DONO.split(',') // Número do administrador do bot
-        const isOwner = ownerNumber.includes(sender.id.replace(/@c.us/g, ''))
+        const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
+        const isOwner = ownerNumber == sender.id.replace(/@c.us/g, '')
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
@@ -68,7 +68,7 @@ module.exports = msgHandler = async (client, message) => {
             let registrado = await db.verificarRegistro(sender.id)
             //4.0.1 - SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
             if(!registrado) {
-                if(ownerNumber.includes(sender.id.replace("@c.us", ""))){
+                if(isOwner){
                     await db.registrarDono(sender.id, pushname)
                 } else {
                     await db.registrarUsuarioComum(sender.id, pushname)
