@@ -22,7 +22,9 @@
 
 ## Sobre o projeto :
 
-Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem diversas funções interessantes para uso individual ou em grupo. Espero que façam bom uso.
+Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem diversas funções interessantes para uso individual ou em grupo. Espero que façam bom uso.<br>
+
+Se forem usar para fazer modificações ou outras coisas, por favor deem crédito a esse Github ^^
 
 ### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 ### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
@@ -115,8 +117,8 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | :------------: | :---------------------------------------------: |
 |       ✅        |   Texto para voz                   |
 |       ✅        |   Reconhecimento de músicas                 |
-|       ✅        |   Download de aúdio (Youtube)    |
-|       ✅        |   Download de videos (Youtube)            |
+|       ✅        |   Download de aúdio/videos (Youtube)    |
+|       ✅        |   Download de imagens/videos (Instagram)  |
 |       ✅        |   Download de videos (Twitter)            |
 |       ✅        |   Detector de DDD             |
 |       ✅        |   Consulta de Clima/Previsão do Tempo            |

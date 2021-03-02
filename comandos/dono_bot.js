@@ -7,7 +7,6 @@ const fs = require("fs-extra")
 const path = require("path")
 const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botBloquearComando, botDesbloquearComando} = require('../lib/bot')
 
-
 module.exports = dono_bot = async(client,message) => {
     try{
         const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message

@@ -219,6 +219,22 @@ module.exports = utilidades = async(client,message) => {
             })
             break
 
+        case "!ig":
+            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
+            await client.reply(from, msgs_texto.utilidades.ig.espera, id)    
+            servicos.obterMediaInstagram(body.slice(4)).then(dados =>{
+                if(dados.type == "Video"){
+                    client.sendFile(from, dados.file, `ig-video.mp4`,"",id)
+                    fs.unlinkSync(dados.thumbnail)
+                } else {
+                    client.sendFile(from, dados.file, `ig-image.jpg`,"",id)
+                }
+                fs.unlinkSync(dados.file)
+            }).catch(err=>{
+                client.reply(from,err.message,id)
+            })
+            break
+
         case "!tw":
             if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             client.reply(from,msgs_texto.utilidades.tw.espera,id)

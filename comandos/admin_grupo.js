@@ -34,7 +34,7 @@ module.exports = admin_grupo = async(client,message) => {
                     client.sendText(from, grupo_info.description)
                 }
                 break
-                
+            
             case '!status':
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 const g_status = await db.obterGrupo(groupId)
