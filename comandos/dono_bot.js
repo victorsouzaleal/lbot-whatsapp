@@ -39,7 +39,11 @@ module.exports = dono_bot = async(client,message) => {
                 infocompleta_resposta += (info_bot.limitarmensagens.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                 infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
                 infocompleta_resposta += preencherTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber)
-                client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
+                if(foto_bot_url != undefined){
+                    client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
+                } else {
+                    client.reply(from, infocompleta_resposta, id)
+                }
                 break
                 
             case '!entrargrupo':

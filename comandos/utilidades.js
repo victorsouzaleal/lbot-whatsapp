@@ -33,7 +33,11 @@ module.exports = utilidades = async(client,message) => {
             const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
             let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
             let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,ownerNumber,process.env.npm_package_version)
-            client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",info_resposta,id)
+            if(foto_bot_url != undefined){
+                client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",info_resposta,id)
+            } else {
+                client.reply(from, info_resposta, id)
+            }
             break
         
         case "!reportar":
@@ -222,16 +226,16 @@ module.exports = utilidades = async(client,message) => {
         case "!ig":
             if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             await client.reply(from, msgs_texto.utilidades.ig.espera, id)    
-            servicos.obterMediaInstagram(body.slice(4)).then(dados =>{
-                if(dados.type == "Video"){
-                    client.sendFile(from, dados.file, `ig-video.mp4`,"",id)
-                    fs.unlinkSync(dados.thumbnail)
+            servicos.obterMediaInstagram(body.slice(4)).then(async links =>{
+                if(links.length == 1){
+                    await client.sendFile(from, links[0], `ig-video.mp4`,"",id)
                 } else {
-                    client.sendFile(from, dados.file, `ig-image.jpg`,"",id)
+                    for(let link of links){
+                        await client.sendFile(from, link, `ig-video.mp4`,"")
+                    }
                 }
-                fs.unlinkSync(dados.file)
             }).catch(err=>{
-                client.reply(from,err.message,id)
+                client.reply(from,err,id)
             })
             break
 
