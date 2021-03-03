@@ -226,12 +226,13 @@ module.exports = utilidades = async(client,message) => {
         case "!ig":
             if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             await client.reply(from, msgs_texto.utilidades.ig.espera, id)    
-            servicos.obterMediaInstagram(body.slice(4)).then(async links =>{
-                if(links.length == 1){
-                    await client.sendFile(from, links[0], `ig-video.mp4`,"",id)
+            servicos.obterMediaInstagram(body.slice(4)).then(async resp =>{
+                if(resp.results_number == 0) return client.reply(from, msgs_texto.utilidades.ig.nao_encontrado, id)
+                if(resp.results_number == 1){
+                    await client.sendFile(from, resp.url_list[0], `ig-media`,"",id)
                 } else {
-                    for(let link of links){
-                        await client.sendFile(from, link, `ig-video.mp4`,"")
+                    for(let url of resp.url_list){
+                        await client.sendFile(from, url, `ig-media`,"")
                     }
                 }
             }).catch(err=>{
