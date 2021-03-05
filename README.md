@@ -80,18 +80,10 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
         API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
         # RAPIDAPI - PESQUISA DE IMAGENS/WEB
         API_RAPIDAPI = recebe a chave da conta que você criar no site rapidapi.com 
-        # TWITTER - DOWNLOAD VIDEOS DO TWITTER
-        twitter_consumer_key = recebe sua consumer_key obtida no https://developer.twitter.com/
-        twitter_consumer_secret= recebe sua consumer_secret obtida no https://developer.twitter.com/
-        twitter_access_token= recebe seu access_token obtido no https://developer.twitter.com/
-        twitter_access_token_secret= recebe seu access_token_secret obtido no https://developer.twitter.com/
         # ACRCLOUD - RECONHECIMENTO DE MÚSICAS
         acr_host= recebe seu endereço de host obtido no https://acrcloud.com/
         acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
         acr_access_secret= recebe seu access_secret obtido no https://acrcloud.com/
-
-
-**Obs**: As chaves do Twitter agora já vem configuradas de ínicio, só mude elas se você achar necessário.
 
 **Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas)** :  [Clique AQUI](CHAVESAPI.md)
 

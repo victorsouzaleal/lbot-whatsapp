@@ -27,7 +27,7 @@ module.exports = utilidades = async(client,message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
         switch(command){
-
+            
         //################## UTILIDADES ########################
         case "!info":
             const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
@@ -243,8 +243,13 @@ module.exports = utilidades = async(client,message) => {
         case "!tw":
             if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             client.reply(from,msgs_texto.utilidades.tw.espera,id)
-            servicos.obterMediaTwitter(args[1]).then(link=>{
-                client.sendFile(from, link, `twittervid.mp4`,"", id)
+            servicos.obterMediaTwitter(args[1]).then(res=>{
+                if(!res.found) return client.reply(from, msgs_texto.utilidades.tw.nao_encontrado, id)
+                if(res.type == "video"){
+                    client.sendFile(from, res.download[0].url, `twittervid.mp4`,"", id)
+                } else {
+                    client.sendFile(from, res.download, `twitterimg.jpg`,"", id)
+                }
             }).catch(err =>{
                 client.reply(from,err.message,id)
             })
