@@ -85,6 +85,8 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
         acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
         acr_access_secret= recebe seu access_secret obtido no https://acrcloud.com/
 
+**Obs**: Se o seu sistema for MAC, habilite a exibição de arquivos ocultos para exibir o .env na raiz do projeto.<br>
+
 **Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas)** :  [Clique AQUI](CHAVESAPI.md)
 
 
@@ -192,7 +194,6 @@ Só faça os passos abaixo se você tiver algum erro :
     ```bash
     > npm i --unsafe-perm
     ```
-
 
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal/lbot-whatsapp#8---d%C3%BAvidas)
 

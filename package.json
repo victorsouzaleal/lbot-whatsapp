@@ -25,7 +25,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
-    "instagram-url-direct": "^1.0.2",
+    "instagram-url-direct": "^1.0.4",
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
     "nedb-async": "^0.1.6",
