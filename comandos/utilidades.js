@@ -356,7 +356,7 @@ module.exports = utilidades = async(client,message) => {
                 if(dados_s.tipo === "image"){
                     const mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
                     const imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
-                    client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true}).catch(err=>{
+                    client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true, discord: "701084178112053288"}).catch(err=>{
                         consoleErro(err.message, "STICKER")
                         client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
                     })
@@ -390,7 +390,7 @@ module.exports = utilidades = async(client,message) => {
                     const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
                     const sgifB64 = `data:${dados_sgif.mimetype};base64,${mediaData.toString('base64')}`
                     client.reply(from, msgs_texto.geral.espera , id)
-                    client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false}).catch((err)=>{
+                    client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"}).catch((err)=>{
                         consoleErro(err.message, "STICKER-GIF")
                         client.reply(from, msgs_texto.utilidades.sticker.erro_sgif , id)
                     })
@@ -407,7 +407,7 @@ module.exports = utilidades = async(client,message) => {
             if(body.slice(5).length > 40) return client.reply(from,msgs_texto.utilidades.tps.texto_longo,id)
             await client.reply(from, msgs_texto.utilidades.tps.espera,id)
             sticker.textoParaSticker(body.slice(5)).then((base64)=>{
-                client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true}).catch(err=>{
+                client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true, discord: "701084178112053288"}).catch(err=>{
                     consoleErro(err.message, "STICKER-TPS")
                     client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
                 })
@@ -427,7 +427,7 @@ module.exports = utilidades = async(client,message) => {
                     var mediaData = await decryptMedia(msgDataSsf.mensagem, uaOverride)
                     var imageBase64 = `data:${msgDataSsf.mimetype};base64,${mediaData.toString('base64')}`
                     sticker.stickerSemFundo(imageBase64,msgDataSsf.mimetype).then(base64 =>{
-                        client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true}).catch(err=>{
+                        client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true, discord: "701084178112053288"}).catch(err=>{
                             consoleErro(err.message, "STICKER-SSF")
                             client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
                         })

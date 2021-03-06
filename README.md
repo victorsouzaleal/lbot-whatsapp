@@ -111,7 +111,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Reconhecimento de músicas                 |
 |       ✅        |   Download de aúdio/videos (Youtube)    |
 |       ✅        |   Download de imagens/videos (Instagram)  |
-|       ✅        |   Download de videos (Twitter)            |
+|       ✅        |   Download de imagens/videos (Twitter)            |
 |       ✅        |   Detector de DDD             |
 |       ✅        |   Consulta de Clima/Previsão do Tempo            |
 |       ✅        |   Conversão de Moedas           |

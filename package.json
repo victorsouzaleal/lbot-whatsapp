@@ -13,7 +13,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@open-wa/wa-automate": "^3.7.0",
     "@open-wa/wa-decrypt": "^3.0.1",
-    "@vitalets/google-translate-api": "git+https://github.com/vkedwardli/google-translate-api.git",
+    "@vitalets/google-translate-api": "^5.1.0",
     "acrcloud": "^1.4.0",
     "axios": "^0.21.1",
     "chalk": "^4.1.0",
