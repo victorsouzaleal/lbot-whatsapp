@@ -236,7 +236,7 @@ module.exports = utilidades = async(client,message) => {
                     }
                 }
             }).catch(err=>{
-                client.reply(from,err,id)
+                client.reply(from,err.message,id)
             })
             break
 
