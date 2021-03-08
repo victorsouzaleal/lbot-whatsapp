@@ -2,6 +2,7 @@
 const { AsyncNedb } = require('nedb-async')
 const path = require('path')
 const fs = require('fs-extra')
+const moment = require("moment-timezone")
 var db = {}
 db.usuarios = new AsyncNedb({filename : './database/db/usuarios.db'})
 db.grupos = new AsyncNedb({filename : './database/db/grupos.db'})
@@ -198,9 +199,7 @@ module.exports = {
     },
     alterarContador: async(id_grupo, status = true)=>{
         db.grupos.loadDatabase()
-        let data = new Date()
-        let dia = `0${data.getDate()}`, mes = `0${data.getMonth()+1}`, horas = `0${data.getHours()}`, minutos = `0${data.getMinutes()}`, segundos = `0${data.getSeconds()}`
-        let data_atual = (status) ? `${dia.substr(-2)}/${mes.substr(-2)}/${data.getFullYear()} - ${horas.substr(-2)}:${minutos.substr(-2)}:${segundos.substr(-2)}` : ''
+        let data_atual = (status) ? moment(moment.now()).format("DD/MM HH:mm:ss") : ''
         db.grupos.asyncUpdate({id_grupo}, {$set:{"contador.status":status, "contador.inicio":data_atual}})
     },
     alterarAntiFlood: async(id_grupo, status = true, max = 10, intervalo=10)=>{

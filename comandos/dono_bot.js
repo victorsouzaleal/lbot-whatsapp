@@ -1,5 +1,6 @@
 //REQUERINDO MODULOS
 const {admin} = require('../lib/menu')
+const moment = require("moment-timezone")
 const msgs_texto = require('../lib/msgs')
 const {preencherTexto,erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
@@ -31,10 +32,9 @@ module.exports = dono_bot = async(client,message) => {
             case "!infocompleta":
                 const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
                 let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-                let data = new Date(info_bot.limite_diario.expiracao * 1000)
-                let dia = `0${data.getDate()}`, mes = `0${data.getMonth()+1}`, ano= data.getFullYear(), horas = `0${data.getHours()}`, minutos = `0${data.getMinutes()}`, segundos = `0${data.getSeconds()}`
+                let limitediario_expiracao = moment(info_bot.limite_diario.expiracao * 1000).format("DD/MM HH:mm:ss")
                 let infocompleta_resposta = preencherTexto(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado, process.env.npm_package_version)
-                infocompleta_resposta += (info_bot.limite_diario.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, dia.substr(-2), mes.substr(-2), ano, horas.substr(-2), minutos.substr(-2), segundos.substr(-2)) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
+                infocompleta_resposta += (info_bot.limite_diario.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, limitediario_expiracao) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
                 infocompleta_resposta += (info_bot.limitecomandos.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
                 infocompleta_resposta += (info_bot.limitarmensagens.status) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                 infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? preencherTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off

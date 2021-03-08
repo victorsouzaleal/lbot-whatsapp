@@ -4,7 +4,6 @@ const moment = require('moment-timezone')
 const color = require('./lib/color')
 const cadastrarGrupo = require('./lib/cadastrarGrupo')
 const db = require('./database/database')
-moment.tz.setDefault('America/Sao_Paulo')
 const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,botLimitarMensagensPv} = require("./lib/bot")
 
 //COMANDOS

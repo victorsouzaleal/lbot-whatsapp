@@ -1,4 +1,6 @@
 //REQUERINDO MODULOS
+const moment = require("moment-timezone")
+moment.tz.setDefault('America/Sao_Paulo')
 require('dotenv').config()
 const { create, Client } = require('@open-wa/wa-automate')
 const {criarArquivosNecessarios, preencherTexto} = require('./lib/util')
