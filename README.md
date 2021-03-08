@@ -114,6 +114,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Download de aúdio/videos (Youtube)    |
 |       ✅        |   Download de imagens/videos (Instagram)  |
 |       ✅        |   Download de imagens/videos (Twitter)            |
+|       ✅        |   Download de videos (Facebook)            |
 |       ✅        |   Detector de DDD             |
 |       ✅        |   Consulta de Clima/Previsão do Tempo            |
 |       ✅        |   Conversão de Moedas           |
@@ -178,13 +179,13 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 #### SOLUÇÃO DE PROBLEMAS - WINDOWS :
 Só faça os passos abaixo se você tiver algum erro :
 
-- Se houver um erro na inicialização e você não tiver o Google Chrome instalado, faça a instalação : https://www.google.com/intl/pt-BR/chrome/
+- Se houver um erro na inicialização ou o comando !yt não funcionar corretamente, faça a instalação do Google Chrome : https://www.google.com/intl/pt-BR/chrome/
 
 
 #### SOLUÇÃO DE PROBLEMAS - LINUX :
 Só faça os passos abaixo se você tiver algum erro :
 
-- Se houve algum problema na inicialização do script:
+- Se houve algum problema na inicialização do script, instale o Google Chrome:
    ```bash
     > wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     > sudo apt install ./google-chrome-stable_current_amd64.deb

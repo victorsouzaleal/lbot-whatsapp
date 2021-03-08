@@ -240,6 +240,17 @@ module.exports = utilidades = async(client,message) => {
             })
             break
 
+        case "!fb":
+            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
+            await client.reply(from, msgs_texto.utilidades.fb.espera, id)    
+            servicos.obterMediaFacebook(body.slice(4)).then(async resp =>{
+                if(!resp.found) return client.reply(from, msgs_texto.utilidades.fb.nao_encontrado, id)
+                await client.sendFile(from, resp.url, `fb-media`,"",id)
+            }).catch(err=>{
+                client.reply(from,err.message,id)
+            })
+            break
+
         case "!tw":
             if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
             client.reply(from,msgs_texto.utilidades.tw.espera,id)
