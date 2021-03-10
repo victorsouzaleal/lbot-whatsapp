@@ -14,7 +14,6 @@ const msgs_texto = require('./lib/msgs')
 
 module.exports = msgHandler = async (client, message) => {
     try {
-        const timestamp_inicio = new Date().getTime()
         const {t, sender, isGroupMsg, chat, type, caption,id, from} = message
         let { body } = message
         const {formattedTitle } = chat
@@ -143,26 +142,30 @@ module.exports = msgHandler = async (client, message) => {
         if(lista_comandos.utilidades.includes(command)){
             if(isGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
             await utilidades(client,message)
-            const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
+            //SAIDA PARA O CONSOLE LOG
+            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
+            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else if (lista_comandos.grupo.includes(command)){
             if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
             await grupo(client,message)
-            const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - ADMINISTRAÇÃO]","yellow"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
+             //SAIDA PARA O CONSOLE LOG
+            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
+            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - ADMINISTRAÇÃO]","yellow"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else if(lista_comandos.diversao.includes(command)){
             if(isGuia) return client.reply(from, guiaComandoMsg("diversao", command), id)
             await diversao(client,message)
-            const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>',color("[PRIVADO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
+             //SAIDA PARA O CONSOLE LOG
+            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
+            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>',color("[PRIVADO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else if(lista_comandos.admin.includes(command)){
             if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
             await admin(client,message)
-            const timestamp_pos_comando = new Date().getTime(), tempo_resposta = (timestamp_pos_comando - timestamp_inicio)/1000
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - DONO]","white"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DONO]","white"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta+"s")})`)
+             //SAIDA PARA O CONSOLE LOG
+            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
+            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - DONO]","white"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DONO]","white"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else {
             if(!isGroupMsg) return client.reply(from, msgs_texto.geral.comando_invalido ,id)
         }

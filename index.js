@@ -72,13 +72,8 @@ const start = async (client = new Client()) => {
             //Ouvindo se a entrada do BOT em grupos
             client.onAddedToGroup((async (chat) => {
                 await cadastrarGrupo(chat.id, "added", client)
-                let totalMem = chat.groupMetadata.participants.length
-                const minMem = 1
-                if (totalMem < minMem) { 
-                    client.sendText(chat.id, preencherTexto(msgs_texto.geral.min_membros, minMem, totalMem)).then(() => client.leaveGroup(chat.id)).then(() => client.deleteChat(chat.id))
-                } else {
-                    client.sendText(chat.groupMetadata.id, preencherTexto(msgs_texto.geral.entrada_grupo, chat.contact.name))
-                }
+                let gInfo = await client.getGroupInfo(chat.id)
+                client.sendText(chat.id, preencherTexto(msgs_texto.geral.entrada_grupo, gInfo.title))
             }))
 
             // Ouvindo ligações recebidas
