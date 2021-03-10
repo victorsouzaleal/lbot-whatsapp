@@ -28,6 +28,7 @@ Se forem usar para fazer modificações ou outras coisas, por favor deem crédit
 
 ### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 ### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
+<br><br>
 
 ## 1 - Clone este projeto OU faça download da ultima release :
 
@@ -41,6 +42,8 @@ Para clonar, digite os comandos abaixo no Terminal do seu sistema:
 Ou se quiser fazer o download diretamente (extraia o zip e entre na pasta para os passos seguintes):
 https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest
 
+<br>
+
 ## 2 - Instale as dependências :
 Antes de executar o comando abaixo, tenha certeza que você está 
 no diretório do projeto que você clonou/fez download!
@@ -51,6 +54,8 @@ no diretório do projeto que você clonou/fez download!
 
 #### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/victorsouzaleal/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
 
+<br>
+
 ## 3 - Uso :
 
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
@@ -60,6 +65,8 @@ Dentro da pasta do projeto após ter realizado todos os passos anteriores, execu
 ```
 
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal **SEU** número de telefone **COM CÓDIGO DO PAÍS** no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
+
+<br>
 
 ## 4 - Funcionamento :
 Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
@@ -72,7 +79,8 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 ### Pronto! Seu bot já está funcionando!!
 
 **Obs**: Se você deseja utilizar os comandos **!ssf** (remover fundo), **!img** (pesquisar imagem), **!pesquisar** (pesquisar na internet), **!noticias** (noticias atuais) e **!qualmusica**(reconhecimento de músicas) vá para o **passo 5**.
- 
+
+<br>
 
 ## 5 - Configuração do arquivo .env :
 
@@ -95,7 +103,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 **Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas)** :  [Clique AQUI](CHAVESAPI.md)
 
-
+<br>
 
 ## 6 - Recursos Principais :
 
@@ -179,6 +187,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Obter lista de usuários bloqueados                |
 |       ✅        |   Modificar status atual do bot                |
 
+<br>
 
 ## 7 - Solução de Problemas :
 
@@ -204,12 +213,17 @@ Só faça os passos abaixo se você tiver algum erro :
 
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal/lbot-whatsapp#8---d%C3%BAvidas)
 
+<br>
 
 ## 8 - Dúvidas ou Sugestões de Comando?
 Entre em contato comigo pelo WhatsApp : https://wa.me/5521995612287
 
+<br>
+
 ## 9 - Atualizações
 Se quiser atualizar o bot sem perder suas informações de usuários/grupos e o seu .env, guarde a pasta **database** e o arquivo **.env** em algum lugar e depois de clonar/fazer download da nova versão do Bot, cole eles novamente na pasta.
+
+<br>
 
 ## 10 - Agradecimentos
 * [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
