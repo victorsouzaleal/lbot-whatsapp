@@ -3,7 +3,7 @@ const fs = require('fs-extra')
 const moment = require('moment-timezone')
 const color = require('./lib/color')
 const cadastrarGrupo = require('./lib/cadastrarGrupo')
-const db = require('./database/database')
+const db = require('./lib/database')
 const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,botLimitarMensagensPv} = require("./lib/bot")
 
 //COMANDOS

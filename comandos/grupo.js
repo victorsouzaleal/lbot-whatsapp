@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 const msgs_texto = require('../lib/msgs')
 const {preencherTexto, erroComandoMsg} = require('../lib/util')
-const db = require('../database/database')
+const db = require('../lib/database')
 const fs = require('fs-extra')
 
 module.exports = grupo = async(client,message) => {

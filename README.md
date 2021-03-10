@@ -29,15 +29,21 @@ Se forem usar para fazer modificações ou outras coisas, por favor deem crédit
 ### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 ### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
 
-## 1 - Clone este projeto :
+## 1 - Clone este projeto OU faça download da ultima release :
+
+Para clonar, digite os comandos abaixo no Terminal do seu sistema:
+
 ```bash
 > git clone https://github.com/victorsouzaleal/lbot-whatsapp.git
 > cd lbot-whatsapp
 ```
 
+Ou se quiser fazer o download diretamente (extraia o zip e entre na pasta para os passos seguintes):
+https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest
+
 ## 2 - Instale as dependências :
 Antes de executar o comando abaixo, tenha certeza que você está 
-no diretório do projeto que você clonou!
+no diretório do projeto que você clonou/fez download!
 
 ```bash
 > npm i
@@ -199,9 +205,12 @@ Só faça os passos abaixo se você tiver algum erro :
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal/lbot-whatsapp#8---d%C3%BAvidas)
 
 
-## 8 - Dúvidas?
+## 8 - Dúvidas ou Sugestões de Comando?
 Entre em contato comigo pelo WhatsApp : https://wa.me/5521995612287
 
-## 9 - Agradecimentos
+## 9 - Atualizações
+Se quiser atualizar o bot sem perder suas informações de usuários/grupos e o seu .env, guarde a pasta **database** e o arquivo **.env** em algum lugar e depois de clonar/fazer download da nova versão do Bot, cole eles novamente na pasta.
+
+## 10 - Agradecimentos
 * [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
 * [`MhankBarBar/whatsapp-bot`](https://github.com/MhankBarBar/whatsapp-bot)
