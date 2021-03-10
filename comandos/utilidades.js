@@ -59,14 +59,11 @@ module.exports = utilidades = async(client,message) => {
             } else {
                 return client.reply(from, erroComandoMsg(command), id)
             }
-            const estados = JSON.parse(fs.readFileSync('./database/json/ddd.json')).estados
-            const procurarDdd = estados.findIndex(estado => estado.ddd.includes(ddd_selecionado))
-            if(procurarDdd != -1){
-                let ddd_resposta = preencherTexto(msgs_texto.utilidades.ddd.resposta,estados[procurarDdd].nome,estados[procurarDdd].regiao)
-                client.reply(from,ddd_resposta,id)
-            } else {
-                client.reply(from, msgs_texto.utilidades.ddd.erro_ddd ,id)
-            }
+            servicos.obterListaDDD(ddd_selecionado).then(resp=>{
+                client.reply(from,resp,id)
+            }).catch(err=>{
+                client.reply(from,err.message,id)
+            })
             break
 
         case "!audio":

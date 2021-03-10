@@ -1,8 +1,9 @@
 //REQUERINDO MODULOS
-const fs = require('fs-extra')
 const msgs_texto = require('../lib/msgs')
 const {preencherTexto, primeiraLetraMaiuscula, erroComandoMsg} = require("../lib/util")
 const path = require("path")
+const axios  = require('axios')
+const servicos = require('../lib/servicos')
 
 module.exports = diversao = async(client,message) => {
     try {
@@ -201,24 +202,11 @@ module.exports = diversao = async(client,message) => {
                 break
 
             case "!fch":
-                let cartas = JSON.parse(fs.readFileSync('./database/json/cartas.json'))
-                let carta_preta_aleatoria = Math.floor(Math.random() * cartas.cartas_pretas.length)
-                let carta_preta_escolhida = cartas.cartas_pretas[carta_preta_aleatoria]
-                let cont_parametros = 1
-
-                if(carta_preta_escolhida.indexOf("{p3}" != -1)){cont_parametros = 3}
-                else if(carta_preta_escolhida.indexOf("{p2}" != -1)) {cont_parametros = 2}
-                else {cont_parametros = 1}
-
-                for(i = 1; i <= cont_parametros; i++){
-                    let carta_branca_aleatoria = Math.floor(Math.random() * cartas.cartas_brancas.length)
-                    let carta_branca_escolhida = cartas.cartas_brancas[carta_branca_aleatoria]
-                    carta_preta_escolhida = carta_preta_escolhida.replace(`{p${i}}`, `*${carta_branca_escolhida}*`)
-                    cartas.cartas_brancas.splice(cartas.cartas_brancas.indexOf(carta_branca_escolhida,1))
-                }
-
-                let fch_resposta = preencherTexto(msgs_texto.diversao.fch.resposta, carta_preta_escolhida)
-                client.reply(from, fch_resposta, id)
+                servicos.obterCartasContraHu().then(resp=>{
+                    client.reply(from, resp, id)
+                }).catch(err=>{
+                    client.reply(from, err.message, id)
+                })
                 break    
         }
     } catch(err){
