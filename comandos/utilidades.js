@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
-const {ajuda} = require('../lib/menu')
+const {menuAjuda} = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
 const {preencherTexto, erroComandoMsg, consoleErro} = require("../lib/util")
 const path = require('path')
@@ -349,7 +349,7 @@ module.exports = utilidades = async(client,message) => {
                 msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_comum,ajuda_usuario,tipo_usuario)
             }
             msgs_dados += `═════════════════\n`
-            let menu = ajuda(isGroupAdmins,isGroupMsg)
+            let menu = menuAjuda(isGroupAdmins,isGroupMsg)
             client.sendText(from, msgs_dados+menu)
             break
 

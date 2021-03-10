@@ -4,7 +4,7 @@ const {preencherTexto, erroComandoMsg} = require('../lib/util')
 const db = require('../database/database')
 const fs = require('fs-extra')
 
-module.exports = admin_grupo = async(client,message) => {
+module.exports = grupo = async(client,message) => {
     try{
         const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
         let { body } = message
@@ -512,7 +512,7 @@ module.exports = admin_grupo = async(client,message) => {
                             b_cmd_verificados.push(b_cmd)
                             bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.bloqueado_sucesso, b_cmd)
                         }
-                    } else if (lista_comandos.admin_grupo.includes(b_cmd) || lista_comandos.dono_bot.includes(b_cmd) ){
+                    } else if (lista_comandos.admin_grupo.includes(b_cmd) || lista_comandos.admin.includes(b_cmd) ){
                         bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.comando_admin, b_cmd)
                     } else {
                         bcmd_resposta += preencherTexto(msgs_texto.grupo.bcmd.resposta_variavel.nao_existe, b_cmd)

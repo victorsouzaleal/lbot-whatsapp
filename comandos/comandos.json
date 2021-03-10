@@ -29,7 +29,7 @@
         "!reportar",
         "!qualmusica"
     ],
-    "admin_grupo":[
+    "grupo":[
         "!status",
         "!regras",
         "!blista",
@@ -83,7 +83,7 @@
         "!malacos", 
         "!fch"
     ],
-    "dono_bot":[
+    "admin":[
         "!sair",
         "!bcmdglobal",
         "!dcmdglobal",

@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-const {admin} = require('../lib/menu')
+const {menuAdmin} = require('../lib/menu')
 const moment = require("moment-timezone")
 const msgs_texto = require('../lib/msgs')
 const {preencherTexto,erroComandoMsg} = require('../lib/util')
@@ -8,7 +8,7 @@ const fs = require("fs-extra")
 const path = require("path")
 const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botBloquearComando, botDesbloquearComando} = require('../lib/bot')
 
-module.exports = dono_bot = async(client,message) => {
+module.exports = admin = async(client,message) => {
     try{
         const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
         let { body } = message
@@ -26,7 +26,7 @@ module.exports = dono_bot = async(client,message) => {
 
         switch(command){
             case "!admin":
-                client.sendText(from, admin)
+                client.sendText(from, menuAdmin())
                 break
 
             case "!infocompleta":
@@ -97,7 +97,7 @@ module.exports = dono_bot = async(client,message) => {
                             b_cmd_verificados.push(b_cmd)
                             bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, b_cmd)
                         }
-                    } else if (lista_comandos.admin_grupo.includes(b_cmd) || lista_comandos.dono_bot.includes(b_cmd) ){
+                    } else if (lista_comandos.grupo.includes(b_cmd) || lista_comandos.admin.includes(b_cmd) ){
                         bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.comando_admin, b_cmd)
                     } else {
                         bcmd_resposta += preencherTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, b_cmd)
