@@ -73,7 +73,7 @@ const start = async (client = new Client()) => {
             client.onAddedToGroup((async (chat) => {
                 await cadastrarGrupo(chat.id, "added", client)
                 let gInfo = await client.getGroupInfo(chat.id)
-                client.sendText(chat.id, preencherTexto(msgs_texto.geral.entrada_grupo, gInfo.title))
+                client.sendText(chat.id, preencherTexto(msgs_texto.geral.entrada_grupo, gInfo.title || ""))
             }))
 
             // Ouvindo ligações recebidas

@@ -120,12 +120,13 @@ module.exports = utilidades = async(client,message) => {
 
         case "!clima":
             if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
-            servicos.obterClima(body.slice(7)).then(clima=>{
+            try{
+                var clima = await servicos.obterClima(body.slice(7))
                 let clima_resposta = preencherTexto(msgs_texto.utilidades.clima.resposta,clima.msg)
                 client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima_resposta, id)
-            }).catch(err =>{
+            } catch(err){
                 client.reply(from,err.message,id)
-            })
+            }
             break
 
         case "!moeda":
