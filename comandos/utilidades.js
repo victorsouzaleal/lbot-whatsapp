@@ -3,7 +3,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const {menuAjuda} = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
-const {preencherTexto, erroComandoMsg, consoleErro} = require("../lib/util")
+const {preencherTexto, erroComandoMsg, consoleErro, obterNomeAleatorio} = require("../lib/util")
 const path = require('path')
 const db = require('../lib/database')
 const sticker = require("../lib/sticker")
@@ -69,7 +69,7 @@ module.exports = utilidades = async(client,message) => {
         case "!audio":
             if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
             if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
-                const mediaData = await decryptMedia(quotedMsg, uaOverride)
+                var mediaData = await decryptMedia(quotedMsg, uaOverride)
                 let timestamp = Math.round(new Date().getTime()/1000)
                 fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
                 let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
@@ -88,51 +88,34 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!qualmusica":
-            let qualmusica_msg = ""
-            if(quotedMsg){
-                qualmusica_msg = quotedMsg
-            } else {
-                qualmusica_msg = message
+            let qualmusica_msg = quotedMsg ? quotedMsg : message
+            if(qualmusica_msg.mimetype != "video/mp4" && qualmusica_msg.type != "audio" && qualmusica_msg.type != "ptt") return client.reply(from, erroComandoMsg(command), id)
+            let caminho_musica = null, caminho_video = null
+            var mediaData = await decryptMedia(qualmusica_msg, uaOverride)
+            await client.reply(from, msgs_texto.utilidades.qualmusica.espera, id)
+            if(qualmusica_msg.mimetype == "video/mp4"){
+                caminho_video = path.resolve(`media/videos/videoqualmusica-${obterNomeAleatorio(".mp4")}`)
+                fs.writeFileSync(caminho_video, mediaData, "base64")
+                try{
+                    caminho_musica = await converterMp4Mp3(caminho_video)
+                    fs.unlinkSync(caminho_video)
+                }catch(err){
+                    fs.unlinkSync(caminho_video)
+                    client.reply(from, msgs_texto.utilidades.qualmusica.erro_conversao, id)
+                }
             }
-
-            let timestamp = Math.round(new Date().getTime()/1000), caminho_musica = null, caminho_video = null
-
             if(qualmusica_msg.type == "audio" || qualmusica_msg.type == "ptt"){
-              client.reply(from, msgs_texto.utilidades.qualmusica.espera, id)
-              const mediaData = await decryptMedia(qualmusica_msg, uaOverride)
-              caminho_musica = path.resolve(`media/audios/originais/audioqualmusica-${timestamp}.mp3`)
-              fs.writeFileSync(caminho_musica, mediaData, "base64");
-              servicos.obterReconhecimentoAudio(caminho_musica).then(resp=>{
+                caminho_musica = path.resolve(`media/audios/originais/audioqualmusica-${obterNomeAleatorio(".mp3")}`)
+                fs.writeFileSync(caminho_musica, mediaData, "base64");
+            }
+            try{
+                var resp = await servicos.obterReconhecimentoAudio(caminho_musica)
                 fs.unlinkSync(caminho_musica)
                 client.reply(from, preencherTexto(msgs_texto.utilidades.qualmusica.resposta, resp.titulo, resp.produtora, resp.duracao, resp.lancamento, resp.album, resp.artistas), id)
-              }).catch(err=>{
-                fs.unlinkSync(caminho_musica)
+            }catch(err){
+                console.log(err)
                 client.reply(from, err.message, id)
-              })
-            } else if(qualmusica_msg.mimetype == "video/mp4"){
-              client.reply(from, msgs_texto.utilidades.qualmusica.espera, id)
-              const mediaData = await decryptMedia(qualmusica_msg, uaOverride)
-              caminho_video = path.resolve(`media/videos/videoqualmusica-${timestamp}.mp4`)
-              fs.writeFileSync(caminho_video, mediaData, "base64")
-              //CONVERTER O VIDEO MP4 PARA AUDIO MP3
-              converterMp4Mp3(caminho_video).then(async caminho =>{
-                fs.unlinkSync(caminho_video)
-                caminho_musica = caminho
-                servicos.obterReconhecimentoAudio(caminho_musica).then(resp=>{
-                    fs.unlinkSync(caminho_musica)
-                    client.reply(from, preencherTexto(msgs_texto.utilidades.qualmusica.resposta, resp.titulo, resp.produtora, resp.duracao, resp.lancamento, resp.album, resp.artistas), id)
-                }).catch(err=>{
-                    fs.unlinkSync(caminho_musica)
-                    client.reply(from, err.message, id)
-                })
-              }).catch(()=>{
-                 fs.unlinkSync(caminho_video)
-                 client.reply(from, msgs_texto.utilidades.qualmusica.erro_conversao, id)
-              })
-            } else {
-                client.reply(from, erroComandoMsg(command), id)
             }
-        
             break
 
         case "!clima":
@@ -362,8 +345,8 @@ module.exports = utilidades = async(client,message) => {
                     mensagem: (isMedia)? message : quotedMsg
                 }
                 if(dados_s.tipo === "image"){
-                    const mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
-                    const imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
+                    var mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
+                    var imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
                     client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true, discord: "701084178112053288"}).catch(err=>{
                         consoleErro(err.message, "STICKER")
                         client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
@@ -378,8 +361,8 @@ module.exports = utilidades = async(client,message) => {
         
         case '!simg':
             if(quotedMsg && quotedMsg.type == "sticker"){
-                const mediaData = await decryptMedia(quotedMsg, uaOverride)
-                const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                var mediaData = await decryptMedia(quotedMsg, uaOverride)
+                var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
                 await client.sendFile(from,imageBase64,"sticker.jpg","",quotedMsgObj.id)
             } else {
                 client.reply(from, erroComandoMsg(command), id)
@@ -395,8 +378,8 @@ module.exports = utilidades = async(client,message) => {
                     mensagem: (isMedia)? message : quotedMsg
                 }
                 if((dados_sgif.mimetype === 'video/mp4' || dados_sgif.mimetype === 'image/gif') && dados_sgif.duracao < 10){
-                    const mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
-                    const sgifB64 = `data:${dados_sgif.mimetype};base64,${mediaData.toString('base64')}`
+                    var mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
+                    var sgifB64 = `data:${dados_sgif.mimetype};base64,${mediaData.toString('base64')}`
                     client.reply(from, msgs_texto.geral.espera , id)
                     client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"}).catch((err)=>{
                         consoleErro(err.message, "STICKER-GIF")
