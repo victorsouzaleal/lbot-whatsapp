@@ -419,7 +419,7 @@ module.exports = utilidades = async(client,message) => {
                     message: (isMedia)? message : quotedMsg
                 }
                 if(messageData.type === "image"){
-                    var mediaData = await decryptMedia(msgDataSsf.mensagem, uaOverride)
+                    var mediaData = await decryptMedia(messageData.message, uaOverride)
                     var inputImageBase64 = `data:${messageData.mimetype};base64,${mediaData.toString('base64')}`
                     try{
                         var outputImageBase64 = await sticker.imageRemoveBackground(inputImageBase64, messageData.type)
