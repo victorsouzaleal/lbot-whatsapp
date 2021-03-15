@@ -1,14 +1,14 @@
 //REQUERINDO MÓDULOS
 const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
-const {menuAjuda} = require('../lib/menu')
+const {helpMenu} = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
-const {preencherTexto, erroComandoMsg, consoleErro, obterNomeAleatorio} = require("../lib/util")
+const {makeText, errorCommandMsg, consoleError, getRandomName} = require("../lib/util")
 const path = require('path')
 const db = require('../lib/database')
 const sticker = require("../lib/sticker")
-const servicos = require("../lib/servicos")
-const {converterMp4Mp3} = require("../lib/conversor")
+const api = require("../lib/api")
+const {convertMp4ToMp3} = require("../lib/conversion")
 const {botInfo} = require(path.resolve("lib/bot.js"))
 
 module.exports = utilidades = async(client,message) => {
@@ -30,333 +30,334 @@ module.exports = utilidades = async(client,message) => {
             
         //################## UTILIDADES ########################
         case "!info":
-            const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
-            let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-            let info_resposta = preencherTexto(msgs_texto.utilidades.info.resposta,info_bot.criador,info_bot.criado_em,info_bot.nome,info_bot.iniciado,info_bot.cmds_executados,ownerNumber,process.env.npm_package_version)
-            if(foto_bot_url != undefined){
-                client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",info_resposta,id)
+            const botPictureUrl = await client.getProfilePicFromServer(botNumber+'@c.us')
+            var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+            var response = makeText(msgs_texto.utilidades.info.resposta,infoBot.criador,infoBot.criado_em,infoBot.nome,infoBot.iniciado,infoBot.cmds_executados,ownerNumber,process.env.npm_package_version)
+            if(botPictureUrl != undefined){
+                client.sendFileFromUrl(from, botPictureUrl, "botpicture.jpg", response, id)
             } else {
-                client.reply(from, info_resposta, id)
+                client.reply(from, response, id)
             }
             break
         
         case "!reportar":
-            if(args.length == 1) return client.reply(from, erroComandoMsg(command) ,id)
-            let reportar_resposta = preencherTexto(msgs_texto.utilidades.reportar.resposta,pushname,sender.id.replace("@c.us",""),body.slice(10))
-            client.sendText(ownerNumber+"@c.us",reportar_resposta)
+            if(args.length == 1) return client.reply(from, errorCommandMsg(command) ,id)
+            var userInputText = body.slice(10).trim(), response = makeText(msgs_texto.utilidades.reportar.resposta,pushname,sender.id.replace("@c.us",""), userInputText)
+            client.sendText(ownerNumber+"@c.us", response)
             client.reply(from,msgs_texto.utilidades.reportar.sucesso,id)
             break
         
         case "!ddd":
-            let ddd_selecionado = ""
+            var DDD = null
             if(quotedMsg){
-                let codigo_brasileiro = quotedMsgObj.author.slice(0,2)
-                if(codigo_brasileiro != "55") return client.reply(from, msgs_texto.utilidades.ddd.somente_br ,id)
-                ddd_selecionado = quotedMsgObj.author.slice(2,4)
+                let DDI = quotedMsgObj.author.slice(0,2)
+                if(DDI != "55") return client.reply(from, msgs_texto.utilidades.ddd.somente_br ,id)
+                DDD = quotedMsgObj.author.slice(2,4)
             } else if(args.length > 1 && args[1].length == 2){
                 if(args[1].length != 2) return client.reply(from, msgs_texto.utilidades.ddd.erro_ddd ,id)
-                ddd_selecionado = args[1]
+                DDD = args[1]
             } else {
-                return client.reply(from, erroComandoMsg(command), id)
+                return client.reply(from, errorCommandMsg(command), id)
             }
-            servicos.obterListaDDD(ddd_selecionado).then(resp=>{
+            try{
+                var resp = await api.getDataDDD(DDD)
                 client.reply(from,resp,id)
-            }).catch(err=>{
-                client.reply(from,err.message,id)
-            })
+            } catch(err){
+                client.reply(from, err.message, id)
+            }
             break
 
         case "!audio":
-            if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
+            if(args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+            var supportedEffects = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], typeEffect = body.slice(7).trim()
+            if(!supportedEffects.includes(typeEffect)) return client.reply(from, errorCommandMsg(command), id)
             if(quotedMsg && (quotedMsg.type === "ptt" || quotedMsg.type === "audio") ){
                 var mediaData = await decryptMedia(quotedMsg, uaOverride)
-                let timestamp = Math.round(new Date().getTime()/1000)
-                fs.writeFileSync(`./media/audios/originais/audio-${timestamp}.mp3`,mediaData, "base64")
-                let caminho = path.resolve(`./media/audios/originais/audio-${timestamp}.mp3`)
-                servicos.obterAudioEditado(caminho, args[1]).then(audio_caminho=>{
-                    client.sendFile(from, audio_caminho, "audio.mp3","", id).then(()=>{
-                        fs.unlinkSync(audio_caminho)
-                        fs.unlinkSync(caminho)
+                let inputAudioPath = path.resolve(`./media/audios/${getRandomName(".mp3")}`)
+                fs.writeFileSync(inputAudioPath, mediaData, "base64")
+                try{
+                    var outputAudioPath = await api.getModifiedAudio(inputAudioPath, typeEffect)
+                    client.sendFile(from, outputAudioPath, "audio.mp3","", id).then(()=>{
+                        fs.unlinkSync(outputAudioPath)
+                        fs.unlinkSync(inputAudioPath)
                     })
-                }).catch(err=>{
-                    fs.unlinkSync(caminho)
+                } catch(err){
+                    fs.unlinkSync(inputAudioPath)
                     client.reply(from, err.message, id)
-                })
+                }
             } else {
-                client.reply(from, erroComandoMsg(command), id)
+                client.reply(from, errorCommandMsg(command), id)
             }
             break
 
         case "!qualmusica":
-            let qualmusica_msg = quotedMsg ? quotedMsg : message
-            if(qualmusica_msg.mimetype != "video/mp4" && qualmusica_msg.type != "audio" && qualmusica_msg.type != "ptt") return client.reply(from, erroComandoMsg(command), id)
-            let caminho_musica = null, caminho_video = null
-            var mediaData = await decryptMedia(qualmusica_msg, uaOverride)
+            var messageData = quotedMsg ? quotedMsg : message
+            if(messageData.mimetype != "video/mp4" && messageData.type != "audio" && messageData.type != "ptt") return client.reply(from, errorCommandMsg(command), id)
+            var audioPath = null, videoPath = null
+            var mediaData = await decryptMedia(messageData, uaOverride)
             await client.reply(from, msgs_texto.utilidades.qualmusica.espera, id)
-            if(qualmusica_msg.mimetype == "video/mp4"){
-                caminho_video = path.resolve(`media/videos/videoqualmusica-${obterNomeAleatorio(".mp4")}`)
-                fs.writeFileSync(caminho_video, mediaData, "base64")
+            if(messageData.mimetype == "video/mp4"){
+                videoPath = path.resolve(`media/videos/${getRandomName(".mp4")}`)
+                fs.writeFileSync(videoPath, mediaData, "base64")
                 try{
-                    caminho_musica = await converterMp4Mp3(caminho_video)
-                    fs.unlinkSync(caminho_video)
+                    audioPath = await convertMp4ToMp3(videoPath)
+                    fs.unlinkSync(videoPath)
                 }catch(err){
-                    fs.unlinkSync(caminho_video)
+                    fs.unlinkSync(videoPath)
                     client.reply(from, msgs_texto.utilidades.qualmusica.erro_conversao, id)
                 }
             }
-            if(qualmusica_msg.type == "audio" || qualmusica_msg.type == "ptt"){
-                caminho_musica = path.resolve(`media/audios/originais/audioqualmusica-${obterNomeAleatorio(".mp3")}`)
-                fs.writeFileSync(caminho_musica, mediaData, "base64");
+            if(messageData.type == "audio" || messageData.type == "ptt"){
+                audioPath = path.resolve(`media/audios/${getRandomName(".mp3")}`)
+                fs.writeFileSync(audioPath, mediaData, "base64");
             }
             try{
-                var resp = await servicos.obterReconhecimentoAudio(caminho_musica)
-                fs.unlinkSync(caminho_musica)
-                client.reply(from, preencherTexto(msgs_texto.utilidades.qualmusica.resposta, resp.titulo, resp.produtora, resp.duracao, resp.lancamento, resp.album, resp.artistas), id)
+                var resp = await api.getMusicRecognition(audioPath)
+                fs.unlinkSync(audioPath)
+                client.reply(from, makeText(msgs_texto.utilidades.qualmusica.resposta, resp.title, resp.productor, resp.duration, resp.release, resp.album, resp.artists), id)
             }catch(err){
-                console.log(err)
                 client.reply(from, err.message, id)
             }
             break
 
         case "!clima":
-            if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
+            if(args.length === 1) return client.reply(from, errorCommandMsg(command),id)
             try{
-                var clima = await servicos.obterClima(body.slice(7))
-                let clima_resposta = preencherTexto(msgs_texto.utilidades.clima.resposta,clima.msg)
-                client.sendFileFromUrl(from,clima.foto_url,`${body.slice(7)}.png`, clima_resposta, id)
+                var userInputQuery = body.slice(7).trim(), weather = await api.getWeather(userInputQuery)
+                var weatherText = makeText(msgs_texto.utilidades.clima.resposta, weather.text)
+                client.sendFileFromUrl(from,weather.pic_weather,`${body.slice(7)}.png`, weatherText, id)
+            } catch(err){
+                client.reply(from, err.message, id)
+            }
+            break
+
+        case "!moeda":
+            if(args.length !== 3) return client.reply(from, errorCommandMsg(command), id)
+            try{
+                var userInputCurrency = args[1], userInputValue = args[2], currencyConversion = await api.getCurrencyConversion(userInputCurrency, userInputValue)
+                var currencyResponse = makeText(msgs_texto.utilidades.moeda.resposta, currencyConversion.inserted_value, currencyConversion.currency, currencyConversion.value_in_real, currencyConversion.updated)
+                client.reply(from, currencyResponse ,id)
+            } catch(err){
+                client.reply(from, err.message , id)
+            }
+            break
+
+        case "!pesquisa":
+            if (args.length === 1) return client.reply(from, errorCommandMsg(command) , id)
+            try{
+                var userInputQuery = body.slice(10).trim(), searchResults = await api.getWebSearch(userInputQuery)
+                var searchResponse = makeText(msgs_texto.utilidades.pesquisa.resposta_titulo, userInputQuery)
+                for(let result of searchResults){
+                    searchResponse += "═════════════════\n"
+                    searchResponse += makeText(msgs_texto.utilidades.pesquisa.resposta_itens, result.title, result.link, result.description)
+                }
+                client.reply(from, searchResponse, id)
+            } catch(err){
+                client.reply(from, err.message, id)
+            }
+            break
+
+        case '!rastreio':
+            if (args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+            try{
+                var inputUserCode = body.slice(10).trim(), trackingData = await api.getTrackingCorreios(inputUserCode)
+                var trackingResponse = msgs_texto.utilidades.rastreio.resposta_titulo
+                for(let data of trackingData){
+                    var localeData = (data.local != undefined) ?  `Local : ${data.local}` : `Origem : ${data.origem}\nDestino : ${data.destino}`
+                    trackingResponse += makeText(msgs_texto.utilidades.rastreio.resposta_itens, data.status, data.data, data.hora, localeData)
+                    trackingResponse += "-----------------------------------------\n"
+                }
+                client.reply(from, trackingResponse, id)
+            } catch(err){
+                client.reply(from, err.message ,id)
+            }
+            break
+        
+        case "!play":
+            if(args.length === 1) return client.reply(from,errorCommandMsg(command),id)
+            try{
+                var userInput = body.slice(6).trim(), videoInfo = await api.getInfoVideo(userInput)
+                if(videoInfo == null) return client.reply(from, msgs_texto.utilidades.play.nao_encontrado, id)
+                if(videoInfo.duration > 300000) return client.reply(from, msgs_texto.utilidades.play.limite, id)
+                var waitMessage = makeText(msgs_texto.utilidades.play.espera, videoInfo.title, videoInfo.durationFormatted)
+                client.reply(from, waitMessage, id)      
+            } catch(err){
+                return client.reply(from,err.message,id)
+            }
+
+            try{
+                var outputAudio = await api.getYtMp3(videoInfo)
+                client.sendFile(from, outputAudio, "music.mp3","", id).then(()=>{
+                    fs.unlinkSync(outputAudio)
+                })
+            } catch(err){
+                client.reply(from,err.message,id)
+            }
+            break
+        
+        case "!yt":
+            if(args.length === 1) return client.reply(from,errorCommandMsg(command),id)
+            try{
+                var userInput = body.slice(4).trim(), videoInfo = await api.getInfoVideo(userInput)
+                if(videoInfo == null) return client.reply(from,msgs_texto.utilidades.yt.nao_encontrado,id)
+                if(videoInfo.duration > 300000) return client.reply(from,msgs_texto.utilidades.yt.limite,id)
+                var waitMessage = makeText(msgs_texto.utilidades.yt.espera, videoInfo.title, videoInfo.durationFormatted)
+                client.reply(from, waitMessage, id)
+            } catch(err){
+                return client.reply(from,err.message,id)
+            }
+
+            try{
+                var outputVideo = await api.getYtMp4Url(videoInfo)
+                client.sendFile(from, outputVideo.download, `${outputVideo.title}.mp4`,"", id)
             } catch(err){
                 client.reply(from,err.message,id)
             }
             break
 
-        case "!moeda":
-            if(args.length !== 3) return client.reply(from, erroComandoMsg(command), id)
-            servicos.obterConversaoMoeda(args[1],args[2]).then(res=>{
-                let moeda_resposta = preencherTexto(msgs_texto.utilidades.moeda.resposta,res.valor_inserido,res.moeda,res.valor_reais,res.data_atualizacao)
-                client.reply(from, moeda_resposta ,id)
-            }).catch(err =>{
-                client.reply(from, err.message , id)
-            })
-            break
-
-        case "!pesquisa":
-            if (args.length === 1) return client.reply(from, erroComandoMsg(command) , id)
-            servicos.obterPesquisa(body.slice(10)).then(resultados=>{
-                let google_resposta = preencherTexto(msgs_texto.utilidades.pesquisa.resposta_titulo,body.slice(10))
-                for(let resultado of resultados){
-                    google_resposta += "═════════════════\n"
-                    google_resposta += preencherTexto(msgs_texto.utilidades.pesquisa.resposta_itens,resultado.titulo,resultado.link,resultado.descricao)
-                }
-                client.reply(from,google_resposta,id)
-            }).catch(err =>{
-                client.reply(from,err.message,id)
-            })
-            break
-
-        case '!rastreio':
-            if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-            servicos.obterRastreioCorreios(body.slice(10)).then(dados=>{
-                let rastreio_resposta = msgs_texto.utilidades.rastreio.resposta_titulo
-                for(let dado of dados){
-                    let dados_local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
-                    rastreio_resposta += preencherTexto(msgs_texto.utilidades.rastreio.resposta_itens,dado.status,dado.data,dado.hora,dados_local)
-                    rastreio_resposta += "-----------------------------------------\n"
-                }
-                client.reply(from, rastreio_resposta ,id)
-            }).catch(err =>{
-                client.reply(from, err.message ,id)
-            })
-            break
-        
-        case "!play":
-            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-            servicos.obterInfoVideo(body.slice(6)).then(play_video =>{
-                if(play_video == null) return client.reply(from,msgs_texto.utilidades.play.nao_encontrado,id)
-                if(play_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.play.limite,id)
-                let play_espera = preencherTexto(msgs_texto.utilidades.play.espera,play_video.title,play_video.durationFormatted)
-                client.reply(from,play_espera,id)
-                servicos.obterYtMp3(play_video).then(mp3_path =>{
-                    client.sendFile(from, mp3_path, "musica.mp3","", id).then(()=>{
-                        fs.unlinkSync(mp3_path)
-                    })
-                }).catch(err=>{
-                    client.reply(from,err.message,id)
-                })
-            }).catch(err=>{
-                client.reply(from,err.message,id)
-            })
-            break
-        
-        case "!yt":
-            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)    
-            servicos.obterInfoVideo(body.slice(4)).then(yt_video => {
-                if(yt_video == null) return client.reply(from,msgs_texto.utilidades.yt.nao_encontrado,id)
-                if(yt_video.duration > 300000) return client.reply(from,msgs_texto.utilidades.yt.limite,id)
-                let yt_espera = preencherTexto(msgs_texto.utilidades.yt.espera,yt_video.title,yt_video.durationFormatted)
-                client.reply(from,yt_espera,id)
-                servicos.obterYtMp4Url(yt_video).then(video =>{
-                    client.sendFile(from, video.download, `${video.titulo}.mp4`,"", id)
-                }).catch(err=>{
-                    client.reply(from,err.message,id)
-                })
-            }).catch(err=>{
-                client.reply(from,err.message,id)
-            })
-            break
-
         case "!ig":
-            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-            await client.reply(from, msgs_texto.utilidades.ig.espera, id)    
-            servicos.obterMediaInstagram(body.slice(4)).then(async resp =>{
-                if(resp.results_number == 0) return client.reply(from, msgs_texto.utilidades.ig.nao_encontrado, id)
-                if(resp.results_number == 1){
-                    await client.sendFile(from, resp.url_list[0], `ig-media`,"",id)
+            if(args.length === 1) return client.reply(from,errorCommandMsg(command),id)
+            await client.reply(from, msgs_texto.utilidades.ig.espera, id)
+            try{
+                var userInputURL = body.slice(4).trim(), mediaResults = await api.getMediaInstagram(userInputURL)
+                if(mediaResults.results_number == 0) return client.reply(from, msgs_texto.utilidades.ig.nao_encontrado, id)
+                if(mediaResults.results_number == 1){
+                    await client.sendFile(from, mediaResults.url_list[0], `ig-media`,"",id)
                 } else {
-                    for(let url of resp.url_list){
+                    for(let url of mediaResults.url_list){
                         await client.sendFile(from, url, `ig-media`,"")
                     }
                 }
-            }).catch(err=>{
+            } catch(err){
                 client.reply(from,err.message,id)
-            })
+            }
             break
 
         case "!fb":
-            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-            await client.reply(from, msgs_texto.utilidades.fb.espera, id)    
-            servicos.obterMediaFacebook(body.slice(4)).then(async resp =>{
-                if(!resp.found) return client.reply(from, msgs_texto.utilidades.fb.nao_encontrado, id)
-                await client.sendFile(from, resp.url, `fb-media`,"",id)
-            }).catch(err=>{
+            if(args.length === 1) return client.reply(from,errorCommandMsg(command),id)
+            await client.reply(from, msgs_texto.utilidades.fb.espera, id)
+            try{
+                var userInputURL = body.slice(4).trim(), mediaResults = await api.getMediaFacebook(userInputURL)
+                if(!mediaResults.found) return client.reply(from, msgs_texto.utilidades.fb.nao_encontrado, id)
+                if(mediaResults.duration > 180) return client.reply(from, msgs_texto.utilidades.fb.limite, id)
+                await client.sendFile(from, mediaResults.url, `fb-media.mp4`,"",id)
+            } catch(err){
                 client.reply(from,err.message,id)
-            })
+            }    
             break
 
         case "!tw":
-            if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-            client.reply(from,msgs_texto.utilidades.tw.espera,id)
-            servicos.obterMediaTwitter(args[1]).then(res=>{
-                if(!res.found) return client.reply(from, msgs_texto.utilidades.tw.nao_encontrado, id)
-                if(res.type == "video"){
-                    client.sendFile(from, res.download[0].url, `twittervid.mp4`,"", id)
+            if(args.length === 1) return client.reply(from,errorCommandMsg(command),id)
+            await client.reply(from,msgs_texto.utilidades.tw.espera,id)
+            try{
+                var userInputURL = body.slice(4).trim(), mediaResults = await api.getMediaTwitter(userInputURL)
+                if(!mediaResults.found) return client.reply(from, msgs_texto.utilidades.tw.nao_encontrado, id)
+                if(mediaResults.type == "video"){
+                    client.sendFile(from, mediaResults.download[0].url, `twittervid.mp4`,"", id)
                 } else {
-                    client.sendFile(from, res.download, `twitterimg.jpg`,"", id)
+                    client.sendFile(from, mediaResults.download, `twitterimg.jpg`,"", id)
                 }
-            }).catch(err =>{
+            } catch(err){
                 client.reply(from,err.message,id)
-            })
+            }
             break
         
         case '!img':
-            if(quotedMsg || type != "chat") return client.reply(from, erroComandoMsg(command) , id)
-            let qtd_Img = 1;
-            let data_Img = ""
-            if(!isNaN(args[1])){
-                if(args[1] > 0 && args[1] <= 5) {
-                    qtd_Img = args[1]
-                    for(var i = 2; i < args.length; i++){
-                        data_Img += `${args[i]} `
-                    }
+            if(quotedMsg || type != "chat") return client.reply(from, errorCommandMsg(command) , id)
+            var userInputPicsNumber = args[1], picsNumber = 1, querySearch = ""
+            if(!isNaN(userInputPicsNumber)){
+                if(userInputPicsNumber > 0 && userInputPicsNumber <= 5) {
+                    picsNumber = userInputPicsNumber
+                    querySearch = args.slice(2).join(" ").trim()
                 } else {
                     return client.reply(from, msgs_texto.utilidades.img.qtd_imagem , id)
                 }
             } else {
-                data_Img = body.slice(5)
+                querySearch = body.slice(5).trim()
             }
-            if (data_Img === '') return client.reply(from, erroComandoMsg(command), id)
-            if (data_Img.length > 500) return client.reply(from, msgs_texto.utilidades.img.tema_longo , id)
-            servicos.obterImagens(data_Img,qtd_Img).then(imagens=>{
-                for(let imagem of imagens){
-                    client.sendFileFromUrl(from, imagem , "foto.jpg" , "", (qtd_Img == 1) ? id : "").catch(()=>{
+            if (!querySearch) return client.reply(from, errorCommandMsg(command), id)
+            if (querySearch.length > 120) return client.reply(from, msgs_texto.utilidades.img.tema_longo , id)
+            try{
+                var imageResults = await api.getImages(querySearch, picsNumber)
+                for(let image of imageResults){
+                    client.sendFileFromUrl(from, image , "picture.jpg" , "", (picsNumber == 1) ? id : "").catch(()=>{
                         client.sendText(from, msgs_texto.utilidades.img.erro_imagem)
                     })
                 }
-            }).catch(err=>{
-                client.sendText(from, err.message)
-            })
+            } catch(err){
+                client.reply(from, err.message, id)
+            }
             break
         
         case '!meusdados':
-            let meusdados = await db.obterUsuario(sender.id)
-            let tipo_usuario_dados = "Comum"
-            let max_comandos_md = (meusdados.max_comandos_dia == null) ? "Sem limite" : meusdados.max_comandos_dia
-            switch(meusdados.tipo) {
+            var userData = await db.obterUsuario(sender.id), typeUser = userData.tipo, maxCommandsDay = userData.max_comandos_dia ||  "Sem limite" 
+            switch(typeUser) {
                 case "dono":
-                    tipo_usuario_dados = "🤖 Dono"
+                    typeUser = "🤖 Dono"
                     break
                 case "vip":
-                    tipo_usuario_dados = "⭐ VIP"
+                    typeUser = "⭐ VIP"
                     break
                 case "comum":
-                    tipo_usuario_dados = "👤 Comum"
+                    typeUser = "👤 Comum"
                     break    
             }
-            let nome_usuario = (pushname != undefined) ? pushname : `Ainda não obtido`
-            let meusdados_resposta = preencherTexto(msgs_texto.utilidades.meusdados.resposta_geral,tipo_usuario_dados,nome_usuario,meusdados.comandos_total)
-            
-            if(botInfo().limite_diario.status) {
-                meusdados_resposta += preencherTexto(msgs_texto.utilidades.meusdados.resposta_limite_diario,meusdados.comandos_dia,max_comandos_md,max_comandos_md)
-            }
-
+            var username = pushname || `Ainda não obtido`, response = makeText(msgs_texto.utilidades.meusdados.resposta_geral, typeUser, username, userData.comandos_total)
+            if(botInfo().limite_diario.status) response += makeText(msgs_texto.utilidades.meusdados.resposta_limite_diario, userData.comandos_dia, maxCommandsDay, maxCommandsDay)
             if(isGroupMsg){
-                let g_meusdados = await db.obterGrupo(groupId)
-                if(g_meusdados.contador.status){
-                    let c_meusdados = await db.obterAtividade(groupId,sender.id)
-                    meusdados_resposta += preencherTexto(msgs_texto.utilidades.meusdados.resposta_grupo,c_meusdados.msg)
+                var groupData = await db.obterGrupo(groupId)
+                if(groupData.contador.status){
+                    var userGroupActivity = await db.obterAtividade(groupId,sender.id)
+                    response += makeText(msgs_texto.utilidades.meusdados.resposta_grupo, userGroupActivity.msg)
                 }   
             }
-            client.reply(from, meusdados_resposta, id)
+            client.reply(from, response, id)
             break
 
         case "!help": case "!menu": case ".menu": case ".help":
-        case '!ajuda': //Menu principal
-            let dados_user = await db.obterUsuario(sender.id)
-            let max_comm = (dados_user.max_comandos_dia == null) ? "Sem limite" : dados_user.max_comandos_dia
-            let tipo_usuario = "Comum"
-            switch(dados_user.tipo) {
+        case '!ajuda': 
+            var userData = await db.obterUsuario(sender.id), typeUser = userData.tipo, maxCommandsDay = userData.max_comandos_dia || "Sem limite" 
+            switch(typeUser) {
                 case "dono":
-                    tipo_usuario = "🤖 Dono"
+                    typeUser = "🤖 Dono"
                     break
                 case "vip":
-                    tipo_usuario = "⭐ VIP"
+                    typeUser = "⭐ VIP"
                     break
                 case "comum":
-                    tipo_usuario = "👤 Comum"
+                    typeUser= "👤 Comum"
                     break     
             }
-
-            let msgs_dados = ""
-            let ajuda_usuario = (pushname != undefined) ? pushname : "Ainda não obtido"
+            var responseData = '', username = pushname || "Ainda não obtido"
             if(botInfo().limite_diario.status){
-                msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_limite_diario,ajuda_usuario,dados_user.comandos_dia,max_comm,tipo_usuario)
+                responseData = makeText(msgs_texto.utilidades.ajuda.resposta_limite_diario, username, userData.comandos_dia, maxCommandsDay, typeUser)
             } else {
-                msgs_dados = preencherTexto(msgs_texto.utilidades.ajuda.resposta_comum,ajuda_usuario,tipo_usuario)
+                responseData = makeText(msgs_texto.utilidades.ajuda.resposta_comum, username, typeUser)
             }
-            msgs_dados += `═════════════════\n`
-            let menu = menuAjuda(isGroupAdmins,isGroupMsg)
-            client.sendText(from, msgs_dados+menu)
+            responseData += `═════════════════\n`
+            var responseMenu = helpMenu(isGroupAdmins,isGroupMsg)
+            client.sendText(from, responseData+responseMenu)
             break
 
         case '!s':
             if(isMedia || quotedMsg){
-                let dados_s = {}
-                dados_s = {
-                    tipo : (isMedia)? type : quotedMsg.type,
+                var messageData = {
+                    type : (isMedia) ? type : quotedMsg.type,
                     mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
-                    mensagem: (isMedia)? message : quotedMsg
+                    message: (isMedia)? message : quotedMsg
                 }
-                if(dados_s.tipo === "image"){
-                    var mediaData = await decryptMedia(dados_s.mensagem, uaOverride)
-                    var imageBase64 = `data:${dados_s.mimetype};base64,${mediaData.toString('base64')}`
+                if(messageData.type === "image"){
+                    var mediaData = await decryptMedia(messageData.message, uaOverride)
+                    var imageBase64 = `data:${messageData.mimetype};base64,${mediaData.toString('base64')}`
                     client.sendImageAsSticker(from, imageBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true, discord: "701084178112053288"}).catch(err=>{
-                        consoleErro(err.message, "STICKER")
+                        consoleError(err.message, "STICKER")
                         client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
                     })
                 } else {
-                    return client.reply(from, erroComandoMsg(command) , id)
+                    return client.reply(from, errorCommandMsg(command) , id)
                 }
             } else {
-                return client.reply(from, erroComandoMsg(command) , id)
+                return client.reply(from, errorCommandMsg(command) , id)
             }
             break
         
@@ -366,27 +367,27 @@ module.exports = utilidades = async(client,message) => {
                 var imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
                 await client.sendFile(from,imageBase64,"sticker.jpg","",quotedMsgObj.id)
             } else {
-                client.reply(from, erroComandoMsg(command), id)
+                client.reply(from, errorCommandMsg(command), id)
             }
             break
 
         case '!sgif':
             if(isMedia || quotedMsg){
-                let dados_sgif = {}
-                dados_sgif = {
+                var messageData = {
                     mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
-                    duracao: (isMedia)? message.duration : quotedMsg.duration,
-                    mensagem: (isMedia)? message : quotedMsg
+                    duration: (isMedia)? message.duration : quotedMsg.duration,
+                    message: (isMedia)? message : quotedMsg
                 }
-                if((dados_sgif.mimetype === 'video/mp4' || dados_sgif.mimetype === 'image/gif') && dados_sgif.duracao < 10){
-                    var mediaData = await decryptMedia(dados_sgif.mensagem, uaOverride)
-                    var sgifB64 = `data:${dados_sgif.mimetype};base64,${mediaData.toString('base64')}`
+                if((messageData.mimetype === 'video/mp4' || messageData.mimetype === 'image/gif') && messageData.duration < 10){
                     client.reply(from, msgs_texto.geral.espera , id)
-                    client.sendMp4AsSticker(from, sgifB64, {endTime: "00:00:10.0", fps:9}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"}).catch((err)=>{
-                        consoleErro(err.message, "STICKER-GIF")
+                    var mediaData = await decryptMedia(messageData.message, uaOverride)
+                    var base64 = `data:${messageData.mimetype};base64,${mediaData.toString('base64')}`
+                    client.sendMp4AsSticker(from, base64, {endTime: "00:00:10.0", fps:9, square:300}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"})
+                    .catch((err)=>{
+                        consoleError(err.message, "STICKER-GIF")
                         client.reply(from, msgs_texto.utilidades.sticker.erro_sgif , id)
                     })
-                }else {
+                } else {
                     return client.reply(from, msgs_texto.utilidades.sticker.video_invalido, id)
                 }
             } else {
@@ -395,145 +396,152 @@ module.exports = utilidades = async(client,message) => {
             break
 
         case "!tps":
-            if(args.length == 1 || type != "chat") return client.reply(from,erroComandoMsg(command),id)
-            if(body.slice(5).length > 40) return client.reply(from,msgs_texto.utilidades.tps.texto_longo,id)
+            if(args.length == 1 || type != "chat") return client.reply(from,errorCommandMsg(command),id)
+            var userInputText = body.slice(5).trim()
+            if(userInputText.length > 40) return client.reply(from,msgs_texto.utilidades.tps.texto_longo,id)
             await client.reply(from, msgs_texto.utilidades.tps.espera,id)
-            sticker.textoParaSticker(body.slice(5)).then((base64)=>{
-                client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true, discord: "701084178112053288"}).catch(err=>{
-                    consoleErro(err.message, "STICKER-TPS")
+            try{
+                var imageBase64 = await sticker.textToPicture(userInputText)
+                client.sendImageAsSticker(from, imageBase64, {author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true, discord: "701084178112053288"}).catch(err=>{
+                    consoleError(err.message, "STICKER-TPS")
                     client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
                 })
-            }).catch(msg=>{
-                client.reply(from,msg,id)
-            })
+            } catch(err){
+                client.reply(from, err.message, id)
+            }
             break
         
         case '!ssf':
             if(isMedia || quotedMsg){
-                let msgDataSsf = {
-                    tipo: (isMedia)? type : quotedMsg.type,
+                var messageData = {
+                    type: (isMedia)? type : quotedMsg.type,
                     mimetype: (isMedia)? mimetype : quotedMsg.mimetype,
-                    mensagem: (isMedia)? message : quotedMsg
+                    message: (isMedia)? message : quotedMsg
                 }
-                if(msgDataSsf.tipo === "image"){
+                if(messageData.type === "image"){
                     var mediaData = await decryptMedia(msgDataSsf.mensagem, uaOverride)
-                    var imageBase64 = `data:${msgDataSsf.mimetype};base64,${mediaData.toString('base64')}`
-                    sticker.stickerSemFundo(imageBase64,msgDataSsf.mimetype).then(base64 =>{
-                        client.sendImageAsSticker(from, base64,{author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true, discord: "701084178112053288"}).catch(err=>{
-                            consoleErro(err.message, "STICKER-SSF")
+                    var inputImageBase64 = `data:${messageData.mimetype};base64,${mediaData.toString('base64')}`
+                    try{
+                        var outputImageBase64 = await sticker.imageRemoveBackground(inputImageBase64, messageData.type)
+                        client.sendImageAsSticker(from, outputImageBase64, {author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true, discord: "701084178112053288"}).catch(err=>{
+                            consoleError(err.message, "STICKER-SSF")
                             client.reply(from, msgs_texto.utilidades.sticker.erro_s,id)
                         })
-                    }).catch(err =>{
+                    } catch(err){
                         client.reply(from, err.message, id)
-                    })
+                    }
                 } else {
                     client.reply(from, msgs_texto.utilidades.sticker.ssf_imagem, id)
                 }
             } else {
-                client.reply(from, msgs_texto.geral.erro, id)
+                client.reply(from, errorCommandMsg(command), id)
             }
             break
 
         case "!anime":
             if(isMedia || quotedMsg){
-                let msgDataAnime = {}
-                msgDataAnime = {
-                    tipo: (isMedia)? type : quotedMsg.type,
+                var messageData = {
+                    type: (isMedia)? type : quotedMsg.type,
                     mimetype: (isMedia)? mimetype : quotedMsg.mimetype,
-                    mensagem: (isMedia)? message : quotedMsg
+                    message: (isMedia)? message : quotedMsg
                 }
-                if(msgDataAnime.tipo === "image"){
+                if(messageData.type === "image"){
                     client.reply(from,msgs_texto.utilidades.anime.espera, id)
-                    var mediaData = await decryptMedia(msgDataAnime.mensagem, uaOverride)
-                    var imageBase64 = `data:${msgDataAnime.mimetype};base64,${mediaData.toString('base64')}`
-                    servicos.obterAnime(imageBase64).then((anime)=>{
-                        if(anime.similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
-                        anime.episodio =  (anime.episodio != "") ? anime.episodio : "---"
-                        anime_resp = preencherTexto(msgs_texto.utilidades.anime.resposta,anime.titulo,anime.episodio,anime.tempo_inicial,anime.tempo_final,anime.similaridade)
-                        client.sendFileFromUrl(from,anime.link_preview, "anime.mp4", anime_resp, id)
-                    }).catch((err)=>{
+                    var mediaData = await decryptMedia(messageData.message, uaOverride)
+                    var inputImageBase64 = `data:${messageData.mimetype};base64,${mediaData.toString('base64')}`
+                    try{
+                        var animeInfo = await api.getAnime(inputImageBase64)
+                        if(animeInfo.similarity < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
+                        animeInfo.episode = animeInfo.episode || "---"
+                        var animeResponse = makeText(msgs_texto.utilidades.anime.resposta, animeInfo.title, animeInfo.episode, animeInfo.startTime, animeInfo.endTime, animeInfo.similarity)
+                        client.sendFileFromUrl(from, animeInfo.link_preview, "anime.mp4", animeResponse, id)
+                    } catch(err){
                         client.reply(from,err.message,id)
-                    })
+                    }
                 } else {
-                    client.reply(from,erroComandoMsg(command), id)
+                    client.reply(from,errorCommandMsg(command), id)
                 }
             } else {
-                client.reply(from,erroComandoMsg(command), id)
+                client.reply(from,errorCommandMsg(command), id)
             }
             break
 
         case "!animelanc":
-            servicos.obterAnimesLancamentos().then((animes)=>{
-                let animelanc_resposta = msgs_texto.utilidades.animelanc.resposta_titulo
-                for(let anime of animes){
-                    animelanc_resposta += preencherTexto(msgs_texto.utilidades.animelanc.resposta_itens,anime.nome,anime.episodio,anime.link)
+            try{
+                var animeResults = await api.getAnimeReleases()
+                var responseReleases = msgs_texto.utilidades.animelanc.resposta_titulo
+                for(let anime of animeResults){
+                    responseReleases += makeText(msgs_texto.utilidades.animelanc.resposta_itens, anime.title, anime.episode, anime.url)
                 }
-                client.reply(from,animelanc_resposta,id)
-            }).catch(err =>{
+                client.reply(from, responseReleases, id)
+            } catch(err){
                 client.reply(from, err.message, id)
-            })
+            }
             break
         
         case "!traduz":
-            let texto_traducao = ""
+            var inputText = ""
             if(quotedMsg != undefined && quotedMsg.type == "chat"){
-                texto_traducao = quotedMsg.body
+                inputText = quotedMsg.body
             } else if(quotedMsg == undefined && type == "chat" ){
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                texto_traducao = body.slice(8)
+                if(args.length === 1) return client.reply(from, errorCommandMsg(command) ,id)
+                inputText = body.slice(8).trim()
             } else {
-                return client.reply(from, erroComandoMsg(command) ,id)
+                return client.reply(from, errorCommandMsg(command) ,id)
             }
-            servicos.obterTraducao(texto_traducao).then(traducao=>{
-                client.reply(from, traducao, id);
-            }).catch(err =>{
+
+            try{
+                var translationResponse = await api.getTranslation(inputText)
+                client.reply(from, translationResponse, id)
+            } catch(err){
                 client.reply(from, err.message, id)
-            })
+            }
             break  
         
         case '!voz':
-            var dataText = '';
-            var id_resp = id
+            var inputText = '', idMessage = id
             if (args.length === 1) {
-                return client.reply(from, erroComandoMsg(command) ,id)
-            } else if(quotedMsg !== undefined && quotedMsg.type == 'chat'){
-                dataText = (args.length == 2) ? quotedMsg.body : body.slice(8)
+                return client.reply(from, errorCommandMsg(command) ,id)
+            } else if(quotedMsg  && quotedMsg.type == 'chat'){
+                inputText = (args.length == 2) ? quotedMsg.body : body.slice(8).trim()
             } else {
-                dataText = body.slice(8)
+                inputText = body.slice(8).trim()
             }
-            if (dataText === '') return client.reply(from, msgs_texto.utilidades.voz.texto_vazio , id)
-            if (dataText.length > 5000) return client.reply(from, msgs_texto.utilidades.voz.texto_longo, id)
-            if(quotedMsg !== undefined) id_resp = quotedMsgObj.id
-            var idioma = body.slice(5, 7).toLowerCase()
-            servicos.textoParaVoz(idioma,dataText).then(audio_path=>{
-                client.sendPtt(from, audio_path, id_resp)
-            }).catch(err =>{
+            if (!inputText) return client.reply(from, msgs_texto.utilidades.voz.texto_vazio , id)
+            if (inputText.length > 200) return client.reply(from, msgs_texto.utilidades.voz.texto_longo, id)
+            if(quotedMsg) idMessage = quotedMsgObj.id
+            var language = body.slice(5, 7).toLowerCase()
+            try{
+                var audioResponse = await api.textToSpeech(language, inputText)
+                client.sendPtt(from, audioResponse, idMessage)
+            } catch(err){
                 client.reply(from, err.message, id)
-            })
+            }
             break
 
         case '!noticias':
-            servicos.obterNoticias().then(noticias=>{
-                let noticias_resposta = msgs_texto.utilidades.noticia.resposta_titulo
-                for(let noticia of noticias){
-                    noticias_resposta += preencherTexto(msgs_texto.utilidades.noticia.resposta_itens,noticia.title)
-
+            try{
+                var newsResponse = await api.getNews()
+                var response = msgs_texto.utilidades.noticia.resposta_titulo
+                for(let n of newsResponse){
+                    response += makeText(msgs_texto.utilidades.noticia.resposta_itens, n.title)
                 }
-                client.reply(from,noticias_resposta, id)
-            }).catch(err =>{
+                client.reply(from, response, id)
+            } catch(err){
                 client.reply(from, err.message, id)
-            })
+            }
             break;
 
         case '!calc':
-            if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-            let expressao = body.slice(6)
-            servicos.obterCalculo(expressao).then(resultado=>{
-                let calc_resposta = preencherTexto(msgs_texto.utilidades.calc.resposta,resultado)
-                client.reply(from,calc_resposta,id)
-            }).catch(err =>{
+            if(args.length === 1) return client.reply(from, errorCommandMsg(command) ,id)
+            var inputMathExpression = body.slice(6).trim()
+            try{
+                var calcResponse = await api.getCalc(inputMathExpression)
+                var response = makeText(msgs_texto.utilidades.calc.resposta, calcResponse)
+                client.reply(from, response, id)
+            } catch(err){
                 client.reply(from, err.message, id)
-            })
+            }
             break
         }
     } catch(err){

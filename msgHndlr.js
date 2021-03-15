@@ -9,7 +9,7 @@ const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,bo
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
 const grupo = require('./comandos/grupo'), utilidades = require('./comandos/utilidades'), diversao = require('./comandos/diversao'), admin = require('./comandos/admin')
-const { preencherTexto, guiaComandoMsg } = require('./lib/util')
+const { makeText, guideCommandMsg } = require('./lib/util')
 const msgs_texto = require('./lib/msgs')
 
 module.exports = msgHandler = async (client, message) => {
@@ -94,11 +94,11 @@ module.exports = msgHandler = async (client, message) => {
 
             //4.0.6 - BLOQUEIO GLOBAL DE COMANDOS
             if(botInfo().bloqueio_cmds.includes(command) && !isOwner){
-                return client.reply(from, preencherTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
+                return client.reply(from, makeText(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
             }
             
             //4.0.7 - SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
-            if(isGroupMsg && g_info.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,preencherTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
+            if(isGroupMsg && g_info.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,makeText(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
 
             //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/ADMINISTRACAO/DONO
             if(botInfo().limite_diario.status){
@@ -110,7 +110,7 @@ module.exports = msgHandler = async (client, message) => {
                         await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
                     } else { //4.0.8.2 - SE ULTRAPASSAR LIMITE DIARIO
                         pushname = (pushname != undefined) ? pushname : ""
-                        return client.reply(from, preencherTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, pushname, botInfo().limite_diario.qtd),id)
+                        return client.reply(from, makeText(msgs_texto.admin.limitediario.resposta_excedeu_limite, pushname, botInfo().limite_diario.qtd),id)
                     }
                 } else {
                     await db.addContagemTotal(sender.id)
@@ -140,27 +140,27 @@ module.exports = msgHandler = async (client, message) => {
 
         //6.0 - APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
         if(lista_comandos.utilidades.includes(command)){
-            if(isGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
+            if(isGuia) return client.reply(from, guideCommandMsg("utilidade", command), id)
             await utilidades(client,message)
             //SAIDA PARA O CONSOLE LOG
             const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
             if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta.toFixed(3)+"s")})`)
             if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - UTILIDADE]","orange"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else if (lista_comandos.grupo.includes(command)){
-            if(isGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
+            if(isGuia) return client.reply(from, guideCommandMsg("grupo", command), id)
             await grupo(client,message)
              //SAIDA PARA O CONSOLE LOG
             const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
             if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - ADMINISTRAÇÃO]","yellow"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else if(lista_comandos.diversao.includes(command)){
-            if(isGuia) return client.reply(from, guiaComandoMsg("diversao", command), id)
+            if(isGuia) return client.reply(from, guideCommandMsg("diversao", command), id)
             await diversao(client,message)
              //SAIDA PARA O CONSOLE LOG
             const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
             if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>',color("[PRIVADO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), `(${color(tempo_resposta.toFixed(3)+"s")})`)
             if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DIVERSÃO]","cyan"), time, color(msgs(command)), 'de', color(pushname), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
         } else if(lista_comandos.admin.includes(command)){
-            if(isGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
+            if(isGuia) return client.reply(from, guideCommandMsg("admin", command), id)
             await admin(client,message)
              //SAIDA PARA O CONSOLE LOG
             const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)

@@ -23,9 +23,7 @@ media/*.mp4
 media/img/noBg.png
 media/*.gif
 media/tts/*.mp3
-media/audios/editados/*.mp3
-media/audios/baixados/*.mp3
-media/audios/originais/*.mp3
+media/audios/*.mp3
 media/videos/*.mp4
 media/videos/*.jpg
 
