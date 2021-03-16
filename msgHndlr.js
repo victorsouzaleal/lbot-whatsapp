@@ -9,7 +9,7 @@ const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,bo
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
 const grupo = require('./comandos/grupo'), utilidades = require('./comandos/utilidades'), diversao = require('./comandos/diversao'), admin = require('./comandos/admin')
-const { criarTexto, guiaComandoMsg } = require('./lib/util')
+const { criarTexto, guiaComandoMsg, removerNegritoComando } = require('./lib/util')
 const msgs_texto = require('./lib/msgs')
 
 module.exports = msgHandler = async (client, message) => {
@@ -20,7 +20,8 @@ module.exports = msgHandler = async (client, message) => {
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
         const commands = caption || body || ''
-        const command = commands.toLowerCase().split(' ')[0] || ''
+        var command = commands.toLowerCase().split(' ')[0] || ''
+        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
         const isOwner = ownerNumber == sender.id.replace(/@c.us/g, '')

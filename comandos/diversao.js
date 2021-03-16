@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 const msgs_texto = require('../lib/msgs')
-const {criarTexto, primeiraLetraMaiuscula, erroComandoMsg} = require("../lib/util")
+const {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, removerNegritoComando} = require("../lib/util")
 const path = require("path")
 const api = require('../lib/api')
 
@@ -11,7 +11,8 @@ module.exports = diversao = async(client,message) => {
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
         const commands = caption || body || ''
-        const command = commands.toLowerCase().split(' ')[0] || ''
+        var command = commands.toLowerCase().split(' ')[0] || ''
+        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
         const botNumber = await client.getHostNumber()

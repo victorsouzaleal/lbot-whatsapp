@@ -70,10 +70,11 @@ Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digi
 
 ## 4 - Funcionamento :
 Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
-
-    !ajuda - Dá acesso aos comandos disponíveis dependendo de onde ele for usado (Grupo ou Privado).
-    !admin - Dá acesso aos comandos de ADMINISTRADOR/DONO DO BOT
-
+<br><br>
+**!menu** - Dá acesso ao MENU PRINCIPAL.
+<br>
+**!admin** - Dá acesso ao MENU de ADMINISTRADOR/DONO DO BOT.
+<br><br>
 Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ### Pronto! Seu bot já está funcionando!!

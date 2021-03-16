@@ -1,8 +1,8 @@
 //REQUERINDO MODULOS
-const {menuAdmin} = require('../lib/menu')
+const menu = require('../lib/menu')
 const moment = require("moment-timezone")
 const msgs_texto = require('../lib/msgs')
-const {criarTexto,erroComandoMsg} = require('../lib/util')
+const {criarTexto,erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -15,7 +15,8 @@ module.exports = admin = async(client,message) => {
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
         const commands = caption || body || ''
-        const command = commands.toLowerCase().split(' ')[0] || ''
+        var command = commands.toLowerCase().split(' ')[0] || ''
+        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const botNumber = await client.getHostNumber()
         const blockNumber = await client.getBlockedIds()
@@ -26,7 +27,7 @@ module.exports = admin = async(client,message) => {
 
         switch(command){
             case "!admin":
-                client.sendText(from, menuAdmin())
+                client.sendText(from, menu.menuAdmin())
                 break
 
             case "!infocompleta":

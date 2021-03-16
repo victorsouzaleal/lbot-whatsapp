@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 const msgs_texto = require('../lib/msgs')
-const {criarTexto, erroComandoMsg} = require('../lib/util')
+const {criarTexto, erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const db = require('../lib/database')
 const fs = require('fs-extra')
 
@@ -12,7 +12,8 @@ module.exports = grupo = async(client,message) => {
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
         const commands = caption || body || ''
-        const command = commands.toLowerCase().split(' ')[0] || ''
+        var command = commands.toLowerCase().split(' ')[0] || ''
+        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const botNumber = await client.getHostNumber()
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
