@@ -2,7 +2,7 @@
 const {menuAdmin} = require('../lib/menu')
 const moment = require("moment-timezone")
 const msgs_texto = require('../lib/msgs')
-const {makeText,errorCommandMsg} = require('../lib/util')
+const {criarTexto,erroComandoMsg} = require('../lib/util')
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -33,12 +33,12 @@ module.exports = admin = async(client,message) => {
                 const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
                 let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 let limitediario_expiracao = moment(info_bot.limite_diario.expiracao * 1000).format("DD/MM HH:mm:ss")
-                let infocompleta_resposta = makeText(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado, process.env.npm_package_version)
-                infocompleta_resposta += (info_bot.limite_diario.status) ? makeText(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, limitediario_expiracao) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
-                infocompleta_resposta += (info_bot.limitecomandos.status) ? makeText(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
-                infocompleta_resposta += (info_bot.limitarmensagens.status) ? makeText(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
-                infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? makeText(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
-                infocompleta_resposta += makeText(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber)
+                let infocompleta_resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado, process.env.npm_package_version)
+                infocompleta_resposta += (info_bot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, limitediario_expiracao) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
+                infocompleta_resposta += (info_bot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
+                infocompleta_resposta += (info_bot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
+                infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
+                infocompleta_resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber)
                 if(foto_bot_url != undefined){
                     client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
                 } else {
@@ -47,7 +47,7 @@ module.exports = admin = async(client,message) => {
                 break
                 
             case '!entrargrupo':
-                if (args.length < 2) return client.reply(from, errorCommandMsg(command), id)
+                if (args.length < 2) return client.reply(from, erroComandoMsg(command), id)
                 const link = args[1]
                 const tGr = await client.getAllGroups()
                 const isLink = link.match(/(https:\/\/chat.whatsapp.com)/gi)
@@ -70,9 +70,9 @@ module.exports = admin = async(client,message) => {
                 break
 
             case '!listablock':
-                let listablock_resposta = makeText(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
+                let listablock_resposta = criarTexto(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
                 for (let i of blockNumber) {
-                    listablock_resposta += makeText(msgs_texto.admin.listablock.resposta_itens, i.replace(/@c.us/g,''))
+                    listablock_resposta += criarTexto(msgs_texto.admin.listablock.resposta_itens, i.replace(/@c.us/g,''))
                 }
                 client.sendTextWithMentions(from, listablock_resposta, id)
                 break
@@ -86,21 +86,21 @@ module.exports = admin = async(client,message) => {
                 break
             
             case "!bcmdglobal":
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command) ,id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
                 let b_cmd_inseridos = body.slice(12).split(" "), b_cmd_verificados = [], b_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), bcmd_resposta = msgs_texto.admin.bcmdglobal.resposta_titulo
                 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
                 for(let b_cmd of b_cmd_inseridos){
                     if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd)){
                         if(b_cmd_global.bloqueio_cmds.includes(b_cmd)){
-                            bcmd_resposta += makeText(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, b_cmd)
+                            bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, b_cmd)
                         } else {
                             b_cmd_verificados.push(b_cmd)
-                            bcmd_resposta += makeText(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, b_cmd)
+                            bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, b_cmd)
                         }
                     } else if (lista_comandos.grupo.includes(b_cmd) || lista_comandos.admin.includes(b_cmd) ){
-                        bcmd_resposta += makeText(msgs_texto.admin.bcmdglobal.resposta_variavel.comando_admin, b_cmd)
+                        bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.comando_admin, b_cmd)
                     } else {
-                        bcmd_resposta += makeText(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, b_cmd)
+                        bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, b_cmd)
                     }
                 }
                 if(b_cmd_verificados.length != 0) botBloquearComando(b_cmd_verificados)
@@ -108,14 +108,14 @@ module.exports = admin = async(client,message) => {
                 break
             
             case "!dcmdglobal":
-                if(args.length === 1) return client.reply(from,errorCommandMsg(command),id)
+                if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
                 let d_cmd_inseridos = body.slice(12).split(" "), d_cmd_verificados = [], d_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), dcmd_resposta = msgs_texto.admin.dcmdglobal.resposta_titulo
                 for(let d_cmd of d_cmd_inseridos){
                     if(d_cmd_global.bloqueio_cmds.includes(d_cmd)) {
                         d_cmd_verificados.push(d_cmd)
-                        dcmd_resposta += makeText(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, d_cmd)
+                        dcmd_resposta += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, d_cmd)
                     } else {
-                        dcmd_resposta += makeText(msgs_texto.admin.dcmdglobal.resposta_variavel.ja_desbloqueado, d_cmd)
+                        dcmd_resposta += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.ja_desbloqueado, d_cmd)
                     }
                 }
                 if(d_cmd_verificados.length != 0)  botDesbloquearComando(d_cmd_verificados)
@@ -138,7 +138,7 @@ module.exports = admin = async(client,message) => {
             case '!sairgrupos':
                 const allGroups = await client.getAllGroups()
                 for (let gclist of allGroups) {
-                    let total_grupos_resposta = makeText(msgs_texto.admin.sairtodos.resposta, allGroups.length)
+                    let total_grupos_resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, allGroups.length)
                     await client.sendText(gclist.contact.id, total_grupos_resposta)
                     await client.leaveGroup(gclist.contact.id)
                 }
@@ -148,7 +148,7 @@ module.exports = admin = async(client,message) => {
             case "!bloquear":
                 let usuarios_bloq = []
                 if (mentionedJidList.length === 0){
-                    if(!quotedMsg) return client.reply(from, errorCommandMsg(command), id)
+                    if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
                     usuarios_bloq.push(quotedMsgObj.author)
                 } else {
                     for (let i = 0; i < mentionedJidList.length; i++) {
@@ -158,13 +158,13 @@ module.exports = admin = async(client,message) => {
 
                 for (let user_b of usuarios_bloq){
                     if(ownerNumber == user_b.replace(/@c.us/g, '')){
-                        await client.sendTextWithMentions(from, makeText(msgs_texto.admin.bloquear.erro_dono, user_b.replace(/@c.us/g, '')))
+                        await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.erro_dono, user_b.replace(/@c.us/g, '')))
                     } else {
                         if(blockNumber.includes(user_b)) {
-                            await client.sendTextWithMentions(from, makeText(msgs_texto.admin.bloquear.ja_bloqueado, user_b.replace(/@c.us/g, '')))
+                            await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.ja_bloqueado, user_b.replace(/@c.us/g, '')))
                         } else {
                             await client.contactBlock(user_b)
-                            await client.sendTextWithMentions(from, makeText(msgs_texto.admin.bloquear.sucesso, user_b.replace(/@c.us/g, '')))
+                            await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.sucesso, user_b.replace(/@c.us/g, '')))
                         }
                     }
                     
@@ -174,7 +174,7 @@ module.exports = admin = async(client,message) => {
             case "!desbloquear":
                 let usuarios_desbloq = []
                 if (mentionedJidList.length === 0){
-                    if(!quotedMsg) return client.reply(from, errorCommandMsg(command), id)
+                    if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
                     usuarios_desbloq.push(quotedMsgObj.author)
                 } else {
                     for (let i = 0; i < mentionedJidList.length; i++) {
@@ -184,21 +184,21 @@ module.exports = admin = async(client,message) => {
 
                 for (let user_d of usuarios_desbloq){
                     if(!blockNumber.includes(user_d)) {
-                        await client.sendTextWithMentions(from, makeText(msgs_texto.admin.desbloquear.ja_desbloqueado, user_d.replace(/@c.us/g,'')))
+                        await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.desbloquear.ja_desbloqueado, user_d.replace(/@c.us/g,'')))
                     } else {
                         await client.contactUnblock(user_d)
-                        await client.sendTextWithMentions(from, makeText(msgs_texto.admin.desbloquear.sucesso, user_d.replace(/@c.us/g,'')))
+                        await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.desbloquear.sucesso, user_d.replace(/@c.us/g,'')))
                     }
                 }
                 break
 
             
             case "!limitediario":
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command),id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
                 let limitediario_estado = args[1]
                 if(limitediario_estado == "on"){
                     if(botInfo().limite_diario.status) return client.reply(from,msgs_texto.admin.limitediario.ja_ativado,id)
-                    if(args.length !== 3) return client.reply(from,errorCommandMsg(command),id)
+                    if(args.length !== 3) return client.reply(from,erroComandoMsg(command),id)
                     let qtd_comandos = args[2]
                     if(isNaN(qtd_comandos) || qtd_comandos < 10) return client.reply(from,msgs_texto.admin.limitediario.qtd_invalida,id)
                     botAlterarLimiteDiario(true,qtd_comandos)
@@ -208,16 +208,16 @@ module.exports = admin = async(client,message) => {
                     botAlterarLimiteDiario(false)
                     client.reply(from, msgs_texto.admin.limitediario.desativado,id)
                 } else {
-                    client.reply(from, errorCommandMsg(command), id)
+                    client.reply(from, erroComandoMsg(command), id)
                 }
                 break
 
             case "!taxalimite":
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 let limitador_estado = args[1]
                 if(limitador_estado == "on"){
                     if(botInfo().limitecomandos.status) return client.reply(from,msgs_texto.admin.limitecomandos.ja_ativado,id)
-                    if(args.length !== 4) return client.reply(from,errorCommandMsg(command),id)
+                    if(args.length !== 4) return client.reply(from,erroComandoMsg(command),id)
                     let qtd_max_minuto = args[2], tempo_bloqueio = args[3]
                     if(isNaN(qtd_max_minuto) || qtd_max_minuto < 3) return client.reply(from,msgs_texto.admin.limitecomandos.qtd_invalida,id)
                     if(isNaN(tempo_bloqueio) || tempo_bloqueio < 10) return client.reply(from,msgs_texto.admin.limitecomandos.tempo_invalido,id)
@@ -228,16 +228,16 @@ module.exports = admin = async(client,message) => {
                     botAlterarLimitador(false)
                     client.reply(from, msgs_texto.admin.limitecomandos.desativado,id)
                 } else {
-                    client.reply(from,errorCommandMsg(command),id)
+                    client.reply(from,erroComandoMsg(command),id)
                 }
                 break
             
             case "!limitarmsgs":
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 let limitarmsgs_estado = args[1]
                 if(limitarmsgs_estado == "on"){
                     if(botInfo().limitarmensagens.status) return client.reply(from,msgs_texto.admin.limitarmsgs.ja_ativado,id)
-                    if(args.length !== 4) return client.reply(from,errorCommandMsg(command),id)
+                    if(args.length !== 4) return client.reply(from,erroComandoMsg(command),id)
                     let max_msg = args[2], msgs_intervalo = args[3]
                     if(isNaN(max_msg) || max_msg < 3) return client.reply(from,msgs_texto.admin.limitarmsgs.qtd_invalida,id)
                     if(isNaN(msgs_intervalo) || msgs_intervalo < 10) return client.reply(from,msgs_texto.admin.limitarmsgs.tempo_invalido,id)
@@ -248,20 +248,20 @@ module.exports = admin = async(client,message) => {
                     botAlterarLimitarMensagensPv(false)
                     client.reply(from, msgs_texto.admin.limitarmsgs.desativado,id)
                 } else {
-                    client.reply(from,errorCommandMsg(command),id)
+                    client.reply(from,erroComandoMsg(command),id)
                 }
                 break
             
             case "!mudarlimite":
                 if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.mudarlimite.erro_limite_diario,id)
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command),id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
                 if(isNaN(args[1])) return client.reply(from, msgs_texto.admin.mudarlimite.invalido,id)
                 await botQtdLimiteDiario(parseInt(args[1]))
-                client.reply(from, makeText(msgs_texto.admin.mudarlimite.sucesso, args[1]),id)
+                client.reply(from, criarTexto(msgs_texto.admin.mudarlimite.sucesso, args[1]),id)
                 break
             
             case "!tipo":
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 if(args[1].toLowerCase() == "comum" || args[1].toLowerCase() == "vip"){
                     let usuario_tipo = ""
                     if(quotedMsg){
@@ -271,14 +271,14 @@ module.exports = admin = async(client,message) => {
                     } else if(args.length > 2){
                         usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")+"@c.us"
                     } else {
-                        return client.reply(from, errorCommandMsg(command),id)
+                        return client.reply(from, erroComandoMsg(command),id)
                     }
 
                     if(ownerNumber == usuario_tipo.replace("@c.us","")) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
                         let c_registrado = await db.verificarRegistro(usuario_tipo)
                         if(c_registrado){
                             await db.alterarTipoUsuario(usuario_tipo, args[1])
-                            return client.reply(from, makeText(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()),id)
+                            return client.reply(from, criarTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()),id)
                         } else {
                             return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
                     }
@@ -299,7 +299,7 @@ module.exports = admin = async(client,message) => {
                 let vervips_resposta = msgs_texto.admin.vervips.resposta_titulo
                 for(let u of u_vips){
                     let vip_nome = (u.nome != undefined) ? u.nome : ""
-                    vervips_resposta += makeText(msgs_texto.admin.vervips.resposta_itens, vip_nome, u.id_usuario.replace(/@c.us/g,''), u.comandos_total)
+                    vervips_resposta += criarTexto(msgs_texto.admin.vervips.resposta_itens, vip_nome, u.id_usuario.replace(/@c.us/g,''), u.comandos_total)
                 }
                 await client.sendTextWithMentions(from,vervips_resposta)
                 break
@@ -343,7 +343,7 @@ module.exports = admin = async(client,message) => {
                         return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
                     }
                 } else {
-                return client.reply(from, errorCommandMsg(command),id)
+                return client.reply(from, erroComandoMsg(command),id)
                 }
                 break  
                 
@@ -356,7 +356,7 @@ module.exports = admin = async(client,message) => {
                 } else if(args.length >= 1){
                     vd_usuario_consultado =  args.slice(1).join("").replace(/\W+/g,"")+"@c.us"
                 } else {
-                    return client.reply(from, errorCommandMsg(command),id)
+                    return client.reply(from, erroComandoMsg(command),id)
                 }
 
                 let vd_registrado = await db.verificarRegistro(vd_usuario_consultado)
@@ -381,33 +381,33 @@ module.exports = admin = async(client,message) => {
                 }
 
                 let vd_nome =  (vd_usuario.nome != undefined) ? vd_usuario.nome : "Ainda não obtido"
-                let verdados_resposta = makeText(msgs_texto.admin.verdados.resposta_superior, vd_nome, vd_usuario.tipo, vd_usuario.id_usuario.replace("@c.us",""))
+                let verdados_resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, vd_nome, vd_usuario.tipo, vd_usuario.id_usuario.replace("@c.us",""))
                 if(botInfo().limite_diario.status){
-                    verdados_resposta += makeText(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, vd_usuario.comandos_dia, max_comandos_vd, max_comandos_vd)
+                    verdados_resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, vd_usuario.comandos_dia, max_comandos_vd, max_comandos_vd)
                 }
-                verdados_resposta += makeText(msgs_texto.admin.verdados.resposta_inferior, vd_usuario.comandos_total)
+                verdados_resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, vd_usuario.comandos_total)
                 client.reply(from, verdados_resposta, id)
                 break
 
             case '!bc':
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 let msg_bc = body.slice(4)
                 const chats_bc = await client.getAllChatIds()
                 for (let id_chat of chats_bc) {
                     var chat_bc_info = await client.getChatById(id_chat)
-                    if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, makeText(msgs_texto.admin.bc.anuncio, msg_bc))
+                    if (!chat_bc_info.isReadOnly) await client.sendText(id_chat, criarTexto(msgs_texto.admin.bc.anuncio, msg_bc))
                 }
                 client.reply(from, msgs_texto.admin.bc.bc_sucesso , id)
                 break
             
             case '!bcgrupos':
-                if(args.length === 1) return client.reply(from, errorCommandMsg(command), id)
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 let msg_bcgrupos = body.slice(10)
                 const chats_bcgrupos = await client.getAllChatIds()
                 for (let id_chat of chats_bcgrupos) {
                     if(id_chat.match(/@g.us/g)){
                         var chat_bcgrupos_info = await client.getChatById(id_chat)
-                        if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, makeText(msgs_texto.admin.bcgrupos.anuncio, msg_bcgrupos))
+                        if (!chat_bcgrupos_info.isReadOnly) await client.sendText(id_chat, criarTexto(msgs_texto.admin.bcgrupos.anuncio, msg_bcgrupos))
                     }
                 }
                 client.reply(from, msgs_texto.admin.bcgrupos.bc_sucesso , id)
@@ -419,7 +419,7 @@ module.exports = admin = async(client,message) => {
                 break
 
             case '!estado':
-                if(args.length != 2)  return client.reply(from,errorCommandMsg(command),id)
+                if(args.length != 2)  return client.reply(from,erroComandoMsg(command),id)
                 switch(args[1]){
                     case 'online':
                         client.setMyStatus("< 🟢 Online />")
@@ -434,7 +434,7 @@ module.exports = admin = async(client,message) => {
                         client.reply(from,msgs_texto.admin.estado.sucesso,id)
                         break
                     default:
-                        client.reply(from, errorCommandMsg(command), id)
+                        client.reply(from, erroComandoMsg(command), id)
                 }
                 break
 

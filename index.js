@@ -3,7 +3,7 @@ const moment = require("moment-timezone")
 moment.tz.setDefault('America/Sao_Paulo')
 require('dotenv').config()
 const { create, Client } = require('@open-wa/wa-automate')
-const {createNecessaryFiles, makeText} = require('./lib/util')
+const {criarArquivosNecessarios, criarTexto} = require('./lib/util')
 const {verificacaoListaNegraGeral} = require(`./lib/listaNegra`)
 const {atualizarParticipantes} = require("./lib/controleParticipantes")
 const color = require('./lib/color')
@@ -17,7 +17,7 @@ const {verificarEnv} = require('./lib/env')
 const start = async (client = new Client()) => {
     try{
         //VERIFICA SE É NECESSÁRIO CRIAR ALGUM TIPO DE ARQUIVO NECESSÁRIO
-        let necessitaCriar = await createNecessaryFiles()
+        let necessitaCriar = await criarArquivosNecessarios()
         if(necessitaCriar){
             console.log(color(msgs_texto.inicio.arquivos_criados))
             setTimeout(()=>{
@@ -73,7 +73,7 @@ const start = async (client = new Client()) => {
             client.onAddedToGroup((async (chat) => {
                 await cadastrarGrupo(chat.id, "added", client)
                 let gInfo = await client.getGroupInfo(chat.id)
-                client.sendText(chat.id, makeText(msgs_texto.geral.entrada_grupo, gInfo.title || ""))
+                client.sendText(chat.id, criarTexto(msgs_texto.geral.entrada_grupo, gInfo.title || ""))
             }))
 
             // Ouvindo ligações recebidas
