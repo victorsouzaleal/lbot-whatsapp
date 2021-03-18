@@ -44,7 +44,7 @@ const start = async (client = new Client()) => {
 
             //INICIO DO SERVIDOR
             console.log('[SERVIDOR] Servidor iniciado!')
-            
+
             // Forçando para continuar na sessão atual
             client.onStateChanged((state) => {
                 console.log('[ESTADO CLIENTE]', state)

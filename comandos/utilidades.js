@@ -13,10 +13,8 @@ const {botInfo} = require(path.resolve("lib/bot.js"))
 
 module.exports = utilidades = async(client,message) => {
     try{
-        const { type, id, from, sender, chat, isGroupMsg, caption, isMedia, mimetype, quotedMsg, quotedMsgObj} = message
-        let { body } = message
-        let { pushname, verifiedName, formattedName } = sender
-        pushname = pushname || verifiedName
+        const { type, id, from, sender, chat, isGroupMsg, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, body} = message
+        const { pushname, verifiedName, formattedName } = sender, username = pushname || verifiedName || formattedName
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -42,7 +40,7 @@ module.exports = utilidades = async(client,message) => {
             
             case "!reportar":
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command) ,id)
-                var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.utilidades.reportar.resposta, pushname, sender.id.replace("@c.us",""), usuarioMensagem)
+                var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.utilidades.reportar.resposta, username, sender.id.replace("@c.us",""), usuarioMensagem)
                 client.sendText(ownerNumber+"@c.us", resposta)
                 client.reply(from,msgs_texto.utilidades.reportar.sucesso,id)
                 break
@@ -302,7 +300,7 @@ module.exports = utilidades = async(client,message) => {
                         tipoUsuario = "👤 Comum"
                         break    
                 }
-                var nomeUsuario = pushname || formattedName, resposta = criarTexto(msgs_texto.utilidades.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
+                var nomeUsuario = username , resposta = criarTexto(msgs_texto.utilidades.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                 if(botInfo().limite_diario.status) resposta += criarTexto(msgs_texto.utilidades.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                 if(isGroupMsg){
                     var dadosGrupo = await db.obterGrupo(groupId)
@@ -328,7 +326,7 @@ module.exports = utilidades = async(client,message) => {
                         tipoUsuario= "👤 Comum"
                         break     
                 }
-                var dadosResposta = '', nomeUsuario = pushname || formattedName
+                var dadosResposta = '', nomeUsuario = username
                 if(botInfo().limite_diario.status){
                     dadosResposta = criarTexto(msgs_texto.utilidades.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario)
                 } else {
@@ -409,11 +407,11 @@ module.exports = utilidades = async(client,message) => {
                         duracao: (isMedia)? message.duration : quotedMsg.duration,
                         mensagem: (isMedia)? message : quotedMsg
                     }
-                    if((dadosMensagem.mimetype === 'video/mp4' || dadosMensagem.mimetype === 'image/gif') && dadosMensagem.duracao < 10){
+                    if((dadosMensagem.mimetype === 'video/mp4' || dadosMensagem.mimetype === 'image/gif') && dadosMensagem.duracao < 11){
                         client.reply(from, msgs_texto.geral.espera , id)
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var base64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
-                        client.sendMp4AsSticker(from, base64, {endTime: "00:00:10.0", fps:9, square:240}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"})
+                        client.sendMp4AsSticker(from, base64, {endTime: "00:00:11.0", fps:9, square:240}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"})
                         .catch((err)=>{
                             consoleErro(err.message, "STICKER-GIF")
                             client.reply(from, msgs_texto.utilidades.sticker.erro_sgif , id)

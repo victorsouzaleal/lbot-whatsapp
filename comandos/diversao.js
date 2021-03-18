@@ -8,8 +8,6 @@ module.exports = diversao = async(client,message) => {
     try {
         const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj,mentionedJidList} = message
         let { body } = message
-        let { pushname, verifiedName } = sender
-        pushname = pushname || verifiedName
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)

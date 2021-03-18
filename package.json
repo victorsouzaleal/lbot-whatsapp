@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Bot para uso no Whatsapp com diversas funções úteis",
   "main": "index",
   "scripts": {
