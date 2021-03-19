@@ -113,7 +113,8 @@
         "!rtodos",
         "!r",
         "!verdados",
-        "!desligar"
+        "!desligar",
+        "!ping"
     ],
     "excecoes_contagem": [
         "!meusdados",

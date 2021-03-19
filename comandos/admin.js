@@ -10,7 +10,7 @@ const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario,
 
 module.exports = admin = async(client,message) => {
     try{
-        const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
+        const {id, from, sender, isGroupMsg, t, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
         let { body } = message
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
@@ -441,6 +441,27 @@ module.exports = admin = async(client,message) => {
                 await client.reply(from, msgs_texto.admin.desligar.sucesso, id).then(()=>{
                     client.kill()
                 })
+                break
+            
+            case "!ping":
+                var os = require('os')
+                var tempoResposta = (moment.now()/1000) - t
+                var memoriaTotal = os.totalmem()/1024000000, memoriaUsada = (os.totalmem() - os.freemem())/1024000000
+                var sistemaOperacional = `${os.type()} ${os.release()}`
+                var nomeProcessador = os.cpus()[0].model
+                var mensagensCarregadas = await client.getAmountOfLoadedMessages()
+                var chatContatos = await client.getAllContacts(), chatGrupos = await client.getAllGroups()
+                client.reply(from, criarTexto(
+                    msgs_texto.admin.ping.resposta, 
+                    sistemaOperacional, 
+                    nomeProcessador, 
+                    memoriaUsada.toFixed(2), 
+                    memoriaTotal.toFixed(2), 
+                    tempoResposta.toFixed(3),
+                    mensagensCarregadas,
+                    chatContatos.length,
+                    chatGrupos.length
+                    ), id)
                 break
         }
     } catch(err){
