@@ -460,7 +460,8 @@ module.exports = admin = async(client,message) => {
                     tempoResposta.toFixed(3),
                     mensagensCarregadas,
                     chatContatos.length,
-                    chatGrupos.length
+                    chatGrupos.length,
+                    botInfo().iniciado
                     ), id)
                 break
         }
