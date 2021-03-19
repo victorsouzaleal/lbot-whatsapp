@@ -66,7 +66,7 @@ module.exports = grupo = async(client,message) => {
                 var grupoInfo = await db.obterGrupo(groupId)
                 var estadoNovo = !grupoInfo.bemvindo.status
                 if (estadoNovo) {
-                    var usuarioMensagem = args.slice(2).join(" ")
+                    var usuarioMensagem = args.slice(1).join(" ")
                     await db.alterarBemVindo(groupId, true, usuarioMensagem)
                     client.reply(from, msgs_texto.grupo.bemvindo.ligado, id)
                 } else {
