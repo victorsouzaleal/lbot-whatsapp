@@ -516,7 +516,8 @@ module.exports = grupo = async(client,message) => {
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 var usuarioNumero = body.slice(5).replace(/\W+/g,"")
-                client.addParticipant(from, usuarioNumero+"@c.us").catch(()=>{
+                client.addParticipant(from, usuarioNumero+"@c.us").catch((err)=>{
+                    console.log(err)
                     client.reply(from, msgs_texto.grupo.add.add_erro, id)
                 })
                 break
@@ -548,9 +549,9 @@ module.exports = grupo = async(client,message) => {
                 for(let usuario of usuariosSelecionados){
                     if(!groupAdmins.includes(usuario)) {
                         await client.promoteParticipant(groupId, usuario)
-                        respostaUsuarios += criarTexto(msgs_texto.grupo.promover.sucesso_usuario, usuario)
+                        respostaUsuarios += criarTexto(msgs_texto.grupo.promover.sucesso_usuario, usuario.replace("@c.us", ""))
                     } else {
-                        respostaUsuarios += criarTexto(msgs_texto.grupo.promover.erro_usuario, usuario)
+                        respostaUsuarios += criarTexto(msgs_texto.grupo.promover.erro_usuario, usuario.replace("@c.us", ""))
                     }
                 }
                 if(!usuariosSelecionados.length) return client.reply(from, msgs_texto.grupo.promover.erro_bot, id)
@@ -568,9 +569,9 @@ module.exports = grupo = async(client,message) => {
                 for(let usuario of usuariosSelecionados){
                     if(groupAdmins.includes(usuario)) {
                         await client.demoteParticipant(groupId, usuario)
-                        respostaUsuarios += criarTexto(msgs_texto.grupo.rebaixar.sucesso_usuario, usuario)
+                        respostaUsuarios += criarTexto(msgs_texto.grupo.rebaixar.sucesso_usuario, usuario.replace("@c.us", ""))
                     } else {
-                        respostaUsuarios += criarTexto(msgs_texto.grupo.rebaixar.erro_usuario, usuario)
+                        respostaUsuarios += criarTexto(msgs_texto.grupo.rebaixar.erro_usuario, usuario.replace("@c.us", ""))
                     }
                 }
                 if(!usuariosSelecionados.length) return client.reply(from, msgs_texto.grupo.rebaixar.erro_bot, id)
