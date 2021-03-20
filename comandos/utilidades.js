@@ -510,18 +510,22 @@ module.exports = utilidades = async(client,message) => {
                 break
             
             case "!traduz":
-                var usuarioTexto = ""
+                var usuarioTexto = "", idiomaTraducao = 'pt'
                 if(quotedMsg  && quotedMsg.type == "chat"){
+                    if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
+                    idiomaTraducao = args[1]
                     usuarioTexto = quotedMsg.body
                 } else if(!quotedMsg && type == "chat" ){
                     if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                    usuarioTexto = body.slice(8).trim()
+                    usuarioTexto = body.slice(8).split('/')
+                    if(usuarioTexto.length < 2) return client.reply(from, erroComandoMsg(command) ,id)
+                    idiomaTraducao = usuarioTexto[0]
+                    usuarioTexto = usuarioTexto[1]
                 } else {
                     return client.reply(from, erroComandoMsg(command) ,id)
                 }
-
                 try{
-                    var respostaTraducao = await api.obterTraducao(usuarioTexto)
+                    var respostaTraducao = await api.obterTraducao(usuarioTexto, idiomaTraducao)
                     client.reply(from, respostaTraducao, id)
                 } catch(err){
                     client.reply(from, err.message, id)
