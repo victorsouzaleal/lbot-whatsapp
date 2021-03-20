@@ -47,7 +47,7 @@ const start = async (client = new Client()) => {
             console.log('[SERVIDOR] Servidor iniciado!')
 
 
-            //RECARREGA A CADA 1HR PARA POUPAR MEMÓRIA RAM
+            //Recarrega a cada 1HR para poupar memória RAM
             schedule.scheduleJob("0 */1 * * *", async()=>{
                 await client.refresh()
             })
