@@ -100,6 +100,6 @@ const start = async (client = new Client()) => {
     }
 }
 
-create(options(false, start))
+create(options(true, start))
     .then(client => start(client))
     .catch((error) => console.log(error))
