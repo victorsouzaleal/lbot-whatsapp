@@ -3,6 +3,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const menu = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
+const { version } = require('../package.json');
 const {criarTexto, erroComandoMsg, consoleErro, obterNomeAleatorio, removerNegritoComando} = require("../lib/util")
 const path = require('path')
 const db = require('../lib/database')
@@ -30,7 +31,7 @@ module.exports = utilidades = async(client,message) => {
             case "!info":
                 const botFotoURL = await client.getProfilePicFromServer(botNumber+'@c.us')
                 var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-                var resposta = criarTexto(msgs_texto.utilidades.info.resposta,infoBot.criador,infoBot.criado_em,infoBot.nome,infoBot.iniciado,infoBot.cmds_executados,ownerNumber,process.env.npm_package_version)
+                var resposta = criarTexto(msgs_texto.utilidades.info.resposta,infoBot.criador,infoBot.criado_em,infoBot.nome,infoBot.iniciado,infoBot.cmds_executados,ownerNumber, version)
                 if(botFotoURL != undefined){
                     client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
                 } else {
