@@ -11,6 +11,7 @@ const options = require('./options')
 const msgHandler = require('./msgHndlr')
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
+const schedule = require('node-schedule')
 const {botStart} = require('./lib/bot')
 const {verificarEnv} = require('./lib/env')
 
@@ -44,6 +45,12 @@ const start = async (client = new Client()) => {
 
             //INICIO DO SERVIDOR
             console.log('[SERVIDOR] Servidor iniciado!')
+
+
+            //RECARREGA A CADA 1HR PARA POUPAR MEMÓRIA RAM
+            schedule.scheduleJob("0 */1 * * *", async()=>{
+                await client.refresh()
+            })
 
             // Forçando para continuar na sessão atual
             client.onStateChanged((state) => {
@@ -93,6 +100,6 @@ const start = async (client = new Client()) => {
     }
 }
 
-create(options(true, start))
+create(options(false, start))
     .then(client => start(client))
     .catch((error) => console.log(error))
