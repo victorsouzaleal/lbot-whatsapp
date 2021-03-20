@@ -55,7 +55,7 @@ const start = async (client = new Client()) => {
             client.onMessage((async (message) => {
                 client.getAmountOfLoadedMessages()
                 .then((msg) => {
-                    if (msg >= 3000) {
+                    if (msg >= 500) {
                         client.cutMsgCache()
                     }
                 })
