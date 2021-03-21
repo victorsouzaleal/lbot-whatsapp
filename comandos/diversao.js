@@ -107,7 +107,7 @@ module.exports = diversao = async(client,message) => {
             case "!massacote":
             case '!mascote':
                 //const url_mascote_img = "https://i.imgur.com/mVwa7q4.png"
-                const url_mascote_img = "https://i.imgur.com/srwThvU.jpg"
+                const url_mascote_img = "https://i.imgur.com/SbKeovm.png"
                 client.sendFileFromUrl(from, url_mascote_img, 'mascote.jpeg', 'Whatsapp Jr.', id)
                 break 
 

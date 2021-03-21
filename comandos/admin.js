@@ -19,7 +19,7 @@ module.exports = admin = async(client,message) => {
         const botNumber = await client.getHostNumber()
         const blockNumber = await client.getBlockedIds()
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
-        const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
+        const ownerNumber = process.env.NUMERO_DONO.trim()
         const isOwner = ownerNumber == sender.id.replace(/@c.us/g, '')
         if (!isOwner) return client.reply(from, msgs_texto.permissao.apenas_dono_bot, id)
 
