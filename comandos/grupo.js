@@ -517,7 +517,7 @@ module.exports = grupo = async(client,message) => {
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
                 var usuarioNumeros = body.slice(5).split(",")
                 for(let numero of usuarioNumeros){
-                    var numeroCompleto = numero.replace(/\W+/g,"")+"@c.us"
+                    var numeroCompleto = numero.trim().replace(/\W+/g,"")+"@c.us"
                     client.addParticipant(from, numeroCompleto).catch((err)=>{
                         var numeroFormatado  = numeroCompleto.replace("@c.us", ""), mensagemErro = msgs_texto.grupo.add.add_erro
                         if(err.data){
