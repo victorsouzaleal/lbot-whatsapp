@@ -519,7 +519,6 @@ module.exports = grupo = async(client,message) => {
                 for(let numero of usuarioNumeros){
                     var numeroCompleto = numero.replace(/\W+/g,"")+"@c.us"
                     client.addParticipant(from, numeroCompleto).catch((err)=>{
-                        console.log(err)
                         var numeroFormatado  = numeroCompleto.replace("@c.us", ""), mensagemErro = msgs_texto.grupo.add.add_erro
                         if(err.data){
                             switch(err.data[numeroCompleto]){
@@ -532,6 +531,9 @@ module.exports = grupo = async(client,message) => {
                                 case 403:
                                     mensagemErro = msgs_texto.grupo.add.com_privacidade
                                     break
+                                case 500:
+                                    mensagemErro = msgs_texto.grupo.add.grupo_cheio
+
                             }
                         } else {
                             mensagemErro = msgs_texto.grupo.add.nao_contato
