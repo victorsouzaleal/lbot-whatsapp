@@ -46,9 +46,9 @@ const start = async (client = new Client()) => {
             console.log('[SERVIDOR] Servidor iniciado!')
 
             // Forçando para continuar na sessão atual
-            client.onStateChanged((state) => {
-                console.log('[ESTADO CLIENTE]', state)
-                if (state === 'CONFLICT' || state === 'UNLAUNCHED') client.forceRefocus()
+            client.onStateChanged((estado) => {
+                console.log('[ESTADO CLIENTE]', estado)
+                if (estado === 'CONFLICT' || estado === 'UNLAUNCHED') client.forceRefocus()
             })
 
             // Ouvindo mensagens

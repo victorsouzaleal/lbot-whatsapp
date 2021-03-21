@@ -515,11 +515,30 @@ module.exports = grupo = async(client,message) => {
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin, id)
                 if (!isBotGroupAdmins) return client.reply(from, msgs_texto.permissao.bot_admin, id)
                 if (args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                var usuarioNumero = body.slice(5).replace(/\W+/g,"")
-                client.addParticipant(from, usuarioNumero+"@c.us").catch((err)=>{
-                    console.log(err)
-                    client.reply(from, msgs_texto.grupo.add.add_erro, id)
-                })
+                var usuarioNumeros = body.slice(5).split(",")
+                for(let numero of usuarioNumeros){
+                    var numeroCompleto = numero.replace(/\W+/g,"")+"@c.us"
+                    client.addParticipant(from, numeroCompleto).catch((err)=>{
+                        console.log(err)
+                        var numeroFormatado  = numeroCompleto.replace("@c.us", ""), mensagemErro = msgs_texto.grupo.add.add_erro
+                        if(err.data){
+                            switch(err.data[numeroCompleto]){
+                                case 409:
+                                    mensagemErro = msgs_texto.grupo.add.membro_grupo
+                                    break
+                                case 408:
+                                    mensagemErro = msgs_texto.grupo.add.saiu_recente
+                                    break
+                                case 403:
+                                    mensagemErro = msgs_texto.grupo.add.com_privacidade
+                                    break
+                            }
+                        } else {
+                            mensagemErro = msgs_texto.grupo.add.nao_contato
+                        }
+                        client.reply(from, criarTexto(mensagemErro, numeroFormatado), id)
+                    })
+                }
                 break
 
             case '!ban':
