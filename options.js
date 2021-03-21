@@ -15,6 +15,7 @@ module.exports = options = (headless, start) => {
             '--disable-setuid-sandbox',
             '--aggressive-cache-discard',
             '--disable-cache',
+            '--disable-gl-drawing-for-tests',
             '--disable-application-cache',
             '--disable-offline-load-stale-cache',
             '--disk-cache-size=0'
