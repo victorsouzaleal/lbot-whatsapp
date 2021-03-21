@@ -1,4 +1,5 @@
 //REQUERINDO MODULOS
+const {AddParticipantErrorStatusCode} = require("@open-wa/wa-automate")
 const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const db = require('../lib/database')
@@ -522,18 +523,18 @@ module.exports = grupo = async(client,message) => {
                         var numeroFormatado  = numeroCompleto.replace("@c.us", ""), mensagemErro = msgs_texto.grupo.add.add_erro
                         if(err.data){
                             switch(err.data[numeroCompleto]){
-                                case 409:
+                                case AddParticipantErrorStatusCode.ALREADY_IN_GROUP:
                                     mensagemErro = msgs_texto.grupo.add.membro_grupo
                                     break
-                                case 408:
+                                case AddParticipantErrorStatusCode.RECENTLY_LEFT:
                                     mensagemErro = msgs_texto.grupo.add.saiu_recente
                                     break
-                                case 403:
+                                case AddParticipantErrorStatusCode.PRIVACY_SETTINGS:
                                     mensagemErro = msgs_texto.grupo.add.com_privacidade
                                     break
-                                case 500:
+                                case AddParticipantErrorStatusCode.GROUP_FULL:
                                     mensagemErro = msgs_texto.grupo.add.grupo_cheio
-
+                                    break
                             }
                         } else {
                             mensagemErro = msgs_texto.grupo.add.nao_contato
