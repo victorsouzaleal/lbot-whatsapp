@@ -146,41 +146,44 @@ module.exports = admin = async(client,message) => {
 
             case "!bloquear":
                 let usuarios_bloq = []
-                if (mentionedJidList.length === 0){
-                    if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
+                if(quotedMsg){
                     usuarios_bloq.push(quotedMsgObj.author)
+                } else if(mentionedJidList.length > 1) {
+                    usuarios_bloq = mentionedJidList
                 } else {
-                    for (let i = 0; i < mentionedJidList.length; i++) {
-                        usuarios_bloq.push(mentionedJidList[i])
-                    }
+                    var numeroInserido = body.slice(10).trim()
+                    if(numeroInserido.length == 0) return client.reply(from, erroComandoMsg(command), id)
+                    usuarios_bloq.push(numeroInserido.replace(/\W+/g,"")+"@c.us")
                 }
-
                 for (let user_b of usuarios_bloq){
-                    if(ownerNumber == user_b.replace(/@c.us/g, '')){
-                        await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.erro_dono, user_b.replace(/@c.us/g, '')))
-                    } else {
-                        if(blockNumber.includes(user_b)) {
-                            await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.ja_bloqueado, user_b.replace(/@c.us/g, '')))
+                    if(await client.getContact(user_b)){
+                        if(ownerNumber == user_b.replace(/@c.us/g, '')){
+                            await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.erro_dono, user_b.replace(/@c.us/g, '')))
                         } else {
-                            await client.contactBlock(user_b)
-                            await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.sucesso, user_b.replace(/@c.us/g, '')))
+                            if(blockNumber.includes(user_b)) {
+                                await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.ja_bloqueado, user_b.replace(/@c.us/g, '')))
+                            } else {
+                                await client.contactBlock(user_b)
+                                await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.sucesso, user_b.replace(/@c.us/g, '')))
+                            }
                         }
+                    } else {
+                        client.reply(from, criarTexto(msgs_texto.admin.bloquear.erro, user_b.replace("@c.us","")), id)
                     }
-                    
                 }
                 break      
 
             case "!desbloquear":
                 let usuarios_desbloq = []
-                if (mentionedJidList.length === 0){
-                    if(!quotedMsg) return client.reply(from, erroComandoMsg(command), id)
+                if(quotedMsg){
                     usuarios_desbloq.push(quotedMsgObj.author)
+                } else if(mentionedJidList.length > 1) {
+                    usuarios_desbloq = mentionedJidList
                 } else {
-                    for (let i = 0; i < mentionedJidList.length; i++) {
-                        usuarios_desbloq.push(mentionedJidList[i])
-                    }
+                    var numeroInserido = body.slice(13).trim()
+                    if(numeroInserido.length == 0) return client.reply(from, erroComandoMsg(command), id)
+                    usuarios_desbloq.push(numeroInserido.replace(/\W+/g,"")+"@c.us")
                 }
-
                 for (let user_d of usuarios_desbloq){
                     if(!blockNumber.includes(user_d)) {
                         await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.desbloquear.ja_desbloqueado, user_d.replace(/@c.us/g,'')))
@@ -191,7 +194,6 @@ module.exports = admin = async(client,message) => {
                 }
                 break
 
-            
             case "!limitediario":
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
                 let limitediario_estado = args[1]
