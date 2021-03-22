@@ -551,12 +551,19 @@ module.exports = grupo = async(client,message) => {
                 if(mentionedJidList.length === 0 && quotedMsg) usuariosSelecionados.push(quotedMsgObj.author)
                 else if(mentionedJidList.length > 0) usuariosSelecionados = mentionedJidList
                 else return client.reply(from, erroComandoMsg(command), id)
+                var idParticipantesAtuais = await client.getGroupMembersId(groupId)
                 for(let usuario of usuariosSelecionados){
-                    client.removeParticipant(groupId, usuario).then(()=>{
-                        if(usuariosSelecionados.length === 1) client.sendText(from, msgs_texto.grupo.banir.banir_sucesso)
-                    }).catch(()=>{
-                        client.reply(from,  msgs_texto.grupo.banir.banir_erro, id)
-                    })
+                    if(idParticipantesAtuais.includes(usuario)){
+                        if(!groupAdmins.includes(usuario)){
+                            client.removeParticipant(groupId, usuario).then(()=>{
+                                if(usuariosSelecionados.length === 1) client.reply(from, msgs_texto.grupo.banir.banir_sucesso, id)
+                            })
+                        } else {
+                            if(usuariosSelecionados.length === 1) client.reply(from, msgs_texto.grupo.banir.banir_admin, id)
+                        }
+                    } else {
+                        if(usuariosSelecionados.length === 1) client.reply(from,  msgs_texto.grupo.banir.banir_erro, id)
+                    }
                 }     
                 break
 
