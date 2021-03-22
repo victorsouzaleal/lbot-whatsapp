@@ -27,7 +27,7 @@ Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem 
 Se forem usar para fazer modificações ou outras coisas, por favor deem crédito a esse Github ^^
 
 ### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
-### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) E O  [NODE VERSÃO LTS](https://nodejs.org/en/) INSTALADOS EM SEU COMPUTADOR
+### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) ,  [NODE VERSÃO LTS](https://nodejs.org/en/) E O [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/) INSTALADOS EM SEU COMPUTADOR
 <br><br>
 
 ## 1 - Clone este projeto OU faça download da ultima release :
