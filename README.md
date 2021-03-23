@@ -108,7 +108,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ## 6 - Recursos Principais :
 
-### Criação
+### Figurinhas
 
 | Criador de Sticker |                Recursos        |
 | :-----------: | :--------------------------------: |
@@ -117,24 +117,28 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅       | Texto para Sticker                  |
 |       ✅       | Video/GIF para Sticker |
 |       ✅       | Foto para Sticker (Sem fundo) |
-|       ✅       | Efeitos de Aúdio
 
+### Downloads 
+
+| Downloads      |                Recursos            |
+| :------------: | :---------------------------------------------: |
+|       ✅        |   Download de aúdio/videos (Youtube)    |
+|       ✅        |   Download de imagens/videos (Instagram)  |
+|       ✅        |   Download de imagens/videos (Twitter)            |
+|       ✅        |   Download de videos (Facebook)            |
+|       ✅        |   Pesquisa/Download de Imagens                  |
 
 ### Utilidades Gerais
 
 | Utilitários |                     Recursos            |
 | :------------: | :---------------------------------------------: |
+|       ✅       | Efeitos de Aúdio
 |       ✅        |   Texto para voz                   |
 |       ✅        |   Reconhecimento de músicas                 |
-|       ✅        |   Download de aúdio/videos (Youtube)    |
-|       ✅        |   Download de imagens/videos (Instagram)  |
-|       ✅        |   Download de imagens/videos (Twitter)            |
-|       ✅        |   Download de videos (Facebook)            |
 |       ✅        |   Detector de DDD             |
 |       ✅        |   Consulta de Clima/Previsão do Tempo            |
 |       ✅        |   Conversão de Moedas           |
 |       ✅        |   Calculadora básica           |
-|       ✅        |   Pesquisa Imagens                  |
 |       ✅        |   Pesquisa Web                  |
 |       ✅        |   Detector Anime                  |
 |       ✅        |   Lançamentos recentes  - Animes                 |

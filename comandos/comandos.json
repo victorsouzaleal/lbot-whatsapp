@@ -1,33 +1,39 @@
 {
     "utilidades":[
-        "!ajuda","!menu",
-        "!s",
-        "!sgif",
-        "!ssf",
-        "!tps",
-        "!simg",
         "!audio",
         "!traduz",
         "!voz",
-        "!img",
         "!noticias",
         "!rastreio",
         "!calc",
-        "!info",
         "!pesquisa",
         "!moeda",
         "!clima",
         "!ddd",
+        "!anime",
+        "!animelanc",
+        "!qualmusica"
+    ],
+    "info":[
+        "!ajuda","!menu",
+        "!reportar",
+        "!meusdados",
+        "!info"
+    ],
+    "figurinhas": [
+        "!s",
+        "!sgif",
+        "!ssf",
+        "!tps",
+        "!simg"
+    ],
+    "downloads": [
         "!play",
         "!yt",
         "!ig",
         "!fb",
         "!tw",
-        "!anime",
-        "!animelanc",
-        "!meusdados",
-        "!reportar",
-        "!qualmusica"
+        "!img"
     ],
     "grupo":[
         "!status",

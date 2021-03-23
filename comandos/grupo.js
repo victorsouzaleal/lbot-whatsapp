@@ -7,11 +7,8 @@ const fs = require('fs-extra')
 
 module.exports = grupo = async(client,message) => {
     try{
-        const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
-        let { body } = message
+        const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList, body} = message
         const { name } = chat
-        let { pushname, verifiedName } = sender
-        pushname = pushname || verifiedName
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -420,15 +417,15 @@ module.exports = grupo = async(client,message) => {
                 var usuarioComandos = body.slice(6).split(" "), comandosBloqueados = [], grupoInfo = await db.obterGrupo(groupId), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
                 var listaComandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
                 for(var comando of usuarioComandos){
-                    if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando)){
+                    if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando) || listaComandos.figurinhas.includes(comando) || listaComandos.downloads.includes(comando)){
                         if(grupoInfo.block_cmds.includes(comando)){
                             respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, comando)
                         } else {
                             comandosBloqueados.push(comando)
                             respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.bloqueado_sucesso, comando)
                         }
-                    } else if (listaComandos.admin_grupo.includes(comando) || listaComandos.admin.includes(comando)){
-                        respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.comando_admin, comando)
+                    } else if (listaComandos.grupo.includes(comando) || listaComandos.admin.includes(comando) || listaComandos.info.includes(comando)){
+                        respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.erro, comando)
                     } else {
                         respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.nao_existe, comando)
                     }

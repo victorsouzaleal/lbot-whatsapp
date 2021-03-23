@@ -89,15 +89,15 @@ module.exports = admin = async(client,message) => {
                 let b_cmd_inseridos = body.slice(12).split(" "), b_cmd_verificados = [], b_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), bcmd_resposta = msgs_texto.admin.bcmdglobal.resposta_titulo
                 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
                 for(let b_cmd of b_cmd_inseridos){
-                    if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd)){
+                    if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd) || lista_comandos.figurinhas.includes(b_cmd) || lista_comandos.downloads.includes(b_cmd)){
                         if(b_cmd_global.bloqueio_cmds.includes(b_cmd)){
                             bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, b_cmd)
                         } else {
                             b_cmd_verificados.push(b_cmd)
                             bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, b_cmd)
                         }
-                    } else if (lista_comandos.grupo.includes(b_cmd) || lista_comandos.admin.includes(b_cmd) ){
-                        bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.comando_admin, b_cmd)
+                    } else if (lista_comandos.grupo.includes(b_cmd) || lista_comandos.admin.includes(b_cmd) || lista_comandos.info.includes(b_cmd) ){
+                        bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.erro, b_cmd)
                     } else {
                         bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, b_cmd)
                     }

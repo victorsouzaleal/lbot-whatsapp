@@ -1,10 +1,8 @@
-module.exports = options = (headless, start) => {
-    const options = {
+module.exports =  {
         sessionId: 'session',
-        headless: headless,
+        headless: true,
         qrTimeout: 0,
         authTimeout: 0,
-        restartOnCrash: start,
         cacheEnabled: false,
         useChrome: true,
         stickerServerEndpoint: true,
@@ -20,6 +18,5 @@ module.exports = options = (headless, start) => {
             '--disable-offline-load-stale-cache',
             '--disk-cache-size=0'
         ]
-    }
-    return options
 }
+

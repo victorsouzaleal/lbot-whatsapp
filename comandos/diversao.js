@@ -6,8 +6,7 @@ const api = require('../lib/api')
 
 module.exports = diversao = async(client,message) => {
     try {
-        const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj,mentionedJidList} = message
-        let { body } = message
+        const {id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList, body} = message
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)

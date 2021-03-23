@@ -3,12 +3,12 @@ const moment = require("moment-timezone")
 moment.tz.setDefault('America/Sao_Paulo')
 require('dotenv').config()
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosNecessarios, criarTexto} = require('./lib/util')
+const {criarArquivosNecessarios, criarTexto, consoleErro} = require('./lib/util')
 const {verificacaoListaNegraGeral} = require(`./lib/listaNegra`)
 const {atualizarParticipantes} = require("./lib/controleParticipantes")
 const color = require('./lib/color')
-const options = require('./options')
-const msgHandler = require('./msgHndlr')
+const config = require('./config-openwa')
+const tratamentoMensagem = require('./tratamentoMensagem')
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
 const {botStart} = require('./lib/bot')
@@ -61,7 +61,7 @@ const start = async (client = new Client()) => {
                 })
                 await antiLink(client,message)
                 await antiFlood(client,message)
-                await msgHandler(client, message)
+                await tratamentoMensagem(client, message)
             }))
 
             //Ouvindo entrada/saida de participantes dos grupo
@@ -93,6 +93,6 @@ const start = async (client = new Client()) => {
     }
 }
 
-create(options(true, start))
+create(config)
     .then(client => start(client))
-    .catch((error) => console.log(error))
+    .catch((error) => consoleErro(error, 'OPEN-WA'))
