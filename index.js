@@ -93,6 +93,6 @@ const start = async (client = new Client()) => {
     }
 }
 
-create(config(true, start))
+create(options(true, start))
     .then(client => start(client))
     .catch((error) => consoleErro(error, 'OPEN-WA'))
