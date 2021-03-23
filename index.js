@@ -7,7 +7,7 @@ const {criarArquivosNecessarios, criarTexto, consoleErro} = require('./lib/util'
 const {verificacaoListaNegraGeral} = require(`./lib/listaNegra`)
 const {atualizarParticipantes} = require("./lib/controleParticipantes")
 const color = require('./lib/color')
-const config = require('./config-openwa')
+const options = require('./config-openwa')
 const tratamentoMensagem = require('./tratamentoMensagem')
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
@@ -93,6 +93,6 @@ const start = async (client = new Client()) => {
     }
 }
 
-create(config)
+create(config(true, start))
     .then(client => start(client))
     .catch((error) => consoleErro(error, 'OPEN-WA'))

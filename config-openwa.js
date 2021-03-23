@@ -1,9 +1,11 @@
-module.exports =  {
+module.exports = options = (headless, start) =>  {
+    return{
         sessionId: 'session',
-        headless: true,
+        headless,
         qrTimeout: 0,
         authTimeout: 0,
         cacheEnabled: false,
+        restartOnCrash: start,
         useChrome: true,
         stickerServerEndpoint: true,
         killProcessOnBrowserClose: true,
@@ -18,5 +20,6 @@ module.exports =  {
             '--disable-offline-load-stale-cache',
             '--disk-cache-size=0'
         ]
+    }
 }
 
