@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@open-wa/wa-automate": "^3.9.13",
+    "@open-wa/wa-automate": "^3.9.14",
     "@open-wa/wa-decrypt": "^3.0.1",
     "@vitalets/google-translate-api": "^5.1.0",
     "acrcloud": "^1.4.0",
