@@ -3,6 +3,16 @@ const fs = require('fs-extra')
 const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require("../lib/util")
 const api = require("../lib/api")
+const {default: PQueue} = require('p-queue')
+
+//FILAS
+const filaPlay = new PQueue({concurrency: 2})
+const filaYT = new PQueue({concurrency: 1})
+const filaIg = new PQueue({concurrency: 1})
+const filaTw = new PQueue({concurrency: 2})
+const filaFb = new PQueue({concurrency: 1})
+const filaImg = new PQueue({concurrency: 1})
+
 
 module.exports = downloads = async(client,message) => {
     try{
@@ -26,9 +36,11 @@ module.exports = downloads = async(client,message) => {
                 }
 
                 try{
-                    var saidaAudio = await api.obterYTMp3(videoInfo)
-                    client.sendFile(from, saidaAudio, "musica.mp3","", id).then(()=>{
-                        fs.unlinkSync(saidaAudio)
+                    await filaPlay.add(async () => {
+                        var saidaAudio = await api.obterYTMp3(videoInfo)
+                        client.sendFile(from, saidaAudio, "musica.mp3","", id).then(()=>{
+                            fs.unlinkSync(saidaAudio)
+                        })
                     })
                 } catch(err){
                     client.reply(from,err.message,id)
@@ -47,59 +59,68 @@ module.exports = downloads = async(client,message) => {
                     return client.reply(from,err.message,id)
                 }
 
-                try{
-                    var saidaVideoInfo = await api.obterYTMp4URL(videoInfo)
-                    client.sendFile(from, saidaVideoInfo.download, `${saidaVideoInfo.title}.mp4`,"", id)
-                } catch(err){
-                    client.reply(from,err.message,id)
-                }
+                await filaYT.add(async ()=>{
+                    try{
+                        var saidaVideoInfo = await api.obterYTMp4URL(videoInfo)
+                        await client.sendFile(from, saidaVideoInfo.download, `${saidaVideoInfo.title}.mp4`,"", id)
+                    } catch(err){
+                        await client.reply(from,err.message,id)
+                    }
+                })
                 break
 
             case "!ig":
                 if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
                 await client.reply(from, msgs_texto.downloads.ig.espera, id)
-                try{
-                    var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
-                    if(resultadosMidia.results_number == 0) return client.reply(from, msgs_texto.downloads.ig.nao_encontrado, id)
-                    if(resultadosMidia.results_number == 1){
-                        await client.sendFile(from, resultadosMidia.url_list[0], `ig-media`,"",id)
-                    } else {
-                        for(let url of resultadosMidia.url_list){
-                            await client.sendFile(from, url, `ig-media`,"")
+                await filaIg.add(async ()=>{
+                    try{
+                        var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
+                        if(resultadosMidia.results_number == 0) return client.reply(from, msgs_texto.downloads.ig.nao_encontrado, id)
+                        if(resultadosMidia.results_number == 1){
+                            await client.sendFile(from, resultadosMidia.url_list[0], `ig-media`,"",id)
+                        } else {
+                            for(let url of resultadosMidia.url_list){
+                                await client.sendFile(from, url, `ig-media`,"")
+                            }
                         }
+                    } catch(err){
+                        client.reply(from,err.message,id)
                     }
-                } catch(err){
-                    client.reply(from,err.message,id)
-                }
+                })
                 break
 
             case "!fb":
                 if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
                 await client.reply(from, msgs_texto.downloads.fb.espera, id)
-                try{
-                    var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioTexto)
-                    if(!resultadosMidia.encontrado) return client.reply(from, msgs_texto.downloads.fb.nao_encontrado, id)
-                    if(resultadosMidia.duracao > 180) return client.reply(from, msgs_texto.downloads.fb.limite, id)
-                    await client.sendFile(from, resultadosMidia.url, `fb-media.mp4`,"",id)
-                } catch(err){
-                    client.reply(from,err.message,id)
-                }    
+                await filaFb.add(async ()=>{
+                    try{
+                        var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioTexto)
+                        if(!resultadosMidia.encontrado) return client.reply(from, msgs_texto.downloads.fb.nao_encontrado, id)
+                        if(resultadosMidia.duracao > 180) return client.reply(from, msgs_texto.downloads.fb.limite, id)
+                        await client.sendFile(from, resultadosMidia.url, `fb-media.mp4`,"",id)
+                    } catch(err){
+                        client.reply(from,err.message,id)
+                    } 
+                })
                 break
 
             case "!tw":
                 if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
                 await client.reply(from,msgs_texto.downloads.tw.espera,id)
-                try{
-                    var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaTwitter(usuarioTexto)
-                    if(!resultadosMidia.found) return client.reply(from, msgs_texto.downloads.tw.nao_encontrado, id)
-                    if(resultadosMidia.type == "video"){
-                        client.sendFile(from, resultadosMidia.download[0].url, `twittervid.mp4`,"", id)
-                    } else {
-                        client.sendFile(from, resultadosMidia.download, `twitterimg.jpg`,"", id)
+                await filaTw.add(async ()=>{
+                    try{
+                        var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaTwitter(usuarioTexto)
+                        if(!resultadosMidia.found) return client.reply(from, msgs_texto.downloads.tw.nao_encontrado, id)
+                        if(resultadosMidia.type == "video"){
+                            await client.sendFile(from, resultadosMidia.download[0].url, `twittervid.mp4`,"", id)
+                        } else {
+                            await client.sendFile(from, resultadosMidia.download, `twitterimg.jpg`,"", id)
+                        }
+                    } catch(err){
+                        client.reply(from,err.message,id)
                     }
-                } catch(err){
-                    client.reply(from,err.message,id)
-                }
+                })
+
                 break
             
             case '!img':
@@ -117,16 +138,18 @@ module.exports = downloads = async(client,message) => {
                 }
                 if (!textoPesquisa) return client.reply(from, erroComandoMsg(command), id)
                 if (textoPesquisa.length > 120) return client.reply(from, msgs_texto.downloads.img.tema_longo , id)
-                try{
-                    var resultadosImagens = await api.obterImagens(textoPesquisa, qtdFotos)
-                    for(let imagem of resultadosImagens){
-                        client.sendFileFromUrl(from, imagem , "foto.jpg" , "", (qtdFotos == 1) ? id : "").catch(()=>{
-                            client.sendText(from, msgs_texto.downloads.img.erro_imagem)
-                        })
+                await filaImg.add(async ()=>{
+                    try{
+                        var resultadosImagens = await api.obterImagens(textoPesquisa, qtdFotos)
+                        for(let imagem of resultadosImagens){
+                            client.sendFileFromUrl(from, imagem , "foto.jpg" , "", (qtdFotos == 1) ? id : "").catch(()=>{
+                                client.sendText(from, msgs_texto.downloads.img.erro_imagem)
+                            })
+                        }
+                    } catch(err){
+                        client.reply(from, err.message, id)
                     }
-                } catch(err){
-                    client.reply(from, err.message, id)
-                }
+                })
                 break
         }
     } catch(err){
