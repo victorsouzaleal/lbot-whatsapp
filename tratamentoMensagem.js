@@ -5,6 +5,7 @@ const color = require('./lib/color')
 const cadastrarGrupo = require('./lib/cadastrarGrupo')
 const db = require('./lib/database')
 const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,botLimitarMensagensPv} = require("./lib/bot")
+const {verificarBloqueioGlobal, verificarBloqueioGrupo} = require("./lib/bloqueioComandos")
 
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
@@ -88,12 +89,12 @@ module.exports = tratamentoMensagem = async (client, message) => {
 
 
             //4.0.6 - BLOQUEIO GLOBAL DE COMANDOS
-            if(botInfo().bloqueio_cmds.includes(command) && !isOwner){
+            if(await verificarBloqueioGlobal(command) && !isOwner){
                 return client.reply(from, criarTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
             }
             
             //4.0.7 - SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
-            if(isGroupMsg && grupoInfo.block_cmds.includes(command) && !isGroupAdmins) return client.reply(from,criarTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
+            if(isGroupMsg && await verificarBloqueioGrupo(command, groupId) && !isGroupAdmins) return client.reply(from,criarTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
 
             //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
             if(botInfo().limite_diario.status){
@@ -186,8 +187,6 @@ module.exports = tratamentoMensagem = async (client, message) => {
         }
 
     } catch (err) {
-        consoleErro(err.message, 'Mensagem')
-        console.log(color('[ERRO]', 'red'), err)
-        //client.kill().then(a => console.log(a))
+        consoleErro(err, 'tratamentoMensagem')
     }
 }

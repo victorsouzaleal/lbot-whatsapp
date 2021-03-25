@@ -4,6 +4,7 @@ const moment = require("moment-timezone")
 const { version } = require('../package.json');
 const msgs_texto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando} = require('../lib/util')
+const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -87,39 +88,14 @@ module.exports = admin = async(client,message) => {
             
             case "!bcmdglobal":
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                let b_cmd_inseridos = body.slice(12).split(" "), b_cmd_verificados = [], b_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), bcmd_resposta = msgs_texto.admin.bcmdglobal.resposta_titulo
-                const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
-                for(let b_cmd of b_cmd_inseridos){
-                    if(lista_comandos.utilidades.includes(b_cmd) || lista_comandos.diversao.includes(b_cmd) || lista_comandos.figurinhas.includes(b_cmd) || lista_comandos.downloads.includes(b_cmd)){
-                        if(b_cmd_global.bloqueio_cmds.includes(b_cmd)){
-                            bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, b_cmd)
-                        } else {
-                            b_cmd_verificados.push(b_cmd)
-                            bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, b_cmd)
-                        }
-                    } else if (lista_comandos.grupo.includes(b_cmd) || lista_comandos.admin.includes(b_cmd) || lista_comandos.info.includes(b_cmd) ){
-                        bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.erro, b_cmd)
-                    } else {
-                        bcmd_resposta += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, b_cmd)
-                    }
-                }
-                if(b_cmd_verificados.length != 0) botBloquearComando(b_cmd_verificados)
-                client.reply(from, bcmd_resposta, id)
+                var usuarioComandos = body.slice(12).split(" "), respostaBloqueio = await bloquearComandosGlobal(usuarioComandos)
+                await client.reply(from, respostaBloqueio, id)
                 break
             
             case "!dcmdglobal":
                 if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-                let d_cmd_inseridos = body.slice(12).split(" "), d_cmd_verificados = [], d_cmd_global = JSON.parse(fs.readFileSync('./database/json/bot.json')), dcmd_resposta = msgs_texto.admin.dcmdglobal.resposta_titulo
-                for(let d_cmd of d_cmd_inseridos){
-                    if(d_cmd_global.bloqueio_cmds.includes(d_cmd)) {
-                        d_cmd_verificados.push(d_cmd)
-                        dcmd_resposta += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, d_cmd)
-                    } else {
-                        dcmd_resposta += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.ja_desbloqueado, d_cmd)
-                    }
-                }
-                if(d_cmd_verificados.length != 0)  botDesbloquearComando(d_cmd_verificados)
-                client.reply(from, dcmd_resposta, id)
+                var usuarioComandos = body.slice(12).split(" "), respostaDesbloqueio = await desbloquearComandosGlobal(usuarioComandos)
+                await client.reply(from, respostaDesbloqueio, id)
                 break
 
             case '!limpar':

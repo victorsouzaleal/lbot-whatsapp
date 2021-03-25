@@ -2,6 +2,7 @@
 const {AddParticipantErrorStatusCode} = require("@open-wa/wa-automate")
 const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require('../lib/util')
+const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
 const db = require('../lib/database')
 const fs = require('fs-extra')
 
@@ -414,40 +415,15 @@ module.exports = grupo = async(client,message) => {
             case "!bcmd":
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                var usuarioComandos = body.slice(6).split(" "), comandosBloqueados = [], grupoInfo = await db.obterGrupo(groupId), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
-                var listaComandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
-                for(var comando of usuarioComandos){
-                    if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando) || listaComandos.figurinhas.includes(comando) || listaComandos.downloads.includes(comando)){
-                        if(grupoInfo.block_cmds.includes(comando)){
-                            respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, comando)
-                        } else {
-                            comandosBloqueados.push(comando)
-                            respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.bloqueado_sucesso, comando)
-                        }
-                    } else if (listaComandos.grupo.includes(comando) || listaComandos.admin.includes(comando) || listaComandos.info.includes(comando)){
-                        respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.erro, comando)
-                    } else {
-                        respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.nao_existe, comando)
-                    }
-                }
-                if(comandosBloqueados.length != 0) await db.addBlockedCmd(groupId, comandosBloqueados)
-                client.reply(from, respostaBloqueio, id)
+                var usuarioComandos = body.slice(6).split(" "), respostaBloqueio = await bloquearComandosGrupo(usuarioComandos, groupId)
+                await client.reply(from, respostaBloqueio, id)
                 break
             
             case "!dcmd":
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
-                var usuarioComandos = body.slice(6).split(" "), comandosDesbloqueados = [], grupoInfo = await db.obterGrupo(groupId), respostaDesbloqueio = msgs_texto.grupo.dcmd.resposta_titulo
-                for(var comando of usuarioComandos){
-                    if(grupoInfo.block_cmds.includes(comando)) {
-                        comandosDesbloqueados.push(comando)
-                        respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.desbloqueado_sucesso, comando)
-                    } else {
-                        respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.ja_desbloqueado, comando)
-                    }
-                }
-                if(comandosDesbloqueados.length != 0) await db.removeBlockedCmd(groupId, comandosDesbloqueados)
-                client.reply(from, respostaDesbloqueio, id)
+                var usuarioComandos = body.slice(6).split(" "), respostaDesbloqueio = await desbloquearComandosGrupo(usuarioComandos, groupId)
+                await client.reply(from, respostaDesbloqueio, id)
                 break
 
             case '!link':
