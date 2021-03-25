@@ -2,7 +2,7 @@
 const fs = require('fs-extra')
 const menu = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
-const { version } = require('../package.json');
+const { version } = require('../package.json')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require("../lib/util")
 const path = require('path')
 const db = require('../lib/database')

@@ -1,6 +1,7 @@
 //REQUERINDO MODULOS
 const menu = require('../lib/menu')
 const moment = require("moment-timezone")
+const { version } = require('../package.json');
 const msgs_texto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const db = require('../lib/database')
@@ -32,7 +33,7 @@ module.exports = admin = async(client,message) => {
                 const foto_bot_url = await client.getProfilePicFromServer(botNumber+'@c.us')
                 let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 let limitediario_expiracao = moment(info_bot.limite_diario.expiracao * 1000).format("DD/MM HH:mm:ss")
-                let infocompleta_resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado, process.env.npm_package_version)
+                let infocompleta_resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado, version)
                 infocompleta_resposta += (info_bot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, limitediario_expiracao) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
                 infocompleta_resposta += (info_bot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
                 infocompleta_resposta += (info_bot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
