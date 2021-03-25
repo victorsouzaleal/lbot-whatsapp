@@ -58,11 +58,15 @@ module.exports = tratamentoMensagem = async (client, message) => {
             let registrado = await db.verificarRegistro(sender.id)
             //4.0.1 - SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
             if(!registrado) {
-                if(isOwner){
+                if(isOwner) {
+                    await db.verificarDonoAtual(sender.id)
                     await db.registrarDono(sender.id, username)
-                } else {
+                }
+                else {
                     await db.registrarUsuarioComum(sender.id, username)
                 }
+            } else {
+                if(isOwner) await db.verificarDonoAtual(sender.id)       
             }
 
             //4.0.2 - ATUALIZE NOME DO USUÁRIO 
