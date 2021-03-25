@@ -5,8 +5,6 @@ module.exports = options = (headless, start) =>  {
         qrTimeout: 0,
         authTimeout: 0,
         skipUpdateCheck: true,
-        blockAssets: true,
-        skipBrokenMethodsCheck: true,
         cachedPatch: true,
         cacheEnabled: false,
         restartOnCrash: start,
