@@ -1,5 +1,6 @@
 {
     "utilidades":[
+        "!tabela",
         "!audio",
         "!traduz",
         "!voz",
@@ -36,6 +37,7 @@
         "!img"
     ],
     "grupo":[
+        "!destravar",
         "!status",
         "!regras",
         "!blista",

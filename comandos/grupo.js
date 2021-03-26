@@ -4,7 +4,7 @@ const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
 const db = require('../lib/database')
-const fs = require('fs-extra')
+const {obterDestravas} = require("../lib/api")
 
 module.exports = grupo = async(client,message) => {
     try{
@@ -58,6 +58,12 @@ module.exports = grupo = async(client,message) => {
                 //Lista Negra
                 resposta += criarTexto(msgs_texto.grupo.status.resposta_variavel.listanegra, grupoInfo.lista_negra.length)
                 client.sendText(from, resposta)
+                break
+
+            case "!destravar":
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                var destravas = await obterDestravas()
+                for(var destrava of destravas) await client.sendText(from, destrava)
                 break
 
             case '!bv':

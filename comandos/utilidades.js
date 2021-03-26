@@ -17,6 +17,11 @@ module.exports = utilidades = async(client,message) => {
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
 
         switch(command){      
+            case "!tabela":
+                var tabela = await api.obterTabelaNick()
+                await client.reply(from, criarTexto(msgs_texto.utilidades.tabela.resposta, tabela), id)
+                break
+                
             case "!ddd":
                 var DDD = null
                 if(quotedMsg){
