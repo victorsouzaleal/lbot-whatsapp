@@ -369,7 +369,7 @@ module.exports = admin = async(client,message) => {
 
             case '!bctodos':
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                var mensagem = body.slice(4).trim(), chatsId = await client.getAllChatIds(), bloqueados = await client.getBlockedIds()
+                var mensagem = body.slice(9).trim(), chatsId = await client.getAllChatIds(), bloqueados = await client.getBlockedIds()
                 for (var chatId of chatsId) {
                     if(chatId.match(/@g.us/g)){
                         var chatInfo = await client.getChatById(chatId)
@@ -383,7 +383,7 @@ module.exports = admin = async(client,message) => {
 
             case '!bccontatos':
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                var mensagem = body.slice(10).trim(), chatsId = await client.getAllChatIds(), bloqueados = await client.getBlockedIds()
+                var mensagem = body.slice(12).trim(), chatsId = await client.getAllChatIds(), bloqueados = await client.getBlockedIds()
                 for (let chatId of chatsId) {
                     if(chatId.match(/@c.us/g) && !bloqueados.includes(chatId)) await client.sendText(chatId, criarTexto(msgs_texto.admin.bccontatos.anuncio, mensagem))
                 }
