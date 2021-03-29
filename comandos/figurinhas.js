@@ -16,6 +16,7 @@ module.exports = figurinhas = async(client,message) => {
         switch(command){      
             case '!s':
                 if(isMedia || quotedMsg){
+                    var circular = args[1] == "circular"
                     var dadosMensagem = {
                         tipo : (isMedia) ? type : quotedMsg.type,
                         mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
@@ -24,7 +25,7 @@ module.exports = figurinhas = async(client,message) => {
                     if(dadosMensagem.tipo === "image"){
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var imagemBase64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
-                        client.sendImageAsSticker(from, imagemBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true, discord: "701084178112053288"}).catch(err=>{
+                        client.sendImageAsSticker(from, imagemBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true, circle: circular, discord: "701084178112053288"}).catch(err=>{
                             consoleErro(err.message, "STICKER")
                             client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
                         })
