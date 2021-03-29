@@ -16,7 +16,20 @@ module.exports = figurinhas = async(client,message) => {
         switch(command){      
             case '!s':
                 if(isMedia || quotedMsg){
-                    var circular = args[1] == "circular"
+                    var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
+                    var stickerMetadata = {
+                        author: "LBOT", 
+                        pack: "LBOT Stickers", 
+                        keepScale: true, 
+                        circle: false, 
+                        discord: "701084178112053288"
+                    }
+
+                    if(argSticker == "1"){
+                        stickerMetadata.circle = true
+                        stickerMetadata.keepScale = false
+                    }
+
                     var dadosMensagem = {
                         tipo : (isMedia) ? type : quotedMsg.type,
                         mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
@@ -25,7 +38,7 @@ module.exports = figurinhas = async(client,message) => {
                     if(dadosMensagem.tipo === "image"){
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var imagemBase64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
-                        client.sendImageAsSticker(from, imagemBase64,{author: "LBOT", pack: "LBOT Stickers", keepScale: true, circle: circular, discord: "701084178112053288"}).catch(err=>{
+                        client.sendImageAsSticker(from, imagemBase64, stickerMetadata).catch(err=>{
                             consoleErro(err.message, "STICKER")
                             client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
                         })
@@ -49,6 +62,25 @@ module.exports = figurinhas = async(client,message) => {
 
             case '!sgif':
                 if(isMedia || quotedMsg){
+                    var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
+                    var stickerMetadata = {
+                        author: "LBOT", 
+                        pack: "LBOT Sticker Animado", 
+                        keepScale: false, 
+                        discord: "701084178112053288"
+                    }
+                    var configConversao = {
+                        endTime: "00:00:11.0",
+                        crop: true,
+                        fps:9,
+                        square:240
+                    }
+
+                    if(argSticker == "1"){
+                        stickerMetadata.keepScale = true
+                        configConversao.crop = false
+                    }
+
                     var dadosMensagem = {
                         mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
                         duracao: (isMedia)? message.duration : quotedMsg.duration,
@@ -58,7 +90,7 @@ module.exports = figurinhas = async(client,message) => {
                         client.reply(from, msgs_texto.geral.espera , id)
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var base64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
-                        client.sendMp4AsSticker(from, base64, {endTime: "00:00:11.0", fps:9, square:240}, {author: "LBOT", pack: "LBOT Sticker Animado", keepScale: false, discord: "701084178112053288"})
+                        client.sendMp4AsSticker(from, base64, configConversao, stickerMetadata)
                         .catch((err)=>{
                             consoleErro(err.message, "STICKER-GIF")
                             client.reply(from, msgs_texto.figurinhas.sticker.erro_sgif , id)
