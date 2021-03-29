@@ -43,17 +43,7 @@ module.exports = info = async(client,message) => {
             
             case '!meusdados':
                 var dadosUsuario = await db.obterUsuario(sender.id), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
-                switch(tipoUsuario) {
-                    case "dono":
-                        tipoUsuario = "🤖 Dono"
-                        break
-                    case "vip":
-                        tipoUsuario = "⭐ VIP"
-                        break
-                    case "comum":
-                        tipoUsuario = "👤 Comum"
-                        break    
-                }
+                tipoUsuario = msgs_texto.tipos[tipoUsuario]
                 var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                 if(botInfo().limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                 if(isGroupMsg){
@@ -63,23 +53,13 @@ module.exports = info = async(client,message) => {
                         resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                     }   
                 }
-                client.reply(from, resposta, id)
+                await client.reply(from, resposta, id)
                 break
             
             case '!menu':
             case '!ajuda': 
                 var dadosUsuario = await db.obterUsuario(sender.id), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite" 
-                switch(tipoUsuario) {
-                    case "dono":
-                        tipoUsuario = "🤖 Dono"
-                        break
-                    case "vip":
-                        tipoUsuario = "⭐ VIP"
-                        break
-                    case "comum":
-                        tipoUsuario= "👤 Comum"
-                        break     
-                }
+                tipoUsuario = msgs_texto.tipos[tipoUsuario]
                 var dadosResposta = '', nomeUsuario = username
                 if(botInfo().limite_diario.status){
                     dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario)

@@ -27,7 +27,7 @@ module.exports = admin = async(client,message) => {
 
         switch(command){
             case "!admin":
-                client.sendText(from, menu.menuAdmin())
+                await client.sendText(from, menu.menuAdmin())
                 break
 
             case "!infocompleta":
@@ -35,31 +35,28 @@ module.exports = admin = async(client,message) => {
                 let info_bot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 let limitediario_expiracao = moment(info_bot.limite_diario.expiracao * 1000).format("DD/MM HH:mm:ss")
                 let infocompleta_resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, info_bot.criador, info_bot.criado_em, info_bot.nome, info_bot.iniciado, version)
-                infocompleta_resposta += (info_bot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on, info_bot.limite_diario.qtd, limitediario_expiracao) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
+                infocompleta_resposta += (info_bot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on,  limitediario_expiracao) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
                 infocompleta_resposta += (info_bot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, info_bot.limitecomandos.cmds_minuto_max, info_bot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
                 infocompleta_resposta += (info_bot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, info_bot.limitarmensagens.max, info_bot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                 infocompleta_resposta += (info_bot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, info_bot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
                 infocompleta_resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, info_bot.cmds_executados, ownerNumber)
-                if(foto_bot_url != undefined){
-                    client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
-                } else {
-                    client.reply(from, infocompleta_resposta, id)
-                }
+                if(foto_bot_url != undefined) await client.sendFileFromUrl(from,foto_bot_url,"foto_bot.jpg",infocompleta_resposta,id)
+                else await client.reply(from, infocompleta_resposta, id)
                 break
                 
             case '!entrargrupo':
                 if (args.length < 2) return client.reply(from, erroComandoMsg(command), id)
-                const link = args[1]
-                const tGr = await client.getAllGroups()
-                const isLink = link.match(/(https:\/\/chat.whatsapp.com)/gi)
-                const check = await client.inviteInfo(link)
-                if (!isLink) return client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
-                if (tGr.length > 10) return client.reply(from, msgs_texto.admin.entrar_grupo.maximo_grupos, id)
-                if (check.size < 5) return client.reply(from, msgs_texto.admin.entrar_grupo.minimo_membros, id)
-                if (check.status === 200) {
-                    await client.joinGroupViaLink(link).then(() => client.reply(from, msgs_texto.admin.entrar_grupo.entrar_sucesso,id))
+                var linkGrupo = args[1]
+                var totalGrupos = await client.getAllGroups()
+                var linkValido = linkGrupo.match(/(https:\/\/chat.whatsapp.com)/gi)
+                var conviteInfo = await client.inviteInfo(linkGrupo)
+                if (!linkValido) return client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
+                if (totalGrupos.length > 10) return client.reply(from, msgs_texto.admin.entrar_grupo.maximo_grupos, id)
+                if (conviteInfo.size < 5) return client.reply(from, msgs_texto.admin.entrar_grupo.minimo_membros, id)
+                if (conviteInfo.status === 200) {
+                    await client.joinGroupViaLink(linkGrupo).then(() => client.reply(from, msgs_texto.admin.entrar_grupo.entrar_sucesso,id))
                 } else {
-                    client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
+                    await client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
                 }
                 break
 
@@ -71,17 +68,17 @@ module.exports = admin = async(client,message) => {
                 break
 
             case '!listablock':
-                let listablock_resposta = criarTexto(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
+                var listablock_resposta = criarTexto(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
                 for (let i of blockNumber) {
                     listablock_resposta += criarTexto(msgs_texto.admin.listablock.resposta_itens, i.replace(/@c.us/g,''))
                 }
-                client.sendTextWithMentions(from, listablock_resposta, id)
+                await client.sendTextWithMentions(from, listablock_resposta, id)
                 break
 
             case '!limpartudo':
-                const allChatz = await client.getAllChats()
-                for (let dchat of allChatz) {
-                    await client.deleteChat(dchat.id)
+                var chats = await client.getAllChats()
+                for (var ch of chats) {
+                    await client.deleteChat(ch.id)
                 }
                 client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
                 break
@@ -99,30 +96,30 @@ module.exports = admin = async(client,message) => {
                 break
 
             case '!limpar':
-                const all_chats = await client.getAllChats()
-                for (let dchat of all_chats) {
-                    if(dchat.id.match(/@c.us/g) && dchat.id != sender.id) await client.deleteChat(dchat.id)
+                var chats = await client.getAllChats()
+                for (var ch of chats) {
+                    if(ch.id.match(/@c.us/g) && ch.id != sender.id) await client.deleteChat(ch.id)
                 }
-                client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
+                await client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
                 break
                 
             case '!rconfig':
                 await db.resetarGrupos()
-                client.reply(from,msgs_texto.admin.rconfig.reset_sucesso,id)
+                await client.reply(from,msgs_texto.admin.rconfig.reset_sucesso,id)
                 break
 
             case '!sairgrupos':
-                const allGroups = await client.getAllGroups()
-                for (let gclist of allGroups) {
-                    let total_grupos_resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, allGroups.length)
-                    await client.sendText(gclist.contact.id, total_grupos_resposta)
-                    await client.leaveGroup(gclist.contact.id)
+                var grupos = await client.getAllGroups()
+                for (var grupo of grupos) {
+                    var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
+                    await client.sendText(grupo.contact.id, resposta)
+                    await client.leaveGroup(grupo.contact.id)
                 }
                 client.reply(from, msgs_texto.admin.sairtodos.sair_sucesso, id)
                 break
 
             case "!bloquear":
-                let usuarios_bloq = []
+                var usuarios_bloq = []
                 if(quotedMsg){
                     usuarios_bloq.push(quotedMsgObj.author)
                 } else if(mentionedJidList.length > 1) {
@@ -145,7 +142,7 @@ module.exports = admin = async(client,message) => {
                             }
                         }
                     } else {
-                        client.reply(from, criarTexto(msgs_texto.admin.bloquear.erro, user_b.replace("@c.us","")), id)
+                        await client.reply(from, criarTexto(msgs_texto.admin.bloquear.erro, user_b.replace("@c.us","")), id)
                     }
                 }
                 break      
@@ -172,140 +169,138 @@ module.exports = admin = async(client,message) => {
                 break
 
             case "!limitediario":
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
-                let limitediario_estado = args[1]
-                if(limitediario_estado == "on"){
-                    if(botInfo().limite_diario.status) return client.reply(from,msgs_texto.admin.limitediario.ja_ativado,id)
-                    if(args.length !== 3) return client.reply(from,erroComandoMsg(command),id)
-                    let qtd_comandos = args[2]
-                    if(isNaN(qtd_comandos) || qtd_comandos < 10) return client.reply(from,msgs_texto.admin.limitediario.qtd_invalida,id)
-                    botAlterarLimiteDiario(true,qtd_comandos)
-                    client.reply(from, msgs_texto.admin.limitediario.ativado,id)
-                } else if(limitediario_estado == "off"){
-                    if(!botInfo().limite_diario.status) return client.reply(from,msgs_texto.admin.limitediario.ja_desativado,id)
-                    botAlterarLimiteDiario(false)
-                    client.reply(from, msgs_texto.admin.limitediario.desativado,id)
+                var novoEstado = !botInfo().limite_diario.status
+                if(novoEstado){
+                    botAlterarLimiteDiario(true)
+                    await client.reply(from, msgs_texto.admin.limitediario.ativado,id)
                 } else {
-                    client.reply(from, erroComandoMsg(command), id)
-                }
+                    botAlterarLimiteDiario(false)
+                    await client.reply(from, msgs_texto.admin.limitediario.desativado,id)
+                } 
                 break
 
             case "!taxalimite":
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                let limitador_estado = args[1]
-                if(limitador_estado == "on"){
-                    if(botInfo().limitecomandos.status) return client.reply(from,msgs_texto.admin.limitecomandos.ja_ativado,id)
-                    if(args.length !== 4) return client.reply(from,erroComandoMsg(command),id)
-                    let qtd_max_minuto = args[2], tempo_bloqueio = args[3]
+                var novoEstado = !botInfo().limitecomandos.status
+                if(novoEstado){
+                    if(args.length !== 3) return client.reply(from,erroComandoMsg(command),id)
+                    let qtd_max_minuto = args[1], tempo_bloqueio = args[2]
                     if(isNaN(qtd_max_minuto) || qtd_max_minuto < 3) return client.reply(from,msgs_texto.admin.limitecomandos.qtd_invalida,id)
                     if(isNaN(tempo_bloqueio) || tempo_bloqueio < 10) return client.reply(from,msgs_texto.admin.limitecomandos.tempo_invalido,id)
                     botAlterarLimitador(true,parseInt(qtd_max_minuto),parseInt(tempo_bloqueio))
-                    client.reply(from, msgs_texto.admin.limitecomandos.ativado,id)
-                } else if(limitador_estado == "off"){
-                    if(!botInfo().limitecomandos.status) return client.reply(from,msgs_texto.admin.limitecomandos.ja_desativado,id)
-                    botAlterarLimitador(false)
-                    client.reply(from, msgs_texto.admin.limitecomandos.desativado,id)
+                    await client.reply(from, msgs_texto.admin.limitecomandos.ativado,id)
                 } else {
-                    client.reply(from,erroComandoMsg(command),id)
+                    botAlterarLimitador(false)
+                    await client.reply(from, msgs_texto.admin.limitecomandos.desativado,id)
                 }
                 break
             
             case "!limitarmsgs":
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                let limitarmsgs_estado = args[1]
-                if(limitarmsgs_estado == "on"){
-                    if(botInfo().limitarmensagens.status) return client.reply(from,msgs_texto.admin.limitarmsgs.ja_ativado,id)
-                    if(args.length !== 4) return client.reply(from,erroComandoMsg(command),id)
-                    let max_msg = args[2], msgs_intervalo = args[3]
+                var novoEstado = !botInfo().limitarmensagens.status
+                if(novoEstado){
+                    if(args.length !== 3) return client.reply(from,erroComandoMsg(command),id)
+                    let max_msg = args[1], msgs_intervalo = args[2]
                     if(isNaN(max_msg) || max_msg < 3) return client.reply(from,msgs_texto.admin.limitarmsgs.qtd_invalida,id)
                     if(isNaN(msgs_intervalo) || msgs_intervalo < 10) return client.reply(from,msgs_texto.admin.limitarmsgs.tempo_invalido,id)
                     botAlterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
-                    client.reply(from, msgs_texto.admin.limitarmsgs.ativado,id)
-                } else if(limitarmsgs_estado == "off"){
-                    if(!botInfo().limitarmensagens.status) return client.reply(from,msgs_texto.admin.limitarmsgs.ja_desativado,id)
-                    botAlterarLimitarMensagensPv(false)
-                    client.reply(from, msgs_texto.admin.limitarmsgs.desativado,id)
+                    await client.reply(from, msgs_texto.admin.limitarmsgs.ativado,id)
                 } else {
-                    client.reply(from,erroComandoMsg(command),id)
+                    botAlterarLimitarMensagensPv(false)
+                    await client.reply(from, msgs_texto.admin.limitarmsgs.desativado,id)
                 }
                 break
             
             case "!mudarlimite":
                 if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.mudarlimite.erro_limite_diario,id)
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command),id)
-                if(isNaN(args[1])) return client.reply(from, msgs_texto.admin.mudarlimite.invalido,id)
-                await botQtdLimiteDiario(parseInt(args[1]))
-                client.reply(from, criarTexto(msgs_texto.admin.mudarlimite.sucesso, args[1]),id)
+                var tipo = args[1].toLowerCase(), qtd = args[2]
+                if(qtd != -1) if(isNaN(qtd) || qtd < 5) return client.reply(from, msgs_texto.admin.mudarlimite.invalido,id)
+                var alterou = await botQtdLimiteDiario(tipo, parseInt(qtd))
+                if(!alterou) return client.reply(from, msgs_texto.admin.mudarlimite.tipo_invalido,id)
+                await client.reply(from, criarTexto(msgs_texto.admin.mudarlimite.sucesso, tipo.toUpperCase(), qtd == -1 ? "∞" : qtd), id)
                 break
             
-            case "!tipo":
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(args[1].toLowerCase() == "comum" || args[1].toLowerCase() == "vip"){
-                    let usuario_tipo = ""
-                    if(quotedMsg){
-                        usuario_tipo = quotedMsgObj.author
-                    } else if(mentionedJidList.length === 1){
-                        usuario_tipo = mentionedJidList[0]
-                    } else if(args.length > 2){
-                        usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")+"@c.us"
-                    } else {
-                        return client.reply(from, erroComandoMsg(command),id)
-                    }
+            case "!usuarios":
+                if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
+                var tipo = args[1].toLowerCase()
+                var usuarios = await db.obterUsuariosTipo(tipo)
+                if(usuarios.length == 0) return await client.reply(from, msgs_texto.admin.usuarios.nao_encontrado, id)
+                var respostaItens = ''
+                for (var usuario of usuarios){
+                    respostaItens += criarTexto(msgs_texto.admin.usuarios.resposta_item, usuario.nome, usuario.id_usuario.replace("@c.us", ""), usuario.comandos_total)
+                }
+                var resposta = criarTexto(msgs_texto.admin.usuarios.resposta_titulo, tipo.toUpperCase(), usuarios.length, respostaItens)
+                await client.sendTextWithMentions(from, resposta)
+                break
 
-                    if(ownerNumber == usuario_tipo.replace("@c.us","")) return client.reply(from, msgs_texto.admin.tipo.tipo_dono,id)
-                        let c_registrado = await db.verificarRegistro(usuario_tipo)
-                        if(c_registrado){
-                            await db.alterarTipoUsuario(usuario_tipo, args[1])
-                            return client.reply(from, criarTexto(msgs_texto.admin.tipo.sucesso, args[1].toUpperCase()),id)
-                        } else {
-                            return client.reply(from, msgs_texto.admin.tipo.nao_registrado,id)
-                    }
+            case "!limpartipo":
+                if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
+                var tipo = args[1].toLowerCase()
+                var limpou = await db.limparTipo(tipo)
+                if(!limpou) return await client.reply(from, msgs_texto.admin.limpartipo.erro, id)
+                await client.reply(from, criarTexto(msgs_texto.admin.limpartipo.sucesso, tipo.toUpperCase()), id)
+                break
 
+            case "!alterartipo":
+                if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
+                let usuario_tipo = ""
+                if(quotedMsg){
+                    usuario_tipo = quotedMsgObj.author
+                } else if(mentionedJidList.length === 1){
+                    usuario_tipo = mentionedJidList[0]
+                } else if(args.length > 2){
+                    usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")+"@c.us"
                 } else {
-                    client.reply(from, msgs_texto.admin.tipo.tipos_disponiveis,id)
+                    return await client.reply(from, erroComandoMsg(command),id)
+                }
+
+                if(ownerNumber == usuario_tipo.replace("@c.us","")) return await client.reply(from, msgs_texto.admin.alterartipo.tipo_dono,id)
+                let c_registrado = await db.verificarRegistro(usuario_tipo)
+                if(c_registrado){
+                    var alterou = await db.alterarTipoUsuario(usuario_tipo, args[1])
+                    if(!alterou) return await client.reply(msgs_texto.admin.alterartipo.tipo_invalido, id)
+                    await client.reply(from, criarTexto(msgs_texto.admin.alterartipo.sucesso, args[1].toUpperCase()),id)
+                } else {
+                    await client.reply(from, msgs_texto.admin.alterartipo.nao_registrado,id)
                 }
                 break
             
             case "!limparvip":
                 await db.limparVip()
-                client.reply(from,msgs_texto.admin.limparvip.sucesso,id)
+                await client.reply(from,msgs_texto.admin.limparvip.sucesso,id)
                 break
 
-            case "!vervips":
-                let u_vips = await db.obterUsuariosVip()
-                if(u_vips.length == 0) return client.reply(from, msgs_texto.admin.vervips.sem_vips, id)
-                let vervips_resposta = msgs_texto.admin.vervips.resposta_titulo
-                for(let u of u_vips){
-                    let vip_nome = (u.nome != undefined) ? u.nome : ""
-                    vervips_resposta += criarTexto(msgs_texto.admin.vervips.resposta_itens, vip_nome, u.id_usuario.replace(/@c.us/g,''), u.comandos_total)
+            case "!tipos":
+                var tipos = botInfo().limite_diario.limite_tipos, respostaTipos = ''
+                for (var tipo in tipos){
+                    respostaTipos += criarTexto(msgs_texto.admin.tipos.item_tipo, msgs_texto.tipos[tipo], tipos[tipo] || "∞")
                 }
-                await client.sendTextWithMentions(from,vervips_resposta)
+                await client.reply(from, criarTexto(msgs_texto.admin.tipos.resposta, respostaTipos), id)
                 break
             
             case "!rtodos":
-                if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.rtodos.erro_limite_diario,id)
+                if(!botInfo().limite_diario.status) return await client.reply(from, msgs_texto.admin.rtodos.erro_limite_diario,id)
                 db.resetarComandosDia().then(async()=>{
                     await client.reply(from, msgs_texto.admin.rtodos.sucesso,id)
                 })
                 break
 
             case "!r":
-                if(!botInfo().limite_diario.status) return client.reply(from, msgs_texto.admin.r.erro_limite_diario,id)
+                if(!botInfo().limite_diario.status) return await client.reply(from, msgs_texto.admin.r.erro_limite_diario,id)
                 if(quotedMsg){
                     let r_registrado = await db.verificarRegistro(quotedMsgObj.author)
                     if(r_registrado){
                         await db.resetarComandosDiaUsuario(quotedMsgObj.author)
-                        client.reply(from, msgs_texto.admin.r.sucesso,id)
+                        await client.reply(from, msgs_texto.admin.r.sucesso,id)
                     } else {
-                        return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
+                        return await client.reply(from, msgs_texto.admin.r.nao_registrado,id)
                     }
                 } else if (mentionedJidList.length === 1){
                     let r_registrado = await db.verificarRegistro(mentionedJidList[0])
                     if(r_registrado){
                         await db.resetarComandosDiaUsuario(mentionedJidList[0])
-                        client.reply(from, msgs_texto.admin.r.sucesso,id)
+                        await client.reply(from, msgs_texto.admin.r.sucesso,id)
                     } else {
-                        return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
+                        return await client.reply(from, msgs_texto.admin.r.nao_registrado,id)
                     }
                 } else if(args.length >= 1){
                     let r_numero_usuario = ""
@@ -316,12 +311,12 @@ module.exports = admin = async(client,message) => {
                     let r_registrado = await db.verificarRegistro(r_numero_usuario+"@c.us")
                     if(r_registrado){
                         await db.resetarComandosDiaUsuario(r_numero_usuario+"@c.us")
-                        client.reply(from, msgs_texto.admin.r.sucesso,id)
+                        await client.reply(from, msgs_texto.admin.r.sucesso,id)
                     } else {
-                        return client.reply(from, msgs_texto.admin.r.nao_registrado,id)
+                        return await client.reply(from, msgs_texto.admin.r.nao_registrado,id)
                     }
                 } else {
-                return client.reply(from, erroComandoMsg(command),id)
+                    return await client.reply(from, erroComandoMsg(command),id)
                 }
                 break  
                 
@@ -343,22 +338,9 @@ module.exports = admin = async(client,message) => {
                 } else {
                     return client.reply(from,msgs_texto.admin.verdados.nao_registrado,id)
                 }
-
-                let max_comandos_vd = (vd_usuario.max_comandos_dia == null) ? "Sem limite" : vd_usuario.max_comandos_dia
-
-                switch(vd_usuario.tipo) {
-                    case "dono":
-                        vd_usuario.tipo = "🤖 Dono"
-                        break
-                    case "vip":
-                        vd_usuario.tipo  = "⭐ VIP"
-                        break
-                    case "comum":
-                        vd_usuario.tipo  = "👤 Comum"
-                        break    
-                }
-
-                let vd_nome =  (vd_usuario.nome != undefined) ? vd_usuario.nome : "Ainda não obtido"
+                let max_comandos_vd = vd_usuario.max_comandos_dia || "Sem limite"
+                vd_usuario.tipo = msgs_texto.tipos[vd_usuario.tipo]
+                let vd_nome =  vd_usuario.nome || "Ainda não obtido"
                 let verdados_resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, vd_nome, vd_usuario.tipo, vd_usuario.id_usuario.replace("@c.us",""))
                 if(botInfo().limite_diario.status){
                     verdados_resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, vd_usuario.comandos_dia, max_comandos_vd, max_comandos_vd)

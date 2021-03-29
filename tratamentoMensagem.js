@@ -109,7 +109,7 @@ module.exports = tratamentoMensagem = async (client, message) => {
                     if(!ultrapassou){ // 4.0.8.1 - SE NÃO ULTRAPASSAR LIMITE DIARIO
                         await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
                     } else { //4.0.8.2 - SE ULTRAPASSAR LIMITE DIARIO
-                        return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, botInfo().limite_diario.qtd, ownerNumber), id)
+                        return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
                     }
                 } else {
                     await db.addContagemTotal(sender.id)
