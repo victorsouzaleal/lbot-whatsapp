@@ -63,7 +63,7 @@ Faça a mesma coisa da ultima inscrição, clique em **"Select Plan"**
 
 ## 4 - ACRCloud - Reconhecimento de Músicas
 
-#### Limite Gratuito: 14 dias de uso ou 5000 reconhecimentos, após isso você terá que criar uma nova conta.
+#### Limite Gratuito: 14 dias de uso ou 5000 reconhecimentos, após isso o limite é de 100 reconhecimentos/dia.
 
 ### Crie uma conta no site https://console.acrcloud.com/avr?region=eu-west-1#/register
 
