@@ -196,11 +196,9 @@ module.exports = utilidades = async(client,message) => {
                     idiomaTraducao = args[1]
                     usuarioTexto = quotedMsg.body
                 } else if(!quotedMsg && type == "chat" ){
-                    if(args.length === 1) return client.reply(from, erroComandoMsg(command) ,id)
-                    usuarioTexto = body.slice(8).split('/')
-                    if(usuarioTexto.length < 2) return client.reply(from, erroComandoMsg(command) ,id)
-                    idiomaTraducao = usuarioTexto[0]
-                    usuarioTexto = usuarioTexto[1]
+                    if(args.length < 3) return client.reply(from, erroComandoMsg(command) ,id)
+                    idiomaTraducao = args[1]
+                    usuarioTexto = args.slice(2).join(" ")
                 } else {
                     return client.reply(from, erroComandoMsg(command) ,id)
                 }
