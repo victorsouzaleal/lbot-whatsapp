@@ -79,6 +79,8 @@ module.exports = figurinhas = async(client,message) => {
                     if(argSticker == "1"){
                         stickerMetadata.keepScale = true
                         configConversao.crop = false
+                    } else if (argSticker == "2"){
+                        stickerMetadata.circle = true
                     }
 
                     var dadosMensagem = {
@@ -87,7 +89,7 @@ module.exports = figurinhas = async(client,message) => {
                         mensagem: (isMedia)? message : quotedMsg
                     }
                     if((dadosMensagem.mimetype === 'video/mp4' || dadosMensagem.mimetype === 'image/gif') && dadosMensagem.duracao < 11){
-                        client.reply(from, msgs_texto.geral.espera , id)
+                        await client.reply(from, msgs_texto.geral.espera , id)
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var base64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
                         client.sendMp4AsSticker(from, base64, configConversao, stickerMetadata)
