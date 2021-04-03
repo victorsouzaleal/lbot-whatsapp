@@ -4,7 +4,7 @@
   "description": "Bot para uso no Whatsapp com diversas funções úteis",
   "main": "index",
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "author": "Leal",
   "license": "Apache-2.0",
