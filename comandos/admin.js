@@ -429,7 +429,7 @@ module.exports = admin = async(client,message) => {
                     mensagensCarregadas,
                     chatContatos.length,
                     chatGrupos.length,
-                    botInfo().iniciado
+                    timestampParaData(botInfo().iniciado) 
                     ), id)
                 break
         }
