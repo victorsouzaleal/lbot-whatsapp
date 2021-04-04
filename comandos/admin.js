@@ -81,7 +81,7 @@ module.exports = admin = async(client,message) => {
                 for (var ch of chats) {
                     await client.deleteChat(ch.id)
                 }
-                client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
+                await client.sendText(ownerNumber+"@c.us", msgs_texto.admin.limpar.limpar_sucesso)
                 break
             
             case "!bcmdglobal":
@@ -101,7 +101,7 @@ module.exports = admin = async(client,message) => {
                 for (var ch of chats) {
                     if(ch.id.match(/@c.us/g) && ch.id != sender.id) await client.deleteChat(ch.id)
                 }
-                await client.reply(from, msgs_texto.admin.limpar.limpar_sucesso, id)
+                await client.sendText(ownerNumber+"@c.us", msgs_texto.admin.limpar.limpar_sucesso)
                 break
                 
             case '!rconfig':
@@ -264,12 +264,7 @@ module.exports = admin = async(client,message) => {
                     await client.reply(from, msgs_texto.admin.alterartipo.nao_registrado,id)
                 }
                 break
-            
-            case "!limparvip":
-                await db.limparVip()
-                await client.reply(from,msgs_texto.admin.limparvip.sucesso,id)
-                break
-
+        
             case "!tipos":
                 var tipos = botInfo().limite_diario.limite_tipos, respostaTipos = ''
                 for (var tipo in tipos){
