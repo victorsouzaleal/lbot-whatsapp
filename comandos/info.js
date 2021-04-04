@@ -3,7 +3,7 @@ const fs = require('fs-extra')
 const menu = require('../lib/menu')
 const msgs_texto = require('../lib/msgs')
 const { version } = require('../package.json')
-const {criarTexto, erroComandoMsg, removerNegritoComando} = require("../lib/util")
+const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = require("../lib/util")
 const path = require('path')
 const db = require('../lib/database')
 const {botInfo} = require(path.resolve("lib/bot.js"))
@@ -26,7 +26,8 @@ module.exports = info = async(client,message) => {
             case "!info":
                 const botFotoURL = await client.getProfilePicFromServer(botNumber+'@c.us')
                 var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
-                var resposta = criarTexto(msgs_texto.info.info.resposta,infoBot.criador,infoBot.criado_em,infoBot.nome,infoBot.iniciado,infoBot.cmds_executados,ownerNumber, version)
+                var botInicializacaoData = timestampParaData(infoBot.iniciado)
+                var resposta = criarTexto(msgs_texto.info.info.resposta, infoBot.criador, infoBot.nome, botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                 if(botFotoURL != undefined){
                     client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
                 } else {

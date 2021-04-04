@@ -3,10 +3,9 @@ const moment = require("moment-timezone")
 moment.tz.setDefault('America/Sao_Paulo')
 require('dotenv').config()
 const { create, Client } = require('@open-wa/wa-automate')
-const {criarArquivosNecessarios, criarTexto, consoleErro} = require('./lib/util')
+const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('./lib/util')
 const {verificacaoListaNegraGeral} = require(`./lib/listaNegra`)
 const {atualizarParticipantes} = require("./lib/controleParticipantes")
-const color = require('./lib/color')
 const config = require('./config')
 const msgTratamento = require('./msgTratamento')
 const msgs_texto = require("./lib/msgs")
@@ -19,7 +18,7 @@ const start = async (client = new Client()) => {
         //VERIFICA SE É NECESSÁRIO CRIAR ALGUM TIPO DE ARQUIVO NECESSÁRIO
         let necessitaCriar = await criarArquivosNecessarios()
         if(necessitaCriar){
-            console.log(color(msgs_texto.inicio.arquivos_criados))
+            console.log(corTexto(msgs_texto.inicio.arquivos_criados))
             setTimeout(()=>{
                 return client.kill()
             },10000)
@@ -30,15 +29,15 @@ const start = async (client = new Client()) => {
             const cadastrarGrupo = require('./lib/cadastrarGrupo')
 
             //Pegando hora de inicialização do BOT
-            console.log(color(await botStart()))
+            console.log(corTexto(await botStart()))
             //Cadastro de grupos
-            console.log(color(await cadastrarGrupo("","inicio",client)))
+            console.log(corTexto(await cadastrarGrupo("","inicio",client)))
             //Verificar lista negra dos grupos
-            console.log(color(await verificacaoListaNegraGeral(client)))
+            console.log(corTexto(await verificacaoListaNegraGeral(client)))
             //Atualização dos participantes dos grupos
-            console.log(color(await atualizarParticipantes(client)))
+            console.log(corTexto(await atualizarParticipantes(client)))
             //Atualização da contagem de mensagens
-            console.log(color(await recarregarContagem(client)))
+            console.log(corTexto(await recarregarContagem(client)))
             //Verificando se os campos do .env foram modificados e envia para o console
             verificarEnv()
 
@@ -86,7 +85,7 @@ const start = async (client = new Client()) => {
         } 
     } catch(err) {
         //Faça algo se der erro em alguma das funções acima
-        console.error(color("[ERRO FATAL]","red"), err.message)
+        console.error(corTexto("[ERRO FATAL]","#d63e3e"), err.message)
         setTimeout(()=>{
             return client.kill()
         },10000)

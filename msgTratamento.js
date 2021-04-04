@@ -1,17 +1,16 @@
 //REQUERINDO MODULOS
 const fs = require('fs-extra')
-const moment = require('moment-timezone')
-const color = require('./lib/color')
 const cadastrarGrupo = require('./lib/cadastrarGrupo')
 const db = require('./lib/database')
 const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,botLimitarMensagensPv} = require("./lib/bot")
 const {verificarBloqueioGlobal, verificarBloqueioGrupo} = require("./lib/bloqueioComandos")
+const { criarTexto, guiaComandoMsg, removerNegritoComando, consoleErro, consoleComando } = require('./lib/util')
+const msgs_texto = require('./lib/msgs')
 
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
 const grupo = require('./comandos/grupo'), utilidades = require('./comandos/utilidades'), diversao = require('./comandos/diversao'), admin = require('./comandos/admin'), info = require('./comandos/info'), figurinhas = require('./comandos/figurinhas'), downloads = require('./comandos/downloads')
-const { criarTexto, guiaComandoMsg, removerNegritoComando, consoleErro } = require('./lib/util')
-const msgs_texto = require('./lib/msgs')
+
 
 module.exports = msgTratamento = async (client, message) => {
     try {
@@ -28,7 +27,6 @@ module.exports = msgTratamento = async (client, message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const grupoInfo = isGroupMsg ? await db.obterGrupo(groupId) : ''
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
-        const time = moment(t * 1000).format('DD/MM HH:mm:ss')
         const blockedNumbers = await client.getBlockedIds()
         const isBlocked = blockedNumbers.includes(sender.id)
         const comandoExiste = (
@@ -56,6 +54,7 @@ module.exports = msgTratamento = async (client, message) => {
         //4.0 - SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
             let registrado = await db.verificarRegistro(sender.id)
+            
             //4.0.1 - SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
             if(!registrado) {
                 if(isOwner) {
@@ -79,7 +78,7 @@ module.exports = msgTratamento = async (client, message) => {
 
             //4.0.4 - SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
             if(isGroupMsg && !isGroupAdmins && grupoInfo.mutar) return
-            
+
             //4.0.5 - LIMITACAO DE COMANDO POR MINUTO
             if(botInfo().limitecomandos.status){
                 let usuario = await db.obterUsuario(sender.id)
@@ -90,8 +89,6 @@ module.exports = msgTratamento = async (client, message) => {
                 }
             }
             
-
-
             //4.0.6 - BLOQUEIO GLOBAL DE COMANDOS
             if(await verificarBloqueioGlobal(command) && !isOwner){
                 return client.reply(from, criarTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
@@ -142,50 +139,37 @@ module.exports = msgTratamento = async (client, message) => {
             //UTILIDADES
             if(msgGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
             await utilidades(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - UTILIDADE]","#de9a07"), time, color(command), 'de', color(username), `(${color(tempo_resposta.toFixed(3)+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - UTILIDADE]","#de9a07"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            consoleComando(isGroupMsg, "UTILIDADES", command, "#de9a07", t, username, formattedTitle)
         } else if(lista_comandos.info.includes(command)){
             //INFO
             if(msgGuia) return client.reply(from, guiaComandoMsg("info", command), id)
             await info(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - INFO]","#8ac46e"), time, color(command), 'de', color(username), `(${color(tempo_resposta.toFixed(3)+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - INFO]","#8ac46e"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
         } else if(lista_comandos.figurinhas.includes(command)){
             //FIGURINHAS
             if(msgGuia) return client.reply(from, guiaComandoMsg("figurinhas", command), id)
             await figurinhas(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - FIGURINHAS]","#ae45d1"), time, color(command), 'de', color(username), `(${color(tempo_resposta.toFixed(3)+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - FIGURINHAS]","#ae45d1"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            consoleComando(isGroupMsg, "FIGURINHAS", command, "#ae45d1", t, username, formattedTitle)
         } else if(lista_comandos.downloads.includes(command)){
             //DOWNLOADS
             if(msgGuia) return client.reply(from, guiaComandoMsg("downloads", command), id)
             await downloads(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - DOWNLOADS]","#2195cf"), time, color(command), 'de', color(username), `(${color(tempo_resposta.toFixed(3)+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DOWNLOADS]","#2195cf"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            consoleComando(isGroupMsg, "DOWNLOADS", command, "#2195cf", t, username, formattedTitle)
         } else if (lista_comandos.grupo.includes(command)){
             //GRUPO
             if(msgGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
             await grupo(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - ADMINISTRAÇÃO]","#e0e031"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            if(isGroupMsg) consoleComando(isGroupMsg, "ADMINISTRAÇÃO", command, "#e0e031", t, username, formattedTitle)
         } else if(lista_comandos.diversao.includes(command)){
             //DIVERSÃO
             if(msgGuia) return client.reply(from, guiaComandoMsg("diversao", command), id)
             await diversao(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>',color("[PRIVADO - DIVERSÃO]","#22e3dd"), time, color(command), 'de', color(username), `(${color(tempo_resposta.toFixed(3)+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DIVERSÃO]","#22e3dd"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            consoleComando(isGroupMsg, "DIVERSÃO", command, "#22e3dd", t, username, formattedTitle)
         } else if(lista_comandos.admin.includes(command)){
             //ADMIN
             if(msgGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
             await admin(client,message)
-            const timestamp_pos_comando = moment.now()/1000, tempo_resposta = (timestamp_pos_comando - t)
-            if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[PRIVADO - DONO]","#d1d1d1"), time, color(command), 'de', color(username), `(${color(tempo_resposta.toFixed(3)+"s")})`)
-            if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', color("[GRUPO - DONO]","#d1d1d1"), time, color(command), 'de', color(username), 'em', color(formattedTitle), `(${color(tempo_resposta.toFixed(3)+"s")})`)
+            consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
         } else {
             if(!isGroupMsg) return client.reply(from, msgs_texto.geral.comando_invalido ,id)
         }
