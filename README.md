@@ -162,7 +162,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Lista Negra  |
 |       ✅        |   Mutar Grupo
 |       ✅        |   Bem Vindo  |
-|       ✅        |   Anti Fake (números estrangeiros)|
+|       ✅        |   Anti Fake |
 |       ✅        |   Anti Link  |
 |       ✅        |   Anti Flood  |
 |       ✅        |   Contagem de mensagens |
@@ -183,7 +183,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Limpar todos os chats              |
 |       ✅        |   Broadcast - Anuncio Geral                     |
 |       ✅        |   Bloquear/Desbloquear usuário                     |
-|       ✅        |   Sistema Comum/VIP         |
+|       ✅        |   Sistema de Tipos de Usuários        |
 |       ✅        |   Limitador comandos diários (por usuário)            |
 |       ✅        |   Limitador de comandos por minuto (por usuário)          |
 |       ✅       | Limitador de mensagens privadas (Anti-flood)
