@@ -111,12 +111,9 @@ module.exports = admin = async(client,message) => {
 
             case '!sairgrupos':
                 var grupos = await client.getAllGroups()
-                for (var grupo of grupos) {
-                    var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
-                    await client.sendText(grupo.contact.id, resposta)
-                    await client.leaveGroup(grupo.contact.id)
-                }
-                client.reply(from, msgs_texto.admin.sairtodos.sair_sucesso, id)
+                for (var grupo of grupos) await client.leaveGroup(grupo.contact.id)
+                var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
+                await client.sendText(ownerNumber+"@c.us", resposta, id)
                 break
 
             case "!bloquear":
