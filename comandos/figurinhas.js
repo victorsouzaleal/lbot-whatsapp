@@ -14,7 +14,7 @@ module.exports = figurinhas = async(client,message) => {
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
 
         switch(command){      
-            case '!s':
+            case '!s': 
                 if(isMedia || quotedMsg){
                     var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                     var stickerMetadata = {
@@ -101,7 +101,7 @@ module.exports = figurinhas = async(client,message) => {
                         return client.reply(from, msgs_texto.figurinhas.sticker.video_invalido, id)
                     }
                 } else {
-                    return client.reply(from, msgs_texto.geral.erro, id)
+                    return client.reply(from, erroComandoMsg(command), id)
                 }
                 break
 
