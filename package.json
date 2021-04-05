@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "1.8.6",
+  "version": "1.8.7",
   "description": "Bot para uso no Whatsapp com diversas funções úteis",
   "main": "index",
   "scripts": {
@@ -10,6 +10,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@ffprobe-installer/ffprobe": "^1.1.0",
     "@open-wa/wa-automate": "^3.10.7",
     "@open-wa/wa-decrypt": "^3.0.1",
     "@vitalets/google-translate-api": "^5.1.0",
@@ -20,10 +21,10 @@
     "correios-brasil": "^2.1.0",
     "discord-canvas": "^1.4.1",
     "dotenv": "^8.2.0",
+    "ffprobe": "^1.1.2",
     "fluent-ffmpeg": "^2.1.2",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
-    "get-video-duration": "^3.0.2",
     "instagram-url-direct": "^1.0.5",
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
