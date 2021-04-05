@@ -10,7 +10,6 @@ const filaPlay = new PQueue({concurrency: 2})
 const filaYT = new PQueue({concurrency: 1})
 const filaIg = new PQueue({concurrency: 1})
 const filaTw = new PQueue({concurrency: 2})
-const filaFb = new PQueue({concurrency: 1})
 const filaImg = new PQueue({concurrency: 1})
 
 
@@ -86,21 +85,6 @@ module.exports = downloads = async(client,message) => {
                     } catch(err){
                         client.reply(from,err.message,id)
                     }
-                })
-                break
-
-            case "!fb":
-                if(args.length === 1) return client.reply(from,erroComandoMsg(command),id)
-                await client.reply(from, msgs_texto.downloads.fb.espera, id)
-                await filaFb.add(async ()=>{
-                    try{
-                        var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioTexto)
-                        if(!resultadosMidia.encontrado) return client.reply(from, msgs_texto.downloads.fb.nao_encontrado, id)
-                        if(resultadosMidia.duracao > 180) return client.reply(from, msgs_texto.downloads.fb.limite, id)
-                        await client.sendFile(from, resultadosMidia.url, `fb-media.mp4`,"",id)
-                    } catch(err){
-                        client.reply(from,err.message,id)
-                    } 
                 })
                 break
 
