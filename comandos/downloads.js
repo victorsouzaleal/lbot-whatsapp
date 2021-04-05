@@ -95,6 +95,7 @@ module.exports = downloads = async(client,message) => {
                 await filaFb.add(async ()=>{
                     try{
                         var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioTexto)
+                        console.log(resultadosMidia)
                         if(!resultadosMidia.encontrado) return client.reply(from, msgs_texto.downloads.fb.nao_encontrado, id)
                         if(resultadosMidia.duracao > 180) return client.reply(from, msgs_texto.downloads.fb.limite, id)
                         await client.sendFile(from, resultadosMidia.url, `fb-media.mp4`,"",id)
