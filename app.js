@@ -52,12 +52,8 @@ const start = async (client = new Client()) => {
 
             // Ouvindo mensagens
             client.onMessage((async (message) => {
-                client.getAmountOfLoadedMessages()
-                .then((msg) => {
-                    if (msg >= 3000) {
-                        client.cutMsgCache()
-                    }
-                })
+                var msgs = await client.getAmountOfLoadedMessages()
+                if(msgs >= 3000) await client.cutMsgCache()
                 await antiLink(client,message)
                 await antiFlood(client,message)
                 await msgTratamento(client, message)
@@ -72,7 +68,7 @@ const start = async (client = new Client()) => {
             client.onAddedToGroup((async (chat) => {
                 await cadastrarGrupo(chat.id, "added", client)
                 let gInfo = await client.getGroupInfo(chat.id)
-                client.sendText(chat.id, criarTexto(msgs_texto.geral.entrada_grupo, gInfo.title || ""))
+                await client.sendText(chat.id, criarTexto(msgs_texto.geral.entrada_grupo, gInfo.title))
             }))
 
             // Ouvindo ligações recebidas
