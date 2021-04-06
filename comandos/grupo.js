@@ -9,7 +9,6 @@ const {obterDestravas} = require("../lib/api")
 module.exports = grupo = async(client,message) => {
     try{
         const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList, body} = message
-        const { name } = chat
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -435,8 +434,9 @@ module.exports = grupo = async(client,message) => {
             case '!link':
                 if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-                var linkConvite = await client.getGroupInviteLink(groupId);
-                await client.sendLinkWithAutoPreview(from, linkConvite, criarTexto(msgs_texto.grupo.link.resposta, name))
+                var linkConvite = await client.getGroupInviteLink(groupId)
+                var {title} = await client.getGroupInfo(groupId);
+                await client.sendLinkWithAutoPreview(from, linkConvite, criarTexto(msgs_texto.grupo.link.resposta, title))
                 break
 
             case '!adms':
