@@ -125,6 +125,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Download de aúdio/videos (Youtube)    |
 |       ✅        |   Download de imagens/videos (Instagram)  |
 |       ✅        |   Download de imagens/videos (Twitter)            |
+|       ✅        |   Download de videos (Facebook)            |
 |       ✅        |   Pesquisa/Download de Imagens                  |
 
 ### Utilidades Gerais

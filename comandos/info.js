@@ -29,17 +29,17 @@ module.exports = info = async(client,message) => {
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
                 var resposta = criarTexto(msgs_texto.info.info.resposta, infoBot.criador, infoBot.nome, botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                 if(botFotoURL != undefined){
-                    client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
+                    await client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
                 } else {
-                    client.reply(from, resposta, id)
+                    await client.reply(from, resposta, id)
                 }
                 break
             
             case "!reportar":
                 if(args.length == 1) return client.reply(from, erroComandoMsg(command) ,id)
                 var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.id.replace("@c.us",""), usuarioMensagem)
-                client.sendText(ownerNumber+"@c.us", resposta)
-                client.reply(from,msgs_texto.info.reportar.sucesso,id)
+                await client.sendText(ownerNumber+"@c.us", resposta)
+                await client.reply(from,msgs_texto.info.reportar.sucesso,id)
                 break
             
             case '!meusdados':
@@ -71,7 +71,7 @@ module.exports = info = async(client,message) => {
 
                 if(args.length == 1){
                     var menuResposta = menu.menuPrincipal()
-                    client.sendText(from, dadosResposta+menuResposta)
+                    await client.sendText(from, dadosResposta+menuResposta)
                 } else {
                     var usuarioOpcao = args[1]
                     var menuResposta = menu.menuPrincipal()
@@ -90,7 +90,7 @@ module.exports = info = async(client,message) => {
                             break
                         case "4":
                             if(isGroupMsg) menuResposta = menu.menuGrupo(isGroupAdmins)
-                            else return client.reply(from, msgs_texto.permissao.grupo, id)
+                            else return await client.reply(from, msgs_texto.permissao.grupo, id)
                             break
                         case "5":
                             menuResposta = menu.menuDiversao(isGroupMsg)
@@ -99,7 +99,7 @@ module.exports = info = async(client,message) => {
                             menuResposta = menu.menuCreditos()
                             break
                     }
-                    client.sendText(from, dadosResposta+menuResposta)
+                    await client.sendText(from, dadosResposta+menuResposta)
                 }
                 break
         }
