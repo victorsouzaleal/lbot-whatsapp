@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "1.8.10",
+  "version": "1.8.11",
   "description": "Bot para uso no Whatsapp com diversas funções úteis",
   "main": "index",
   "scripts": {
@@ -20,6 +20,7 @@
     "correios-brasil": "^2.1.0",
     "discord-canvas": "^1.4.1",
     "dotenv": "^8.2.0",
+    "fbdl-core": "git+https://github.com/victorsouzaleal/fbdl-core.git",
     "fluent-ffmpeg": "^2.1.2",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
