@@ -39,19 +39,19 @@ module.exports = msgTratamento = async (client, message) => {
             lista_comandos.downloads.includes(command)
         )
        
-        //1.0 SE O GRUPO NÃO FOR CADASTRADO
+        //SE O GRUPO NÃO FOR CADASTRADO
         if(isGroupMsg && !grupoInfo) await cadastrarGrupo(message,"msg",client)
 
-        //2.0 - SE NÃO FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
+        //SE NÃO FOR MENSAGEM DE GRUPO E FOR  BLOQUEADO RETORNE
         if (!isGroupMsg && isBlocked) return
 
-        //3.0- SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, VERIFICA SE O USUARIO EXISTE NO CONTADOR , REGISTRA ELE E ADICIONA A CONTAGEM
+        //SE O CONTADOR TIVER ATIVADO E FOR UMA MENSAGEM DE GRUPO, VERIFICA SE O USUARIO EXISTE NO CONTADOR , REGISTRA ELE E ADICIONA A CONTAGEM
         if(isGroupMsg && grupoInfo.contador.status) {
             await db.existeUsuarioContador(groupId,sender.id)
             await db.addContagem(groupId,sender.id,type)
         }
 
-        //4.0 - SE FOR ALGUM COMANDO EXISTENTE
+        //SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
             let registrado = await db.verificarRegistro(sender.id)
             
@@ -68,46 +68,40 @@ module.exports = msgTratamento = async (client, message) => {
                 if(isOwner) await db.verificarDonoAtual(sender.id)       
             }
 
-            //4.0.2 - ATUALIZE NOME DO USUÁRIO 
+            //ATUALIZE NOME DO USUÁRIO 
             await db.atualizarNome(sender.id, username)
 
-            //4.0.3 - SE FOR MENSAGEM DE GRUPO E USUARIO FOR BLOQUEADO RETORNE
-            if (isGroupMsg && isBlocked) {
-                return
-            }
+            //SE FOR MENSAGEM DE GRUPO E USUARIO FOR BLOQUEADO RETORNE
+            if (isGroupMsg && isBlocked) return
 
-            //4.0.4 - SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
+            //SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
             if(isGroupMsg && !isGroupAdmins && grupoInfo.mutar) return
 
-            //4.0.5 - LIMITACAO DE COMANDO POR MINUTO
+            //LIMITACAO DE COMANDO POR MINUTO
             if(botInfo().limitecomandos.status){
                 let usuario = await db.obterUsuario(sender.id)
                 let limiteComando = await botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
                 if(limiteComando.comando_bloqueado) {
-                    if(limiteComando.msg != undefined) client.reply(from, limiteComando.msg, id)
+                    if(limiteComando.msg != undefined) await client.reply(from, limiteComando.msg, id)
                     return 
                 }
             }
             
-            //4.0.6 - BLOQUEIO GLOBAL DE COMANDOS
+            //BLOQUEIO GLOBAL DE COMANDOS
             if(await verificarBloqueioGlobal(command) && !isOwner){
                 return client.reply(from, criarTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
             }
             
-            //4.0.7 - SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
+            //SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
             if(isGroupMsg && await verificarBloqueioGrupo(command, groupId) && !isGroupAdmins) return client.reply(from,criarTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, command), id)
 
-            //4.0.8 - SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
+            //SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
             if(botInfo().limite_diario.status){
                 if(!lista_comandos.excecoes_contagem.includes(command) && !lista_comandos.admin.includes(command) && !lista_comandos.grupo.includes(command) && !lista_comandos.info.includes(command) && !msgGuia){
-                    //LIMITADOR DIARIO DE COMANDOS
                     await botVerificarExpiracaoLimite()
                     let ultrapassou = await db.ultrapassouLimite(sender.id)
-                    if(!ultrapassou){ // 4.0.8.1 - SE NÃO ULTRAPASSAR LIMITE DIARIO
-                        await db.addContagemDiaria(sender.id) // ADICIONA CONTAGEM
-                    } else { //4.0.8.2 - SE ULTRAPASSAR LIMITE DIARIO
-                        return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
-                    }
+                    if(!ultrapassou) await db.addContagemDiaria(sender.id) 
+                    else return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
                 } else {
                     await db.addContagemTotal(sender.id)
                     await botVerificarExpiracaoLimite()
@@ -116,25 +110,23 @@ module.exports = msgTratamento = async (client, message) => {
                 await db.addContagemTotal(sender.id)
             }
           
-            //4.0.9 - ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
+            //ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
             await botInfoUpdate()
 
-        } else { // 5.0 SE NÃO FOR UM COMANDO EXISTENTE
-            //5.0.1 - SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
+        } else { //SE NÃO FOR UM COMANDO EXISTENTE
+            //SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
             if(!isGroupMsg && botInfo().limitarmensagens.status){
                 let u = await db.obterUsuario(sender.id)
                 let tipo_usuario_pv = u ? u.tipo : "comum"
                 let limitarMensagens = await botLimitarMensagensPv(sender.id, tipo_usuario_pv)
                 if(limitarMensagens.bloquear_usuario) {
-                    client.sendText(sender.id, limitarMensagens.msg).then(()=>{
-                        client.contactBlock(sender.id)
-                    })
-                    return 
+                    await client.sendText(sender.id, limitarMensagens.msg)
+                    return await client.contactBlock(sender.id)
                 }
             }
         }
 
-        //6.0 - APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
+        //APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
         if(lista_comandos.utilidades.includes(command)){
             //UTILIDADES
             if(msgGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
