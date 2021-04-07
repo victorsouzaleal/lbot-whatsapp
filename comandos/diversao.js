@@ -21,8 +21,8 @@ module.exports = diversao = async(client,message) => {
 
         switch(command){
             case '!detector' :
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg) return client.reply(from, erroComandoMsg(command) , id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if(!quotedMsg) return await client.reply(from, erroComandoMsg(command) , id)
                 var imgsDetector = ['verdade','vaipra','mentiroso','meengana','kao','incerteza','estresse','conversapraboi']
                 var indexAleatorio = Math.floor(Math.random() * imgsDetector.length)
                 await client.sendFile(from, './media/img/comandos/detector/calibrando.png', 'detector.png', msgs_texto.diversao.detector.espera, id)
@@ -30,32 +30,26 @@ module.exports = diversao = async(client,message) => {
                 break
             
             case '!viadometro' :
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg && mentionedJidList.length == 0) return client.reply(from, erroComandoMsg(command), id)
-                if(mentionedJidList.length > 1) client.reply(from, msgs_texto.diversao.viadometro.apenas_um, id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if(!quotedMsg && mentionedJidList.length == 0) return await client.reply(from, erroComandoMsg(command), id)
+                if(mentionedJidList.length > 1) return await client.reply(from, msgs_texto.diversao.viadometro.apenas_um, id)
                 var respostas = msgs_texto.diversao.viadometro.respostas
                 var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
-                if(mentionedJidList.length == 1){
-                    idResposta = id, alvo = mentionedJidList[0].replace(/@c.us/g, '')
-                } else {
-                    idResposta = quotedMsgObj.id, alvo = quotedMsgObj.author.replace(/@c.us/g, '')
-                }
+                if(mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0].replace(/@c.us/g, '')
+                else idResposta = quotedMsgObj.id, alvo = quotedMsgObj.author.replace(/@c.us/g, '')
                 if(ownerNumber == alvo) indexAleatorio = 0
                 var respostaTexto = criarTexto(msgs_texto.diversao.viadometro.resposta,respostas[indexAleatorio])
                 await client.reply(from, respostaTexto, idResposta)
                 break
             
             case '!bafometro' :
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg && mentionedJidList.length == 0) return client.reply(from, erroComandoMsg(command), id)
-                if (mentionedJidList.length > 1) return client.reply(from, msgs_texto.diversao.bafometro.apenas_um, id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if(!quotedMsg && mentionedJidList.length == 0) return await client.reply(from, erroComandoMsg(command), id)
+                if (mentionedJidList.length > 1) return await client.reply(from, msgs_texto.diversao.bafometro.apenas_um, id)
                 var respostas = msgs_texto.diversao.bafometro.respostas
                 var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
-                if(mentionedJidList.length == 1){
-                    idResposta = id, alvo = mentionedJidList[0].replace(/@c.us/g, '')
-                } else {
-                    idResposta = quotedMsgObj.id, alvo = quotedMsgObj.author.replace(/@c.us/g, '')
-                }
+                if(mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0].replace(/@c.us/g, '')
+                else idResposta = quotedMsgObj.id, alvo = quotedMsgObj.author.replace(/@c.us/g, '')
                 if(ownerNumber == alvo) indexAleatorio = 0
                 var respostaTexto = criarTexto(msgs_texto.diversao.bafometro.resposta, respostas[indexAleatorio])
                 await client.reply(from, respostaTexto, idResposta)
@@ -70,8 +64,8 @@ module.exports = diversao = async(client,message) => {
 
             case "!ppt":
                 var ppt = ["pedra","papel","tesoura"], indexAleatorio = Math.floor(Math.random() * ppt.length)
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                if(!ppt.includes(args[1].toLowerCase())) return client.reply(from, msgs_texto.diversao.ppt.opcao_erro, id)
+                if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
+                if(!ppt.includes(args[1].toLowerCase())) return await client.reply(from, msgs_texto.diversao.ppt.opcao_erro, id)
                 var escolhaBot = ppt[indexAleatorio], iconeEscolhaBot = null, escolhaUsuario = args[1].toLowerCase(), iconeEscolhaUsuario = null, vitoriaUsuario = null
                 if(escolhaBot == "pedra"){
                     iconeEscolhaBot = "✊"
@@ -98,8 +92,7 @@ module.exports = diversao = async(client,message) => {
 
             case "!massacote":
             case '!mascote':
-                //var mascoteFotoURL = "https://i.imgur.com/mVwa7q4.png"
-                var mascoteFotoURL = "https://i.imgur.com/SbKeovm.png"
+                var mascoteFotoURL = "https://i.imgur.com/mVwa7q4.png"
                 await client.sendFileFromUrl(from, mascoteFotoURL, 'mascote.jpeg', 'Whatsapp Jr.', id)
                 break 
 
@@ -109,13 +102,13 @@ module.exports = diversao = async(client,message) => {
                 break
 
             case '!roletarussa':
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
-                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if (!isGroupAdmins) return await client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return await client.reply(from,msgs_texto.permissao.bot_admin, id)
                 var idParticipantesAtuais = await client.getGroupMembersId(groupId)
                 idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(groupOwner),1)
                 idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(botNumber+'@c.us'),1)
-                if(idParticipantesAtuais.length == 0) return client.reply(from, msgs_texto.diversao.roletarussa.sem_membros, id)
+                if(idParticipantesAtuais.length == 0) return await client.reply(from, msgs_texto.diversao.roletarussa.sem_membros, id)
                 var indexAleatorio = Math.floor(Math.random() * idParticipantesAtuais.length)
                 var respostaTexto = criarTexto(msgs_texto.diversao.roletarussa.resposta, idParticipantesAtuais[indexAleatorio].replace(/@c.us/g, ''))
                 await client.reply(from, msgs_texto.diversao.roletarussa.espera , id)
@@ -124,9 +117,9 @@ module.exports = diversao = async(client,message) => {
                 break
             
             case '!casal':
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
                 var idParticipantesAtuais = await client.getGroupMembersId(groupId)
-                if(idParticipantesAtuais.length < 2) return client.reply(from, msgs_texto.diversao.casal.minimo, id)
+                if(idParticipantesAtuais.length < 2) return await client.reply(from, msgs_texto.diversao.casal.minimo, id)
                 var indexAleatorio = Math.floor(Math.random() * idParticipantesAtuais.length)
                 var pessoaEscolhida1 = idParticipantesAtuais[indexAleatorio]
                 idParticipantesAtuais.splice(indexAleatorio,1)
@@ -137,26 +130,23 @@ module.exports = diversao = async(client,message) => {
                 break
 
             case '!gadometro':
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(!quotedMsg && mentionedJidList.length === 0) return client.reply(from, erroComandoMsg(command) , id)
-                if(mentionedJidList.length > 1) return client.reply(from, msgs_texto.diversao.gadometro.apenas_um , id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if(!quotedMsg && mentionedJidList.length === 0) return await client.reply(from, erroComandoMsg(command) , id)
+                if(mentionedJidList.length > 1) return await client.reply(from, msgs_texto.diversao.gadometro.apenas_um , id)
                 var respostas = msgs_texto.diversao.gadometro.respostas 
                 var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
-                if (mentionedJidList.length == 1){
-                    idResposta = id, alvo = mentionedJidList[0].replace(/@c.us/g, '')
-                }else{
-                    idResposta = quotedMsgObj.id, alvo = quotedMsgObj.author.replace(/@c.us/g, '')
-                }
+                if (mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0].replace(/@c.us/g, '')
+                else idResposta = quotedMsgObj.id, alvo = quotedMsgObj.author.replace(/@c.us/g, '')
                 if(ownerNumber == alvo) indexAleatorio = 0
                 var respostaTexto = criarTexto(msgs_texto.diversao.gadometro.resposta, respostas[indexAleatorio])
                 await client.reply(from, respostaTexto, idResposta)       
                 break
 
             case '!top5':
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
                 var temaRanking = body.slice(6).trim(), idParticipantesAtuais = await client.getGroupMembersId(groupId)
-                if(idParticipantesAtuais.length < 5) return client.reply(from,msgs_texto.diversao.top5.erro_membros, id)
+                if(idParticipantesAtuais.length < 5) return await client.reply(from,msgs_texto.diversao.top5.erro_membros, id)
                 var respostaTexto = criarTexto(msgs_texto.diversao.top5.resposta_titulo, temaRanking)
                 for (let i = 0 ; i < 5 ; i++){
                     var medalha = ""
@@ -182,8 +172,8 @@ module.exports = diversao = async(client,message) => {
                 break
 
             case '!par':
-                if (!isGroupMsg) return client.reply(from, msgs_texto.permissao.grupo, id)
-                if(mentionedJidList.length !== 2) return client.reply(from, erroComandoMsg(command) , id)
+                if (!isGroupMsg) return await client.reply(from, msgs_texto.permissao.grupo, id)
+                if(mentionedJidList.length !== 2) return await client.reply(from, erroComandoMsg(command) , id)
                 var respostas = msgs_texto.diversao.par.respostas
                 var indexAleatorio = Math.floor(Math.random() * respostas.length)
                 var respostaTexto = criarTexto(msgs_texto.diversao.par.resposta, mentionedJidList[0].replace(/@c.us/g, ''), mentionedJidList[1].replace(/@c.us/g, ''), respostas[indexAleatorio])
@@ -200,7 +190,7 @@ module.exports = diversao = async(client,message) => {
                 break    
         }
     } catch(err){
-        throw new Error(err)
+        throw err
     }
     
 }
