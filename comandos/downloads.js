@@ -37,8 +37,8 @@ module.exports = downloads = async(client,message) => {
 
                 try{
                     await filaPlay.add(async () => {
-                        var saidaAudio = await api.obterYTMp3(videoInfo)
-                        client.sendFile(from, saidaAudio, "musica.mp3","", id).then(()=>{
+                        var saidaAudio = await api.obterYtMp3(videoInfo)
+                        client.sendFile(from, saidaAudio, `${videoInfo.title}.mp3`,"", id).then(()=>{
                             fs.unlinkSync(saidaAudio)
                         })
                     })
