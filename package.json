@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@open-wa/wa-automate": "^3.10.10",
+    "@open-wa/wa-automate": "^3.10.13",
     "@open-wa/wa-decrypt": "^3.0.1",
     "@vitalets/google-translate-api": "^5.1.0",
     "acrcloud": "^1.4.0",
@@ -24,7 +24,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
-    "instagram-url-direct": "^1.0.6",
+    "instagram-url-direct": "^1.0.7",
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
     "nedb-async": "^0.1.6",
