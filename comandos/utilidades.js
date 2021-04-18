@@ -110,10 +110,12 @@ module.exports = utilidades = async(client,message) => {
                 if(args.length !== 3) return client.reply(from, erroComandoMsg(command), id)
                 try{
                     var usuarioMoedaInserida = args[1], usuarioValorInserido = args[2], conversaoMoeda = await api.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido)
-                    var respostaConversao = criarTexto(msgs_texto.utilidades.moeda.resposta, conversaoMoeda.valor_inserido, conversaoMoeda.moeda, conversaoMoeda.valor_em_real, conversaoMoeda.atualizado)
-                    client.reply(from, respostaConversao ,id)
+                    var itens = ''
+                    for(var c of  conversaoMoeda.conversao) itens += criarTexto(msgs_texto.utilidades.moeda.resposta_item, c.conversao, c.valor_convertido_formatado, c.tipo, c.atualizacao)
+                    var respostaFinal = criarTexto(msgs_texto.utilidades.moeda.resposta_completa, conversaoMoeda.valor_inserido, conversaoMoeda.moeda_inserida, itens)
+                    await client.reply(from, respostaFinal ,id)
                 } catch(err){
-                    client.reply(from, err.message , id)
+                    await client.reply(from, err.message , id)
                 }
                 break
 
