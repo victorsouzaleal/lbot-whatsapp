@@ -13,6 +13,8 @@ package-lock.json
 #Ignorar .env
 *.env
 
+#Ignorar arquivo de teste
+test.js
 
 #Ignorar logs
 *.log

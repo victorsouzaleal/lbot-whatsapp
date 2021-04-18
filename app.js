@@ -52,8 +52,6 @@ const start = async (client = new Client()) => {
 
             // Ouvindo mensagens
             client.onMessage((async (message) => {
-                var msgs = await client.getAmountOfLoadedMessages()
-                if(msgs >= 3000) await client.cutMsgCache()
                 await antiLink(client,message)
                 await antiFlood(client,message)
                 await msgTratamento(client, message)
