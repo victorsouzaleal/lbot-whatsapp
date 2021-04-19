@@ -38,6 +38,8 @@ module.exports = grupo = async(client,message) => {
                 resposta += (grupoInfo.bemvindo.status) ? msgs_texto.grupo.status.resposta_variavel.bemvindo.on : msgs_texto.grupo.status.resposta_variavel.bemvindo.off
                 //Mutar
                 resposta += (grupoInfo.mutar) ? msgs_texto.grupo.status.resposta_variavel.mutar.on : msgs_texto.grupo.status.resposta_variavel.mutar.off
+                //Auto-Sticker
+                resposta += (grupoInfo.autosticker) ? msgs_texto.grupo.status.resposta_variavel.autosticker.on : msgs_texto.grupo.status.resposta_variavel.autosticker.off
                 //Anti-Link
                 let al_filtros = ""
                 if(grupoInfo.antilink.filtros.youtube) al_filtros += msgs_texto.grupo.status.resposta_variavel.antilink.filtros.youtube
@@ -127,6 +129,19 @@ module.exports = grupo = async(client,message) => {
                 } else {
                     await db.alterarAntiLink(groupId, false)
                     client.reply(from, msgs_texto.grupo.antilink.desligado, id)
+                }
+                break
+
+            case '!autosticker':
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                var grupoInfo = await db.obterGrupo(groupId)
+                var estadoNovo = !grupoInfo.autosticker
+                if (estadoNovo) {
+                    await db.alterarAutoSticker(groupId, true)
+                    await client.reply(from, msgs_texto.grupo.autosticker.ligado, id)
+                } else {
+                    await db.alterarAutoSticker(groupId, false)
+                    await client.reply(from, msgs_texto.grupo.autosticker.desligado, id)
                 }
                 break
                     

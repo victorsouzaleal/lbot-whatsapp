@@ -1,4 +1,5 @@
 //REQUERINDO MODULOS
+const { MessageTypes } = require('@open-wa/wa-automate')
 const fs = require('fs-extra')
 const cadastrarGrupo = require('./lib/cadastrarGrupo')
 const db = require('./lib/database')
@@ -6,11 +7,11 @@ const {botInfoUpdate, botLimitarComando, botInfo, botVerificarExpiracaoLimite,bo
 const {verificarBloqueioGlobal, verificarBloqueioGrupo} = require("./lib/bloqueioComandos")
 const { criarTexto, guiaComandoMsg, removerNegritoComando, consoleErro, consoleComando } = require('./lib/util')
 const msgs_texto = require('./lib/msgs')
+const {autoSticker} = require("./lib/sticker")
 
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
 const grupo = require('./comandos/grupo'), utilidades = require('./comandos/utilidades'), diversao = require('./comandos/diversao'), admin = require('./comandos/admin'), info = require('./comandos/info'), figurinhas = require('./comandos/figurinhas'), downloads = require('./comandos/downloads')
-
 
 module.exports = msgTratamento = async (client, message) => {
     try {
@@ -51,23 +52,23 @@ module.exports = msgTratamento = async (client, message) => {
             await db.addContagem(groupId,sender.id,type)
         }
 
+        //SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
+        if(!registrado) {
+            if(isOwner) {
+                await db.verificarDonoAtual(sender.id)
+                await db.registrarDono(sender.id, username)
+            }
+            else {
+                await db.registrarUsuarioComum(sender.id, username)
+            }
+        } else {
+            if(isOwner) await db.verificarDonoAtual(sender.id)       
+        }
+
         //SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
-            let registrado = await db.verificarRegistro(sender.id)
-            
-            //4.0.1 - SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
-            if(!registrado) {
-                if(isOwner) {
-                    await db.verificarDonoAtual(sender.id)
-                    await db.registrarDono(sender.id, username)
-                }
-                else {
-                    await db.registrarUsuarioComum(sender.id, username)
-                }
-            } else {
-                if(isOwner) await db.verificarDonoAtual(sender.id)       
-            }
-
+            var registrado = await db.verificarRegistro(sender.id)
+        
             //ATUALIZE NOME DO USUÁRIO 
             await db.atualizarNome(sender.id, username)
 
@@ -114,6 +115,26 @@ module.exports = msgTratamento = async (client, message) => {
             await botInfoUpdate()
 
         } else { //SE NÃO FOR UM COMANDO EXISTENTE
+
+            //AUTO-STICKER GRUPO
+            if(isGroupMsg && (type == MessageTypes.IMAGE || type == MessageTypes.VIDEO) && grupoInfo.autosticker){
+                //SE FOR MENSAGEM DE GRUPO E USUARIO FOR BLOQUEADO RETORNE
+                if (isGroupMsg && isBlocked) return
+                //SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
+                if(isGroupMsg && !isGroupAdmins && grupoInfo.mutar) return
+                //SE O LIMITE DIARIO DE COMANDOS ESTIVER ATIVADO
+                if(botInfo().limite_diario.status){
+                    await botVerificarExpiracaoLimite()
+                    let ultrapassou = await db.ultrapassouLimite(sender.id)
+                    if(!ultrapassou) await db.addContagemDiaria(sender.id) 
+                    else return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
+                } else {
+                    await db.addContagemTotal(sender.id)
+                }
+                await autoSticker(client, message)
+                return
+            }
+
             //SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
             if(!isGroupMsg && botInfo().limitarmensagens.status){
                 let u = await db.obterUsuario(sender.id)
