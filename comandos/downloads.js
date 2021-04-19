@@ -40,6 +40,9 @@ module.exports = downloads = async(client,message) => {
                         var saidaAudio = await api.obterYtMp3(videoInfo)
                         client.sendFile(from, saidaAudio, `${videoInfo.title}.mp3`,"", id).then(()=>{
                             fs.unlinkSync(saidaAudio)
+                        }).catch(()=>{
+                            fs.unlinkSync(saidaAudio)
+                            client.reply(from, msgs_texto.downloads.play.erro_download, id)
                         })
                     })
                 } catch(err){
@@ -62,7 +65,9 @@ module.exports = downloads = async(client,message) => {
                 await filaYT.add(async ()=>{
                     try{
                         var saidaVideoInfo = await api.obterYTMp4URL(videoInfo)
-                        await client.sendFile(from, saidaVideoInfo.download, `${saidaVideoInfo.title}.mp4`,"", id)
+                        await client.sendFile(from, saidaVideoInfo.download, `${saidaVideoInfo.title}.mp4`,"", id).catch(()=>{
+                            client.reply(from,msgs_texto.downloads.yt.erro_download,id)
+                        })
                     } catch(err){
                         await client.reply(from,err.message,id)
                     }
@@ -76,7 +81,9 @@ module.exports = downloads = async(client,message) => {
                     if(resultadosMidia.t > 300) return await client.reply(from, msgs_texto.downloads.fb.limite, id)
                     await client.reply(from, criarTexto(msgs_texto.downloads.fb.espera, resultadosMidia.title, resultadosMidia.duration+"s"), id)
                     await filaFb.add(async ()=>{
-                        await client.sendFile(from, resultadosMidia.streamURL, `fb-media.mp4`,"", id)
+                        await client.sendFile(from, resultadosMidia.streamURL, `fb-media.mp4`,"", id).catch(()=>{
+                            client.reply(from, msgs_texto.downloads.fb.erro_download, id)
+                        })
                     })
                 } catch(err){
                     await client.reply(from,err.message,id)
@@ -90,8 +97,16 @@ module.exports = downloads = async(client,message) => {
                     try{
                         var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
                         if(resultadosMidia.results_number == 0) return await client.reply(from, msgs_texto.downloads.ig.nao_encontrado, id)
-                        if(resultadosMidia.results_number == 1) await client.sendFile(from, resultadosMidia.url_list[0], `ig-media`,"",id)
-                        else for(let url of resultadosMidia.url_list) await client.sendFile(from, url, `ig-media`,"")
+                        if(resultadosMidia.results_number == 1) {
+                            await client.sendFile(from, resultadosMidia.url_list[0], `ig-media`,"",id).catch(()=>{
+                                client.reply(from, msgs_texto.downloads.ig.erro_download, id)
+                            })
+                        }
+                        else {
+                            var temErro = false
+                            for(let url of resultadosMidia.url_list) await client.sendFile(from, url, `ig-media`,"").catch(()=> temErro = true)
+                            if(temErro) await client.reply(from, msgs_texto.downloads.ig.erro_download, id)
+                        } 
                     } catch(err){
                         await client.reply(from,err.message,id)
                     }
@@ -105,8 +120,16 @@ module.exports = downloads = async(client,message) => {
                     try{
                         var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaTwitter(usuarioTexto)
                         if(!resultadosMidia.found) return await client.reply(from, msgs_texto.downloads.tw.nao_encontrado, id)
-                        if(resultadosMidia.type == "video") await client.sendFile(from, resultadosMidia.download[0].url, `twittervid.mp4`,"", id)
-                        else await client.sendFile(from, resultadosMidia.download, `twitterimg.jpg`,"", id)
+                        if(resultadosMidia.type == "video"){
+                            await client.sendFile(from, resultadosMidia.download[0].url, `twittervid.mp4`,"", id).catch(()=>{
+                                client.reply(from, msgs_texto.downloads.tw.erro_download, id)
+                            })
+                        } 
+                        else{
+                            await client.sendFile(from, resultadosMidia.download, `twitterimg.jpg`,"", id).catch(()=>{
+                                client.reply(from, msgs_texto.downloads.tw.erro_download, id)
+                            })
+                        }
                     } catch(err){
                         await client.reply(from,err.message,id)
                     }
