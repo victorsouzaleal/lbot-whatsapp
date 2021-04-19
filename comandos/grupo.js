@@ -448,8 +448,9 @@ module.exports = grupo = async(client,message) => {
                 break
 
             case "!dono":
-                const Owner_ = chat.groupMetadata.owner
-                await client.sendTextWithMentions(from, criarTexto(msgs_texto.grupo.dono.resposta, Owner_))
+                var donoGrupo = chat.groupMetadata.owner
+                if(donoGrupo) await client.sendTextWithMentions(from, criarTexto(msgs_texto.grupo.dono.resposta, donoGrupo))
+                else await client.sendText(from, msgs_texto.grupo.dono.sem_dono)
                 break
 
             case '!mt':
