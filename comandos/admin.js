@@ -5,6 +5,7 @@ const { version } = require('../package.json');
 const msgs_texto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData} = require('../lib/util')
 const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
+const cadastrarGrupo = require("../lib/cadastrarGrupo")
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
@@ -53,8 +54,15 @@ module.exports = admin = async(client,message) => {
                 var conviteInfo = await client.inviteInfo(linkGrupo)
                 if (!linkValido) return await client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
                 if (totalGrupos.length > 10) return await client.reply(from, msgs_texto.admin.entrar_grupo.maximo_grupos, id)
-                if (conviteInfo.status === 200) await client.joinGroupViaLink(linkGrupo).then(() => client.reply(from, msgs_texto.admin.entrar_grupo.entrar_sucesso,id))
-                else await client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
+                if (conviteInfo.status === 200) {
+                    client.joinGroupViaLink(linkGrupo).then(async (gId) => {
+                        await cadastrarGrupo(gId, "added", client)
+                        await client.reply(from, msgs_texto.admin.entrar_grupo.entrar_sucesso,id)
+                    })
+                }
+                else {
+                    await client.reply(from, msgs_texto.admin.entrar_grupo.link_invalido, id)
+                }
                 break
 
             case '!sair':
