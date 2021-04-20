@@ -22,7 +22,7 @@ logs/session/*
 
 #Ignorar arquivos de mídia
 media/*.mp4
-media/img/noBg.png
+media/img/*.png
 media/*.gif
 media/tts/*.mp3
 media/audios/*.mp3

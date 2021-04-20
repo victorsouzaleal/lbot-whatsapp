@@ -26,6 +26,8 @@ const start = async (client = new Client()) => {
             const eventosGrupo = require('./lib/eventosGrupo')
             const antiLink = require('./lib/antiLink')
             const antiFlood = require('./lib/antiFlood')
+            const antiTrava = require('./lib/antiTrava')
+            const antiPorno = require('./lib/antiPorno')
             const cadastrarGrupo = require('./lib/cadastrarGrupo')
 
             //Pegando hora de inicialização do BOT
@@ -54,8 +56,10 @@ const start = async (client = new Client()) => {
             client.onMessage((async (message) => {
                 var msgs = await client.getAmountOfLoadedMessages()
                 if(msgs >= 3000) await client.cutChatCache()
+                await antiTrava(client,message)
                 await antiLink(client,message)
                 await antiFlood(client,message)
+                await antiPorno(client, message)
                 await msgTratamento(client, message)
             }))
 

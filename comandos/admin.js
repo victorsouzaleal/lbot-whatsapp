@@ -9,7 +9,7 @@ const cadastrarGrupo = require("../lib/cadastrarGrupo")
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker} = require('../lib/bot')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarAntitrava} = require('../lib/bot')
 
 module.exports = admin = async(client,message) => {
     try{
@@ -37,10 +37,17 @@ module.exports = admin = async(client,message) => {
                 var expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
                 var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, infoBot.criador, infoBot.nome, botInicializacaoData, version)
+                // AUTO-STICKER
                 resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
+                // ANTI-TRAVA
+                resposta += (infoBot.antitrava.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.antitrava.on,  infoBot.antitrava.max_caracteres) : msgs_texto.admin.infocompleta.resposta_variavel.antitrava.off
+                // LIMITE COMANDOS DIARIO
                 resposta += (infoBot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on,  expiracaoLimiteDiario) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
+                // LIMITE COMANDOS POR MINUTO
                 resposta += (infoBot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, infoBot.limitecomandos.cmds_minuto_max, infoBot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
+                // LIMITE MENSAGENS PV
                 resposta += (infoBot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, infoBot.limitarmensagens.max, infoBot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
+                // BLOQUEIO DE COMANDOS
                 resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, infoBot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
                 resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, infoBot.cmds_executados, ownerNumber)
                 if(fotoBot) await client.sendFileFromUrl(from, fotoBot, "foto.jpg", resposta, id)
@@ -135,7 +142,7 @@ module.exports = admin = async(client,message) => {
                             if(blockNumber.includes(usuario)) {
                                 await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.ja_bloqueado, usuario.replace(/@c.us/g, '')))
                             } else {
-                                await client.contactBlock(usuario)
+                                client.contactBlock(usuario)
                                 await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.bloquear.sucesso, usuario.replace(/@c.us/g, '')))
                             }
                         }
@@ -160,7 +167,7 @@ module.exports = admin = async(client,message) => {
                     if(!blockNumber.includes(usuario)) {
                         await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.desbloquear.ja_desbloqueado, usuario.replace(/@c.us/g,'')))
                     } else {
-                        await client.contactUnblock(usuario)
+                        client.contactUnblock(usuario)
                         await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.desbloquear.sucesso, usuario.replace(/@c.us/g,'')))
                     }
                 }
@@ -176,6 +183,18 @@ module.exports = admin = async(client,message) => {
                     await client.reply(from, msgs_texto.admin.autostickerpv.desativado,id)
                 } 
                 break
+
+            case "!antitravapv":
+                var novoEstado = !botInfo().antitrava.status
+                if(novoEstado){
+                    var maxCaracteres = args[1] || 1500
+                    if(isNaN(maxCaracteres) || maxCaracteres < 250) return await client.reply(from, msgs_texto.admin.antitrava.qtd_invalida, id)
+                    botAlterarAntitrava(true, maxCaracteres)
+                    await client.reply(from, criarTexto(msgs_texto.admin.antitrava.ligado, maxCaracteres), id)
+                } else {
+                    botAlterarAntitrava(false, 0)
+                    await client.reply(from, msgs_texto.admin.antitrava.desligado, id)
+                } 
                 break
 
             case "!limitediario":

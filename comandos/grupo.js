@@ -40,6 +40,10 @@ module.exports = grupo = async(client,message) => {
                 resposta += (grupoInfo.mutar) ? msgs_texto.grupo.status.resposta_variavel.mutar.on : msgs_texto.grupo.status.resposta_variavel.mutar.off
                 //Auto-Sticker
                 resposta += (grupoInfo.autosticker) ? msgs_texto.grupo.status.resposta_variavel.autosticker.on : msgs_texto.grupo.status.resposta_variavel.autosticker.off
+                //Anti-Pornô
+                resposta += (grupoInfo.antiporno) ? msgs_texto.grupo.status.resposta_variavel.antiporno.on : msgs_texto.grupo.status.resposta_variavel.antiporno.off
+                //Anti-Trava
+                resposta += (grupoInfo.antitrava.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.antitrava.on, grupoInfo.antitrava.max_caracteres) : msgs_texto.grupo.status.resposta_variavel.antitrava.off
                 //Anti-Link
                 let al_filtros = ""
                 if(grupoInfo.antilink.filtros.youtube) al_filtros += msgs_texto.grupo.status.resposta_variavel.antilink.filtros.youtube
@@ -172,11 +176,42 @@ module.exports = grupo = async(client,message) => {
                 var estadoNovo = !grupoInfo.mutar
                 if (estadoNovo) {
                     await db.alterarMutar(groupId)
-                    client.reply(from,  msgs_texto.grupo.mutar.ligado, id)
+                    await client.reply(from,  msgs_texto.grupo.mutar.ligado, id)
                 } else {
                     await db.alterarMutar(groupId,false)
-                    client.reply(from,  msgs_texto.grupo.mutar.desligado, id)
+                    await client.reply(from,  msgs_texto.grupo.mutar.desligado, id)
 
+                }
+                break
+
+            case "!aporno":
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
+                var grupoInfo = await db.obterGrupo(groupId)
+                var estadoNovo = !grupoInfo.antiporno
+                if (estadoNovo) {
+                    await db.alterarAntiPorno(groupId, true)
+                    await client.reply(from,  msgs_texto.grupo.antiporno.ligado, id)
+                } else {
+                    await db.alterarAntiPorno(groupId, false)
+                    await client.reply(from,  msgs_texto.grupo.antiporno.desligado, id)
+
+                }
+                break
+
+            case "!atrava":
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
+                var grupoInfo = await db.obterGrupo(groupId)
+                var estadoNovo = !grupoInfo.antitrava.status
+                if (estadoNovo) {
+                    var maxCaracteres = args[1] || 1500
+                    if(isNaN(maxCaracteres) || maxCaracteres < 250) return await client.reply(from, msgs_texto.grupo.antitrava.qtd_invalida, id)
+                    await db.alterarAntiTrava(groupId, true, maxCaracteres)
+                    await client.reply(from,  criarTexto(msgs_texto.grupo.antitrava.ligado, maxCaracteres), id)
+                } else {
+                    await db.alterarAntiTrava(groupId, false, 0)
+                    await client.reply(from,  msgs_texto.grupo.antitrava.desligado, id)
                 }
                 break
 
