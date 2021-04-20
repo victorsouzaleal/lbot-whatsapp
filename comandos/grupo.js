@@ -9,6 +9,7 @@ const {obterDestravas} = require("../lib/api")
 module.exports = grupo = async(client,message) => {
     try{
         const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList, body} = message
+        const { pushname, verifiedName, formattedName } = sender, username = pushname || verifiedName || formattedName
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -586,7 +587,9 @@ module.exports = grupo = async(client,message) => {
                     if(idParticipantesAtuais.includes(usuario)){
                         if(!groupAdmins.includes(usuario)){
                             client.removeParticipant(groupId, usuario).then(()=>{
-                                if(usuariosSelecionados.length === 1) client.reply(from, msgs_texto.grupo.banir.banir_sucesso, id)
+                                if(usuariosSelecionados.length === 1) {
+                                    client.sendTextWithMentions(from, criarTexto(msgs_texto.geral.resposta_ban, usuario.replace("@c.us", ""), msgs_texto.grupo.banir.motivo, username))
+                                }
                             })
                         } else {
                             if(usuariosSelecionados.length === 1) client.reply(from, msgs_texto.grupo.banir.banir_admin, id)
