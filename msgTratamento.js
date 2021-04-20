@@ -177,7 +177,7 @@ module.exports = msgTratamento = async (client, message) => {
                 let limitarMensagens = await botLimitarMensagensPv(sender.id, tipo_usuario_pv)
                 if(limitarMensagens.bloquear_usuario) {
                     await client.sendText(sender.id, limitarMensagens.msg)
-                    return await client.contactBlock(sender.id)
+                    return client.contactBlock(sender.id)
                 }
             }
         }
