@@ -79,7 +79,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ### Pronto! Seu bot já está funcionando!!
 
-**Obs**: Se você deseja utilizar os comandos **!ssf** (remover fundo), **!img** (pesquisar imagem), **!pesquisar** (pesquisar na internet), **!noticias** (noticias atuais) e **!qualmusica**(reconhecimento de músicas) vá para o **passo 5**.
+**Obs**: Se você deseja utilizar os comandos **!ssf** (remover fundo), **!img** (pesquisar imagem), **!pesquisar** (pesquisar na internet), **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) e o recurso de **anti-pornografia** vá para o **passo 5**.
 
 <br>
 
@@ -99,10 +99,12 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
         acr_host= recebe seu endereço de host obtido no https://acrcloud.com/
         acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
         acr_access_secret= recebe seu access_secret obtido no https://acrcloud.com/
+        # DEEPAI - DETECTOR DE NUDEZ/PORNOGRAFIA
+        API_DEEPAI= recebe a chave da conta que voce criar no site deepai.org 
 
 **Obs**: Se o seu sistema for MAC, habilite a exibição de arquivos ocultos para exibir o .env na raiz do projeto.<br>
 
-**Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas)** :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do RemoveBG(Remover fundo), NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas) e DeepAI(Detector de Nudez e Pornografia)** :  [Clique AQUI](CHAVESAPI.md)
 
 <br>
 
@@ -162,6 +164,9 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Lista Negra  |
 |       ✅        |   Mutar Grupo
 |       ✅        |   Bem Vindo  |
+|       ✅        |   Auto Sticker |
+|       ✅        |   Anti Trava |
+|       ✅        |   Anti Pornô |
 |       ✅        |   Anti Fake |
 |       ✅        |   Anti Link  |
 |       ✅        |   Anti Flood  |
@@ -186,7 +191,9 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Sistema de Tipos de Usuários        |
 |       ✅        |   Limitador comandos diários (por usuário)            |
 |       ✅        |   Limitador de comandos por minuto (por usuário)          |
-|       ✅       | Limitador de mensagens privadas (Anti-flood)
+|       ✅        |   Limitador de mensagens privadas (Anti-flood)    |
+|       ✅        |   Auto Sticker Privado   |
+|       ✅        |   Anti Trava Privado   |
 |       ✅        |   Sair do grupo                     |
 |       ✅        |   Limpar somente chat de contatos                 |
 |       ✅        |   Obter lista de usuários bloqueados                |
