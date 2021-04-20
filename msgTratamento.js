@@ -122,6 +122,15 @@ module.exports = msgTratamento = async (client, message) => {
                 if (isGroupMsg && isBlocked) return
                 //SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
                 if(isGroupMsg && !isGroupAdmins && grupoInfo.mutar) return
+                //LIMITACAO DE COMANDO POR MINUTO
+                if(botInfo().limitecomandos.status){
+                    let usuario = await db.obterUsuario(sender.id)
+                    let limiteComando = await botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
+                    if(limiteComando.comando_bloqueado) {
+                        if(limiteComando.msg != undefined) await client.reply(from, limiteComando.msg, id)
+                        return 
+                    }
+                }
                 //SE O LIMITE DIARIO DE COMANDOS ESTIVER ATIVADO
                 if(botInfo().limite_diario.status){
                     await botVerificarExpiracaoLimite()
@@ -132,6 +141,32 @@ module.exports = msgTratamento = async (client, message) => {
                     await db.addContagemTotal(sender.id)
                 }
                 await autoSticker(client, message)
+                consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
+                return
+            }
+
+            //AUTO-STICKER PRIVADO
+            if(!isGroupMsg && (type == MessageTypes.IMAGE || type == MessageTypes.VIDEO) && botInfo().autosticker){
+                //LIMITACAO DE COMANDO POR MINUTO
+                if(botInfo().limitecomandos.status){
+                    let usuario = await db.obterUsuario(sender.id)
+                    let limiteComando = await botLimitarComando(sender.id, usuario.tipo,isGroupAdmins)
+                    if(limiteComando.comando_bloqueado) {
+                        if(limiteComando.msg != undefined) await client.reply(from, limiteComando.msg, id)
+                        return 
+                    }
+                }
+                //SE O LIMITE DIARIO DE COMANDOS ESTIVER ATIVADO
+                if(botInfo().limite_diario.status){
+                    await botVerificarExpiracaoLimite()
+                    let ultrapassou = await db.ultrapassouLimite(sender.id)
+                    if(!ultrapassou) await db.addContagemDiaria(sender.id) 
+                    else return await client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
+                } else {
+                    await db.addContagemTotal(sender.id)
+                }
+                await autoSticker(client, message)
+                consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
                 return
             }
 

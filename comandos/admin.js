@@ -9,7 +9,7 @@ const cadastrarGrupo = require("../lib/cadastrarGrupo")
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv} = require('../lib/bot')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker} = require('../lib/bot')
 
 module.exports = admin = async(client,message) => {
     try{
@@ -37,6 +37,7 @@ module.exports = admin = async(client,message) => {
                 var expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
                 var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, infoBot.criador, infoBot.nome, botInicializacaoData, version)
+                resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
                 resposta += (infoBot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on,  expiracaoLimiteDiario) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
                 resposta += (infoBot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, infoBot.limitecomandos.cmds_minuto_max, infoBot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
                 resposta += (infoBot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, infoBot.limitarmensagens.max, infoBot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
@@ -163,6 +164,18 @@ module.exports = admin = async(client,message) => {
                         await client.sendTextWithMentions(from, criarTexto(msgs_texto.admin.desbloquear.sucesso, usuario.replace(/@c.us/g,'')))
                     }
                 }
+                break
+
+            case "!autostickerpv":
+                var novoEstado = !botInfo().autosticker
+                if(novoEstado){
+                    botAlterarAutoSticker(true)
+                    await client.reply(from, msgs_texto.admin.autostickerpv.ativado,id)
+                } else {
+                    botAlterarAutoSticker(false)
+                    await client.reply(from, msgs_texto.admin.autostickerpv.desativado,id)
+                } 
+                break
                 break
 
             case "!limitediario":
