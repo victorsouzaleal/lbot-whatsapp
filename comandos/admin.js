@@ -420,6 +420,7 @@ module.exports = admin = async(client,message) => {
                 var os = require('os')
                 var tempoResposta = (moment.now()/1000) - t
                 var memoriaTotal = os.totalmem()/1024000000, memoriaUsada = (os.totalmem() - os.freemem())/1024000000
+                var chats = await client.getAllChatIds()
                 var sistemaOperacional = `${os.type()} ${os.release()}`
                 var nomeProcessador = os.cpus()[0].model
                 var mensagensCarregadas = await client.getAmountOfLoadedMessages()
@@ -431,6 +432,7 @@ module.exports = admin = async(client,message) => {
                 memoriaUsada.toFixed(2), 
                 memoriaTotal.toFixed(2), 
                 tempoResposta.toFixed(3),
+                chats.length,
                 mensagensCarregadas,
                 chatContatos.length,
                 chatGrupos.length,
