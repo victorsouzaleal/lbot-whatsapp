@@ -54,10 +54,10 @@ const start = async (client = new Client()) => {
 
             // Ouvindo mensagens
             client.onMessage((async (message) => {
-                await antiTrava(client,message)
-                await antiLink(client,message)
-                await antiFlood(client,message)
-                await antiPorno(client, message)
+                if(!await antiTrava(client,message)) return
+                if(!await antiLink(client,message)) return
+                if(!await antiFlood(client,message)) return
+                if(!await antiPorno(client, message)) return
                 await msgTratamento(client, message)
             }))
 
