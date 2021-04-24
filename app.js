@@ -10,6 +10,7 @@ const config = require('./config')
 const msgTratamento = require('./msgTratamento')
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
+const {atualizadorCamposGrupos, atualizadorCamposBot, atualizadorCamposEnv, atualizadorCamposUsuarios} = require("./lib/atualizadorCampos")
 const {botStart} = require('./lib/bot')
 const {verificarEnv} = require('./lib/env')
 
@@ -21,7 +22,7 @@ const start = async (client = new Client()) => {
             console.log(corTexto(msgs_texto.inicio.arquivos_criados))
             setTimeout(()=>{
                 return client.kill()
-            },10000)
+            },5000)
         } else {
             const eventosGrupo = require('./lib/eventosGrupo')
             const antiLink = require('./lib/antiLink')
@@ -30,16 +31,33 @@ const start = async (client = new Client()) => {
             const antiPorno = require('./lib/antiPorno')
             const cadastrarGrupo = require('./lib/cadastrarGrupo')
 
-            //Pegando hora de inicialização do BOT
-            console.log(corTexto(await botStart()))
             //Cadastro de grupos
             console.log(corTexto(await cadastrarGrupo("","inicio",client)))
+            //Verificar e atualizar campos no banco de dados de usuários que foram incluidos em versões novas
+            console.log(corTexto(await atualizadorCamposUsuarios()))
+            //Verificar e atualizar campos no banco de dados de grupos que foram incluidos em versões novas
+            console.log(corTexto(await atualizadorCamposGrupos()))
+            //Verificar e atualizar campos no banco de dados do bot que foram incluidos em versões novas
+            console.log(corTexto(await atualizadorCamposBot()))
+            //Verificar e atualizar campos no .env que foram incluidos em versões novas
+            if(await atualizadorCamposEnv()){
+                console.log(corTexto(msgs_texto.inicio.env_atualizado))
+                await new Promise((resolve)=>{
+                    setTimeout(()=>{
+                        resolve(client.kill())
+                    },5000)
+                })
+            } else {
+                console.log(corTexto(msgs_texto.inicio.env_verificado))
+            }
             //Verificar lista negra dos grupos
             console.log(corTexto(await verificacaoListaNegraGeral(client)))
             //Atualização dos participantes dos grupos
             console.log(corTexto(await atualizarParticipantes(client)))
             //Atualização da contagem de mensagens
             console.log(corTexto(await recarregarContagem(client)))
+            //Pegando hora de inicialização do BOT
+            console.log(corTexto(await botStart()))
             //Verificando se os campos do .env foram modificados e envia para o console
             verificarEnv()
 
@@ -83,6 +101,7 @@ const start = async (client = new Client()) => {
         } 
     } catch(err) {
         //Faça algo se der erro em alguma das funções acima
+        console.log(err)
         console.error(corTexto("[ERRO FATAL]","#d63e3e"), err.message)
         setTimeout(()=>{
             return client.kill()
