@@ -53,6 +53,7 @@ module.exports = msgTratamento = async (client, message) => {
         }
 
         //SE O USUARIO NÃO FOR REGISTRADO, FAÇA O REGISTRO
+        var registrado = await db.verificarRegistro(sender.id)
         if(!registrado) {
             if(isOwner) {
                 await db.verificarDonoAtual(sender.id)
@@ -67,8 +68,6 @@ module.exports = msgTratamento = async (client, message) => {
 
         //SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
-            var registrado = await db.verificarRegistro(sender.id)
-        
             //ATUALIZE NOME DO USUÁRIO 
             await db.atualizarNome(sender.id, username)
 
