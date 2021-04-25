@@ -238,11 +238,11 @@ module.exports = utilidades = async(client,message) => {
                     var listaNoticias = await api.obterNoticias()
                     var respostaNoticias = msgs_texto.utilidades.noticia.resposta_titulo
                     for(let noticia of listaNoticias){
-                        respostaNoticias += criarTexto(msgs_texto.utilidades.noticia.resposta_itens, noticia.title)
+                        respostaNoticias += criarTexto(msgs_texto.utilidades.noticia.resposta_itens, noticia.titulo, noticia.descricao || "Sem descrição", noticia.url)
                     }
-                    client.reply(from, respostaNoticias, id)
+                    await client.reply(from, respostaNoticias, id)
                 } catch(err){
-                    client.reply(from, err.message, id)
+                    await client.reply(from, err.message, id)
                 }
                 break;
 
