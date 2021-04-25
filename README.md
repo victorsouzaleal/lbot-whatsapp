@@ -79,7 +79,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ### Pronto! Seu bot já está funcionando!!
 
-**Obs**: Se você deseja utilizar os comandos **!img** (pesquisar imagem), **!pesquisar** (pesquisar na internet), **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) e o recurso de **anti-pornografia** vá para o **passo 5**.
+**Obs**: Se você deseja utilizar os comandos **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) e o recurso de **anti-pornografia** vá para o **passo 5**.
 
 <br>
 
@@ -91,8 +91,6 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
         NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
         # NEWSAPI - NOTICIAS 
         API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
-        # RAPIDAPI - PESQUISA DE IMAGENS/WEB
-        API_RAPIDAPI = recebe a chave da conta que você criar no site rapidapi.com 
         # ACRCLOUD - RECONHECIMENTO DE MÚSICAS
         acr_host= recebe seu endereço de host obtido no https://acrcloud.com/
         acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
@@ -102,7 +100,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 **Obs**: Se o seu sistema for MAC, habilite a exibição de arquivos ocultos para exibir o .env na raiz do projeto.<br>
 
-**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), RapidAPI(Pesquisa Imagens/Web), ACRCloud(Reconhecimento de Músicas) e DeepAI(Detector de Nudez e Pornografia)** :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DeepAI(Detector de Nudez e Pornografia)** :  [Clique AQUI](CHAVESAPI.md)
 
 <br>
 

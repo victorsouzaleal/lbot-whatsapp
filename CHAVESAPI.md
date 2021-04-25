@@ -11,36 +11,7 @@ Após a criação da conta a sua **chave** já será exibida para ser usada no c
 
 <br>
 
-## 2 - RapidAPI (Pesquisa Imagens/Web)
-#### Limite Gratuito: 1000 pesquisas/conta, após isso você terá que criar uma nova conta.
-
-### Crie uma conta no site https://rapidapi.com/
-
-Após a conta ser criada, vá em **My Apps**
-<img src="https://i.imgur.com/WBrfNFU.png">
-
-Clique em **default-application_XXXXXX** e depois em **Security**
-<img src="https://i.imgur.com/UG0a6oI.png">
-
-E aqui vai estar a **chave** para usar no campo designado **API_RAPIDAPI** no .env do Bot.
-<img src="https://i.imgur.com/2iLagG6.png">
-
-#### Ainda não acabou, temos que nos inscrever nas API's do Bing para podermos usar os serviços deles.
-
-Se inscrevendo no **Bing Web Search** : https://rapidapi.com/microsoft-azure-org-microsoft-cognitive-services/api/bing-web-search1/pricing
-
-Clique em **"Select Plan"** para se inscrever no plano gratuito
-<img src="https://i.imgur.com/m7I0Mwo.png">
-
-Se inscrevendo no **Bing Image Search** : https://rapidapi.com/microsoft-azure-org-microsoft-cognitive-services/api/bing-image-search1/pricing
-
-Faça a mesma coisa da ultima inscrição, clique em **"Select Plan"**
-
-### Pronto, você já tem sua chave RapidAPI totalmente configurada.
-
-<br>
-
-## 3 - ACRCloud - Reconhecimento de Músicas
+## 2 - ACRCloud - Reconhecimento de Músicas
 
 #### Limite Gratuito: 14 dias de uso ou 5000 reconhecimentos, após isso o limite é de 100 reconhecimentos/dia.
 
@@ -64,7 +35,7 @@ Nessa tela agora você tem seu **acr_host**, **acr_access_key** e **acr_access_s
 ### Pronto, você já tem suas chaves ACRCloud .
 
 
-## 4 - DEEPAI - Detector de Nudez/Pornografia
+## 3 - DEEPAI - Detector de Nudez/Pornografia
 ### Crie uma conta no site https://deepai.org/
 
 Após a conta criada e o email verificado , clique em Dashboard e copie a chave para ser usada no campo **API_DEEPAI** no .env do Bot.
