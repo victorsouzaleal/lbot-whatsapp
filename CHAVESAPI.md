@@ -1,27 +1,6 @@
 # Tutorial para obter as chaves das API's
 
-
-## 1 - RemoveBG (Remover fundo de fotos)
-
-#### Limite Gratuito: 50 stickers sem fundo/conta, após isso você terá que criar uma nova conta.
-
-
-### Crie uma conta no site https://accounts.kaleido.ai/users/sign_up?locale=pt-br
-
-Após criar a conta, clique em **API Key**
-<img src="https://i.imgur.com/llKh6JL.png" >
-
-Após apertar em **"Show"**, a sua **chave** será exibida e deverá ser usada no campo **API_REMOVEBG** no .env do Bot.
-<img src="https://i.imgur.com/kyANXdb.png"/>
-
-### Pronto, você já tem sua chave RemoveBG .
-
-
-
-
-<br>
-
-## 2 - NewsAPI (Noticias)
+## 1 - NewsAPI (Noticias)
 
 ### Crie uma conta no site https://newsapi.org/register
 
@@ -32,7 +11,7 @@ Após a criação da conta a sua **chave** já será exibida para ser usada no c
 
 <br>
 
-## 3 - RapidAPI (Pesquisa Imagens/Web)
+## 2 - RapidAPI (Pesquisa Imagens/Web)
 #### Limite Gratuito: 1000 pesquisas/conta, após isso você terá que criar uma nova conta.
 
 ### Crie uma conta no site https://rapidapi.com/
@@ -61,7 +40,7 @@ Faça a mesma coisa da ultima inscrição, clique em **"Select Plan"**
 
 <br>
 
-## 4 - ACRCloud - Reconhecimento de Músicas
+## 3 - ACRCloud - Reconhecimento de Músicas
 
 #### Limite Gratuito: 14 dias de uso ou 5000 reconhecimentos, após isso o limite é de 100 reconhecimentos/dia.
 
@@ -85,7 +64,7 @@ Nessa tela agora você tem seu **acr_host**, **acr_access_key** e **acr_access_s
 ### Pronto, você já tem suas chaves ACRCloud .
 
 
-## 5 - DEEPAI - Detector de Nudez/Pornografia
+## 4 - DEEPAI - Detector de Nudez/Pornografia
 ### Crie uma conta no site https://deepai.org/
 
 Após a conta criada e o email verificado , clique em Dashboard e copie a chave para ser usada no campo **API_DEEPAI** no .env do Bot.
