@@ -130,9 +130,8 @@ module.exports = figurinhas = async(client,message) => {
                     }
                     if(dadosMensagem.tipo === "image"){
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
-                        var usuarioImgBase64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
                         try{
-                            var saidaImgBase64 = await sticker.removerFundoImagem(usuarioImgBase64, dadosMensagem.mimetype)
+                            var saidaImgBase64 = await sticker.removerFundoImagem(mediaData, dadosMensagem.mimetype)
                             client.sendImageAsSticker(from, saidaImgBase64, {author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true, discord: "701084178112053288"}).catch(err=>{
                                 consoleErro(err.message, "STICKER-SSF")
                                 client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)

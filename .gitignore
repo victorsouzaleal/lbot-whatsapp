@@ -22,7 +22,8 @@ logs/session/*
 
 #Ignorar arquivos de mídia
 media/*.mp4
-media/img/*.png
+media/img/tmp/*.jpg
+media/img/tmp/*.png
 media/*.gif
 media/tts/*.mp3
 media/audios/*.mp3
