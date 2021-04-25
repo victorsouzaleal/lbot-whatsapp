@@ -139,14 +139,14 @@ module.exports = utilidades = async(client,message) => {
                 try{
                     var usuarioCodigoRastreio = body.slice(10).trim(), rastreioDados = await api.obterRastreioCorreios(usuarioCodigoRastreio)
                     var rastreioResposta = msgs_texto.utilidades.rastreio.resposta_titulo
-                    for(let dado of rastreioResposta){
+                    for(let dado of rastreioDados){
                         var local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
                         rastreioResposta += criarTexto(msgs_texto.utilidades.rastreio.resposta_itens, dado.status, dado.data, dado.hora, local)
                         rastreioResposta += "-----------------------------------------\n"
                     }
-                    client.reply(from, rastreioResposta, id)
+                    await client.reply(from, rastreioResposta, id)
                 } catch(err){
-                    client.reply(from, err.message ,id)
+                    await client.reply(from, err.message ,id)
                 }
                 break
             
