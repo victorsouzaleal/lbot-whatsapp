@@ -353,13 +353,23 @@ module.exports = admin = async(client,message) => {
 
             case '!bctodos':
                 if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
-                var mensagem = body.slice(9).trim(), chatsId = await client.getAllChatIds(), bloqueados = await client.getBlockedIds()
-                for (var chatId of chatsId) {
-                    if(chatId.match(/@g.us/g)){
-                        var chatInfo = await client.getChatById(chatId)
-                        if (!chatInfo.isReadOnly) await client.sendText(chatId, criarTexto(msgs_texto.admin.bctodos.anuncio, mensagem))
+                var mensagem = body.slice(9).trim(), chats = await client.getAllChats(), bloqueados = await client.getBlockedIds()
+                await client.reply(from, criarTexto(msgs_texto.admin.bctodos.espera, chats.length, chats.length), id)
+                for (let chat of chats) {
+                    if(chat.isGroup && !chat.isReadOnly && !chat.isAnnounceGrpRestrict){
+                        await new Promise((resolve)=>{
+                            setTimeout(async ()=>{
+                                resolve(await client.sendText(chat.id, criarTexto(msgs_texto.admin.bctodos.anuncio, mensagem)))
+                            }, 1000)
+                        })
                     } else {
-                        if(!bloqueados.includes(chatId)) await client.sendText(chatId, criarTexto(msgs_texto.admin.bctodos.anuncio, mensagem))
+                        if(!bloqueados.includes(chat.id)) {
+                            await new Promise((resolve)=>{
+                                setTimeout(async ()=>{
+                                    resolve(await client.sendText(chat.id, criarTexto(msgs_texto.admin.bctodos.anuncio, mensagem)))
+                                }, 1000)
+                            })
+                        }
                     }
                 }
                 await client.reply(from, msgs_texto.admin.bctodos.bc_sucesso , id)
@@ -367,20 +377,31 @@ module.exports = admin = async(client,message) => {
 
             case '!bccontatos':
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                var mensagem = body.slice(12).trim(), chatsId = await client.getAllChatIds(), bloqueados = await client.getBlockedIds()
-                for (let chatId of chatsId) {
-                    if(chatId.match(/@c.us/g) && !bloqueados.includes(chatId)) await client.sendText(chatId, criarTexto(msgs_texto.admin.bccontatos.anuncio, mensagem))
+                var mensagem = body.slice(12).trim(), chats = await client.getAllChats(), grupos = await client.getAllGroups(), bloqueados = await client.getBlockedIds(), qtdChatContatos = chats.length - grupos.length
+                await client.reply(from, criarTexto(msgs_texto.admin.bccontatos.espera, qtdChatContatos, qtdChatContatos), id)
+                for (let chat of chats) {
+                    if(!chat.isGroup && !bloqueados.includes(chat.id)) {
+                        await new Promise((resolve)=>{
+                            setTimeout(async ()=>{
+                                resolve(await client.sendText(chat.id, criarTexto(msgs_texto.admin.bccontatos.anuncio, mensagem)))
+                            }, 1000)
+                        })
+                    }
                 }
                 await client.reply(from, msgs_texto.admin.bccontatos.bc_sucesso , id)
                 break
             
             case '!bcgrupos':
                 if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
-                var mensagem = body.slice(10).trim(), chatsId = await client.getAllChatIds()
-                for (var chatId of chatsId) {
-                    if(chatId.match(/@g.us/g)){
-                        var chatInfo = await client.getChatById(chatId)
-                        if (!chatInfo.isReadOnly) await client.sendText(chatId, criarTexto(msgs_texto.admin.bcgrupos.anuncio, mensagem))
+                var mensagem = body.slice(10).trim(), grupos = await client.getAllGroups()
+                await client.reply(from, criarTexto(msgs_texto.admin.bcgrupos.espera, grupos.length, grupos.length) , id)
+                for (var grupo of grupos) {
+                    if (!grupo.isReadOnly && !grupo.isAnnounceGrpRestrict) {
+                        await new Promise((resolve)=>{
+                            setTimeout(async ()=>{
+                                resolve(await client.sendText(grupo.id, criarTexto(msgs_texto.admin.bcgrupos.anuncio, mensagem)))
+                            }, 1000)
+                        })
                     }
                 }
                 await client.reply(from, msgs_texto.admin.bcgrupos.bc_sucesso , id)
