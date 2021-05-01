@@ -29,7 +29,7 @@
     "fs-extra": "^9.0.1",
     "g-i-s": "^2.1.6",
     "google-it": "^1.6.2",
-    "instagram-url-direct": "^1.0.8",
+    "instagram-url-direct": "^1.0.9",
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
     "nedb-async": "^0.1.6",
