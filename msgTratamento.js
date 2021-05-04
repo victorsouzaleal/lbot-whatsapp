@@ -60,7 +60,7 @@ module.exports = msgTratamento = async (client, message) => {
                 await db.registrarDono(sender.id, username)
             }
             else {
-                await db.registrarUsuarioComum(sender.id, username)
+                await db.registrarUsuario(sender.id, username)
             }
         } else {
             if(isOwner) await db.verificarDonoAtual(sender.id)       
@@ -172,7 +172,7 @@ module.exports = msgTratamento = async (client, message) => {
             //SE FOR UMA MENSAGEM PRIVADA E O LIMITADOR DE MENSAGENS ESTIVER ATIVO
             if(!isGroupMsg && botInfo().limitarmensagens.status){
                 let u = await db.obterUsuario(sender.id)
-                let tipo_usuario_pv = u ? u.tipo : "comum"
+                let tipo_usuario_pv = u ? u.tipo : "bronze"
                 let limitarMensagens = await botLimitarMensagensPv(sender.id, tipo_usuario_pv)
                 if(limitarMensagens.bloquear_usuario) {
                     await client.sendText(sender.id, limitarMensagens.msg)

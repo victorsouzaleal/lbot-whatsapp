@@ -10,7 +10,6 @@ const config = require('./config')
 const msgTratamento = require('./msgTratamento')
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
-const {atualizadorCamposGrupos, atualizadorCamposBot, atualizadorCamposEnv, atualizadorCamposUsuarios} = require("./lib/atualizadorCampos")
 const {botStart} = require('./lib/bot')
 const {verificarEnv} = require('./lib/env')
 
@@ -33,23 +32,6 @@ const start = async (client = new Client()) => {
 
             //Cadastro de grupos
             console.log(corTexto(await cadastrarGrupo("","inicio",client)))
-            //Verificar e atualizar campos no banco de dados de usuários que foram incluidos em versões novas
-            console.log(corTexto(await atualizadorCamposUsuarios()))
-            //Verificar e atualizar campos no banco de dados de grupos que foram incluidos em versões novas
-            console.log(corTexto(await atualizadorCamposGrupos()))
-            //Verificar e atualizar campos no banco de dados do bot que foram incluidos em versões novas
-            console.log(corTexto(await atualizadorCamposBot()))
-            //Verificar e atualizar campos no .env que foram incluidos em versões novas
-            if(await atualizadorCamposEnv()){
-                console.log(corTexto(msgs_texto.inicio.env_atualizado))
-                await new Promise((resolve)=>{
-                    setTimeout(()=>{
-                        resolve(client.kill())
-                    },5000)
-                })
-            } else {
-                console.log(corTexto(msgs_texto.inicio.env_verificado))
-            }
             //Verificar lista negra dos grupos
             console.log(corTexto(await verificacaoListaNegraGeral(client)))
             //Atualização dos participantes dos grupos
