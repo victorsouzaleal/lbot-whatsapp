@@ -407,6 +407,18 @@ module.exports = admin = async(client,message) => {
                 await client.reply(from, msgs_texto.admin.bcgrupos.bc_sucesso , id)
                 break
             
+            case "!grupos":
+                var grupos = await client.getAllGroups(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, grupos.length)
+                for (var grupo of grupos){
+                    var adminsGrupo = await client.getGroupAdmins(grupo.id)
+                    var botAdmin = adminsGrupo.includes(botNumber + '@c.us')
+                    var linkGrupo = "Não Disponível"
+                    if(botAdmin) linkGrupo = await client.getGroupInviteLink(grupo.id)
+                    resposta += criarTexto(msgs_texto.admin.grupos.resposta_itens, grupo.formattedTitle, grupo.groupMetadata.participants.length, botAdmin ? "Sim" : "Não", linkGrupo)
+                }
+                await client.reply(from, resposta, id)
+                break
+
             case '!print':
                 let print = await client.getSnapshot()
                 await client.sendFile(from,print,"print.png",'Captura de Tela',id)
