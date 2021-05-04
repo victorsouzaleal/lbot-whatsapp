@@ -20,15 +20,17 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Sim-blue.svg"/></a>
 </p>
 
-## Sobre o projeto :
+## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
+## VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) ,  [NODE VERSÃO LTS](https://nodejs.org/en/) E O [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/) INSTALADOS EM SEU COMPUTADOR
 
-Esse é o LBOT que fiz no meu tempo livre para aprender mais sobre Node.js, tem diversas funções interessantes para uso individual ou em grupo. Espero que façam bom uso.<br>
-
-Se forem usar para fazer modificações ou outras coisas, por favor deem crédito a esse Github ^^
-
-### ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
-### VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) ,  [NODE VERSÃO LTS](https://nodejs.org/en/) E O [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/) INSTALADOS EM SEU COMPUTADOR
 <br><br>
+
+## Atualização 1.12.0 (NECESSÁRIO INSTALAR NOVAMENTE DO ZERO!)
+### **[NOVO]** Comando **!atps** que transforma texto em sticker animado
+### **[ALTERAÇÃO]** Nomes dos tipos do usuários foram modificados para **bronze**, **prata**, **ouro** e **vip**
+### **[ATUALIZAÇÃO]** Ytdl-core atualizado para 4.7.0
+
+<br>
 
 ## 1 - Clone este projeto OU faça download da ultima release :
 
@@ -228,11 +230,6 @@ Entre em contato comigo pelo WhatsApp : https://wa.me/5521995612287
 
 <br>
 
-## 9 - Atualizações
-Se quiser atualizar o bot sem perder suas informações de usuários/grupos e o seu .env, guarde a pasta **database** e o arquivo **.env** em algum lugar e depois de clonar/fazer download da nova versão do Bot, cole eles novamente na pasta.
-
-<br>
-
-## 10 - Agradecimentos
+## 9 - Agradecimentos
 * [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
 * [`MhankBarBar/whatsapp-bot`](https://github.com/MhankBarBar/whatsapp-bot)
