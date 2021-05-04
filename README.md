@@ -26,9 +26,9 @@
 <br><br>
 
 ## Atualização 1.12.0 (NECESSÁRIO INSTALAR NOVAMENTE DO ZERO!)
-### **[NOVO]** Comando **!atps** que transforma texto em sticker animado
-### **[ALTERAÇÃO]** Nomes dos tipos do usuários foram modificados para **bronze**, **prata**, **ouro** e **vip**
-### **[ATUALIZAÇÃO]** Ytdl-core atualizado para 4.7.0
+**[NOVO]** Comando **!atps** que transforma texto em sticker animado<br>
+**[ALTERAÇÃO]** Nomes dos tipos do usuários foram modificados para **bronze**, **prata**, **ouro** e **vip**<br>
+**[ATUALIZAÇÃO]** Ytdl-core atualizado para 4.7.0<br>
 
 <br>
 
@@ -115,6 +115,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅       | Foto para Sticker     |
 |       ✅       | Sticker para foto              |
 |       ✅       | Texto para Sticker                  |
+|       ✅       | Texto para Sticker Animado                 |
 |       ✅       | Video/GIF para Sticker |
 |       ✅       | Foto para Sticker (Sem fundo) |
 
