@@ -10,8 +10,8 @@ const filaPlay = new PQueue({concurrency: 2})
 const filaYT = new PQueue({concurrency: 1})
 const filaIg = new PQueue({concurrency: 1})
 const filaFb = new PQueue({concurrency: 1})
-const filaTw = new PQueue({concurrency: 2})
-const filaImg = new PQueue({concurrency: 1})
+const filaTw = new PQueue({concurrency: 1})
+const filaImg = new PQueue({concurrency: 2})
 
 
 module.exports = downloads = async(client,message) => {
