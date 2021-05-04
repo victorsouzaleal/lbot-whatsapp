@@ -120,6 +120,19 @@ module.exports = figurinhas = async(client,message) => {
                     client.reply(from, err.message, id)
                 }
                 break
+
+            case "!atps":
+                if(args.length == 1 || type != "chat") return client.reply(from,erroComandoMsg(command),id)
+                var usuarioTexto = body.slice(5).trim()
+                if(usuarioTexto.length > 40) return client.reply(from,msgs_texto.figurinhas.atps.texto_longo,id)
+                await client.reply(from, msgs_texto.figurinhas.atps.espera,id)
+                try{
+                    var webpBase64 = await sticker.textoParaGif(usuarioTexto)
+                    await client.sendRawWebpAsSticker(from, webpBase64, true)
+                } catch(err){
+                    await client.reply(from, err.message, id)
+                }
+                break
             
             case '!ssf':
                 if(isMedia || quotedMsg){
