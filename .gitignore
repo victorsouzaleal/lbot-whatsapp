@@ -35,3 +35,7 @@ media/videos/*.jpg
 database/db/*.db
 database/json/bot.json
 database/json/antiflood.json
+
+# managed by open-wa. see: https://github.com/open-wa/wa-automate-nodejs/issues/1632
+**.data.json
+# end managed by open-wa. see: https://github.com/open-wa/wa-automate-nodejs/issues/1632
