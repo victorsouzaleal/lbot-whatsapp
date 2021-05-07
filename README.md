@@ -25,10 +25,9 @@
 
 <br><br>
 
-## Atualização 1.12.0 (NECESSÁRIO INSTALAR NOVAMENTE DO ZERO!)
-**[NOVO]** Comando **!atps** que transforma texto em sticker animado<br>
-**[ALTERAÇÃO]** Nomes dos tipos do usuários foram modificados para **bronze**, **prata**, **ouro** e **vip**<br>
-**[ATUALIZAÇÃO]** Ytdl-core atualizado para 4.7.0<br>
+## Atualização 1.12.1
+**[CORREÇÃO]** Guia do comando **!antitravapv** foi corrigido<br>
+**[ATUALIZAÇÃO]** Open-WA atualizado para 3.12.0<br>
 
 <br>
 
