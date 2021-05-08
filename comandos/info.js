@@ -21,13 +21,13 @@ module.exports = info = async(client,message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
-
+        if(commands.match(/comandos|comando|ajuda|menu|help/gm)) command = "!menu"
         switch(command){
             case "!info":
                 const botFotoURL = await client.getProfilePicFromServer(botNumber+'@c.us')
                 var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
-                var resposta = criarTexto(msgs_texto.info.info.resposta, infoBot.criador, infoBot.nome, botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
+                var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                 if(botFotoURL != undefined){
                     await client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
                 } else {

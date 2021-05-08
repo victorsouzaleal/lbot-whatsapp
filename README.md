@@ -87,6 +87,13 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 ## 5 - Configuração do arquivo .env :
 
 #### Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
+        #############  DADOS DO BOT ############# 
+
+        NOME_ADMINISTRADOR= Digite seu nome
+        NOME_BOT= Digite o nome que o bot vai ter
+        NOME_AUTOR_FIGURINHAS = Digite o nome que vai aparecer como autor das figurinhas
+
+        ############ CONFIGURAÇÕES DO BOT ############# 
 
         # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
         NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx

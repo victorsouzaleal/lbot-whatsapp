@@ -18,8 +18,8 @@ module.exports = figurinhas = async(client,message) => {
                 if(isMedia || quotedMsg){
                     var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                     var stickerMetadata = {
-                        author: "LBOT", 
-                        pack: "LBOT Stickers", 
+                        author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
+                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Stickers`, 
                         keepScale: true, 
                         circle: false, 
                         discord: "701084178112053288"
@@ -64,8 +64,8 @@ module.exports = figurinhas = async(client,message) => {
                 if(isMedia || quotedMsg){
                     var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                     var stickerMetadata = {
-                        author: "LBOT", 
-                        pack: "LBOT Sticker Animado", 
+                        author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
+                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Animado`, 
                         keepScale: false, 
                         discord: "701084178112053288"
                     }
@@ -106,13 +106,19 @@ module.exports = figurinhas = async(client,message) => {
                 break
 
             case "!tps":
-                if(args.length == 1 || type != "chat") return client.reply(from,erroComandoMsg(command),id)
+                if(args.length == 1 || type != "chat") return client.reply(from, erroComandoMsg(command), id)
+                var stickerMetadata = {
+                    author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
+                    pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Textos`, 
+                    keepScale: true, 
+                    discord: "701084178112053288"
+                }
                 var usuarioTexto = body.slice(5).trim()
                 if(usuarioTexto.length > 40) return client.reply(from,msgs_texto.figurinhas.tps.texto_longo,id)
                 await client.reply(from, msgs_texto.figurinhas.tps.espera,id)
                 try{
                     var imagemBase64 = await sticker.textoParaFoto(usuarioTexto)
-                    client.sendImageAsSticker(from, imagemBase64, {author: "LBOT", pack: "LBOT Sticker Textos", keepScale: true, discord: "701084178112053288"}).catch(err=>{
+                    client.sendImageAsSticker(from, imagemBase64, stickerMetadata).catch(err=>{
                         consoleErro(err.message, "STICKER-TPS")
                         client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
                     })
@@ -136,6 +142,12 @@ module.exports = figurinhas = async(client,message) => {
             
             case '!ssf':
                 if(isMedia || quotedMsg){
+                    var stickerMetadata = {
+                        author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
+                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Sem Fundo`, 
+                        keepScale: true, 
+                        discord: "701084178112053288"
+                    }
                     var dadosMensagem = {
                         tipo: (isMedia)? type : quotedMsg.type,
                         mimetype: (isMedia)? mimetype : quotedMsg.mimetype,
@@ -145,7 +157,7 @@ module.exports = figurinhas = async(client,message) => {
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         try{
                             var saidaImgBase64 = await sticker.removerFundoImagem(mediaData, dadosMensagem.mimetype)
-                            client.sendImageAsSticker(from, saidaImgBase64, {author: "LBOT", pack: "LBOT Sticker Sem Fundo", keepScale: true, discord: "701084178112053288"}).catch(err=>{
+                            client.sendImageAsSticker(from, saidaImgBase64, stickerMetadata).catch(err=>{
                                 consoleErro(err.message, "STICKER-SSF")
                                 client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
                             })
