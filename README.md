@@ -25,10 +25,11 @@
 
 <br><br>
 
-## Atualização 1.12.1
-**[CORREÇÃO]** Guia do comando **!antitravapv** foi corrigido<br>
-**[ATUALIZAÇÃO]** Open-WA atualizado para 3.12.0<br>
-
+## Atualização 1.13.0 (NECESSÁRIO INSTALAR DO ZERO!!!!)
+**[NOVO]** Adicionado comando **!tk** para fazer download de videos do Tiktok.<br>
+**[MELHORIA]** Ao usuário falar alguma frase que contenha **menu/comando/comandos/ajuda/help** ele abre o menu de comandos.<br>
+**[NOVO]** Agora o nome do administrador, nome do bot e nome do autor das figurinhas pode ser configurado no .env, alterar isso mudará o nome do Bot em todos os menus para poupar tempo editando :)<br>
+**[NOVO]** Adicionado timeout na fila dos comandos de Download caso algum trave.<br>
 <br>
 
 ## 1 - Clone este projeto OU faça download da ultima release :
@@ -133,6 +134,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Download de imagens/videos (Instagram)  |
 |       ✅        |   Download de imagens/videos (Twitter)            |
 |       ✅        |   Download de videos (Facebook)            |
+|       ✅        |   Download de videos (Tiktok)            |
 |       ✅        |   Pesquisa/Download de Imagens                  |
 
 ### Utilidades Gerais

@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "main": "app",
   "scripts": {
@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@open-wa/wa-automate": "^3.12.0",
+    "@open-wa/wa-automate": "3.12.0",
     "@open-wa/wa-decrypt": "^3.0.1",
     "@vitalets/google-translate-api": "^5.1.0",
     "acrcloud": "^1.4.0",
@@ -29,15 +29,14 @@
     "fs-extra": "^9.0.1",
     "g-i-s": "^2.1.6",
     "google-it": "^1.6.2",
+    "ignore-check": "^1.1.7",
     "instagram-url-direct": "^1.0.9",
     "moment-timezone": "^0.5.31",
-    "nedb": "^1.8.0",
     "nedb-async": "^0.1.6",
     "node-gtts": "^2.0.2",
     "p-queue": "^6.6.2",
     "pretty-num": "^0.5.0",
     "prompt": "^1.1.0",
-    "request": "^2.88.2",
     "sharp": "^0.27.1",
     "twitter-url-direct": "^1.0.1",
     "youtube-sr": "^2.0.5",
