@@ -39,7 +39,7 @@ module.exports = msgTratamento = async (client, message) => {
             lista_comandos.figurinhas.includes(command) ||
             lista_comandos.downloads.includes(command)
         )
-       
+
         //SE O GRUPO NÃO FOR CADASTRADO
         if(isGroupMsg && !grupoInfo) await cadastrarGrupo(message,"msg",client)
 
@@ -114,7 +114,6 @@ module.exports = msgTratamento = async (client, message) => {
             await botInfoUpdate()
 
         } else { //SE NÃO FOR UM COMANDO EXISTENTE
-
             //AUTO-STICKER GRUPO
             if(isGroupMsg && (type == MessageTypes.IMAGE || type == MessageTypes.VIDEO) && grupoInfo.autosticker){
                 //SE FOR MENSAGEM DE GRUPO E USUARIO FOR BLOQUEADO RETORNE
@@ -138,7 +137,7 @@ module.exports = msgTratamento = async (client, message) => {
                     else return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
                 } else {
                     await db.addContagemTotal(sender.id)
-                }
+                }            
                 await autoSticker(client, message)
                 consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
                 return
@@ -187,12 +186,7 @@ module.exports = msgTratamento = async (client, message) => {
             if(msgGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
             await utilidades(client,message)
             consoleComando(isGroupMsg, "UTILIDADES", command, "#de9a07", t, username, formattedTitle)
-        } else if(lista_comandos.info.includes(command)){
-            //INFO
-            if(msgGuia) return client.reply(from, guiaComandoMsg("info", command), id)
-            await info(client,message)
-            consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
-        } else if(lista_comandos.figurinhas.includes(command)){
+        }  else if(lista_comandos.figurinhas.includes(command)){
             //FIGURINHAS
             if(msgGuia) return client.reply(from, guiaComandoMsg("figurinhas", command), id)
             await figurinhas(client,message)
@@ -215,12 +209,15 @@ module.exports = msgTratamento = async (client, message) => {
         } else if(lista_comandos.admin.includes(command)){
             //ADMIN
             if(msgGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
-            await admin(client,message)
+            await admin(client,message, filaComando)
             consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
-        } else {
-            if(!isGroupMsg) return client.reply(from, msgs_texto.geral.comando_invalido ,id)
+        } else if(lista_comandos.info.includes(command) || commands.match(/comandos|comando|ajuda|menu|help/gm)){
+            //INFO
+            if(commands.match(/comandos|comando|ajuda|menu|help/gmi)) command = "!menu"
+            if(msgGuia) return client.reply(from, guiaComandoMsg("info", command), id)
+            await info(client,message)
+            consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
         }
-
     } catch (err) {
         consoleErro(err, 'MSG')
     }

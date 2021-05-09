@@ -21,7 +21,7 @@ module.exports = info = async(client,message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
-        if(commands.match(/comandos|comando|ajuda|menu|help/gm)) command = "!menu"
+        if(commands.match(/comandos|comando|ajuda|menu|help/gmi)) command = "!menu"
         switch(command){
             case "!info":
                 const botFotoURL = await client.getProfilePicFromServer(botNumber+'@c.us')
