@@ -10,6 +10,7 @@ const filaPlay = new PQueue({concurrency: 2, timeout: 90000})
 const filaYT = new PQueue({concurrency: 1, timeout: 90000})
 const filaIg = new PQueue({concurrency: 1, timeout: 90000})
 const filaFb = new PQueue({concurrency: 1, timeout: 60000})
+const filaTk = new PQueue({concurrency: 1, timeout: 60000})
 const filaTw = new PQueue({concurrency: 1, timeout: 90000})
 const filaImg = new PQueue({concurrency: 2, timeout: 60000})
 
@@ -131,6 +132,21 @@ module.exports = downloads = async(client,message) => {
                         }
                     } catch(err){
                         await client.reply(from,err.message,id)
+                    }
+                })
+                break
+
+            case "!tk":
+                if(args.length === 1) return await client.reply(from,erroComandoMsg(command),id)
+                await client.reply(from, msgs_texto.downloads.tk.espera, id)
+                await filaTk.add(async ()=>{
+                    try{
+                        var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaTiktok(usuarioTexto)
+                        await client.sendFile(from, resultadosMidia, `tkvideo.mp4`,"", id).catch(()=>{
+                            client.reply(from, msgs_texto.downloads.tk.erro_download, id)
+                        })
+                    } catch(err){
+                        await client.reply(from, err.message, id)
                     }
                 })
                 break
