@@ -6,12 +6,12 @@ const api = require("../lib/api")
 const {default: PQueue} = require('p-queue')
 
 //FILAS
-const filaPlay = new PQueue({concurrency: 2})
-const filaYT = new PQueue({concurrency: 1})
-const filaIg = new PQueue({concurrency: 1})
-const filaFb = new PQueue({concurrency: 1})
-const filaTw = new PQueue({concurrency: 1})
-const filaImg = new PQueue({concurrency: 2})
+const filaPlay = new PQueue({concurrency: 2, timeout: 90000})
+const filaYT = new PQueue({concurrency: 1, timeout: 90000})
+const filaIg = new PQueue({concurrency: 1, timeout: 90000})
+const filaFb = new PQueue({concurrency: 1, timeout: 60000})
+const filaTw = new PQueue({concurrency: 1, timeout: 90000})
+const filaImg = new PQueue({concurrency: 2, timeout: 60000})
 
 module.exports = downloads = async(client,message) => {
     try{
