@@ -209,7 +209,7 @@ module.exports = msgTratamento = async (client, message) => {
         } else if(lista_comandos.admin.includes(command)){
             //ADMIN
             if(msgGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
-            await admin(client,message, filaComando)
+            await admin(client,message)
             consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
         } else if(lista_comandos.info.includes(command) || commands.match(/comandos|comando|ajuda|menu|help/gm)){
             //INFO
