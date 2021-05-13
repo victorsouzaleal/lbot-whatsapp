@@ -8,6 +8,8 @@ const {verificarBloqueioGlobal, verificarBloqueioGrupo} = require("./lib/bloquei
 const { criarTexto, guiaComandoMsg, removerNegritoComando, consoleErro, consoleComando } = require('./lib/util')
 const msgs_texto = require('./lib/msgs')
 const {autoSticker} = require("./lib/sticker")
+const {default: PQueue} = require('p-queue')
+const queueMensagem = new PQueue({concurrency: 6, timeout: 60000})
 
 //COMANDOS
 const lista_comandos = JSON.parse(fs.readFileSync('./comandos/comandos.json'))
@@ -39,6 +41,7 @@ module.exports = msgTratamento = async (client, message) => {
             lista_comandos.figurinhas.includes(command) ||
             lista_comandos.downloads.includes(command)
         )
+        const queueMensagemEspera = queueMensagem.size > 0
 
         //SE O GRUPO NÃO FOR CADASTRADO
         if(isGroupMsg && !grupoInfo) await cadastrarGrupo(message,"msg",client)
@@ -137,9 +140,12 @@ module.exports = msgTratamento = async (client, message) => {
                     else return client.reply(from, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber), id)
                 } else {
                     await db.addContagemTotal(sender.id)
-                }            
-                await autoSticker(client, message)
-                consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
+                }
+                if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+                await queueMensagem.add(async ()=>{
+                    await autoSticker(client, message)
+                    consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
+                })
                 return
             }
 
@@ -163,8 +169,11 @@ module.exports = msgTratamento = async (client, message) => {
                 } else {
                     await db.addContagemTotal(sender.id)
                 }
-                await autoSticker(client, message)
-                consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
+                if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+                await queueMensagem.add(async ()=>{
+                    await autoSticker(client, message)
+                    consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
+                })
                 return
             }
 
@@ -182,41 +191,63 @@ module.exports = msgTratamento = async (client, message) => {
 
         //APÓS TODAS AS VERIFICAÇÕES SOLICITE OS COMANDOS
         if(lista_comandos.utilidades.includes(command)){
-            //UTILIDADES
-            if(msgGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
-            await utilidades(client,message)
-            consoleComando(isGroupMsg, "UTILIDADES", command, "#de9a07", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //UTILIDADES
+                if(msgGuia) return client.reply(from, guiaComandoMsg("utilidade", command), id)
+                await utilidades(client,message)
+                consoleComando(isGroupMsg, "UTILIDADES", command, "#de9a07", t, username, formattedTitle)
+            })
         }  else if(lista_comandos.figurinhas.includes(command)){
-            //FIGURINHAS
-            if(msgGuia) return client.reply(from, guiaComandoMsg("figurinhas", command), id)
-            await figurinhas(client,message)
-            consoleComando(isGroupMsg, "FIGURINHAS", command, "#ae45d1", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //FIGURINHAS
+                if(msgGuia) return client.reply(from, guiaComandoMsg("figurinhas", command), id)
+                await figurinhas(client,message)
+                consoleComando(isGroupMsg, "FIGURINHAS", command, "#ae45d1", t, username, formattedTitle)
+            })
+
         } else if(lista_comandos.downloads.includes(command)){
-            //DOWNLOADS
-            if(msgGuia) return client.reply(from, guiaComandoMsg("downloads", command), id)
-            await downloads(client,message)
-            consoleComando(isGroupMsg, "DOWNLOADS", command, "#2195cf", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //DOWNLOADS
+                if(msgGuia) return client.reply(from, guiaComandoMsg("downloads", command), id)
+                await downloads(client,message)
+                consoleComando(isGroupMsg, "DOWNLOADS", command, "#2195cf", t, username, formattedTitle)
+            })
         } else if (lista_comandos.grupo.includes(command)){
-            //GRUPO
-            if(msgGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
-            await grupo(client,message)
-            if(isGroupMsg) consoleComando(isGroupMsg, "ADMINISTRAÇÃO", command, "#e0e031", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //GRUPO
+                if(msgGuia) return client.reply(from, guiaComandoMsg("grupo", command), id)
+                await grupo(client,message)
+                if(isGroupMsg) consoleComando(isGroupMsg, "ADMINISTRAÇÃO", command, "#e0e031", t, username, formattedTitle)
+            }, {priority: 1})
         } else if(lista_comandos.diversao.includes(command)){
-            //DIVERSÃO
-            if(msgGuia) return client.reply(from, guiaComandoMsg("diversao", command), id)
-            await diversao(client,message)
-            consoleComando(isGroupMsg, "DIVERSÃO", command, "#22e3dd", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //DIVERSÃO
+                if(msgGuia) return client.reply(from, guiaComandoMsg("diversao", command), id)
+                await diversao(client,message)
+                consoleComando(isGroupMsg, "DIVERSÃO", command, "#22e3dd", t, username, formattedTitle)
+            })
         } else if(lista_comandos.admin.includes(command)){
-            //ADMIN
-            if(msgGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
-            await admin(client,message)
-            consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //ADMIN
+                if(msgGuia) return client.reply(from, guiaComandoMsg("admin", command), id)
+                await admin(client,message)
+                consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
+            }, {priority: 2})
         } else if(lista_comandos.info.includes(command) || commands.match(/comandos|comando|ajuda|menu|help/gm)){
-            //INFO
-            if(commands.match(/comandos|comando|ajuda|menu|help/gmi)) command = "!menu"
-            if(msgGuia) return client.reply(from, guiaComandoMsg("info", command), id)
-            await info(client,message)
-            consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
+            if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
+            await queueMensagem.add(async ()=>{
+                //INFO
+                if(commands.match(/comandos|comando|ajuda|menu|help/gmi)) command = "!menu"
+                if(msgGuia) return client.reply(from, guiaComandoMsg("info", command), id)
+                await info(client,message)
+                consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
+            })
         }
     } catch (err) {
         consoleErro(err, 'MSG')
