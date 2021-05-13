@@ -239,7 +239,7 @@ module.exports = msgTratamento = async (client, message) => {
                 await admin(client,message)
                 consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
             }, {priority: 2})
-        } else if(lista_comandos.info.includes(command) || commands.match(/comandos|comando|ajuda|menu|help/gm)){
+        } else if(lista_comandos.info.includes(command) || (commands.match(/comandos|comando|ajuda|menu|help/gmi) && !isGroupMsg)){
             if(queueMensagemEspera) await client.sendText(from, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size))
             await queueMensagem.add(async ()=>{
                 //INFO
