@@ -25,17 +25,9 @@
 
 <br><br>
 
-## Atualização 1.14.0
-**[NOVO]** Adicionado fila de comandos para evitar do bot sobrecarregar e executar muitos comandos ao mesmo tempo, abaixo tem mais informações.<br>
-**[CORREÇÃO]** O tempo limite de timeout dos comandos de **Download** agora é de 60 segundos.<br>
-**[ATUALIZAÇÃO]** Open-WA atualizado para a versão 3.12.2<br>
-<br>
-
-Sobre a fila de comandos : 
-- A fila suporta até 6 comandos sendo executados ao mesmo tempo
-- Os comandos feitos em **GRUPOS** tem prioridade média.
-- Os comandos de **DONO** tem prioridade máxima.
-- Em caso de muitos comandos e o usuário ficar em espera ele será notificado com uma mensagem mostrando quantos comandos estão na frente dele.
+## Atualização 1.14.1
+**[CORREÇÃO]** Melhorada a detecção de palavras que abrem o menu, podem ser usado tanto letras maiusculas como minusculas. Ex: mENU/CoMandO<br>
+**[CORREÇÃO]** Detecção de palavras que abrem o menu agora funciona apenas em mensagens privadas para não atrapalhar o grupo.<br>
 <br>
 
 ## 1 - Clone este projeto OU faça download da ultima release :
