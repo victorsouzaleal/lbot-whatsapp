@@ -25,9 +25,10 @@
 
 <br><br>
 
-## Atualização 1.14.1
-**[CORREÇÃO]** Melhorada a detecção de palavras que abrem o menu, podem ser usado tanto letras maiusculas como minusculas. Ex: mENU/CoMandO<br>
-**[CORREÇÃO]** Detecção de palavras que abrem o menu agora funciona apenas em mensagens privadas para não atrapalhar o grupo.<br>
+## Atualização 1.15.0
+**[CORREÇÃO]** Corrigido bugs na detecção de abertura de menu<br>
+**[REMOÇÃO]** discord-canvas que era usado nas mensagens de bem-vindo foi removido para deixar mais simples e leve a instalação do bot.<br>
+**[REFATORAÇÃO]** msgTratamento.js não existe mais e agora está dividido em 2 arquivos na pasta lib (checagemMensagem e chamadaComando)<br>
 <br>
 
 ## 1 - Clone este projeto OU faça download da ultima release :
