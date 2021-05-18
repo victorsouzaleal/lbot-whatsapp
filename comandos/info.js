@@ -8,7 +8,7 @@ const path = require('path')
 const db = require('../lib/database')
 const {botInfo} = require(path.resolve("lib/bot.js"))
 
-module.exports = info = async(client,message) => {
+module.exports = info = async(client, message, abrirMenu) => {
     try{
         const {id, from, sender, chat, isGroupMsg, caption, body} = message
         const { pushname, verifiedName, formattedName } = sender, username = pushname || verifiedName || formattedName
@@ -21,7 +21,8 @@ module.exports = info = async(client,message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
-        if(commands.match(/comandos|comando|ajuda|menu|help/gmi)) command = "!menu"
+        if(abrirMenu) command = "!menu"
+
         switch(command){
             case "!info":
                 const botFotoURL = await client.getProfilePicFromServer(botNumber+'@c.us')

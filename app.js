@@ -7,7 +7,8 @@ const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('.
 const {verificacaoListaNegraGeral} = require(`./lib/listaNegra`)
 const {atualizarParticipantes} = require("./lib/controleParticipantes")
 const config = require('./config')
-const msgTratamento = require('./msgTratamento')
+const checagemMensagem = require("./lib/checagemMensagem")
+const chamadaComando = require("./lib/chamadaComando")
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
 const {botStart} = require('./lib/bot')
@@ -59,7 +60,8 @@ const start = async (client = new Client()) => {
                 if(!await antiLink(client,message)) return
                 if(!await antiFlood(client,message)) return
                 if(!await antiPorno(client, message)) return
-                await msgTratamento(client, message)
+                if(!await checagemMensagem(client, message)) return
+                await chamadaComando(client, message)
             }))
 
             //Ouvindo entrada/saida de participantes dos grupo
