@@ -17,13 +17,12 @@
 <a href="https://github.com/victorsouzaleal/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouzaleal?label=seguidores&style=flat-square"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat-square"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
-<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Sim-blue.svg"/></a>
+<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Não-blue.svg"/></a>
 </p>
 
-## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
-## VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) ,  [NODE VERSÃO LTS](https://nodejs.org/en/) E O [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/) INSTALADOS EM SEU COMPUTADOR
+## ESTE PROJETO FOI DESCONTINUADO, NO MOMENTO PODE FUNCIONAR MAS NÃO ESTAREI MAIS TRAZENDO NOVAS ATUALIZAÇÕES.
 
-<br><br>
+<br>
 
 ## Atualização 1.15.0
 **[CORREÇÃO]** Corrigido bugs na detecção de abertura de menu<br>
