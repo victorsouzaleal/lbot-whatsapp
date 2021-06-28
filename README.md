@@ -22,9 +22,10 @@
 
 ## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 
-## Atualização 1.15.1 (RECOMENDADO REINSTALAR)
-**[CORREÇÃO]** Corrigido os comandos !play e !yt que não estavam funcionando<br>
-**[ATUALIZAÇÃO]** Open-WA atualizado para a versão mais recente 4.7.1<br>
+## Atualização 1.16.0 (RECOMENDADO REINSTALAR)
+**[NOVO]** Comando para dono **!pvliberado** para ativar/desativar comandos em mensagens privadas.<br>
+**[CORREÇÃO]** Corrigido o comando **!tk** que não estava mais baixando videos do TikTok<br>
+**[MODIFICAÇÃO]** Nedb-async foi substituido pelo Nedb-promises por ser mais atualizado.<br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
 
