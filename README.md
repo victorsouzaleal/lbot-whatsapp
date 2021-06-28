@@ -20,25 +20,32 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Não-blue.svg"/></a>
 </p>
 
-## ESTE PROJETO FOI DESCONTINUADO, NO MOMENTO PODE FUNCIONAR MAS NÃO ESTAREI MAIS TRAZENDO NOVAS ATUALIZAÇÕES.
 ## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
-## VOCÊ DEVE TER O [GIT](https://git-scm.com/downloads) ,  [NODE VERSÃO LTS](https://nodejs.org/en/) E O [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/) INSTALADOS EM SEU COMPUTADOR
 
+## Atualização 1.15.1 (RECOMENDADO REINSTALAR)
+**[CORREÇÃO]** Corrigido os comandos !play e !yt que não estavam funcionando<br>
+**[ATUALIZAÇÃO]** Open-WA atualizado para a versão mais recente 4.7.1<br>
+Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
 
-## Atualização 1.15.0
-**[CORREÇÃO]** Corrigido bugs na detecção de abertura de menu<br>
-**[REMOÇÃO]** discord-canvas que era usado nas mensagens de bem-vindo foi removido para deixar mais simples e leve a instalação do bot.<br>
-**[REFATORAÇÃO]** msgTratamento.js não existe mais e agora está dividido em 2 arquivos na pasta lib (checagemMensagem e chamadaComando)<br>
-<br>
+## REQUERIMENTOS :
+- [GIT](https://git-scm.com/downloads)
+- [NODE VERSÃO LTS](https://nodejs.org/en/) 
+- [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/)
+
+Após instalar tudo acima, vá no terminal do seu sistema(Prompt de Comando) e digite :
+```bash
+npm install -g npm@latest
+```
+
+Isso tudo é necessário para o bot funcionar corretamente.
 
 ## 1 - Clone este projeto OU faça download da ultima release :
-
 Para clonar, digite os comandos abaixo no Terminal do seu sistema:
 
 ```bash
-> git clone https://github.com/victorsouzaleal/lbot-whatsapp.git
-> cd lbot-whatsapp
+git clone https://github.com/victorsouzaleal/lbot-whatsapp.git
+cd lbot-whatsapp
 ```
 
 Ou se quiser fazer o download diretamente (extraia o zip e entre na pasta para os passos seguintes):
@@ -51,7 +58,7 @@ Antes de executar o comando abaixo, tenha certeza que você está
 no diretório do projeto que você clonou/fez download!
 
 ```bash
-> npm i
+npm i
 ```
 
 #### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/victorsouzaleal/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
@@ -63,7 +70,7 @@ no diretório do projeto que você clonou/fez download!
 Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
 
 ```bash
-> npm start
+npm start
 ```
 
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal **SEU** número de telefone **COM CÓDIGO DO PAÍS** no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
@@ -221,13 +228,13 @@ Só faça os passos abaixo se você tiver algum erro :
 
 - Se houve algum problema na inicialização do script, instale o Google Chrome:
    ```bash
-    > wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    > sudo apt install ./google-chrome-stable_current_amd64.deb
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    sudo apt install ./google-chrome-stable_current_amd64.deb
     ```
 
 - Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
     ```bash
-    > npm i --unsafe-perm
+    npm i --unsafe-perm
     ```
 
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal/lbot-whatsapp#8---d%C3%BAvidas)
