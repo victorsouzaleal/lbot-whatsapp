@@ -99,6 +99,7 @@
     ],
     "admin":[
         "!sair",
+        "!pvliberado",
         "!bcmdglobal",
         "!dcmdglobal",
         "!sairgrupos",

@@ -9,7 +9,7 @@ const cadastrarGrupo = require("../lib/cadastrarGrupo")
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarAntitrava} = require('../lib/bot')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarAntitrava, botAlterarPvLiberado} = require('../lib/bot')
 
 module.exports = admin = async(client,message) => {
     try{
@@ -39,6 +39,8 @@ module.exports = admin = async(client,message) => {
                 var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, infoBot.criador, infoBot.nome, botInicializacaoData, version)
                 // AUTO-STICKER
                 resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
+                // PV LIBERADO
+                resposta += (infoBot.pvliberado) ? msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.on: msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.off
                 // ANTI-TRAVA
                 resposta += (infoBot.antitrava.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.antitrava.on,  infoBot.antitrava.max_caracteres) : msgs_texto.admin.infocompleta.resposta_variavel.antitrava.off
                 // LIMITE COMANDOS DIARIO
@@ -181,6 +183,17 @@ module.exports = admin = async(client,message) => {
                 } else {
                     botAlterarAutoSticker(false)
                     await client.reply(from, msgs_texto.admin.autostickerpv.desativado,id)
+                } 
+                break
+
+            case "!pvliberado":
+                var novoEstado = !botInfo().pvliberado
+                if(novoEstado){
+                    botAlterarPvLiberado(true)
+                    await client.reply(from, msgs_texto.admin.pvliberado.ativado,id)
+                } else {
+                    botAlterarPvLiberado(false)
+                    await client.reply(from, msgs_texto.admin.pvliberado.desativado,id)
                 } 
                 break
 
