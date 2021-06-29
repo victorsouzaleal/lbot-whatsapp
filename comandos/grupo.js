@@ -1,5 +1,6 @@
 //REQUERINDO MODULOS
 const {AddParticipantErrorStatusCode} = require("@open-wa/wa-automate")
+const { decryptMedia } = require('@open-wa/wa-decrypt')
 const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
@@ -8,7 +9,7 @@ const {obterDestravas} = require("../lib/api")
 
 module.exports = grupo = async(client,message) => {
     try{
-        const { id, from, sender, isGroupMsg, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList, body} = message
+        const { id, from, sender, isGroupMsg, chat, caption, type, isMedia, mimetype, quotedMsg, quotedMsgObj, mentionedJidList, body} = message
         const { pushname, verifiedName, formattedName } = sender, username = pushname || verifiedName || formattedName
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
@@ -30,6 +31,30 @@ module.exports = grupo = async(client,message) => {
                     client.sendText(from, grupoDescricao)
                 }
                 break
+
+            case "!fotogrupo":
+                if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(from,msgs_texto.permissao.bot_admin, id)
+                if(isMedia || quotedMsg){
+                    var dadosMensagem = {
+                        tipo : (isMedia) ? type : quotedMsg.type,
+                        mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
+                        mensagem: (isMedia) ? message : quotedMsg
+                    }
+                    if(dadosMensagem.tipo === "image"){
+                        var mediaData = await decryptMedia(dadosMensagem.mensagem)
+                        var imagemBase64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
+                        var res = await client.setGroupIcon(from, imagemBase64)
+                        if(res) await client.reply(from, msgs_texto.grupo.fotogrupo.sucesso, id)
+                        else await client.reply(from, msgs_texto.grupo.fotogrupo.erro, id)
+                    } else {
+                        return client.reply(from, erroComandoMsg(command) , id)
+                    }
+                } else {
+                    return client.reply(from, erroComandoMsg(command) , id)
+                }
+                break
+                
             
             case '!status':
                 if (!isGroupAdmins) return client.reply(from, msgs_texto.permissao.apenas_admin , id)

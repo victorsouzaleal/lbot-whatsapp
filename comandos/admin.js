@@ -1,4 +1,5 @@
 //REQUERINDO MODULOS
+const { decryptMedia } = require('@open-wa/wa-decrypt')
 const menu = require('../lib/menu')
 const moment = require("moment-timezone")
 const { version } = require('../package.json');
@@ -13,7 +14,7 @@ const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario,
 
 module.exports = admin = async(client,message) => {
     try{
-        const {id, from, sender, isGroupMsg, t, chat, caption, quotedMsg, quotedMsgObj, mentionedJidList } = message
+        const {id, from, sender, isGroupMsg, t, chat, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, mentionedJidList } = message
         let { body } = message
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
@@ -195,6 +196,27 @@ module.exports = admin = async(client,message) => {
                     botAlterarPvLiberado(false)
                     await client.reply(from, msgs_texto.admin.pvliberado.desativado,id)
                 } 
+                break
+
+            case "!fotobot":
+                if(isMedia || quotedMsg){
+                    var dadosMensagem = {
+                        tipo : (isMedia) ? type : quotedMsg.type,
+                        mimetype : (isMedia)? mimetype : quotedMsg.mimetype,
+                        mensagem: (isMedia) ? message : quotedMsg
+                    }
+                    if(dadosMensagem.tipo === "image"){
+                        var mediaData = await decryptMedia(dadosMensagem.mensagem)
+                        var imagemBase64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
+                        var res = await client.setProfilePic(imagemBase64)
+                        if(res) await client.reply(from, msgs_texto.admin.fotobot.sucesso, id)
+                        else await client.reply(from, msgs_texto.admin.fotobot.erro, id)
+                    } else {
+                        return client.reply(from, erroComandoMsg(command) , id)
+                    }
+                } else {
+                    return client.reply(from, erroComandoMsg(command) , id)
+                }
                 break
 
             case "!antitravapv":

@@ -42,6 +42,7 @@
     "grupo":[
         "!destravar",
         "!status",
+        "!fotogrupo",
         "!regras",
         "!blista",
         "!dlista",
@@ -110,6 +111,7 @@
         "!bccontatos",
         "!bcgrupos",
         "!print",
+        "!fotobot",
         "!limpartudo",
         "!autostickerpv",
         "!antitravapv",
