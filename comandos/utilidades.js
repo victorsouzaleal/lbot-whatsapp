@@ -21,6 +21,16 @@ module.exports = utilidades = async(client,message) => {
                 var tabela = await api.obterTabelaNick()
                 await client.reply(from, criarTexto(msgs_texto.utilidades.tabela.resposta, tabela), id)
                 break
+
+            case "!letra":
+                if(args.length === 1) return client.reply(from, erroComandoMsg(command), id)
+                try{
+                    var usuarioTexto = body.slice(7).trim(), dadosMusica = await api.obterLetraMusica(usuarioTexto)
+                    await client.sendImage(from, dadosMusica.imagem, "artista.jpg", criarTexto(msgs_texto.utilidades.letra.resposta, dadosMusica.titulo, dadosMusica.artista, dadosMusica.letra), id)
+                } catch(err){
+                    await client.reply(from, err.message, id)
+                }
+                break
                 
             case "!ddd":
                 var DDD = null
