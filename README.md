@@ -17,15 +17,16 @@
 <a href="https://github.com/victorsouzaleal/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouzaleal?label=seguidores&style=flat-square"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat-square"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
-<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-Não-blue.svg"/></a>
+<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
 ## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 
-## Atualização 1.16.0 (RECOMENDADO REINSTALAR)
-**[NOVO]** Comando para dono **!pvliberado** para ativar/desativar comandos em mensagens privadas.<br>
-**[CORREÇÃO]** Corrigido o comando **!tk** que não estava mais baixando videos do TikTok<br>
-**[MODIFICAÇÃO]** Nedb-async foi substituido pelo Nedb-promises por ser mais atualizado.<br>
+## Atualização 1.16.1
+**[NOVO]** Comando para dono **!fotobot** para alterar a foto do BOT.<br>
+**[NOVO]** Comando para grupos **!fotogrupo** para alterar a foto do GRUPO.<br>
+**[NOVO]** Comando de utilidade **!letra** para receber a letra de uma música.<br>
+<br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
 
@@ -151,6 +152,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | :------------: | :---------------------------------------------: |
 |       ✅       | Efeitos de Aúdio
 |       ✅        |   Texto para voz                   |
+|       ✅        |   Letra de Música              |
 |       ✅        |   Reconhecimento de músicas                 |
 |       ✅        |   Detector de DDD             |
 |       ✅        |   Consulta de Clima/Previsão do Tempo            |
