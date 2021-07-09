@@ -22,10 +22,9 @@
 
 ## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 
-## Atualização 1.16.1
-**[NOVO]** Comando para dono **!fotobot** para alterar a foto do BOT.<br>
-**[NOVO]** Comando para grupos **!fotogrupo** para alterar a foto do GRUPO.<br>
-**[NOVO]** Comando de utilidade **!letra** para receber a letra de uma música.<br>
+## Atualização 1.16.2
+**[CORREÇÃO]** API do **!anime** foi atualizada para manter o seu funcionamento.<br>
+**[CORREÇÃO]** O Erro "Session data most likely expired due to manual host account logout. Please re-authenticate this session." foi resolvido.<br>
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
