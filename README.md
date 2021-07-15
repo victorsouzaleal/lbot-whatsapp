@@ -22,9 +22,8 @@
 
 ## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 
-## Atualização 1.16.3
-**[CORREÇÃO]** O Erro "Session data most likely expired due to manual host account logout. Please re-authenticate this session." foi resolvido.<br>
-**[ATUALIZAÇÃO]** OPEN-WA atualizado para versão 4.8.2<br>
+## Atualização 1.16.4
+**[ATUALIZAÇÃO]** OPEN-WA atualizado para versão 4.10.0<br>
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
