@@ -17,10 +17,10 @@
 <a href="https://github.com/victorsouzaleal/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouzaleal?label=seguidores&style=flat-square"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat-square"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
-<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
+<a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-NAO-blue.svg"/></a>
 </p>
 
-## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
+# ESTE BOT ESTÁ DESATUALIZADO/SEM MANUTENÇÃO E NÃO TEM PREVISÃO DE RETORNO.
 
 ## Atualização 1.17.0
 **[ATUALIZAÇÃO]** Depêndencias atualizadas <br>
