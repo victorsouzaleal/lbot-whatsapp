@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "1.16.4",
+  "version": "1.17.0",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "main": "app",
   "scripts": {
@@ -11,14 +11,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "1.0.20",
-    "@open-wa/wa-automate": "4.10.0",
+    "@open-wa/wa-automate": "4.23.6",
     "@open-wa/wa-decrypt": "3.0.1",
     "@vitalets/google-translate-api": "7.0.0",
     "acrcloud": "1.4.0",
-    "axios": "0.21.1",
+    "axios": "0.24.0",
     "chalk": "4.1.0",
-    "cheerio": "1.0.0-rc.5",
-    "correios-brasil": "2.1.0",
+    "cheerio": "1.0.0-rc.10",
+    "correios-brasil": "2.2.2",
     "deepai": "1.0.17",
     "dotenv": "8.2.0",
     "fbdl-core": "git+https://github.com/victorsouzaleal/fbdl-core.git",
@@ -37,15 +37,14 @@
     "p-queue": "6.6.2",
     "pretty-num": "0.5.0",
     "prompt": "1.1.0",
-    "tiktok-scraper": "1.4.32",
+    "tiktok-scraper": "1.4.36",
     "twitter-url-direct": "1.0.1",
-    "youtube-sr": "2.0.5",
-    "ytdl-core": "4.8.3"
+    "youtube-sr": "4.1.9",
+    "ytdl-core": "4.9.1"
   },
   "directories": {
     "lib": "lib"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git"

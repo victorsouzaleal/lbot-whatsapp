@@ -22,8 +22,10 @@
 
 ## ESTE BOT É FUNCIONAL APENAS EM PC/COMPUTADORES
 
-## Atualização 1.16.4
-**[ATUALIZAÇÃO]** OPEN-WA atualizado para versão 4.10.0<br>
+## Atualização 1.17.0
+**[ATUALIZAÇÃO]** Depêndencias atualizadas <br>
+**[CORREÇÃO]** Corrigido problema de erro no comando **!info** caso o bot estivesse sem foto <br>
+
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
@@ -32,11 +34,6 @@ Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 - [GIT](https://git-scm.com/downloads)
 - [NODE VERSÃO LTS](https://nodejs.org/en/) 
 - [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/)
-
-Após instalar tudo acima, vá no terminal do seu sistema(Prompt de Comando) e digite :
-```bash
-npm install -g npm@latest
-```
 
 Isso tudo é necessário para o bot funcionar corretamente.
 
