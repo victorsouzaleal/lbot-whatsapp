@@ -20,9 +20,8 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.0
-**[ATUALIZAÇÃO]** Depêndencias atualizadas <br>
-**[CORREÇÃO]** Corrigido problema de erro no comando **!info** caso o bot estivesse sem foto <br>
+## Atualização 1.17.1
+**[CORREÇÃO]** Corrigida a contagem de limite diário de comandos<br>
 
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
