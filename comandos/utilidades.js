@@ -175,8 +175,8 @@ module.exports = utilidades = async(client,message) => {
                             var animeInfo = await api.obterAnimeInfo(usuarioImgBase64)
                             if(animeInfo.similaridade < 87) return client.reply(from,msgs_texto.utilidades.anime.similaridade,id)
                             animeInfo.episodio = animeInfo.episodio || "---"
-                            var respostaAnimeInfo = criarTexto(msgs_texto.utilidades.anime.resposta, animeInfo.titulo, animeInfo.episodio, animeInfo.tempoInicial, animeInfo.tempoFinal, animeInfo.similaridade)
-                            client.sendFileFromUrl(from, animeInfo.link_previa, "anime.mp4", respostaAnimeInfo, id)
+                            var respostaAnimeInfo = criarTexto(msgs_texto.utilidades.anime.resposta, animeInfo.titulo, animeInfo.episodio, animeInfo.tempoInicial, animeInfo.tempoFinal, animeInfo.similaridade, animeInfo.link_previa)
+                            await client.reply(from, respostaAnimeInfo, id)
                         } catch(err){
                             client.reply(from,err.message,id)
                         }
