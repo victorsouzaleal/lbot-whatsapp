@@ -29,7 +29,7 @@ module.exports = info = async(client, message, abrirMenu) => {
                 var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
                 var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
-                if(botFotoURL != undefined){
+                if(botFotoURL != undefined && botFotoURL != "ERROR: 404"){
                     await client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
                 } else {
                     await client.reply(from, resposta, id)
