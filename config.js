@@ -5,6 +5,7 @@ module.exports = config = (headless, start) =>  {
         qrTimeout: 0,
         authTimeout: 0,
         skipUpdateCheck: true,
+        multiDevice: true,
         cachedPatch: true,
         cacheEnabled: false,
         restartOnCrash: start,
