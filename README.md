@@ -20,11 +20,12 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.2
-**[CORREÇÃO]** Comando !ssf para sticker sem fundo foi corrigido <br>
+## Atualização 1.17.3
+**[CORREÇÃO]** Comando !yt foi corrigido <br>
+**[CORREÇÃO]** Comando !tw foi corrigido <br>
 **[DEPENDÊNCIAS]** As dependências necessárias foram atualizadas. <br>
-**[NOVO]** Agora o BOT funciona no modo BETA do WhatsApp sem precisar de conexão ativa com o celular. <br>
-
+<br>
+Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
