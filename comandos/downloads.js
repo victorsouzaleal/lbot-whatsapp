@@ -120,8 +120,8 @@ module.exports = downloads = async(client,message) => {
                     try{
                         var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaTwitter(usuarioTexto)
                         if(!resultadosMidia.found) return await client.reply(from, msgs_texto.downloads.tw.nao_encontrado, id)
-                        if(resultadosMidia.type == "video"){
-                            await client.sendFile(from, resultadosMidia.download[0].url, `twittervid.mp4`,"", id).catch(()=>{
+                        if(resultadosMidia.type == "video/gif"){
+                            await client.sendFileFromUrl(from, resultadosMidia.download[0].url, `twittervid.mp4`,"", id).catch(()=>{
                                 client.reply(from, msgs_texto.downloads.tw.erro_download, id)
                             })
                         } 
