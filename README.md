@@ -20,12 +20,15 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.3
-**[CORREÇÃO]** Comando !yt foi corrigido <br>
-**[CORREÇÃO]** Comando !tw foi corrigido <br>
-**[DEPENDÊNCIAS]** As dependências necessárias foram atualizadas. <br>
+## Atualização 1.17.4
+**[CORREÇÃO]** Comando !pesquisa foi corrigido <br>
+**[CORREÇÃO]** Comando !ig foi corrigido <br>
+**[REMOVIDO]** Comando !fb foi removido<br>
+**[DEPENDÊNCIAS]** As dependências necessárias foram atualizadas. 
+<br>
 <br>
 Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
+<br>
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
