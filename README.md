@@ -36,22 +36,14 @@ Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 
 Isso tudo é necessário para o bot funcionar corretamente.
 
-## 1 - Clone este projeto OU faça download da ultima release :
-Para clonar, digite os comandos abaixo no Terminal do seu sistema:
-
-```bash
-git clone https://github.com/victorsouzaleal/lbot-whatsapp.git
-cd lbot-whatsapp
-```
-
-Ou se quiser fazer o download diretamente (extraia o zip e entre na pasta para os passos seguintes):
+## 1 - Faça download da ultima versão :
+Faça o download da última versão lançada no link abaixo (extraia o zip e entre na pasta para os passos seguintes):
 https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest
 
 <br>
 
 ## 2 - Instale as dependências :
-Antes de executar o comando abaixo, tenha certeza que você está 
-no diretório do projeto que você clonou/fez download!
+Abra o prompt de comando (CMD/Terminal) na pasta do projeto que você extraiu e execute o comando abaixo :
 
 ```bash
 npm i
