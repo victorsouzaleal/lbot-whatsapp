@@ -11,8 +11,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "1.0.20",
-    "@open-wa/wa-automate": "4.28.13",
-    "@open-wa/wa-decrypt": "3.0.1",
+    "@open-wa/wa-automate": "^4.42.5",
+    "@open-wa/wa-decrypt": "^3.0.1",
     "@vitalets/google-translate-api": "7.0.0",
     "acrcloud": "1.4.0",
     "axios": "0.24.0",
@@ -38,9 +38,9 @@
     "pretty-num": "0.5.0",
     "prompt": "1.1.0",
     "tiktok-scraper": "1.4.36",
-    "twitter-url-direct": "1.0.1",
-    "youtube-sr": "4.1.9",
-    "ytdl-core": "4.10.0"
+    "twitter-url-direct": "1.0.2",
+    "youtube-sr": "4.2.0",
+    "ytdl-core": "4.11.0"
   },
   "directories": {
     "lib": "lib"
