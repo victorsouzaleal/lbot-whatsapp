@@ -20,11 +20,9 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.4
-**[CORREÇÃO]** Comando !pesquisa foi corrigido <br>
-**[CORREÇÃO]** Comando !ig foi corrigido <br>
-**[REMOVIDO]** Comando !fb foi removido<br>
-**[DEPENDÊNCIAS]** As dependências necessárias foram atualizadas. 
+## Atualização 1.17.5
+**[CORREÇÃO]** Comando !ig foi corrigido (novamente, espero que não ocorra mais problemas agora) <br>
+**[DEPENDÊNCIAS]** As dependências necessárias foram atualizadas e o versionamento foi corrigido.
 <br>
 <br>
 Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
@@ -132,7 +130,6 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Download de aúdio/videos (Youtube)    |
 |       ✅        |   Download de imagens/videos (Instagram)  |
 |       ✅        |   Download de imagens/videos (Twitter)            |
-|       ✅        |   Download de videos (Facebook)            |
 |       ✅        |   Download de videos (Tiktok)            |
 |       ✅        |   Pesquisa/Download de Imagens                  |
 
@@ -230,10 +227,18 @@ Só faça os passos abaixo se você tiver algum erro :
     npm i --unsafe-perm
     ```
 
-**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal/lbot-whatsapp#8---d%C3%BAvidas)
+#### SOLUÇÃO DE PROBLEMAS - COMANDO NÃO FUNCIONANDO :
+Se algum comando por acaso não estiver funcionando antes de tentar baixar uma nova versão ou relatar o erro tente usar dentro da pasta do projeto o comando :
+```bash
+npm i 
+```
+Esse comando atualiza as dependências e pode resolver algum problema que você tenha sem precisar baixar ou esperar uma nova versão do bot.<br><br>
 
-<br>
+**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal)
 
-## 8 - Agradecimentos
+## 8 - Contato
+* [`WhatsApp`](https://wa.me/5521995612287)
+
+## 9 - Agradecimentos
 * [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
 * [`MhankBarBar/whatsapp-bot`](https://github.com/MhankBarBar/whatsapp-bot)
