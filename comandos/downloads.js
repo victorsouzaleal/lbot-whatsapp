@@ -6,13 +6,13 @@ const api = require("../lib/api")
 const {default: PQueue} = require('p-queue')
 
 //FILAS
-const filaPlay = new PQueue({concurrency: 2, timeout: 60000})
-const filaYT = new PQueue({concurrency: 1, timeout: 60000})
-const filaIg = new PQueue({concurrency: 1, timeout: 60000})
-const filaFb = new PQueue({concurrency: 1, timeout: 60000})
-const filaTk = new PQueue({concurrency: 1, timeout: 60000})
-const filaTw = new PQueue({concurrency: 1, timeout: 60000})
-const filaImg = new PQueue({concurrency: 2, timeout: 60000})
+const filaPlay = new PQueue({concurrency: 2, timeout: 90000})
+const filaYT = new PQueue({concurrency: 1, timeout: 90000})
+const filaIg = new PQueue({concurrency: 1, timeout: 90000})
+const filaFb = new PQueue({concurrency: 1, timeout: 90000})
+const filaTk = new PQueue({concurrency: 1, timeout: 50000})
+const filaTw = new PQueue({concurrency: 1, timeout: 50000})
+const filaImg = new PQueue({concurrency: 2, timeout: 30000})
 
 module.exports = downloads = async(client,message) => {
     try{
@@ -78,15 +78,16 @@ module.exports = downloads = async(client,message) => {
                 if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
                 try{
                     var usuarioURL = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioURL)
-                    if(resultadosMidia.t > 300) return await client.reply(from, msgs_texto.downloads.fb.limite, id)
-                    await client.reply(from, criarTexto(msgs_texto.downloads.fb.espera, resultadosMidia.title, resultadosMidia.duration+"s"), id)
+                    console.log(resultadosMidia)
+                    if(resultadosMidia.video_length > 120) return await client.reply(from, msgs_texto.downloads.fb.limite, id)
+                    await client.reply(from, criarTexto(msgs_texto.downloads.fb.espera, resultadosMidia.video_length+"s"), id)
                     await filaFb.add(async ()=>{
-                        await client.sendFile(from, resultadosMidia.streamURL, `fb-media.mp4`,"", id).catch(()=>{
+                        await client.sendFile(from, resultadosMidia.download[1].url, `fb-media.mp4`,"", id).catch(()=>{
                             client.reply(from, msgs_texto.downloads.fb.erro_download, id)
                         })
                     })
                 } catch(err){
-                    await client.reply(from,err.message,id)
+                    client.reply(from,err.message,id)
                 } 
                 break
 

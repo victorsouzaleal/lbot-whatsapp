@@ -21,6 +21,7 @@
     "correios-brasil": "^2.2.2",
     "deepai": "^1.0.17",
     "dotenv": "^8.2.0",
+    "fb-downloader-scrapper": "^1.0.1",
     "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
     "format-duration-time": "^1.5.4",

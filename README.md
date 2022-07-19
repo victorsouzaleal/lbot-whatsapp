@@ -20,9 +20,9 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.5
-**[CORREÇÃO]** Comando !ig foi corrigido (novamente, espero que não ocorra mais problemas agora) <br>
-**[DEPENDÊNCIAS]** As dependências necessárias foram atualizadas e o versionamento foi corrigido.
+## Atualização 1.17.6
+**[NOVO]** Comando !fb foi adicionado novamente<br>
+**[AJUSTE]** Timeout de comandos de downloads foram alterados<br>
 <br>
 <br>
 Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
@@ -128,6 +128,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | Downloads      |                Recursos            |
 | :------------: | :---------------------------------------------: |
 |       ✅        |   Download de aúdio/videos (Youtube)    |
+|       ✅        |   Download de videos (Facebook)            |
 |       ✅        |   Download de imagens/videos (Instagram)  |
 |       ✅        |   Download de imagens/videos (Twitter)            |
 |       ✅        |   Download de videos (Tiktok)            |
