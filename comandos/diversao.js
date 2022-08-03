@@ -55,6 +55,16 @@ module.exports = diversao = async(client,message) => {
                 await client.reply(from, respostaTexto, idResposta)
                 break
 
+            case '!chance' :
+                if(args.length === 1) return await client.reply(from, erroComandoMsg(command), id)
+                var num = Math.floor(Math.random() * 100), temaChance = body.slice(8).trim()
+                if(quotedMsg){  //SE O COMANDO TIVER SIDO USADO EM RESPOSTA
+                    await client.reply(from, criarTexto(msgs_texto.diversao.chance.resposta, num, temaChance), quotedMsgObj.id)
+                } else {
+                    await client.reply(from, criarTexto(msgs_texto.diversao.chance.resposta, num, temaChance), id)
+                }
+                break
+
             case "!caracoroa":
                 var ladosMoeda = ["cara","coroa"], indexAleatorio = Math.floor(Math.random() * ladosMoeda.length)
                 await client.reply(from, msgs_texto.diversao.caracoroa.espera, id)
