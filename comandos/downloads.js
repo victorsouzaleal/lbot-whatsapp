@@ -20,21 +20,17 @@ module.exports = downloads = async(client,message) => {
                     if(videoInfo == null) return await client.reply(chatId, msgs_texto.downloads.play.nao_encontrado, id)
                     if(videoInfo.duration > 300000) return await client.reply(chatId, msgs_texto.downloads.play.limite, id)
                     var mensagemEspera = criarTexto(msgs_texto.downloads.play.espera, videoInfo.title, videoInfo.durationFormatted)
-                    await client.reply(chatId, mensagemEspera, id)      
-                } catch(err){
-                    return await client.reply(chatId,err.message,id)
-                }
-
-                try{
+                    await client.reply(chatId, mensagemEspera, id)
                     var saidaAudio = await api.obterYtMp3(videoInfo)
                     client.sendFile(chatId, saidaAudio, `${videoInfo.title}.mp3`,"", id).then(()=>{
                         fs.unlinkSync(saidaAudio)
                     }).catch(()=>{
                         fs.unlinkSync(saidaAudio)
                         client.reply(chatId, msgs_texto.downloads.play.erro_download, id)
-                    })
+                    })      
                 } catch(err){
-                    await client.reply(chatId,err.message,id)
+                    console.log(err)
+                    return await client.reply(chatId,err.message,id)
                 }
                 break
             
@@ -160,6 +156,4 @@ module.exports = downloads = async(client,message) => {
     } catch(err){
         throw err
     }
-    
-
 }
