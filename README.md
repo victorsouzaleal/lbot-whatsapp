@@ -20,8 +20,8 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.8
-**[CORREÇÃO]** Correção na exibição dos tempos de execução dos comandos<br>
+## Atualização 1.17.9
+**[CORREÇÃO]** Correção nos comandos do Youtube : !play e !yt<br>
 <br>
 <br>
 Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
@@ -31,7 +31,7 @@ Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
 
 ## REQUERIMENTOS :
-- [GIT](https://git-scm.com/downloads)
+- Um número de celular secundário para usar o bot.
 - [NODE VERSÃO LTS](https://nodejs.org/en/) 
 - [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/)
 
