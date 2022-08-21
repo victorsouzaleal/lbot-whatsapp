@@ -20,9 +20,8 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-## Atualização 1.17.7
-**[NOVO]** Comando de diversão !chance<br>
-**[DEPS]** Dependências atualizadas<br>
+## Atualização 1.17.8
+**[CORREÇÃO]** Correção na exibição dos tempos de execução dos comandos<br>
 <br>
 <br>
 Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
