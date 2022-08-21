@@ -6,7 +6,7 @@ const sticker = require("../lib/sticker")
 
 module.exports = figurinhas = async(client,message) => {
     try{
-        const { type, id, from, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, body} = message
+        const { type, id, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, body} = message
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -38,15 +38,15 @@ module.exports = figurinhas = async(client,message) => {
                     if(dadosMensagem.tipo === "image"){
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var imagemBase64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
-                        client.sendImageAsSticker(from, imagemBase64, stickerMetadata).catch(err=>{
+                        client.sendImageAsSticker(chatId, imagemBase64, stickerMetadata).catch(err=>{
                             consoleErro(err.message, "STICKER")
-                            client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
+                            client.reply(chatId, msgs_texto.figurinhas.sticker.erro_s,id)
                         })
                     } else {
-                        return client.reply(from, erroComandoMsg(command) , id)
+                        return client.reply(chatId, erroComandoMsg(command) , id)
                     }
                 } else {
-                    return client.reply(from, erroComandoMsg(command) , id)
+                    return client.reply(chatId, erroComandoMsg(command) , id)
                 }
                 break
             
@@ -54,9 +54,9 @@ module.exports = figurinhas = async(client,message) => {
                 if(quotedMsg && quotedMsg.type == "sticker"){
                     var mediaData = await decryptMedia(quotedMsg, uaOverride)
                     var imagemBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
-                    await client.sendFile(from,imagemBase64,"sticker.jpg","",quotedMsgObj.id)
+                    await client.sendFile(chatId,imagemBase64,"sticker.jpg","",quotedMsgObj.id)
                 } else {
-                    client.reply(from, erroComandoMsg(command), id)
+                    client.reply(chatId, erroComandoMsg(command), id)
                 }
                 break
 
@@ -89,24 +89,24 @@ module.exports = figurinhas = async(client,message) => {
                         mensagem: (isMedia)? message : quotedMsg
                     }
                     if((dadosMensagem.mimetype === 'video/mp4' || dadosMensagem.mimetype === 'image/gif') && dadosMensagem.duracao < 11){
-                        await client.reply(from, msgs_texto.geral.espera , id)
+                        await client.reply(chatId, msgs_texto.geral.espera , id)
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         var base64 = `data:${dadosMensagem.mimetype};base64,${mediaData.toString('base64')}`
-                        client.sendMp4AsSticker(from, base64, configConversao, stickerMetadata)
+                        client.sendMp4AsSticker(chatId, base64, configConversao, stickerMetadata)
                         .catch((err)=>{
                             consoleErro(err.message, "STICKER-GIF")
-                            client.reply(from, msgs_texto.figurinhas.sticker.erro_sgif , id)
+                            client.reply(chatId, msgs_texto.figurinhas.sticker.erro_sgif , id)
                         })
                     } else {
-                        return client.reply(from, msgs_texto.figurinhas.sticker.video_invalido, id)
+                        return client.reply(chatId, msgs_texto.figurinhas.sticker.video_invalido, id)
                     }
                 } else {
-                    return client.reply(from, erroComandoMsg(command), id)
+                    return client.reply(chatId, erroComandoMsg(command), id)
                 }
                 break
 
             case "!tps":
-                if(args.length == 1 || type != "chat") return client.reply(from, erroComandoMsg(command), id)
+                if(args.length == 1 || type != "chat") return client.reply(chatId, erroComandoMsg(command), id)
                 var stickerMetadata = {
                     author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
                     pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Textos`, 
@@ -114,29 +114,29 @@ module.exports = figurinhas = async(client,message) => {
                     discord: "701084178112053288"
                 }
                 var usuarioTexto = body.slice(5).trim()
-                if(usuarioTexto.length > 40) return client.reply(from,msgs_texto.figurinhas.tps.texto_longo,id)
-                await client.reply(from, msgs_texto.figurinhas.tps.espera,id)
+                if(usuarioTexto.length > 40) return client.reply(chatId,msgs_texto.figurinhas.tps.texto_longo,id)
+                await client.reply(chatId, msgs_texto.figurinhas.tps.espera,id)
                 try{
                     var imagemBase64 = await sticker.textoParaFoto(usuarioTexto)
-                    client.sendImageAsSticker(from, imagemBase64, stickerMetadata).catch(err=>{
+                    client.sendImageAsSticker(chatId, imagemBase64, stickerMetadata).catch(err=>{
                         consoleErro(err.message, "STICKER-TPS")
-                        client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
+                        client.reply(chatId, msgs_texto.figurinhas.sticker.erro_s,id)
                     })
                 } catch(err){
-                    client.reply(from, err.message, id)
+                    client.reply(chatId, err.message, id)
                 }
                 break
 
             case "!atps":
-                if(args.length == 1 || type != "chat") return client.reply(from,erroComandoMsg(command),id)
+                if(args.length == 1 || type != "chat") return client.reply(chatId,erroComandoMsg(command),id)
                 var usuarioTexto = body.slice(5).trim()
-                if(usuarioTexto.length > 40) return client.reply(from,msgs_texto.figurinhas.atps.texto_longo,id)
-                await client.reply(from, msgs_texto.figurinhas.atps.espera,id)
+                if(usuarioTexto.length > 40) return client.reply(chatId,msgs_texto.figurinhas.atps.texto_longo,id)
+                await client.reply(chatId, msgs_texto.figurinhas.atps.espera,id)
                 try{
                     var webpBase64 = await sticker.textoParaGif(usuarioTexto)
-                    await client.sendRawWebpAsSticker(from, webpBase64, true)
+                    await client.sendRawWebpAsSticker(chatId, webpBase64, true)
                 } catch(err){
-                    await client.reply(from, err.message, id)
+                    await client.reply(chatId, err.message, id)
                 }
                 break
             
@@ -157,18 +157,18 @@ module.exports = figurinhas = async(client,message) => {
                         var mediaData = await decryptMedia(dadosMensagem.mensagem, uaOverride)
                         try{
                             var saidaImgBase64 = await sticker.removerFundoImagem(mediaData, dadosMensagem.mimetype)
-                            client.sendImageAsSticker(from, saidaImgBase64, stickerMetadata).catch(err=>{
+                            client.sendImageAsSticker(chatId, saidaImgBase64, stickerMetadata).catch(err=>{
                                 consoleErro(err.message, "STICKER-SSF")
-                                client.reply(from, msgs_texto.figurinhas.sticker.erro_s,id)
+                                client.reply(chatId, msgs_texto.figurinhas.sticker.erro_s,id)
                             })
                         } catch(err){
-                            client.reply(from, err.message, id)
+                            client.reply(chatId, err.message, id)
                         }
                     } else {
-                        client.reply(from, msgs_texto.figurinhas.sticker.ssf_imagem, id)
+                        client.reply(chatId, msgs_texto.figurinhas.sticker.ssf_imagem, id)
                     }
                 } else {
-                    client.reply(from, erroComandoMsg(command), id)
+                    client.reply(chatId, erroComandoMsg(command), id)
                 }
                 break
         }

@@ -10,7 +10,7 @@ const {botInfo} = require(path.resolve("lib/bot.js"))
 
 module.exports = info = async(client, message, abrirMenu) => {
     try{
-        const {id, from, sender, chat, isGroupMsg, caption, body} = message
+        const {id, chatId, sender, chat, isGroupMsg, caption, body} = message
         const { pushname, verifiedName, formattedName } = sender, username = pushname || verifiedName || formattedName
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
@@ -30,17 +30,17 @@ module.exports = info = async(client, message, abrirMenu) => {
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
                 var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                 if(botFotoURL != undefined && botFotoURL != "ERROR: 404"){
-                    await client.sendFileFromUrl(from, botFotoURL, "botfoto.jpg", resposta, id)
+                    await client.sendFileFromUrl(chatId, botFotoURL, "botfoto.jpg", resposta, id)
                 } else {
-                    await client.reply(from, resposta, id)
+                    await client.reply(chatId, resposta, id)
                 }
                 break
             
             case "!reportar":
-                if(args.length == 1) return client.reply(from, erroComandoMsg(command) ,id)
+                if(args.length == 1) return client.reply(chatId, erroComandoMsg(command) ,id)
                 var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.id.replace("@c.us",""), usuarioMensagem)
                 await client.sendText(ownerNumber+"@c.us", resposta)
-                await client.reply(from,msgs_texto.info.reportar.sucesso,id)
+                await client.reply(chatId,msgs_texto.info.reportar.sucesso,id)
                 break
             
             case '!meusdados':
@@ -55,7 +55,7 @@ module.exports = info = async(client, message, abrirMenu) => {
                         resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                     }   
                 }
-                await client.reply(from, resposta, id)
+                await client.reply(chatId, resposta, id)
                 break
             
             case '!menu':
@@ -72,7 +72,7 @@ module.exports = info = async(client, message, abrirMenu) => {
 
                 if(args.length == 1){
                     var menuResposta = menu.menuPrincipal()
-                    await client.sendText(from, dadosResposta+menuResposta)
+                    await client.sendText(chatId, dadosResposta+menuResposta)
                 } else {
                     var usuarioOpcao = args[1]
                     var menuResposta = menu.menuPrincipal()
@@ -91,7 +91,7 @@ module.exports = info = async(client, message, abrirMenu) => {
                             break
                         case "4":
                             if(isGroupMsg) menuResposta = menu.menuGrupo(isGroupAdmins)
-                            else return await client.reply(from, msgs_texto.permissao.grupo, id)
+                            else return await client.reply(chatId, msgs_texto.permissao.grupo, id)
                             break
                         case "5":
                             menuResposta = menu.menuDiversao(isGroupMsg)
@@ -100,7 +100,7 @@ module.exports = info = async(client, message, abrirMenu) => {
                             menuResposta = menu.menuCreditos()
                             break
                     }
-                    await client.sendText(from, dadosResposta+menuResposta)
+                    await client.sendText(chatId, dadosResposta+menuResposta)
                 }
                 break
         }

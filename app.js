@@ -83,6 +83,11 @@ const start = async (client = new Client()) => {
                 })
             }))
 
+            /* PARA FINS DE TESTE
+            client.onAnyMessage((async (message) =>{
+                if (message.fromMe) await chamadaComando(client, message)
+            })) */
+
         } 
     } catch(err) {
         //Faça algo se der erro em alguma das funções acima
