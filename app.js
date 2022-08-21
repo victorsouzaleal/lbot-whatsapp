@@ -62,7 +62,7 @@ const start = async (client = new Client()) => {
                 if(!await antiPorno(client, message)) return
                 if(!await checagemMensagem(client, message)) return
                 await chamadaComando(client, message)
-            }))
+            }), {})
 
             //Ouvindo entrada/saida de participantes dos grupo
             client.onGlobalParticipantsChanged((async (ev) => {
