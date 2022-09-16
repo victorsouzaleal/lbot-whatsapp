@@ -19,7 +19,7 @@ module.exports = figurinhas = async(client,message) => {
                     var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                     var stickerMetadata = {
                         author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
-                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Stickers`, 
+                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()}`, 
                         keepScale: true, 
                         circle: false, 
                         discord: "701084178112053288"
@@ -65,13 +65,13 @@ module.exports = figurinhas = async(client,message) => {
                     var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                     var stickerMetadata = {
                         author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
-                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Animado`, 
-                        keepScale: false, 
+                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()}`, 
+                        keepScale: true, 
                         discord: "701084178112053288"
                     }
                     var configConversao = {
                         endTime: "00:00:11.0",
-                        crop: true,
+                        crop: false,
                         fps:9,
                         square:240
                     }
@@ -109,7 +109,7 @@ module.exports = figurinhas = async(client,message) => {
                 if(args.length == 1 || type != "chat") return client.reply(chatId, erroComandoMsg(command), id)
                 var stickerMetadata = {
                     author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
-                    pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Textos`, 
+                    pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()}`, 
                     keepScale: true, 
                     discord: "701084178112053288"
                 }
@@ -144,7 +144,7 @@ module.exports = figurinhas = async(client,message) => {
                 if(isMedia || quotedMsg){
                     var stickerMetadata = {
                         author: process.env.NOME_AUTOR_FIGURINHAS.trim(), 
-                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Sticker Sem Fundo`, 
+                        pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()}`, 
                         keepScale: true, 
                         discord: "701084178112053288"
                     }
