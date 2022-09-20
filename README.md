@@ -236,7 +236,7 @@ Esse comando atualiza as dependências e pode resolver algum problema que você 
 
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal)
 
-## 8 - Contato
+## 8 - Contato (NÃO É O BOT, É O NUMERO APENAS PARA TIRAR DÚVIDAS)
 * [`WhatsApp`](https://wa.me/5521995612287)
 
 ## 9 - Agradecimentos
