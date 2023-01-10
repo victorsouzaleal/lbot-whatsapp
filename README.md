@@ -20,12 +20,10 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
+<h1> ESTE PROJETO NÃO ESTÁ SENDO MAIS ATUALIZADO
+
 ## Atualização 1.17.9
 **[CORREÇÃO]** Correção nos comandos do Youtube : !play e !yt<br>
-<br>
-<br>
-Obs: Estou voltando a atualizar o bot aos poucos então alguns comandos podem estar sem funcionar.
-<br>
 <br>
 Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
 <br>
@@ -236,9 +234,6 @@ Esse comando atualiza as dependências e pode resolver algum problema que você 
 
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal)
 
-## 8 - Contato (NÃO É O BOT, É O NUMERO APENAS PARA TIRAR DÚVIDAS)
-* [`WhatsApp`](https://wa.me/5521995612287)
-
-## 9 - Agradecimentos
+## 8 - Agradecimentos
 * [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
 * [`MhankBarBar/whatsapp-bot`](https://github.com/MhankBarBar/whatsapp-bot)
