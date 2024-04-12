@@ -35,14 +35,6 @@ Nessa tela agora você tem seu **acr_host**, **acr_access_key** e **acr_access_s
 ### Pronto, você já tem suas chaves ACRCloud .
 
 
-## 3 - DEEPAI - Detector de Nudez/Pornografia
-### Crie uma conta no site https://deepai.org/
-
-Após a conta criada e o email verificado , clique em Dashboard e copie a chave para ser usada no campo **API_DEEPAI** no .env do Bot.
-![image](https://user-images.githubusercontent.com/4674786/115458184-c80b9e80-a1fb-11eb-9d0d-8397eb32b9e3.png)
-
-### Pronto, você já tem sua chave DEEPAI .
-
 
 
 
