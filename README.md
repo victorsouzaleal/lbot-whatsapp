@@ -20,7 +20,7 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-<h1> ESTE PROJETO NÃO ESTÁ SENDO MAIS ATUALIZADO
+<h1> PROJETO ESTÁ SENDO ATUALIZADO PARA A VERSÃO 2.00, AGUARDE MAIS UM POUCO! IREI LANÇAR EM BREVE O README NOVO COM INSTRUÇÕES SOBRE A VERSÃO 2.00
 
 ## Atualização 1.17.9
 **[CORREÇÃO]** Correção nos comandos do Youtube : !play e !yt<br>
