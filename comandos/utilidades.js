@@ -57,7 +57,8 @@ module.exports = utilidades = async(c,messageTranslated) => {
                         return client.reply(c, chatId, erroComandoMsg(command), id)
                     }
                     var resposta = await api.obterInfoDDD(DDD)
-                    await client.reply(c, chatId,resposta,id)
+                    if(resposta == undefined) return await client.reply(c, chatId, msgs_texto.utilidades.ddd.nao_encontrado, id)
+                    await client.reply(c, chatId, resposta, id)
                 } catch(err){
                     await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
