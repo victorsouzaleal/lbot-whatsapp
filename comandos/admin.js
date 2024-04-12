@@ -5,12 +5,11 @@ const { version } = require('../package.json');
 const msgs_texto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData} = require('../lib/util')
 const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
-const cadastrarGrupo = require("../lib/cadastrarGrupo")
 const db = require('../lib/database')
 const fs = require("fs-extra")
 const path = require("path")
 const client = require('../lib-translate/baileys')
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarAntitrava, botAlterarPvLiberado} = require('../lib/bot')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarPvLiberado} = require('../lib/bot')
 const {obterTodosUsuarios, obterTodosGrupos} = require("../lib/database");
 const { MessageTypes } = require('../lib-translate/msgtypes');
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
@@ -45,8 +44,6 @@ module.exports = admin = async(c,messageTranslated) => {
                 resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
                 // PV LIBERADO
                 resposta += (infoBot.pvliberado) ? msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.on: msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.off
-                // ANTI-TRAVA
-                resposta += (infoBot.antitrava.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.antitrava.on,  infoBot.antitrava.max_caracteres) : msgs_texto.admin.infocompleta.resposta_variavel.antitrava.off
                 // LIMITE COMANDOS DIARIO
                 resposta += (infoBot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on,  expiracaoLimiteDiario) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
                 // LIMITE COMANDOS POR MINUTO
@@ -87,14 +84,6 @@ module.exports = admin = async(c,messageTranslated) => {
                 await client.reply(c, chatId, resposta, id)
                 break
 
-            /* DELETAR COMANDO
-            case '!limpartudo':
-                var chats = await client.getAllChats()
-                for (var c of chats) await client.deleteChat(c.id)
-                await client.sendText(ownerNumber+"@c.us", msgs_texto.admin.limpar.limpar_sucesso)
-                break
-            */ 
-
             case "!bcmdglobal":
                 if(args.length === 1) return await client.reply(c, chatId, erroComandoMsg(command) ,id)
                 var usuarioComandos = body.slice(12).split(" "), respostaBloqueio = await bloquearComandosGlobal(usuarioComandos)
@@ -107,24 +96,14 @@ module.exports = admin = async(c,messageTranslated) => {
                 await client.reply(c, chatId, respostaDesbloqueio, id)
                 break
             
-            /* DELETAR COMANDO
-            case '!limpar':
-                var chats = await client.getAllChats()
-                for (var c of chats) {
-                    if(c.id.match(/@c.us/g) && c.id != sender.id) await client.deleteChat(c.id)
-                }
-                await client.sendText(ownerNumber+"@c.us", msgs_texto.admin.limpar.limpar_sucesso)
-                break
-            */
-
             case '!rconfig':
                 await db.resetarGrupos()
                 await client.reply(c, chatId,msgs_texto.admin.rconfig.reset_sucesso,id)
                 break
 
             case '!sairgrupos':
-                var grupos = await client.getAllGroups()
-                for (var grupo of grupos) await client.leaveGroup(grupo.id)
+                var grupos = await client.getAllGroups(c)
+                for (var grupo of grupos) await client.leaveGroup(c, grupo.id)
                 var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
                 await client.reply(c, ownerNumber+"@s.whatsapp.net", resposta, id)
                 break
@@ -214,19 +193,6 @@ module.exports = admin = async(c,messageTranslated) => {
                 } else {
                     return client.reply(c, chatId, erroComandoMsg(command) , id)
                 }
-                break
-
-            case "!antitravapv":
-                var novoEstado = !botInfo().antitrava.status
-                if(novoEstado){
-                    var maxCaracteres = args[1] || 1500
-                    if(isNaN(maxCaracteres) || maxCaracteres < 250) return await client.reply(c, chatId, msgs_texto.admin.antitrava.qtd_invalida, id)
-                    botAlterarAntitrava(true, maxCaracteres)
-                    await client.reply(c, chatId, criarTexto(msgs_texto.admin.antitrava.ligado, maxCaracteres), id)
-                } else {
-                    botAlterarAntitrava(false, 0)
-                    await client.reply(c, chatId, msgs_texto.admin.antitrava.desligado, id)
-                } 
                 break
 
             case "!limitediario":
@@ -382,49 +348,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, dadosUsuario.comandos_total)
                 await client.reply(c, chatId, resposta, id)
                 break
-            
-            /* REMOVER ESSES COMANDOS POR RISCO DE BANIMENTO
-            case '!bctodos':
-                if(args.length === 1) return await client.reply(chatId, erroComandoMsg(command), id)
-                var mensagem = body.slice(9).trim(), chats = await client.getAllChats(), bloqueados = await client.getBlockedIds()
-                await client.reply(chatId, criarTexto(msgs_texto.admin.bctodos.espera, chats.length, chats.length), id)
-                for (let chat of chats) {
-                    if(chat.isGroup && !chat.isReadOnly && !chat.isAnnounceGrpRestrict){
-                        await new Promise((resolve)=>{
-                            setTimeout(async ()=>{
-                                resolve(await client.sendText(chat.id, criarTexto(msgs_texto.admin.bctodos.anuncio, mensagem)))
-                            }, 1000)
-                        })
-                    } else {
-                        if(!bloqueados.includes(chat.id)) {
-                            await new Promise((resolve)=>{
-                                setTimeout(async ()=>{
-                                    resolve(await client.sendText(chat.id, criarTexto(msgs_texto.admin.bctodos.anuncio, mensagem)))
-                                }, 1000)
-                            })
-                        }
-                    }
-                }
-                await client.reply(chatId, msgs_texto.admin.bctodos.bc_sucesso , id)
-                break
-
-            case '!bccontatos':
-                if(args.length === 1) return client.reply(chatId, erroComandoMsg(command), id)
-                var mensagem = body.slice(12).trim(), chats = await client.getAllChats(), grupos = await client.getAllGroups(), bloqueados = await client.getBlockedIds(), qtdChatContatos = chats.length - grupos.length
-                await client.reply(chatId, criarTexto(msgs_texto.admin.bccontatos.espera, qtdChatContatos, qtdChatContatos), id)
-                for (let chat of chats) {
-                    if(!chat.isGroup && !bloqueados.includes(chat.id)) {
-                        await new Promise((resolve)=>{
-                            setTimeout(async ()=>{
-                                resolve(await client.sendText(chat.id, criarTexto(msgs_texto.admin.bccontatos.anuncio, mensagem)))
-                            }, 1000)
-                        })
-                    }
-                }
-                await client.reply(chatId, msgs_texto.admin.bccontatos.bc_sucesso , id)
-                break
-            */
-            
+                     
             case '!bcgrupos':
                 if(args.length === 1) return client.reply(c, chatId, erroComandoMsg(command), id)
                 var mensagem = body.slice(10).trim(), grupos = await client.getAllGroups(c)
@@ -453,12 +377,6 @@ module.exports = admin = async(c,messageTranslated) => {
                 await client.reply(c, chatId, resposta, id)
                 break
             
-            /* REMOVER COMANDO
-            case '!print':
-                let print = await client.getSnapshot()
-                await client.sendFile(chatId,print,"print.png",'Captura de Tela',id)
-                break
-            */
             case '!estado':
                 if(args.length != 2)  return client.reply(c, chatId,erroComandoMsg(command),id)
                 switch(args[1]){

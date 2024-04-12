@@ -3,7 +3,6 @@ const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando} = require('../lib/util')
 const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
 const db = require('../lib/database')
-const {obterDestravas} = require("../lib/api")
 const client = require('../lib-translate/baileys')
 const { MessageTypes } = require('../lib-translate/msgtypes')
 const { downloadMediaMessage } = require('@whiskeysockets/baileys')
@@ -212,7 +211,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 if (!isGroupAdmins) return client.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                 var grupoInfo = await db.obterGrupo(groupId)
                 var estadoNovo = !grupoInfo.contador.status
-                var membrosAtuais = await client.getGroupMembersId(groupId)
+                var membrosAtuais = await client.getGroupMembersId(c, groupId)
                 if (estadoNovo) {
                     await db.alterarContador(groupId)
                     await db.registrarContagemTodos(groupId, membrosAtuais)
@@ -240,7 +239,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 } else {
                     return client.reply(chatId, erroComandoMsg(command),id)
                 }
-                var atividadeResposta = criarTexto(msgs_texto.grupo.atividade.resposta, atividadeUsuario.msg, atividadeUsuario.texto, atividadeUsuario.imagem, atividadeUsuario.video, atividadeUsuario.sticker, atividadeUsuario.gravacao, atividadeUsuario.audio, atividadeUsuario.outro)
+                var atividadeResposta = criarTexto(msgs_texto.grupo.atividade.resposta, atividadeUsuario.msg, atividadeUsuario.texto, atividadeUsuario.imagem, atividadeUsuario.video, atividadeUsuario.sticker, atividadeUsuario.audio, atividadeUsuario.outro)
                 await client.reply(c, chatId, atividadeResposta, id)
                 break
             
