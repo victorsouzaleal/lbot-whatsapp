@@ -10,48 +10,50 @@
   "author": "Leal",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@open-wa/wa-automate": "^4.43.1",
-    "@open-wa/wa-decrypt": "^3.0.1",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@hapi/boom": "^10.0.1",
+    "@sasmeee/igdl": "^1.0.0",
+    "@tobyg74/tiktok-api-dl": "^1.1.2",
     "@vitalets/google-translate-api": "^7.0.0",
+    "@whiskeysockets/baileys": "^6.6.0",
+    "@xaviabot/fb-downloader": "^1.0.14",
+    "@yohancolla/ytdl": "^1.2.0",
     "acrcloud": "^1.4.0",
     "axios": "^0.24.0",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.10",
     "correios-brasil": "^2.2.2",
-    "deepai": "^1.0.17",
     "dotenv": "^8.2.0",
-    "fb-downloader-scrapper": "^1.0.1",
     "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
     "g-i-s": "^2.1.6",
     "genius-lyrics": "^4.2.9",
+    "get-twitter-media": "^2.0.8",
     "google-it": "^1.6.3",
-    "imgur": "^1.0.2",
-    "instagram-url-direct": "^1.0.12",
+    "jimp": "^0.22.12",
+    "link-preview-js": "^3.0.5",
     "moment-timezone": "^0.5.31",
     "nedb-async": "^0.1.6",
     "node-gtts": "^2.0.2",
+    "pino": "^8.19.0",
     "pretty-num": "^0.5.0",
     "prompt": "^1.1.0",
-    "tiktok-scraper": "^1.4.36",
-    "twitter-url-direct": "^1.0.2",
+    "qrcode-terminal": "^0.12.0",
+    "wa-sticker-formatter": "^4.4.4",
     "youtube-sr": "^4.2.0",
-    "ytdl-core": "4.10.0"
+    "ytdl-core": "4.11.5"
   },
   "directories": {
     "lib": "lib"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git"
-  },
+  "repository": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git",
   "keywords": [
     "whatsapp",
     "whatsapp-bot",
     "bot",
     "sticker"
-  ]
+  ],
+  "private": false
 }

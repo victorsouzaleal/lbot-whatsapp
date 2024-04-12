@@ -7,60 +7,61 @@ const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = r
 const path = require('path')
 const db = require('../lib/database')
 const {botInfo} = require(path.resolve("lib/bot.js"))
+const client = require("../lib-translate/baileys")
+const {MessageTypes}  = require("../lib-translate/msgtypes")
 
-module.exports = info = async(client, message, abrirMenu) => {
+module.exports = info = async(c, abrirMenu, messageTranslated) => {
     try{
-        const {id, chatId, sender, chat, isGroupMsg, caption, body} = message
-        const { pushname, verifiedName, formattedName } = sender, username = pushname || verifiedName || formattedName
+        const {id, chatId, sender, chat, isGroupMsg, caption, body, username} = messageTranslated
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const botNumber = await client.getHostNumber()
+        const botNumber = await client.getHostNumber(c)
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
-        const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
-        const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
+        const groupAdmins = isGroupMsg ? await client.getGroupAdmins(c, groupId) : ''
+        const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
         if(abrirMenu) command = "!menu"
 
         switch(command){
             case "!info":
-                const botFotoURL = await client.getProfilePicFromServer(botNumber+'@c.us')
+                const botFotoURL = await client.getProfilePicFromServer(c,botNumber)
                 var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
                 var botInicializacaoData = timestampParaData(infoBot.iniciado)
                 var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
-                if(botFotoURL != undefined && botFotoURL != "ERROR: 404"){
-                    await client.sendFileFromUrl(chatId, botFotoURL, "botfoto.jpg", resposta, id)
+                if(botFotoURL != undefined){
+                    await client.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                 } else {
-                    await client.reply(chatId, resposta, id)
+                    await client.reply(c, chatId, resposta, id)
                 }
                 break
             
             case "!reportar":
-                if(args.length == 1) return client.reply(chatId, erroComandoMsg(command) ,id)
-                var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.id.replace("@c.us",""), usuarioMensagem)
-                await client.sendText(ownerNumber+"@c.us", resposta)
-                await client.reply(chatId,msgs_texto.info.reportar.sucesso,id)
+                if(args.length == 1) return client.reply(c, chatId, erroComandoMsg(command) ,id)
+                var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
+                await client.sendText(c,ownerNumber+"@s.whatsapp.net", resposta)
+                await client.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
                 break
             
             case '!meusdados':
-                var dadosUsuario = await db.obterUsuario(sender.id), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
+                var dadosUsuario = await db.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
                 tipoUsuario = msgs_texto.tipos[tipoUsuario]
                 var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                 if(botInfo().limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                 if(isGroupMsg){
                     var dadosGrupo = await db.obterGrupo(groupId)
                     if(dadosGrupo.contador.status){
-                        var usuarioAtividade = await db.obterAtividade(groupId,sender.id)
+                        var usuarioAtividade = await db.obterAtividade(groupId,sender)
                         resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                     }   
                 }
-                await client.reply(chatId, resposta, id)
+                await client.reply(c, chatId, resposta, id)
                 break
             
             case '!menu':
             case '!ajuda': 
-                var dadosUsuario = await db.obterUsuario(sender.id), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite" 
+                var dadosUsuario = await db.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite" 
                 tipoUsuario = msgs_texto.tipos[tipoUsuario]
                 var dadosResposta = '', nomeUsuario = username
                 if(botInfo().limite_diario.status){
@@ -72,7 +73,7 @@ module.exports = info = async(client, message, abrirMenu) => {
 
                 if(args.length == 1){
                     var menuResposta = menu.menuPrincipal()
-                    await client.sendText(chatId, dadosResposta+menuResposta)
+                    await client.sendText(c, chatId, dadosResposta+menuResposta)
                 } else {
                     var usuarioOpcao = args[1]
                     var menuResposta = menu.menuPrincipal()
@@ -91,7 +92,7 @@ module.exports = info = async(client, message, abrirMenu) => {
                             break
                         case "4":
                             if(isGroupMsg) menuResposta = menu.menuGrupo(isGroupAdmins)
-                            else return await client.reply(chatId, msgs_texto.permissao.grupo, id)
+                            else return await client.reply(c, chatId, msgs_texto.permissao.grupo, id)
                             break
                         case "5":
                             menuResposta = menu.menuDiversao(isGroupMsg)
@@ -100,7 +101,7 @@ module.exports = info = async(client, message, abrirMenu) => {
                             menuResposta = menu.menuCreditos()
                             break
                     }
-                    await client.sendText(chatId, dadosResposta+menuResposta)
+                    await client.sendText(c, chatId, dadosResposta+menuResposta)
                 }
                 break
         }

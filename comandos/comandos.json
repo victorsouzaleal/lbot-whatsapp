@@ -13,7 +13,6 @@
         "!clima",
         "!ddd",
         "!anime",
-        "!animelanc",
         "!qualmusica"
     ],
     "info":[
@@ -24,10 +23,6 @@
     ],
     "figurinhas": [
         "!s",
-        "!sgif",
-        "!ssf",
-        "!tps",
-        "!atps",
         "!simg"
     ],
     "downloads": [
@@ -40,7 +35,6 @@
         "!img"
     ],
     "grupo":[
-        "!destravar",
         "!status",
         "!fotogrupo",
         "!regras",
@@ -54,32 +48,25 @@
         "!mt",
         "!mm",
         "!adms",
+        "!enquete",
         "!dono",
         "!mutar",
         "!link",
         "!rlink",
         "!f",
         "!alink",
-        "!atrava",
-        "!aporno",
         "!autosticker",
         "!bv",
         "!afake",
         "!aflood",
         "!apg",
         "!bantodos",
-        "!vb",
-        "!votar",
         "!topativos",
         "!contador", 
         "!atividade",
         "!alterarcont",
         "!imarcar",
         "!ibanir",
-        "!votacao",
-        "!enquete",
-        "!votarenquete",
-        "!verenquete",
         "!bcmd",
         "!dcmd"
     ],
