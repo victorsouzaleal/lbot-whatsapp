@@ -8,6 +8,7 @@ const client = require("../lib-translate/baileys")
 const { MessageTypes } = require('../lib-translate/msgtypes')
 const { downloadMediaMessage } = require('@whiskeysockets/baileys')
 const {converterMp4ParaMp3} = require("../lib/conversao")
+const { error } = require('console')
 
 
 module.exports = utilidades = async(c,messageTranslated) => {
@@ -32,9 +33,9 @@ module.exports = utilidades = async(c,messageTranslated) => {
 
             case "!letra":
                 try{
-                    if(args.length === 1) return client.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await client.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioTexto = body.slice(7).trim(), dadosMusica = await api.obterLetraMusica(usuarioTexto)
-                    console.log(dadosMusica)
+                    if(!dadosMusica.success) return await client.reply(c, chatId, dadosMusica.error_message, id)
                     await client.replyFile(c, MessageTypes.image, chatId, dadosMusica.imagem, criarTexto(msgs_texto.utilidades.letra.resposta, dadosMusica.titulo, dadosMusica.artista, dadosMusica.letra), id)
                 } catch(err){
                     await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -112,6 +113,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                     }
                     var resp = await api.obterReconhecimentoMusica(caminhoAudio)
                     fs.unlinkSync(caminhoAudio)
+                    if(!resp.success) return await client.reply(c, chatId, resp.error_message, id)
                     await client.reply(c, chatId, criarTexto(msgs_texto.utilidades.qualmusica.resposta, resp.titulo, resp.produtora, resp.duracao, resp.lancamento, resp.album, resp.artistas), id)
                 } catch(err){
                     if(fs.existsSync(caminhoVideo)) fs.unlinkSync(caminhoVideo)
@@ -140,6 +142,8 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 try{
                     if(args.length !== 3) return await client.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioMoedaInserida = args[1], usuarioValorInserido = args[2], conversaoMoeda = await api.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido)
+                    if(!conversaoMoeda.success) return await client.reply(c, chatId, conversaoMoeda.error_message, id)
+                    console.log(conversaoMoeda)
                     var itens = ''
                     for(var dado of  conversaoMoeda.conversao) itens += criarTexto(msgs_texto.utilidades.moeda.resposta_item, dado.conversao, dado.valor_convertido_formatado, dado.tipo, dado.atualizacao)
                     var respostaFinal = criarTexto(msgs_texto.utilidades.moeda.resposta_completa, conversaoMoeda.valor_inserido, conversaoMoeda.moeda_inserida, itens)
@@ -155,8 +159,9 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 try{
                     if (args.length === 1) return client.reply(c, chatId, erroComandoMsg(command) , id)
                     var usuarioTexto = body.slice(10).trim(), pesquisaResultados = await api.obterPesquisaWeb(usuarioTexto)
+                    if(!pesquisaResultados.success) return await client.reply(c, chatId, pesquisaResultados.error_message, id)
                     var pesquisaResposta = criarTexto(msgs_texto.utilidades.pesquisa.resposta_titulo, usuarioTexto)
-                    for(let resultado of pesquisaResultados){
+                    for(let resultado of pesquisaResultados.resultados){
                         pesquisaResposta += "═════════════════\n"
                         pesquisaResposta += criarTexto(msgs_texto.utilidades.pesquisa.resposta_itens, resultado.titulo, resultado.link, resultado.descricao)
                     }
@@ -172,8 +177,9 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 try{
                     if (args.length === 1) return client.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioCodigoRastreio = body.slice(10).trim(), rastreioDados = await api.obterRastreioCorreios(usuarioCodigoRastreio)
+                    if(!rastreioDados.success) return client.reply(c, chatId, rastreioDados.error_message, id)
                     var rastreioResposta = msgs_texto.utilidades.rastreio.resposta_titulo
-                    for(let dado of rastreioDados){
+                    for(let dado of rastreioDados.rastreio){
                         var local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
                         rastreioResposta += criarTexto(msgs_texto.utilidades.rastreio.resposta_itens, dado.status, dado.data, dado.hora, local)
                         rastreioResposta += "-----------------------------------------\n"
@@ -194,16 +200,17 @@ module.exports = utilidades = async(c,messageTranslated) => {
                         mensagem: (quotedMsg)? quotedMsgObj : id
                     }
                     if(dadosMensagem.tipo == MessageTypes.image){
-                        client.reply(c, chatId,msgs_texto.utilidades.anime.espera, id)
+                        await client.reply(c, chatId,msgs_texto.utilidades.anime.espera, id)
                         var bufferImagem = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
                         var caminhoImagem = path.resolve(`temp/${obterNomeAleatorio(".jpg")}`)
                         fs.writeFileSync(caminhoImagem, bufferImagem)
                         var animeInfo = await api.obterAnimeInfo(caminhoImagem)
+                        fs.unlinkSync(caminhoImagem)
+                        if(!animeInfo.success) return await client.reply(c, chatId, animeInfo.error_message, id)
                         if(animeInfo.similaridade < 87) return await client.reply(c, chatId,msgs_texto.utilidades.anime.similaridade,id)
                         animeInfo.episodio = animeInfo.episodio || "---"
                         var respostaAnimeInfo = criarTexto(msgs_texto.utilidades.anime.resposta, animeInfo.titulo, animeInfo.episodio, animeInfo.tempoInicial, animeInfo.tempoFinal, animeInfo.similaridade, animeInfo.link_previa)
                         await client.replyFile(c, MessageTypes.video, chatId, animeInfo.link_previa, respostaAnimeInfo, id, "video/mp4")
-                        fs.unlinkSync(caminhoImagem)
                     } else {
                         await client.reply(c, chatId,erroComandoMsg(command), id)
                     }
@@ -230,7 +237,8 @@ module.exports = utilidades = async(c,messageTranslated) => {
                         return await client.reply(c, chatId, erroComandoMsg(command) ,id)
                     }
                     var respostaTraducao = await api.obterTraducao(usuarioTexto, idiomaTraducao)
-                    await client.reply(c, chatId, respostaTraducao, id)
+                    if(!respostaTraducao.success) return await client.reply(c, chatId, respostaTraducao.error_message, id)
+                    await client.reply(c, chatId, respostaTraducao.traducao, id)
                 } catch(err){
                     await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -249,14 +257,15 @@ module.exports = utilidades = async(c,messageTranslated) => {
                         usuarioTexto = body.slice(8).trim()
                     }
                     if (!usuarioTexto) return client.reply(c, chatId, msgs_texto.utilidades.voz.texto_vazio , id)
-                    if (usuarioTexto.length > 200) return client.reply(c, chatId, msgs_texto.utilidades.voz.texto_longo, id)
+                    if (usuarioTexto.length > 200) return await client.reply(c, chatId, msgs_texto.utilidades.voz.texto_longo, id)
                     var idioma = body.slice(5, 7).toLowerCase()
                     var respostaAudio = await api.textoParaVoz(idioma, usuarioTexto)
-                    await client.replyFile(c, MessageTypes.audio, chatId, respostaAudio, '', id, 'audio/mpeg').then(()=>{
-                        fs.unlinkSync(respostaAudio)
+                    if(!respostaAudio.success) return await client.reply(c, chatId, respostaAudio.error_message, id)
+                    await client.replyFile(c, MessageTypes.audio, chatId, respostaAudio.audio, '', id, 'audio/mpeg').then(()=>{
+                        fs.unlinkSync(respostaAudio.audio)
                     })
                 } catch(err){
-                    if(fs.existsSync(respostaAudio)) fs.unlinkSync(respostaAudio)
+                    if(fs.existsSync(respostaAudio.audio)) fs.unlinkSync(respostaAudio.audio)
                     await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
@@ -283,7 +292,8 @@ module.exports = utilidades = async(c,messageTranslated) => {
                     if(args.length === 1) return await client.reply(c, chatId, erroComandoMsg(command) ,id)
                     var usuarioExpressaoMatematica = body.slice(6).trim()
                     var resultadoCalculo = await api.obterCalculo(usuarioExpressaoMatematica)
-                    var respostaCalc = criarTexto(msgs_texto.utilidades.calc.resposta, resultadoCalculo)
+                    if(!resultadoCalculo.success) return await client.reply(c, chatId, resultadoCalculo.error_message, id)
+                    var respostaCalc = criarTexto(msgs_texto.utilidades.calc.resposta, resultadoCalculo.resultado)
                     await client.reply(c, chatId, respostaCalc, id)
                 } catch(err){
                     await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
