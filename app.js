@@ -106,8 +106,6 @@ async function connectToWhatsApp(){
         c.ev.on('group-participants.update', async (event)=>{
             try{
                 if(event.participants[0] == await client.getHostNumber(c)) return
-                console.log('group-participants.update')
-                console.log(event)
                 const g_info = await db.obterGrupo(event.id)
                 if (event.action == 'add') {
                     //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
