@@ -77,10 +77,12 @@ module.exports = admin = async(c,messageTranslated) => {
                     var linkValido = linkGrupo.match(/(https:\/\/chat.whatsapp.com)/gi)
                     if (!linkValido) return await client.reply(c, chatId, msgs_texto.admin.entrar_grupo.link_invalido, id)
                     var idLink = linkGrupo.replace(/(https:\/\/chat.whatsapp.com\/)/gi, '')
-                    await client.joinGroupViaLink(c, idLink).catch(async ()=>{
+                    await client.joinGroupViaLink(c, idLink).then(async (res)=>{
+                        if (res == undefined) await client.reply(c, chatId, msgs_texto.admin.entrar_grupo.pendente,id)
+                        else await client.reply(c, chatId, msgs_texto.admin.entrar_grupo.entrar_sucesso,id)
+                    }).catch(async ()=>{
                         await client.reply(c, chatId, msgs_texto.admin.entrar_grupo.entrar_erro, id)
                     })
-                    await client.reply(c, chatId, msgs_texto.admin.entrar_grupo.entrar_sucesso,id)
                 } catch(err){
                     await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
