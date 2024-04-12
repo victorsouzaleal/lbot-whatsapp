@@ -480,8 +480,9 @@ module.exports = admin = async(c,messageTranslated) => {
                 break
 
             case '!desligar':
-                await client.reply(c, chatId, msgs_texto.admin.desligar.sucesso, id)
-                await client.botLogout(c)
+                await client.reply(c, chatId, msgs_texto.admin.desligar.sucesso, id).then(async()=>{
+                    await client.botLogout(c)
+                })
                 break
             
             case "!ping":
