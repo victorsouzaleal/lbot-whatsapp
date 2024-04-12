@@ -32,7 +32,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 } catch(err){
                     if (fs.existsSync(caminhoAudio)) fs.unlinkSync(caminhoAudio) 
                     await client.reply(c, chatId, msgs_texto.downloads.play.erro_download, id)
-                    err.message = `Downloads !play - ${err.message}`
+                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -51,7 +51,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 } catch(err){
                     if (fs.existsSync(caminhoVideo)) fs.unlinkSync(caminhoVideo)
                     await client.reply(c, chatId,msgs_texto.downloads.yt.erro_download,id)
-                    err.message = `Downloads !yt - ${err.message}`
+                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -63,7 +63,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                     await client.replyFileFromUrl(c, MessageTypes.video, chatId, resultadosMidia.sd, '', id, 'video/mp4')
                 } catch(err){
                     await client.reply(c, chatId, msgs_texto.downloads.fb.erro_download, id)
-                    err.message = `Downloads !fb - ${err.message}`
+                    err.message = `${command} - ${err.message}`
                     throw err
                 } 
                 break
@@ -82,7 +82,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                     }
                 } catch(err){
                     await client.reply(c, chatId, msgs_texto.downloads.ig.erro_download, id)
-                    err.message = `Downloads !ig - ${err.message}`
+                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -99,8 +99,9 @@ module.exports = downloads = async(c,messageTranslated) => {
                         await client.replyFileFromUrl(c, MessageTypes.video, chatId, resultadosMidia.media[0].url, resultadosMidia.text, id, "video/mp4")
                     }
                 } catch(err){
-                    consoleErro(err.message, "Downloads - !tw")
                     await client.reply(c, chatId, msgs_texto.downloads.tw.erro_download, id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
                 }
                 break
 
@@ -113,7 +114,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                     await client.replyFileFromBuffer(c, MessageTypes.video, chatId, bufferTk, '', id, "video/mp4")
                 } catch(err){
                     await client.reply(c, chatId, msgs_texto.downloads.tk.erro_download, id)
-                    err.message = `Downloads !tk - ${err.message}`
+                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -134,7 +135,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                     }
                 } catch(err){
                     await client.reply(c, chatId, msgs_texto.downloads.img.erro_imagem, id)
-                    err.message = `Downloads !img - ${err.message}`
+                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
