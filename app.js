@@ -1,12 +1,12 @@
 //REQUERINDO MODULOS
-const {makeWASocket, BufferJSON, useMultiFileAuthState, DisconnectReason} = require('@whiskeysockets/baileys')
+const {makeWASocket, useMultiFileAuthState, DisconnectReason} = require('@whiskeysockets/baileys')
 const { Boom } = require('@hapi/boom')
 const moment = require("moment-timezone")
 moment.tz.setDefault('America/Sao_Paulo')
 require('dotenv').config()
 const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('./lib/util')
 const {verificacaoListaNegraGeral, verificarUsuarioListaNegra} = require(`./lib/listaNegra`)
-const {atualizarParticipantes, adicionarParticipante, removerParticipante, participanteExiste} = require("./lib/controleParticipantes")
+const {atualizarParticipantes, adicionarParticipante, removerParticipante} = require("./lib/controleParticipantes")
 const db = require('./lib/database')
 const checagemMensagem = require("./lib/checagemMensagem")
 const chamadaComando = require("./lib/chamadaComando")
@@ -127,6 +127,7 @@ async function connectToWhatsApp(){
                 }
             } catch(err){
                 consoleErro(err, "GROUP-PARTICIPANTS.UPDATE")
+                c.end(new Error("erro_geral"))
             }
         })
 
