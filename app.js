@@ -29,19 +29,19 @@ async function connectToWhatsApp(){
             if(connection === 'close') {
                 const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
                 if(lastDisconnect.error.message == "Comando"){
-                    console.log('A conexão com o WhatsApp foi encerrada pelo comando do Administrador.')
+                    consoleErro('A conexão com o WhatsApp foi encerrada pelo comando do Administrador.', "DESCONECTADO")
                 } else if(lastDisconnect.error.message == "arquivos"){
-                    console.log('O bot foi encerrado para criação de arquivos necessários, inicie novamente.')
+                    consoleErro('O bot foi encerrado para criação de arquivos necessários, inicie novamente.', "DESCONECTADO")
                 } else if( lastDisconnect.error.message == "erro_geral"){
-                    console.log('A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.')
+                    consoleErro('A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.', "DESCONECTADO")
                 } else {
                     if(erroCodigo == DisconnectReason?.loggedOut){
                         fs.rmSync("./auth_info_baileys", {recursive: true, force: true})
-                        console.log('A sua sessão com o WhatsApp foi deslogada, leia o código QR novamente.')
+                        consoleErro('A sua sessão com o WhatsApp foi deslogada, leia o código QR novamente.', "DESCONECTADO")
                     } else if(erroCodigo == DisconnectReason?.restartRequired){
-                        console.log('A sua conexão com o WhatsApp precisa ser reiniciada, tentando reconectar...')
+                        consoleErro('A sua conexão com o WhatsApp precisa ser reiniciada, tentando reconectar...', "DESCONECTADO")
                     } else {
-                        console.log(`A sua conexão com o WhatsApp foi encerrada, tentando reconectar... Motivo : ${erroCodigo} - ${lastDisconnect.error.message}`)
+                        consoleErro(`A sua conexão com o WhatsApp foi encerrada, tentando reconectar... Motivo : ${erroCodigo} - ${lastDisconnect.error.message}`, "DESCONECTADO")
                     }
                     connectToWhatsApp()
                 }
