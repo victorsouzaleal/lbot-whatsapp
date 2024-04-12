@@ -97,7 +97,7 @@ module.exports ={
 
     setGroupToAdminsOnly: async(c, groupId, state)=>{
         let setting = state ? "announcement" : "not_announcement"
-        await c.groupSettingUpdate(groupId, setting)
+        return await c.groupSettingUpdate(groupId, setting)
     },
 
     deleteMessage: async(c, message, isQuoted = false)=>{
@@ -112,7 +112,7 @@ module.exports ={
         } else{
             deleteMessage = message.key
         }
-        await c.sendMessage(message.key.remoteJid, {delete: deleteMessage})
+        return await c.sendMessage(message.key.remoteJid, {delete: deleteMessage})
     },
 
     setProfilePic: async(c, id, buffer)=>{
@@ -164,11 +164,11 @@ module.exports ={
     },
 
     contactBlock: async(c, userId)=>{
-        await c.updateBlockStatus(userId, "block")
+        return await c.updateBlockStatus(userId, "block")
     },
 
     contactUnblock: async(c, userId)=>{
-        await c.updateBlockStatus(userId, "unblock")
+        return await c.updateBlockStatus(userId, "unblock")
     },
 
     removeParticipant: async(c, groupId, participantId)=>{
@@ -207,70 +207,69 @@ module.exports ={
 
     /////////  FUNÇÕES ENVIO NORMAL
     sendText: async(c, id, text)=>{ //ENVIAR TEXTO
-        await c.sendMessage(id, {text, linkPreview: null})
+        return await c.sendMessage(id, {text, linkPreview: null})
     },
 
     sendPoll: async(c, chatId, pollName, pollValues)=>{
-        await c.sendMessage(chatId, {poll : {name: pollName, values: pollValues, selectableCount: 1}})
+        return await c.sendMessage(chatId, {poll : {name: pollName, values: pollValues, selectableCount: 1}})
     },
 
     sendLinkWithAutoPreview: async(c, chatId, textWithLink) =>{
-        await c.sendMessage(chatId, {text: textWithLink})
+        return await c.sendMessage(chatId, {text: textWithLink})
     },
     
     sendTextWithMentions: async(c, id, text, mentionedIdsArray)=>{ //ENVIAR TEXTO MENCIONANDO UM MEMBRO 
-        await c.sendMessage(id, {text , mentions: mentionedIdsArray})
+        return await c.sendMessage(id, {text , mentions: mentionedIdsArray})
     },
 
     sendSticker: async(c,id, sticker)=>{ //ENVIA UM STICKER
-        await c.sendMessage(id, sticker)
+        return await c.sendMessage(id, sticker)
     },
 
     sendFileFromUrl: async(c, type, chatId, filePath, caption) =>{ //ENVIA COM MIDIA DE URL REMOTO
         if(type == MessageTypes.image){
-            await c.sendMessage(chatId,{image: {url: filePath}, caption})
+            return await c.sendMessage(chatId,{image: {url: filePath}, caption})
         }
     },
 
     /////////  FUNÇÕES DE RESPOSTA
     reply: async(c, chatId, text, quotedMessage)=>{ //RESPONDER COM TEXTO - FUNCIONANDO
-        await c.sendMessage(chatId, {text, linkPreview: null}, {quoted: quotedMessage})
+        return await c.sendMessage(chatId, {text, linkPreview: null}, {quoted: quotedMessage})
     },
 
     replyFile: async(c, type, chatId, filePath, caption, quotedMessage, mimetype = '') =>{ //RESPONDER COM MIDIA DE ARQUIVO LOCAL
         if(type == MessageTypes.image){
-            await c.sendMessage(chatId,{image: {url: filePath}, caption}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId,{image: {url: filePath}, caption}, {quoted: quotedMessage})
         } else if (type == MessageTypes.video){
             var base64Thumb = await getVideoThumbnail(filePath)
-            await c.sendMessage(chatId,{video: {url: filePath}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId,{video: {url: filePath}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
         } else if (type == MessageTypes.audio){
-            await c.sendMessage(chatId, {audio: {url: filePath}, mimetype}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId, {audio: {url: filePath}, mimetype}, {quoted: quotedMessage})
         }
     },
 
     replyFileFromUrl: async(c, type, chatId, url, caption, quotedMessage, mimetype = '') =>{ //RESPONDER COM MIDIA DE URL REMOTO
         if(type == MessageTypes.image){
-            await c.sendMessage(chatId,{image: {url}, caption}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId,{image: {url}, caption}, {quoted: quotedMessage})
         } else if (type == MessageTypes.video){
             var base64Thumb = await getVideoThumbnail(url, "url")
-            await c.sendMessage(chatId,{video: {url}, mimetype, caption, jpegThumbnail : base64Thumb}, {quoted: quotedMessage})
-
+            return await c.sendMessage(chatId,{video: {url}, mimetype, caption, jpegThumbnail : base64Thumb}, {quoted: quotedMessage})
         } else if (type == MessageTypes.audio){
-            await c.sendMessage(chatId, {audio: {url}, mimetype}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId, {audio: {url}, mimetype}, {quoted: quotedMessage})
         }
     },
 
     replyFileFromBuffer: async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ //RESPONDER COM MIDIA EM BUFFER
         if(type == MessageTypes.video){
             var base64Thumb = await getVideoThumbnail(buffer, "buffer")
-            await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
         } else if(type == MessageTypes.image){
-            await c.sendMessage(chatId,{image: buffer, caption}, {quoted: quotedMessage})
+            return await c.sendMessage(chatId,{image: buffer, caption}, {quoted: quotedMessage})
         }
     },
 
     replyWithMentions: async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ //RESPONDER TEXTO MENCIONANDO UM MEMBRO 
-        await c.sendMessage(chatId, {text , mentions: mentionedIdsArray}, {quoted: quotedMessage})
+        return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray}, {quoted: quotedMessage})
     },
 
 }
