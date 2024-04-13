@@ -3,6 +3,7 @@ const {generateWAMessage, generateWAMessageFromContent} = require('@whiskeysocke
 const client = require("../lib-translate/baileys")
 const {} = require('@whiskeysockets/baileys')
 const {getVideoThumbnail} = require("../lib/conversao")
+const db = require("../lib/database")
 const pino  = require("pino")
 const fs = require('fs-extra')
 const path = require('path')
@@ -22,7 +23,6 @@ module.exports ={
                 username : m.pushName,
                 broadcast : m.key.remoteJid == "status@broadcast",
                 caption : m.message[type].caption || null,
-                chat : null,
                 messageId : m.key.id,
                 body : m.message.conversation || m.message.extendedTextMessage?.text || null,
                 id: m,
@@ -49,6 +49,7 @@ module.exports ={
                 } : null
             }
 
+            /*
             //SE FOR MENSAGEM DE GRUPO TRAGA AS INFORMAÇÕES DO GRUPO
             if(msg.isGroupMsg){
                 const group = await c.groupMetadata(msg.chatId)
@@ -67,7 +68,7 @@ module.exports ={
                         participants: group.participants
                     }
                 }
-            }
+            }*/
             return msg
         } catch (err) {
             console.log(err)
@@ -145,6 +146,10 @@ module.exports ={
         return await c.groupMetadata(groupId)
     },
 
+    getGroupInfoFromDb : async(groupId)=>{ //PEGAR DADOS DE UM GRUPO
+        return await db.obterGrupo(groupId)
+    },
+
     getGroupMembersId : async(c, groupId)=>{ // PEGAR ID DE PARTIPANTES DE UM GRUPO  -  FUNCIONANDO
         let {participants} = await c.groupMetadata(groupId)
         let participantsId = []
@@ -152,6 +157,35 @@ module.exports ={
             participantsId.push(participant.id)
         })
         return participantsId
+    },
+
+    getGroupMembersIdFromMetadata : async(groupMetadata)=>{ // PEGAR ID DE PARTIPANTES DE UM GRUPO  -  FUNCIONANDO
+        let {participants} = groupMetadata
+        let participantsId = []
+        participants.forEach((participant)=>{
+            participantsId.push(participant.id)
+        })
+        return participantsId
+    },
+
+    getGroupAdminsFromMetadata : async(groupMetadata)=>{ // PEGAR ADMINS DO GRUPO - FUNCIONANDO
+        let {participants} = groupMetadata
+        let groupAdmins = participants.filter(member => (member.admin != null))
+        let admins = []
+        groupAdmins.forEach((admin)=>{
+            admins.push(admin.id)
+        })
+        return admins
+    },
+
+    getGroupAdminsFromDb : async(groupId)=>{ 
+        let groupAdmins = await db.obterAdminsGrupo(groupId)
+        return groupAdmins
+    },
+
+    getGroupMembersIdFromDb : async(groupId)=>{ 
+        let groupMembers = await db.obterParticipantesGrupo(groupId)
+        return groupMembers
     },
 
     getAllGroups: async(c)=>{ // PEGAR GRUPOS PARTIPANTES  -  FUNCIONANDO
@@ -194,6 +228,11 @@ module.exports ={
     getHostNumber: async(c)=>{ //PEGAR NÚMERO DO BOT - FUNCIONANDO
         var id = c.user.id.replace(/:[0-9]+/ism, '')
         return id
+    },
+
+    getHostNumberFromBotJSON: async()=>{ //PEGAR NÚMERO DO BOT - FUNCIONANDO
+        let bot = JSON.parse(fs.readFileSync(path.resolve('database/json/bot.json')))
+        return bot.hostNumber
     },
 
     getBlockedIds: async(c)=>{ //PEGAR ID DE USUARIOS BLOQUEADOS - FUNCIONANDO

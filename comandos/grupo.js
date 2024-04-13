@@ -14,7 +14,7 @@ module.exports = grupo = async(c,messageTranslated) => {
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const botNumber = await client.getHostNumber(c)
+        const botNumber = await client.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(c, groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false

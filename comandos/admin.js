@@ -22,7 +22,7 @@ module.exports = admin = async(c,messageTranslated) => {
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const botNumber = await client.getHostNumber(c)
+        const botNumber = await client.getHostNumberFromBotJSON()
         const blockNumber = await client.getBlockedIds(c)
         const groupId = isGroupMsg ? chat.groupMetadata.id : ''
         const ownerNumber = process.env.NUMERO_DONO.trim()

@@ -17,9 +17,9 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const botNumber = await client.getHostNumber(c)
-        const groupId = isGroupMsg ? chat.groupMetadata.id : ''
-        const groupAdmins = isGroupMsg ? await client.getGroupAdmins(c, groupId) : ''
+        const botNumber = await client.getHostNumberFromBotJSON()
+        const groupId = isGroupMsg ? chatId : null
+        const groupAdmins = isGroupMsg ? await client.getGroupAdminsFromDb(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
         if(abrirMenu) command = "!menu"
