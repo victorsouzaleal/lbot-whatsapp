@@ -2,8 +2,8 @@
 const msgs_texto = require('../lib/msgs')
 const {erroComandoMsg, consoleErro, removerNegritoComando, criarTexto} = require("../lib/util")
 const { Sticker, StickerTypes } = require("wa-sticker-formatter")
-const client = require("../lib-translate/baileys")
-const {MessageTypes}  = require("../lib-translate/msgtypes")
+const socket = require("../lib-translate/socket-functions")
+const {MessageTypes}  = require("../lib-translate/message")
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
 const fs = require('fs-extra')
 const path = require("path")
@@ -46,24 +46,24 @@ module.exports = figurinhas = async(c,messageTranslated) => {
                         if(dadosMensagem.tipo == MessageTypes.image){
                             var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
                             const stker = new Sticker(bufferMessage, stickerMetadata)
-                            await client.sendSticker(c,chatId, await stker.toMessage())
+                            await socket.sendSticker(c,chatId, await stker.toMessage())
                         } else if (dadosMensagem.tipo == MessageTypes.video){
                             if(dadosMensagem.seconds < 11){
                                 stickerMetadata.quality = 5
                                 var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
                                 const stker = new Sticker(bufferMessage, stickerMetadata)
-                                await client.sendSticker(c,chatId, await stker.toMessage())
+                                await socket.sendSticker(c,chatId, await stker.toMessage())
                             } else {
-                                return client.reply(c,chatId, msgs_texto.figurinhas.sticker.video_invalido, id)
+                                return socket.reply(c,chatId, msgs_texto.figurinhas.sticker.video_invalido, id)
                             }
                         } else {
-                            return await client.reply(c, chatId, erroComandoMsg(command) , id)
+                            return await socket.reply(c, chatId, erroComandoMsg(command) , id)
                         }
                     } else {
-                        return await client.reply(c, chatId, erroComandoMsg(command) , id)
+                        return await socket.reply(c, chatId, erroComandoMsg(command) , id)
                     }
                 } catch(err){
-                    await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
                 }
@@ -79,16 +79,17 @@ module.exports = figurinhas = async(c,messageTranslated) => {
                         imagemSaida = conversaoResultado.saida
                         if(!conversaoResultado.success){
                             fs.unlinkSync(imagemSaida)
-                            return await client.reply(c, chatId, erroComandoMsg(command), id)
-                        } 
-                        await client.replyFile(c, MessageTypes.image, chatId, imagemSaida, '', id)
-                        fs.unlinkSync(imagemSaida)
+                            throw new Error("Erro na conversão")
+                        } else{
+                            await socket.replyFile(c, MessageTypes.image, chatId, imagemSaida, '', id)
+                            fs.unlinkSync(imagemSaida)
+                        }
                     } else {
-                        await client.reply(c, chatId, erroComandoMsg(command), id)
+                        await socket.reply(c, chatId, erroComandoMsg(command), id)
                     }
                 } catch(err){
                     if(fs.existsSync(imagemSaida)) fs.unlinkSync(imagemSaida)
-                    await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
                 }

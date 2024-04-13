@@ -1,12 +1,14 @@
 //REQUERINDO MODULOS
 const {makeWASocket, useMultiFileAuthState, DisconnectReason} = require('@whiskeysockets/baileys')
+const {messageData} = require("./lib-translate/message")
 const { Boom } = require('@hapi/boom')
 const moment = require("moment-timezone")
 moment.tz.setDefault('America/Sao_Paulo')
 require('dotenv').config()
 const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('./lib/util')
 const {verificacaoListaNegraGeral, verificarUsuarioListaNegra} = require(`./lib/listaNegra`)
-const {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin} = require("./lib/atualizacaoGrupos")
+const {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizacaoDadosGrupo} = require("./lib/atualizacaoGrupos")
+const {inicioCadastrarGrupo, mensagemCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} = require('./lib/cadastrarGrupo')
 const db = require('./lib/database')
 const checagemMensagem = require("./lib/checagemMensagem")
 const chamadaComando = require("./lib/chamadaComando")
@@ -14,16 +16,15 @@ const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
 const {botStart} = require('./lib/bot')
 const {verificarEnv} = require('./lib/env')
-const client = require("./lib-translate/baileys")
+const socket = require("./lib-translate/socket-functions")
 const antiFake = require("./lib/antiFake"), bemVindo = require("./lib/bemVindo"), antiLink = require('./lib/antiLink'), antiFlood = require('./lib/antiFlood')
 const pino  = require("pino")
 const fs = require('fs-extra')
-const {inicioCadastrarGrupo, mensagemCadastrarGrupo, adicionadoCadastrarGrupo} = require('./lib/cadastrarGrupo')
+
 
 async function connectToWhatsApp(){
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
-    //logger: pino({level : "silent"}) 
-    const c = makeWASocket({printQRInTerminal: true,auth:state,emitOwnEvents: false, keepAliveIntervalMs: 20000})//
+    const c = makeWASocket({printQRInTerminal: true, auth:state, emitOwnEvents: false, keepAliveIntervalMs: 20000, logger: pino({level : "silent"})})
         //INICIO DO SERVIDOR
         c.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect } = update
@@ -56,21 +57,13 @@ async function connectToWhatsApp(){
                     },5000)
                 } else {
                     try{
-                        //Obtem os dados atualizados dos grupos
-                        const groupsInfo = await client.getAllGroups(c)
-                        //Cadastro de grupos
-                        console.log(corTexto(await inicioCadastrarGrupo(groupsInfo)))
-                        //Atualização dos participantes dos grupos
-                        console.log(corTexto(await atualizarGrupos(groupsInfo)))
-                        //Verificar lista negra dos grupos
-                        console.log(corTexto(await verificacaoListaNegraGeral(c, groupsInfo)))
-                        //Atualização da contagem de mensagens
-                        console.log(corTexto(await recarregarContagem(groupsInfo)))
-                        //Pegando hora de inicialização do BOT
+                        await socket.getAllGroups(c)
+                        //Pegando hora de inicialização do BOT e o número do telefone.
                         console.log(corTexto(await botStart(c)))
                         //Verificando se os campos do .env foram modificados e envia para o console
                         verificarEnv()
                         console.log('[SERVIDOR] Servidor iniciado!')
+                        console.log('[ATUALIZAÇÃO] Atualizando e verificando os dados dos grupos.')
                     } catch(err){
                         consoleErro(err, "Inicialização")
                         c.end(new Error("erro_geral"))
@@ -86,7 +79,7 @@ async function connectToWhatsApp(){
                 switch (m.type) {
                     case "notify":
                         if(m.messages[0].message == undefined) return
-                        const messageTranslated = await client.messageData(c,m)
+                        const messageTranslated = await messageData(m)
                         const {broadcast} = messageTranslated
                         if(broadcast) return
                         await mensagemCadastrarGrupo(c, messageTranslated)
@@ -107,8 +100,9 @@ async function connectToWhatsApp(){
         //Ao haver mudanças nos participantes de um grupo
         c.ev.on('group-participants.update', async (event)=>{
             try{
-                const isBotUpdate = event.participants[0] == await client.getHostNumberFromBotJSON()
+                const isBotUpdate = event.participants[0] == await socket.getHostNumberFromBotJSON()
                 const g_info = await db.obterGrupo(event.id)
+                if(g_info == null) return
                 if (event.action == 'add') {
                     if(!isBotUpdate){
                          //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
@@ -120,12 +114,15 @@ async function connectToWhatsApp(){
                     }
                     //CONTADOR
                     if(g_info.contador) await db.registrarContagem(event.id, event.participants[0])
-                    //ATUALIZA A LISTA DE PARTICIPANTES NO BANDO DE DADOS
                     await adicionarParticipante(event.id, event.participants[0])
                 } else if(event.action == "remove"){
-                    //ATUALIZA A LISTA DE PARTICIPANTES NO BANDO DE DADOS
-                    await removerParticipante(event.id, event.participants[0])
-                    if(g_info.contador) await db.removerContagem(event.id, event.participants[0])
+                    if(isBotUpdate){
+                        if(g_info.contador) await db.removerContagemGrupo(event.id)
+                        await removerGrupo(event.id)
+                    } else{
+                        await removerParticipante(event.id, event.participants[0])
+                        if(g_info.contador) await db.removerContagem(event.id, event.participants[0])
+                    }
                 } else if(event.action == "promote"){
                     await adicionarAdmin(event.id, event.participants[0])
                 } else if(event.action == "demote"){
@@ -141,9 +138,29 @@ async function connectToWhatsApp(){
         c.ev.on('groups.upsert', async (groupData)=>{
             try{
                 await adicionadoCadastrarGrupo(groupData)
-                await client.sendText(c, groupData[0].id, criarTexto(msgs_texto.geral.entrada_grupo, groupData[0].subject))
+                await socket.sendText(c, groupData[0].id, criarTexto(msgs_texto.geral.entrada_grupo, groupData[0].subject))
             } catch(err){
                 consoleErro(err, "GROUPS.UPSERT")
+            }
+        })
+
+        
+        c.ev.on('groups.update', async(groupsUpdate)=>{
+            try{
+                if(groupsUpdate.length != 0 && groupsUpdate[0].participants != undefined ){
+                    //Cadastro de grupos
+                    console.log(corTexto(await inicioCadastrarGrupo(groupsUpdate)))
+                    //Atualização dos participantes dos grupos
+                    console.log(corTexto(await atualizarGrupos(groupsUpdate)))
+                    //Verificar lista negra dos grupos
+                    console.log(corTexto(await verificacaoListaNegraGeral(c, groupsUpdate)))
+                    //Atualização da contagem de mensagens
+                    console.log(corTexto(await recarregarContagem(groupsUpdate)))
+                } else if (groupsUpdate.length == 1 && groupsUpdate[0].participants == undefined){
+                    await atualizacaoDadosGrupo(groupsUpdate[0])
+                }
+            } catch(err){
+                consoleErro(err, "GROUPS.UPDATE")
             }
         })
 

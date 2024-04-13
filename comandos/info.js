@@ -7,8 +7,8 @@ const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = r
 const path = require('path')
 const db = require('../lib/database')
 const {botInfo} = require(path.resolve("lib/bot.js"))
-const client = require("../lib-translate/baileys")
-const {MessageTypes}  = require("../lib-translate/msgtypes")
+const socket = require("../lib-translate/socket-functions")
+const {MessageTypes}  = require("../lib-translate/message")
 
 module.exports = info = async(c, abrirMenu, messageTranslated) => {
     try{
@@ -17,9 +17,9 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const botNumber = await client.getHostNumberFromBotJSON()
+        const botNumber = await socket.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null
-        const groupAdmins = isGroupMsg ? await client.getGroupAdminsFromDb(groupId) : ''
+        const groupAdmins = isGroupMsg ? await socket.getGroupAdminsFromDb(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
         if(abrirMenu) command = "!menu"
@@ -27,17 +27,17 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
         switch(command){
             case "!info":
                 try{
-                    const botFotoURL = await client.getProfilePicFromServer(c,botNumber)
-                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/json/bot.json")))
+                    const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
+                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
                     var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                     if(botFotoURL != undefined){
-                        await client.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
+                        await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                     } else {
-                        await client.reply(c, chatId, resposta, id)
+                        await socket.reply(c, chatId, resposta, id)
                     }
                 } catch(err){
-                    await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
                 }
@@ -46,12 +46,12 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
             
             case "!reportar":
                 try{
-                    if(args.length == 1) return client.reply(c, chatId, erroComandoMsg(command) ,id)
+                    if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command) ,id)
                     var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
-                    await client.sendText(c,ownerNumber+"@s.whatsapp.net", resposta)
-                    await client.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
+                    await socket.sendText(c,ownerNumber+"@s.whatsapp.net", resposta)
+                    await socket.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
                 } catch(err){
-                    await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
                 }
@@ -71,9 +71,9 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                         }   
                     }
-                    await client.reply(c, chatId, resposta, id)
+                    await socket.reply(c, chatId, resposta, id)
                 } catch(err){
-                    await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
                 }
@@ -94,7 +94,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
 
                     if(args.length == 1){
                         var menuResposta = menu.menuPrincipal()
-                        await client.sendText(c, chatId, dadosResposta+menuResposta)
+                        await socket.sendText(c, chatId, dadosResposta+menuResposta)
                     } else {
                         var usuarioOpcao = args[1]
                         var menuResposta = menu.menuPrincipal()
@@ -113,7 +113,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                                 break
                             case "4":
                                 if(isGroupMsg) menuResposta = menu.menuGrupo(isGroupAdmins)
-                                else return await client.reply(c, chatId, msgs_texto.permissao.grupo, id)
+                                else return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                                 break
                             case "5":
                                 menuResposta = menu.menuDiversao(isGroupMsg)
@@ -122,10 +122,10 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                                 menuResposta = menu.menuCreditos()
                                 break
                         }
-                        await client.sendText(c, chatId, dadosResposta+menuResposta)
+                        await socket.sendText(c, chatId, dadosResposta+menuResposta)
                     }
                 } catch(err){
-                    await client.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
                 }
