@@ -13,9 +13,8 @@ test.js
 #Ignorar logs
 *.log
 logs/session/*
-#Ignorar arquivos de mídia
-temp/*
-!temp/tmp.txt
+#Ignorar arquivos temporarios
+temp
 #Ignorar DB e etc
 database
 # managed by open-wa. see: https://github.com/open-wa/wa-automate-nodejs/issues/1632
