@@ -25,12 +25,9 @@
 </h3>
 <br>
 
-## Última Atualização : 14/04/2024 - v2.00.0
-**[REFEITO]** Projeto foi reescrito para a biblioteca do Baileys<br>
-**[MELHORIA]** O celular agora não precisa ficar sempre conectado.<br>
-**[MELHORIA]** Melhoria gerais em comandos de download.<br>
-**[MELHORIA]** Melhoria gerais em exibição de erros dos comandos.<br>
-**[NOVO]** Comando !ouvir para transformar áudio em texto.<br>
+## Última Atualização : 14/04/2024 - v2.00.1
+**[CORREÇÃO]** Foi corrigido problema com as váriaveis .env na inicialização<br>
+**[MUDANÇA]** Agora não é necessário digitar o número do dono na inicialização, pode ser feito depois no .env<br>
 <br>
 OBRIGATÓRIO INSTALAR DO ZERO PARA QUE TUDO FUNCIONE CORRETAMENTE.
 <br>
