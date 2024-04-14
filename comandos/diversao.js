@@ -14,7 +14,7 @@ module.exports = diversao = async(c,messageTranslated) => {
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
+        const ownerNumber = process.env.NUMERO_DONO?.trim() // Número do administrador do bot
         const botNumber = await socketdb.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null
 

@@ -22,7 +22,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
         const groupId = isGroupMsg ? chatId : null
         const groupAdmins = isGroupMsg ? await socketdb.getGroupAdminsFromDb(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
-        const ownerNumber = process.env.NUMERO_DONO.trim()
+        const ownerNumber = process.env.NUMERO_DONO?.trim()
         if(abrirMenu) command = "!menu"
 
         switch(command){
@@ -31,7 +31,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
                     var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
-                    var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
+                    var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR?.trim(), process.env.NOME_BOT?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                     if(botFotoURL != undefined){
                         await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                     } else {

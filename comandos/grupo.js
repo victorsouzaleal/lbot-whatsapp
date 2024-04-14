@@ -179,7 +179,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                     for(let usuario_lista of lista_negra_grupo){
                         resposta_listanegra += criarTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace(/@s.whatsapp.net/g, ''))
                     }
-                    resposta_listanegra += `╚═〘 ${process.env.NOME_BOT.trim()}®〙`
+                    resposta_listanegra += `╚═〘 ${process.env.NOME_BOT?.trim()}®〙`
                     await socket.sendText(c, chatId, resposta_listanegra)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -365,7 +365,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                                 mencionarUsuarios.push(usuario.id_usuario)
                             }
                         }
-                        inativosResposta += `╚═〘 ${process.env.NOME_BOT.trim()}® 〙`
+                        inativosResposta += `╚═〘 ${process.env.NOME_BOT?.trim()}® 〙`
                         await socket.sendTextWithMentions(c, chatId, inativosResposta, mencionarUsuarios)
                     } else {
                         await socket.reply(c, chatId,msgs_texto.grupo.minativos.sem_inativo, id)
@@ -430,7 +430,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                         respostaTop += criarTexto(msgs_texto.grupo.topativos.resposta_itens, medalha, i+1, usuariosAtivos[i].id_usuario.replace(/@s.whatsapp.net/g, ''), usuariosAtivos[i].msg)
                         usuariosMencionados.push(usuariosAtivos[i].id_usuario)   
                     }
-                    respostaTop += `╠\n╚═〘 ${process.env.NOME_BOT.trim()}® 〙`
+                    respostaTop += `╠\n╚═〘 ${process.env.NOME_BOT?.trim()}® 〙`
                     await socket.sendTextWithMentions(c, chatId, respostaTop, usuariosMencionados)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -563,7 +563,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                     for(let membro of membrosGrupo){
                         respostaMarcar += criarTexto(msgs_texto.grupo.mt.resposta_itens, membro.replace("@s.whatsapp.net", ""))
                     }
-                    respostaMarcar += `╚═〘 ${process.env.NOME_BOT.trim()}®〙`
+                    respostaMarcar += `╚═〘 ${process.env.NOME_BOT?.trim()}®〙`
                     await socket.sendTextWithMentions(c, chatId, respostaMarcar, membrosGrupo)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -584,7 +584,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                             membrosMarcados.push(membro)
                         }
                     }
-                    respostaMarcar += `╚═〘 ${process.env.NOME_BOT.trim()}®〙`
+                    respostaMarcar += `╚═〘 ${process.env.NOME_BOT?.trim()}®〙`
                     if(membrosMarcados.length == 0) return await socket.reply(c, chatId, msgs_texto.grupo.mm.sem_membros, id)
                     await socket.sendTextWithMentions(c, chatId, respostaMarcar, membrosMarcados)
                 } catch(err){

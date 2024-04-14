@@ -21,7 +21,7 @@ module.exports = admin = async(c,messageTranslated) => {
         const {id, chatId, sender, isGroupMsg, t, body, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = messageTranslated
         
         //VERIFICAÇÃO DE DONO
-        const ownerNumber = process.env.NUMERO_DONO.trim()
+        const ownerNumber = process.env.NUMERO_DONO?.trim()
         const isOwner = ownerNumber == sender.replace("@s.whatsapp.net", '')
         if (!isOwner) return socket.reply(c, chatId, msgs_texto.permissao.apenas_dono_bot, id)
 

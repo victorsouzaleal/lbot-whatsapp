@@ -23,8 +23,8 @@ module.exports = figurinhas = async(c,messageTranslated) => {
                     if(isMedia || quotedMsg){
                         var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                         var stickerMetadata = {
-                            pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Stickers`, 
-                            author: process.env.NOME_AUTOR_FIGURINHAS.trim(),
+                            pack: `${process.env.NOME_AUTOR_FIGURINHAS?.trim()} Stickers`, 
+                            author: process.env.NOME_AUTOR_FIGURINHAS?.trim(),
                             type: StickerTypes.CROPPED,
                             quality: 100,
                             fps: 7,
