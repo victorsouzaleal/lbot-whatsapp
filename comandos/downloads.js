@@ -72,8 +72,14 @@ module.exports = downloads = async(c,messageTranslated) => {
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     await socket.reply(c, chatId, msgs_texto.downloads.ig.espera, id)
-                    var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
-                    var igResponse = await axios.get(resultadosMidia[0].download_link,  { responseType: 'arraybuffer' })
+                    var usuarioTexto = body.slice(4).trim(), indexEscolhido = 0, resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
+                    if(args.length > 2) {
+                        indexEscolhido = args[2]
+                        if(isNaN(indexEscolhido)) return await socket.reply(c, chatId,erroComandoMsg(command),id)
+                        indexEscolhido = indexEscolhido - 1
+                        if(resultadosMidia[indexEscolhido] == undefined) return await socket.reply(c, chatId, msgs_texto.downloads.ig.nao_encontrado, id)
+                    }
+                    var igResponse = await axios.get(resultadosMidia[indexEscolhido].download_link,  { responseType: 'arraybuffer' })
                     var bufferIg = Buffer.from(igResponse.data, "utf-8")
                     if(igResponse.headers['content-type'] == "image/jpeg"){
                         await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferIg, '', id)
