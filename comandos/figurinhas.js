@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 const msgs_texto = require('../lib/msgs')
 const {erroComandoMsg, consoleErro, removerNegritoComando, criarTexto} = require("../lib/util")
-const { Sticker, StickerTypes } = require("wa-sticker-formatter")
+const { Sticker, StickerTypes } = require("@victorsouzaleal/wa-sticker-formatter")
 const socket = require("../lib-baileys/socket-funcoes")
 const {MessageTypes}  = require("../lib-baileys/mensagem")
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
@@ -26,7 +26,8 @@ module.exports = figurinhas = async(c,messageTranslated) => {
                             pack: `${process.env.NOME_AUTOR_FIGURINHAS.trim()} Stickers`, 
                             author: process.env.NOME_AUTOR_FIGURINHAS.trim(),
                             type: StickerTypes.CROPPED,
-                            quality: 100, 
+                            quality: 100,
+                            fps: 7,
                             background: '#000000' 
                         }
     
@@ -49,7 +50,7 @@ module.exports = figurinhas = async(c,messageTranslated) => {
                             await socket.sendSticker(c,chatId, await stker.toMessage())
                         } else if (dadosMensagem.tipo == MessageTypes.video){
                             if(dadosMensagem.seconds < 11){
-                                stickerMetadata.quality = 5
+                                stickerMetadata.quality = 25
                                 var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
                                 const stker = new Sticker(bufferMessage, stickerMetadata)
                                 await socket.sendSticker(c,chatId, await stker.toMessage())

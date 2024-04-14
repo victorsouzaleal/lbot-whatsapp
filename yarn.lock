@@ -571,6 +571,19 @@
   dependencies:
     "@types/node" "*"
 
+"@victorsouzaleal/wa-sticker-formatter@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@victorsouzaleal/wa-sticker-formatter/-/wa-sticker-formatter-4.5.0.tgz#edbc62f90528bd0a77dfba13855541aa49b5d105"
+  integrity sha512-+97UeSt02kGR84nHsh/0Xm6/wrHSRXGocKRXyDNBb7TliekFiZQc45gtMU5OCEj1Hh2EJiIEtZQiBKlijjpsmg==
+  dependencies:
+    axios "^0.21.1"
+    file-type "^16.5.3"
+    fluent-ffmpeg "^2.1.2"
+    fs-extra "^10.0.0"
+    image-size "^1.0.0"
+    node-webpmux "^3.1.0"
+    sharp "^0.30.0"
+
 "@vitalets/google-translate-api@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@vitalets/google-translate-api/-/google-translate-api-7.0.0.tgz#0aa37d92d475daf4a434ded27e72d80b03686a23"
@@ -3346,19 +3359,6 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-wa-sticker-formatter@^4.4.4:
-  version "4.4.4"
-  resolved "https://registry.yarnpkg.com/wa-sticker-formatter/-/wa-sticker-formatter-4.4.4.tgz#d3ad9cf81b2c00f853a3e75b6fb01664139881c1"
-  integrity sha512-tl2tXlu7HEs630+1LcJsdavNGEysyQV7EIe/tFsPJCEd2jteG0nGouWNUglUEjW+bDCZGXw9VpJgUtwVGIKr8w==
-  dependencies:
-    axios "^0.21.1"
-    file-type "^16.5.3"
-    fluent-ffmpeg "^2.1.2"
-    fs-extra "^10.0.0"
-    image-size "^1.0.0"
-    node-webpmux "^3.1.0"
-    sharp "^0.30.0"
 
 wcwidth@^1.0.1:
   version "1.0.1"
