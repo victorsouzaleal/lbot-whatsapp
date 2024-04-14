@@ -5,11 +5,11 @@ const msgs_texto = require('../lib/msgs')
 const { version } = require('../package.json')
 const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = require("../lib/util")
 const path = require('path')
-const db = require('../db-modules/database')
-const {botInfo} = require(path.resolve("db-modules/bot.js"))
-const socket = require("../lib-translate/socket-functions")
-const socketdb = require("../lib-translate/socket-db-functions")
-const {MessageTypes}  = require("../lib-translate/message")
+const db = require('../db-modulos/database')
+const {botInfo} = require(path.resolve("db-modulos/bot.js"))
+const socket = require("../lib-baileys/socket-funcoes")
+const socketdb = require("../lib-baileys/socket-db-funcoes")
+const {MessageTypes}  = require("../lib-baileys/mensagem")
 
 module.exports = info = async(c, abrirMenu, messageTranslated) => {
     try{

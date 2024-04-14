@@ -1,6 +1,6 @@
 
-const {MessageTypes}  = require("./message")
-const db = require("../db-modules/database")
+const {MessageTypes}  = require("./mensagem")
+const db = require("../db-modulos/database")
 const fs = require('fs-extra')
 const path = require('path')
 

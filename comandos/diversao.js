@@ -3,9 +3,9 @@ const msgs_texto = require('../lib/msgs')
 const {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, removerNegritoComando, consoleErro} = require("../lib/util")
 const path = require("path")
 const api = require('../lib/api')
-const socket = require("../lib-translate/socket-functions")
-const socketdb = require("../lib-translate/socket-db-functions")
-const { MessageTypes } = require('../lib-translate/message')
+const socket = require("../lib-baileys/socket-funcoes")
+const socketdb = require("../lib-baileys/socket-db-funcoes")
+const { MessageTypes } = require('../lib-baileys/mensagem')
 
 module.exports = diversao = async(c,messageTranslated) => {
     try {

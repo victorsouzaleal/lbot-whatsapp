@@ -1,5 +1,5 @@
 const { AsyncNedb } = require('nedb-async')
-const {MessageTypes} = require("../lib-translate/message")
+const {MessageTypes} = require("../lib-baileys/mensagem")
 const path = require('path')
 const fs = require('fs-extra')
 const moment = require("moment-timezone")

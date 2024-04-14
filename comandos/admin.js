@@ -5,14 +5,14 @@ const { version } = require('../package.json');
 const msgs_texto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData, consoleErro} = require('../lib/util')
 const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
-const db = require('../db-modules/database')
+const db = require('../db-modulos/database')
 const fs = require("fs-extra")
 const path = require("path")
-const socket = require('../lib-translate/socket-functions')
-const socketdb = require('../lib-translate/socket-db-functions')
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarPvLiberado} = require('../db-modules/bot')
-const {obterTodosUsuarios, obterTodosGrupos} = require("../db-modules/database");
-const { MessageTypes } = require('../lib-translate/message');
+const socket = require('../lib-baileys/socket-funcoes')
+const socketdb = require('../lib-baileys/socket-db-funcoes')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarPvLiberado} = require('../db-modulos/bot')
+const {obterTodosUsuarios, obterTodosGrupos} = require("../db-modulos/database");
+const { MessageTypes } = require('../lib-baileys/mensagem');
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
 
 

@@ -1,4 +1,4 @@
-const {MessageTypes}  = require("./message")
+const {MessageTypes}  = require("./mensagem")
 const {getVideoThumbnail} = require("../lib/conversao")
 
 module.exports ={
