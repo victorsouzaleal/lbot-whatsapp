@@ -72,11 +72,9 @@ yarn install
 yarn start
 ```
 
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal **SEU NÚMERO PRINCIPAL DE ADMINISTRADOR (NÃO O DO BOT)** e com  **COM CÓDIGO DO PAÍS** 
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular, bot será reiniciado para criar os arquivos necessários e você deverá inicia-lo novamente.
 <br><br>
- **EXEMPLO**: Meu número principal que quero administrar o bot é 21 91234-5678, então vou digitar **5521912345678**
-<br><br>
-Ele irá encerrar o bot para criar os arquivos necessários e você deverá inicia-lo novamente.
+
 
 <br>
 
@@ -91,7 +89,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ### Pronto! Seu bot já está funcionando!!
 
-**Obs**: Se você deseja utilizar os comandos **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) e **!ouvir** (áudio para texto) vá para o **passo 5**.
+**Obs**: Se você deseja utilizar os comandos **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) , **!ouvir** (áudio para texto)  e comandos de **ADMIN** vá para o **passo 5**.
 
 <br>
 
@@ -119,7 +117,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
         # DEEPGRAM - Coloque abaixo sua chave do DEEPGRAM (Transcrição de aúdio para texto)
         dg_secret_key= recebe a chave da conta que voce criar no site https://deepgram.com/
 
-**Obs**: Se o seu sistema for MAC, habilite a exibição de arquivos ocultos para exibir o .env na raiz do projeto.<br>
+**Obs**: Para usar as funções de administrador coloque o seu número principal que irá administrar o bot em **NUMERO_DONO**<br>
 
 **Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](CHAVESAPI.md)
 
