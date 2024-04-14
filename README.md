@@ -20,18 +20,24 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-<h1> PROJETO ESTÁ SENDO ATUALIZADO PARA A VERSÃO 2.00, AGUARDE MAIS UM POUCO! IREI LANÇAR EM BREVE O README NOVO COM INSTRUÇÕES SOBRE A VERSÃO 2.00
-
-## Atualização 1.17.9
-**[CORREÇÃO]** Correção nos comandos do Youtube : !play e !yt<br>
+<h3 align="center">
+    Estou voltando a atualizar o bot, para contato e ajuda com a projeto vá para o <a href="#8---contatodoação-não-é-o-bot-é-o-numero-apenas-para-tirar-dúvidas-ou-ajudar-com-o-projeto">Passo 8</a>
+</h3>
 <br>
-Recomendo que instalem novamente do ZERO para que tudo funcione corretamente.
+
+## Última Atualização : 14/04/2024 - v2.00.0
+**[REFEITO]** Projeto foi reescrito para a biblioteca do Baileys<br>
+**[MELHORIA]** O celular agora não precisa ficar sempre conectado.<br>
+**[MELHORIA]** Melhoria gerais em comandos de download.<br>
+**[MELHORIA]** Melhoria gerais em exibição de erros dos comandos.<br>
+**[NOVO]** Comando !ouvir para transformar áudio em texto.<br>
+<br>
+OBRIGATÓRIO INSTALAR DO ZERO PARA QUE TUDO FUNCIONE CORRETAMENTE.
 <br>
 
 ## REQUERIMENTOS :
 - Um número de celular secundário para usar o bot.
 - [NODE VERSÃO LTS](https://nodejs.org/en/) 
-- [GOOGLE CHROME](https://www.google.com/intl/pt-BR/chrome/)
 
 Isso tudo é necessário para o bot funcionar corretamente.
 
@@ -42,10 +48,16 @@ https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest
 <br>
 
 ## 2 - Instale as dependências :
-Abra o prompt de comando (CMD/Terminal) na pasta do projeto que você extraiu e execute o comando abaixo :
+Abra o prompt de comando (CMD/Terminal) na **PASTA DO PROJETO QUE VOCÊ EXTRAIU** e execute os comandos abaixo :
 
 ```bash
-npm i
+npm i --global yarn
+```
+
+Após terminar de instalar o yarn digite o comando abaixo para instalar as dependências do projeto :
+
+```bash
+yarn install
 ```
 
 #### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/victorsouzaleal/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
@@ -54,13 +66,17 @@ npm i
 
 ## 3 - Uso :
 
-Dentro da pasta do projeto após ter realizado todos os passos anteriores, execute este comando. 
+**Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. 
 
 ```bash
-npm start
+yarn start
 ```
 
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular (No modo BETA que não exige conexão com o celular) e digite no terminal **SEU** número de telefone **COM CÓDIGO DO PAÍS** no terminal. Ele irá encerrar o bot e você deverá inicia-lo novamente.
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular e digite no terminal **SEU NÚMERO PRINCIPAL DE ADMINISTRADOR (NÃO O DO BOT)** e com  **COM CÓDIGO DO PAÍS** 
+<br><br>
+ **EXEMPLO**: Meu número principal que quero administrar o bot é 21 91234-5678, então vou digitar **5521912345678**
+<br><br>
+Ele irá encerrar o bot para criar os arquivos necessários e você deverá inicia-lo novamente.
 
 <br>
 
@@ -75,7 +91,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ### Pronto! Seu bot já está funcionando!!
 
-**Obs**: Se você deseja utilizar os comandos **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) e o recurso de **anti-pornografia** vá para o **passo 5**.
+**Obs**: Se você deseja utilizar os comandos **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) e **!ouvir** (áudio para texto) vá para o **passo 5**.
 
 <br>
 
@@ -89,21 +105,23 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
         NOME_AUTOR_FIGURINHAS = Digite o nome que vai aparecer como autor das figurinhas
 
         ############ CONFIGURAÇÕES DO BOT ############# 
-
         # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
         NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
+
         # NEWSAPI - NOTICIAS 
         API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
+
         # ACRCLOUD - RECONHECIMENTO DE MÚSICAS
         acr_host= recebe seu endereço de host obtido no https://acrcloud.com/
         acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
         acr_access_secret= recebe seu access_secret obtido no https://acrcloud.com/
-        # DEEPAI - DETECTOR DE NUDEZ/PORNOGRAFIA
-        API_DEEPAI= recebe a chave da conta que voce criar no site deepai.org 
+
+        # DEEPGRAM - Coloque abaixo sua chave do DEEPGRAM (Transcrição de aúdio para texto)
+        dg_secret_key= recebe a chave da conta que voce criar no site https://deepgram.com/
 
 **Obs**: Se o seu sistema for MAC, habilite a exibição de arquivos ocultos para exibir o .env na raiz do projeto.<br>
 
-**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DeepAI(Detector de Nudez e Pornografia)** :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](CHAVESAPI.md)
 
 <br>
 
@@ -115,10 +133,9 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | :-----------: | :--------------------------------: |
 |       ✅       | Foto para Sticker     |
 |       ✅       | Sticker para foto              |
-|       ✅       | Texto para Sticker                  |
-|       ✅       | Texto para Sticker Animado                 |
 |       ✅       | Video/GIF para Sticker |
-|       ✅       | Foto para Sticker (Sem fundo) |
+|       ✅       | Sticker circular |
+|       ✅       | Auto Sticker |
 
 ### Downloads 
 
@@ -137,6 +154,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | :------------: | :---------------------------------------------: |
 |       ✅       | Efeitos de Aúdio
 |       ✅        |   Texto para voz                   |
+|       ✅        |   Áudio para texto                   |
 |       ✅        |   Letra de Música              |
 |       ✅        |   Reconhecimento de músicas                 |
 |       ✅        |   Detector de DDD             |
@@ -145,7 +163,6 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Calculadora básica           |
 |       ✅        |   Pesquisa Web                  |
 |       ✅        |   Detector Anime                  |
-|       ✅        |   Lançamentos recentes  - Animes                 |
 |       ✅        |   Rastreamento Correios                  |
 |       ✅        |   Noticias Atuais                 |
 |       ✅        |   Tradutor                |
@@ -167,8 +184,6 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Mutar Grupo
 |       ✅        |   Bem Vindo  |
 |       ✅        |   Auto Sticker |
-|       ✅        |   Anti Trava |
-|       ✅        |   Anti Pornô |
 |       ✅        |   Anti Fake |
 |       ✅        |   Anti Link  |
 |       ✅        |   Anti Flood  |
@@ -176,7 +191,6 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 |       ✅        |   Marcar inativos |
 |       ✅        |   Banir inativos |
 |       ✅        |   Bloquear/Desbloquear Comandos |
-|       ✅        |   Votação de Ban |
 |       ✅        |   Enquete |
 |       ✅        |   Banir Todos  |
 |       ✅        |   Apagar mensagens do bot  |
@@ -187,17 +201,14 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 | :------------: | :---------------------------------------------: |
 |       ✅        |   Entrar em um grupo                 |
 |       ✅        |   Sair de todos os grupos                  |
-|       ✅        |   Limpar todos os chats              |
-|       ✅        |   Broadcast - Anuncio Geral                     |
+|       ✅        |   Broadcast - Grupos                  |
 |       ✅        |   Bloquear/Desbloquear usuário                     |
 |       ✅        |   Sistema de Tipos de Usuários        |
 |       ✅        |   Limitador comandos diários (por usuário)            |
 |       ✅        |   Limitador de comandos por minuto (por usuário)          |
 |       ✅        |   Limitador de mensagens privadas (Anti-flood)    |
 |       ✅        |   Auto Sticker Privado   |
-|       ✅        |   Anti Trava Privado   |
 |       ✅        |   Sair do grupo                     |
-|       ✅        |   Limpar somente chat de contatos                 |
 |       ✅        |   Obter lista de usuários bloqueados                |
 |       ✅        |   Modificar status atual do bot                |
 
@@ -220,20 +231,20 @@ Só faça os passos abaixo se você tiver algum erro :
     sudo apt install ./google-chrome-stable_current_amd64.deb
     ```
 
-- Se houver algum erro relacionado a permissão ao tentar usar o  "npm i"
-    ```bash
-    npm i --unsafe-perm
-    ```
-
 #### SOLUÇÃO DE PROBLEMAS - COMANDO NÃO FUNCIONANDO :
 Se algum comando por acaso não estiver funcionando antes de tentar baixar uma nova versão ou relatar o erro tente usar dentro da pasta do projeto o comando :
 ```bash
-npm i 
+yarn install 
 ```
 Esse comando atualiza as dependências e pode resolver algum problema que você tenha sem precisar baixar ou esperar uma nova versão do bot.<br><br>
 
 **Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal)
 
-## 8 - Agradecimentos
-* [`open-wa/wa-automate-nodejs`](https://github.com/open-wa/wa-automate-nodejs)
-* [`MhankBarBar/whatsapp-bot`](https://github.com/MhankBarBar/whatsapp-bot)
+## 8 - Contato/Doação (NÃO É O BOT, É O NUMERO APENAS PARA TIRAR DÚVIDAS OU AJUDAR COM O PROJETO)
+Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
+
+* **WhatsApp :** https://wa.me/5521995612287
+* **Chave PIX :** victorsouzaleal@gmail.com
+
+## 9 - Agradecimentos
+* [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys)

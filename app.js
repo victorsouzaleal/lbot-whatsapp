@@ -25,7 +25,7 @@ const fs = require('fs-extra')
 
 async function connectToWhatsApp(){
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
-    const c = makeWASocket({printQRInTerminal: true, auth:state, emitOwnEvents: false, keepAliveIntervalMs: 20000, logger: pino({level : "silent"})})
+    const c = makeWASocket({printQRInTerminal: true, auth:state, emitOwnEvents: false, keepAliveIntervalMs: 60000, logger: pino({level : "silent"})})
         //INICIO DO SERVIDOR
         c.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect } = update
