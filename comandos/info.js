@@ -5,9 +5,10 @@ const msgs_texto = require('../lib/msgs')
 const { version } = require('../package.json')
 const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = require("../lib/util")
 const path = require('path')
-const db = require('../lib/database')
-const {botInfo} = require(path.resolve("lib/bot.js"))
+const db = require('../db-modules/database')
+const {botInfo} = require(path.resolve("db-modules/bot.js"))
 const socket = require("../lib-translate/socket-functions")
+const socketdb = require("../lib-translate/socket-db-functions")
 const {MessageTypes}  = require("../lib-translate/message")
 
 module.exports = info = async(c, abrirMenu, messageTranslated) => {
@@ -17,9 +18,9 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        const botNumber = await socket.getHostNumberFromBotJSON()
+        const botNumber = await socketdb.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null
-        const groupAdmins = isGroupMsg ? await socket.getGroupAdminsFromDb(groupId) : ''
+        const groupAdmins = isGroupMsg ? await socketdb.getGroupAdminsFromDb(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
         const ownerNumber = process.env.NUMERO_DONO.trim()
         if(abrirMenu) command = "!menu"
@@ -65,7 +66,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                     var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfo().limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
-                        var dadosGrupo = await db.obterGrupo(groupId)
+                        var dadosGrupo = await socketdb.getGroupInfoFromDb(groupId)
                         if(dadosGrupo.contador.status){
                             var usuarioAtividade = await db.obterAtividade(groupId,sender)
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)

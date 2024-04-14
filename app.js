@@ -9,14 +9,15 @@ const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('.
 const {verificacaoListaNegraGeral, verificarUsuarioListaNegra} = require(`./lib/listaNegra`)
 const {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizacaoDadosGrupo} = require("./lib/atualizacaoGrupos")
 const {inicioCadastrarGrupo, mensagemCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} = require('./lib/cadastrarGrupo')
-const db = require('./lib/database')
+const db = require('./db-modules/database')
 const checagemMensagem = require("./lib/checagemMensagem")
 const chamadaComando = require("./lib/chamadaComando")
 const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
-const {botStart} = require('./lib/bot')
+const {botStart} = require('./db-modules/bot')
 const {verificarEnv} = require('./lib/env')
 const socket = require("./lib-translate/socket-functions")
+const socketdb = require("./lib-translate/socket-db-functions")
 const antiFake = require("./lib/antiFake"), bemVindo = require("./lib/bemVindo"), antiLink = require('./lib/antiLink'), antiFlood = require('./lib/antiFlood')
 const pino  = require("pino")
 const fs = require('fs-extra')
@@ -100,8 +101,8 @@ async function connectToWhatsApp(){
         //Ao haver mudanças nos participantes de um grupo
         c.ev.on('group-participants.update', async (event)=>{
             try{
-                const isBotUpdate = event.participants[0] == await socket.getHostNumberFromBotJSON()
-                const g_info = await db.obterGrupo(event.id)
+                const isBotUpdate = event.participants[0] == await socketdb.getHostNumberFromBotJSON()
+                const g_info = await socketdb.getGroupInfoFromDb(event.id)
                 if(g_info == null) return
                 if (event.action == 'add') {
                     if(!isBotUpdate){

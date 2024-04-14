@@ -1,11 +1,9 @@
 const {MessageTypes}  = require("./message")
 const {getVideoThumbnail} = require("../lib/conversao")
-const db = require("../lib/database")
-const fs = require('fs-extra')
-const path = require('path')
 
 module.exports ={
-    // >>>>>>>>>>>>>>> FUNÇÕES GERAIS
+
+    // GENERAL FUNCTIONS
     deleteMessage: async(c, message, isQuoted = false)=>{
         var deleteMessage
         if(isQuoted){
@@ -45,18 +43,17 @@ module.exports ={
         return await c.updateBlockStatus(userId, "unblock")
     },
 
-    getHostNumber: async(c)=>{ //PEGAR NÚMERO DO BOT - FUNCIONANDO
+    getHostNumber: async(c)=>{ 
         var id = c.user.id.replace(/:[0-9]+/ism, '')
         return id
     },
 
-    getBlockedIds: async(c)=>{ //PEGAR ID DE USUARIOS BLOQUEADOS - FUNCIONANDO
+    getBlockedIds: async(c)=>{ 
         return await c.fetchBlocklist()
     },
 
 
-    // >>>>>>>>>>>>>>> FUNÇÕES DE ENVIO DE MENSAGENS/CONTEÚDO
-
+    // SEND MESSAGES/MEDIAS FUNCTIONS
     sendText: async(c, id, text)=>{ 
         return await c.sendMessage(id, {text, linkPreview: null})
     },
@@ -69,25 +66,25 @@ module.exports ={
         return await c.sendMessage(chatId, {text: textWithLink})
     },
     
-    sendTextWithMentions: async(c, id, text, mentionedIdsArray)=>{ //ENVIAR TEXTO MENCIONANDO UM MEMBRO 
+    sendTextWithMentions: async(c, id, text, mentionedIdsArray)=>{  
         return await c.sendMessage(id, {text , mentions: mentionedIdsArray})
     },
 
-    sendSticker: async(c,id, sticker)=>{ //ENVIA UM STICKER
+    sendSticker: async(c,id, sticker)=>{ 
         return await c.sendMessage(id, sticker)
     },
 
-    sendFileFromUrl: async(c, type, chatId, filePath, caption) =>{ //ENVIA COM MIDIA DE URL REMOTO
+    sendFileFromUrl: async(c, type, chatId, filePath, caption) =>{ 
         if(type == MessageTypes.image){
             return await c.sendMessage(chatId,{image: {url: filePath}, caption})
         }
     },
 
-    reply: async(c, chatId, text, quotedMessage)=>{ //RESPONDER COM TEXTO - FUNCIONANDO
+    reply: async(c, chatId, text, quotedMessage)=>{ 
         return await c.sendMessage(chatId, {text, linkPreview: null}, {quoted: quotedMessage})
     },
 
-    replyFile: async(c, type, chatId, filePath, caption, quotedMessage, mimetype = '') =>{ //RESPONDER COM MIDIA DE ARQUIVO LOCAL
+    replyFile: async(c, type, chatId, filePath, caption, quotedMessage, mimetype = '') =>{ 
         if(type == MessageTypes.image){
             return await c.sendMessage(chatId,{image: {url: filePath}, caption}, {quoted: quotedMessage})
         } else if (type == MessageTypes.video){
@@ -98,7 +95,7 @@ module.exports ={
         }
     },
 
-    replyFileFromUrl: async(c, type, chatId, url, caption, quotedMessage, mimetype = '') =>{ //RESPONDER COM MIDIA DE URL REMOTO
+    replyFileFromUrl: async(c, type, chatId, url, caption, quotedMessage, mimetype = '') =>{ 
         if(type == MessageTypes.image){
             return await c.sendMessage(chatId,{image: {url}, caption}, {quoted: quotedMessage})
         } else if (type == MessageTypes.video){
@@ -109,7 +106,7 @@ module.exports ={
         }
     },
 
-    replyFileFromBuffer: async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ //RESPONDER COM MIDIA EM BUFFER
+    replyFileFromBuffer: async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ 
         if(type == MessageTypes.video){
             var base64Thumb = await getVideoThumbnail(buffer, "buffer")
             return await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
@@ -118,13 +115,12 @@ module.exports ={
         }
     },
 
-    replyWithMentions: async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ //RESPONDER TEXTO MENCIONANDO UM MEMBRO 
+    replyWithMentions: async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ 
         return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray}, {quoted: quotedMessage})
     },
 
 
-    // >>>>>>>>>>>>>>> FUNÇÕES DE GRUPOS
-
+    // GROUP FUNCTIONS
     joinGroupViaLink : async(c, idLink)=>{
         return await c.groupAcceptInvite(idLink)
     },
@@ -147,7 +143,7 @@ module.exports ={
     },
 
     
-    getGroupAdmins : async(c, groupId)=>{ // PEGAR ADMINS DO GRUPO - FUNCIONANDO
+    getGroupAdmins : async(c, groupId)=>{ 
         let {participants} = await c.groupMetadata(groupId)
         let groupAdmins = participants.filter(member => (member.admin != null))
         let admins = []
@@ -157,11 +153,11 @@ module.exports ={
         return admins
     },
 
-    getGroupInfo : async(c, groupId)=>{ //PEGAR DADOS DE UM GRUPO
+    getGroupInfo : async(c, groupId)=>{ 
         return await c.groupMetadata(groupId)
     },
 
-    getGroupMembersId : async(c, groupId)=>{ // PEGAR ID DE PARTIPANTES DE UM GRUPO  -  FUNCIONANDO
+    getGroupMembersId : async(c, groupId)=>{ 
         let {participants} = await c.groupMetadata(groupId)
         let participantsId = []
         participants.forEach((participant)=>{
@@ -170,7 +166,7 @@ module.exports ={
         return participantsId
     },
 
-    getGroupMembersIdFromMetadata : async(groupMetadata)=>{ // PEGAR ID DE PARTIPANTES DE UM GRUPO  -  FUNCIONANDO
+    getGroupMembersIdFromMetadata : async(groupMetadata)=>{ 
         let {participants} = groupMetadata
         let participantsId = []
         participants.forEach((participant)=>{
@@ -179,7 +175,7 @@ module.exports ={
         return participantsId
     },
 
-    getGroupAdminsFromMetadata : async(groupMetadata)=>{ // PEGAR ADMINS DO GRUPO - FUNCIONANDO
+    getGroupAdminsFromMetadata : async(groupMetadata)=>{ 
         let {participants} = groupMetadata
         let groupAdmins = participants.filter(member => (member.admin != null))
         let admins = []
@@ -189,7 +185,7 @@ module.exports ={
         return admins
     },
 
-    getAllGroups: async(c)=>{ // PEGAR GRUPOS PARTIPANTES  -  FUNCIONANDO
+    getAllGroups: async(c)=>{ 
         let groups = await c.groupFetchAllParticipating()
         let groupsData = []
         for (let [key, value] of Object.entries(groups)) {
@@ -222,45 +218,6 @@ module.exports ={
         var inviteCode = await c.groupInviteCode(groupId)
         return `https://chat.whatsapp.com/${inviteCode}`
     },
-
-
-    // >>>>>>>>>>>>>>> FUNÇÕES DE SOCKET ACESSANDO DB
-
-    getGroupInfoFromDb : async(groupId)=>{ //PEGAR DADOS DE UM GRUPO
-        return await db.obterGrupo(groupId)
-    },
-
-    getHostNumberFromBotJSON: async()=>{ //PEGAR NÚMERO DO BOT - FUNCIONANDO
-        let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
-        return bot.hostNumber
-    },
-
-    getAllGroupsFromDb: async()=>{
-        let groups = await db.obterTodosGrupos()
-        return groups
-    },
-
-    getGroupAdminsFromDb : async(groupId)=>{ 
-        let groupAdmins = await db.obterAdminsGrupo(groupId)
-        return groupAdmins
-    },
-
-    getGroupOwnerFromDb : async(groupId)=>{ 
-        let ownerGroup = await db.obterDonoGrupo(groupId)
-        return ownerGroup
-    },
-
-    getGroupAnnounceFromDb : async(groupId)=>{ 
-        let announceGroup = await db.obterStatusRestritoMsg(groupId)
-        return announceGroup
-    },
-
-    getGroupMembersIdFromDb : async(groupId)=>{ 
-        let groupMembers = await db.obterParticipantesGrupo(groupId)
-        return groupMembers
-    },
-
-
 
 }
 

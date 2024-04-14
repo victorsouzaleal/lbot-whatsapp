@@ -4,6 +4,7 @@ const {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, removerNegritoComando
 const path = require("path")
 const api = require('../lib/api')
 const socket = require("../lib-translate/socket-functions")
+const socketdb = require("../lib-translate/socket-db-functions")
 const { MessageTypes } = require('../lib-translate/message')
 
 module.exports = diversao = async(c,messageTranslated) => {
@@ -14,11 +15,11 @@ module.exports = diversao = async(c,messageTranslated) => {
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const ownerNumber = process.env.NUMERO_DONO.trim() // Número do administrador do bot
-        const botNumber = await socket.getHostNumberFromBotJSON()
+        const botNumber = await socketdb.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null
 
         //OBTENDO DADOS DO GRUPO
-        const grupoInfo = isGroupMsg ? await socket.getGroupInfoFromDb(groupId) : null
+        const grupoInfo = isGroupMsg ? await socketdb.getGroupInfoFromDb(groupId) : null
         const groupAdmins = isGroupMsg ? grupoInfo.admins : null
         const groupOwner = isGroupMsg ? grupoInfo.dono : null
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false

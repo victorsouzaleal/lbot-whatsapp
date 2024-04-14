@@ -2,8 +2,9 @@
 const msgs_texto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} = require('../lib/util')
 const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
-const db = require('../lib/database')
+const db = require('../db-modules/database')
 const socket = require('../lib-translate/socket-functions')
+const socketdb = require('../lib-translate/socket-db-functions')
 const { MessageTypes } = require('../lib-translate/message')
 const { downloadMediaMessage } = require('@whiskeysockets/baileys')
 
@@ -17,10 +18,10 @@ module.exports = grupo = async(c,messageTranslated) => {
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const groupId = chatId
-        const botNumber = await socket.getHostNumberFromBotJSON()
+        const botNumber = await socketdb.getHostNumberFromBotJSON()
 
         //OBTENDO DADOS DO GRUPO
-        const grupoInfo = await socket.getGroupInfoFromDb(groupId)
+        const grupoInfo = await socketdb.getGroupInfoFromDb(groupId)
         const donoGrupo = grupoInfo.dono
         const groupAdmins = grupoInfo.admins
         const membrosGrupo = grupoInfo.participantes

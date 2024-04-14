@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require("fs-extra")
-const msgs_texto = require("./msgs")
+const msgs_texto = require("../lib/msgs")
 const moment = require("moment-timezone")
 const {getHostNumber} = require("../lib-translate/socket-functions")
 
@@ -78,7 +78,7 @@ module.exports = {
 
     // * LIMITE DIARIO DE COMANDOS
     botQtdLimiteDiario : async (tipo, limite)=>{
-        let db = require(path.resolve("lib/database.js"))
+        let db = require(path.resolve("db-modules/database.js"))
         let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
         if(limite == -1) limite = null
         if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
@@ -89,7 +89,7 @@ module.exports = {
     },
 
     botAlterarLimiteDiario : async (status)=>{
-        let db = require(path.resolve("lib/database.js"))
+        let db = require(path.resolve("db-modules/database.js"))
         let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
         let timestamp_atual = Math.round(new Date().getTime()/1000)
         bot.limite_diario.expiracao = (status) ? timestamp_atual+86400 : 0
@@ -108,7 +108,7 @@ module.exports = {
     },
 
     botVerificarExpiracaoLimite : async ()=>{
-        let db = require(path.resolve("lib/database.js"))
+        let db = require(path.resolve("db-modules/database.js"))
         let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
         let timestamp_atual = Math.round(new Date().getTime()/1000)
         if(timestamp_atual >= bot.limite_diario.expiracao){

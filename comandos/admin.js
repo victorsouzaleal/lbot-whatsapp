@@ -5,12 +5,13 @@ const { version } = require('../package.json');
 const msgs_texto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData, consoleErro} = require('../lib/util')
 const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
-const db = require('../lib/database')
+const db = require('../db-modules/database')
 const fs = require("fs-extra")
 const path = require("path")
 const socket = require('../lib-translate/socket-functions')
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarPvLiberado} = require('../lib/bot')
-const {obterTodosUsuarios, obterTodosGrupos} = require("../lib/database");
+const socketdb = require('../lib-translate/socket-db-functions')
+const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarPvLiberado} = require('../db-modules/bot')
+const {obterTodosUsuarios, obterTodosGrupos} = require("../db-modules/database");
 const { MessageTypes } = require('../lib-translate/message');
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
 
@@ -31,7 +32,7 @@ module.exports = admin = async(c,messageTranslated) => {
         const groupId = isGroupMsg ? chatId : null
 
         //OBTENDO DADOS SOBRE O BOT
-        const botNumber = await socket.getHostNumberFromBotJSON()
+        const botNumber = await socketdb.getHostNumberFromBotJSON()
         const blockNumber = await socket.getBlockedIds(c)
 
         switch(command){
@@ -158,7 +159,7 @@ module.exports = admin = async(c,messageTranslated) => {
 
             case '!sairgrupos':
                 try{
-                    var grupos = await socket.getAllGroupsFromDb()
+                    var grupos = await socketdb.getAllGroupsFromDb()
                     for (var grupo of grupos) await socket.leaveGroup(c, grupo.id_grupo)
                     var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
                     await socket.reply(c, ownerNumber+"@s.whatsapp.net", resposta, id)
@@ -510,7 +511,7 @@ module.exports = admin = async(c,messageTranslated) => {
             case '!bcgrupos':
                 try{
                     if(args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var mensagem = body.slice(10).trim(), grupos = await socket.getAllGroupsFromDb()
+                    var mensagem = body.slice(10).trim(), grupos = await socketdb.getAllGroupsFromDb()
                     await socket.reply(c, chatId, criarTexto(msgs_texto.admin.bcgrupos.espera, grupos.length, grupos.length) , id)
                     for (var grupo of grupos) {
                         if (!grupo.restrito_msg) {
@@ -532,7 +533,7 @@ module.exports = admin = async(c,messageTranslated) => {
             
             case "!grupos":
                 try{
-                    var grupos = await socket.getAllGroupsFromDb(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, grupos.length)
+                    var grupos = await socketdb.getAllGroupsFromDb(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, grupos.length)
                     for (var grupo of grupos){
                         var adminsGrupo = grupo.admins
                         var botAdmin = adminsGrupo.includes(botNumber)
