@@ -43,6 +43,23 @@ module.exports = utilidades = async(c,messageTranslated) => {
                     throw err
                 }
                 break
+
+            case "!ouvir":
+                try{
+                    if(!quotedMsg || quotedMsgObjInfo?.type != MessageTypes.audio) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(quotedMsgObjInfo.seconds > 90) return await socket.reply(c, chatId, msgs_texto.utilidades.ouvir.erro_limite, id)
+                    var bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer"), caminhoAudio = path.resolve(`temp/${obterNomeAleatorio(".mp3")}`)
+                    fs.writeFileSync(caminhoAudio, bufferAudio)
+                    var dadosTranscricao = await api.obterTranscricaoAudio(caminhoAudio)
+                    if(!dadosTranscricao.success) return await socket.reply(c, chatId, msgs_texto.utilidades.ouvir.erro_transcricao, id)
+                    var textoTranscricao = dadosTranscricao.result.results.channels[0].alternatives[0].transcript
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.ouvir.sucesso, textoTranscricao), quotedMsgObj)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
                 
             case "!ddd":
                 try{
