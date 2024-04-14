@@ -28,6 +28,7 @@ module.exports ={
                 isGroupMsg : m.key.remoteJid.includes("@g.us"),
                 isMedia : type == module.exports.MessageTypes.image || type == module.exports.MessageTypes.video,
                 seconds : m.message[type].seconds,
+                fileLength: m.message[type].fileLength,
                 quotedMsg
             }
 
@@ -41,6 +42,7 @@ module.exports ={
                     caption : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.caption,
                     url : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.url,
                     mimetype : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.mimetype,
+                    fileLength: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.fileLength,
                     seconds: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.seconds
                 }
             }
