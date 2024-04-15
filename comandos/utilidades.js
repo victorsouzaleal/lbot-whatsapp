@@ -160,7 +160,6 @@ module.exports = utilidades = async(c,messageTranslated) => {
                     if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioMoedaInserida = args[1], usuarioValorInserido = args[2], conversaoMoeda = await api.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido)
                     if(!conversaoMoeda.success) return await socket.reply(c, chatId, conversaoMoeda.error_message, id)
-                    console.log(conversaoMoeda)
                     var itens = ''
                     for(var dado of  conversaoMoeda.conversao) itens += criarTexto(msgs_texto.utilidades.moeda.resposta_item, dado.conversao, dado.valor_convertido_formatado, dado.tipo, dado.atualizacao)
                     var respostaFinal = criarTexto(msgs_texto.utilidades.moeda.resposta_completa, conversaoMoeda.valor_inserido, conversaoMoeda.moeda_inserida, itens)
