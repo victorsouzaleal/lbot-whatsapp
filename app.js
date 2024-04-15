@@ -25,7 +25,14 @@ const fs = require('fs-extra')
 
 async function connectToWhatsApp(){
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
-    const c = makeWASocket({printQRInTerminal: true, auth:state, emitOwnEvents: false, keepAliveIntervalMs: 60000, logger: pino({level : "silent"})})
+    const c = makeWASocket({
+        printQRInTerminal: true,
+        auth:state,
+        emitOwnEvents: false,
+        keepAliveIntervalMs: 60000,
+        logger: pino({level : "silent"}),
+        getMessage: (key) => { return Promise() }
+    })
         //INICIO DO SERVIDOR
         c.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect } = update
@@ -53,9 +60,7 @@ async function connectToWhatsApp(){
                 let necessitaCriar = await criarArquivosNecessarios()
                 if(necessitaCriar){
                     console.log(corTexto(msgs_texto.inicio.arquivos_criados))
-                    setTimeout(()=>{
-                        return c.end(new Error("arquivos"))
-                    },5000)
+                    return c.end(new Error("arquivos"))
                 } else {
                     try{
                         await socket.getAllGroups(c)
@@ -138,7 +143,7 @@ async function connectToWhatsApp(){
         //Ao ser adicionado em novos grupos
         c.ev.on('groups.upsert', async (groupData)=>{
             try{
-                await adicionadoCadastrarGrupo(groupData)
+                await adicionadoCadastrarGrupo(groupData[0])
                 await socket.sendText(c, groupData[0].id, criarTexto(msgs_texto.geral.entrada_grupo, groupData[0].subject))
             } catch(err){
                 consoleErro(err, "GROUPS.UPSERT")
