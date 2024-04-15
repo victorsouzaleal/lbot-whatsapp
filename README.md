@@ -25,12 +25,10 @@
 </h3>
 <br>
 
-## Última Atualização : 14/04/2024 - v2.0.2
-**[CORREÇÃO]** Foi corrigido o erro ao adicionar o bot em um grupo<br>
-**[MUDANÇA]** Mudança na configuração do Socket para melhorar o recebimento das mensagens<br>
+## Última Atualização : 15/04/2024 - v2.0.3
+**[MELHORIA]** O bot agora tem um armazenamento na memória para manter mensagens/contatos sempre atualizados.<br>
 <br>
-OBRIGATÓRIO INSTALAR DO ZERO PARA QUE TUDO FUNCIONE CORRETAMENTE.
-<br>
+
 
 ## REQUERIMENTOS :
 - Um número de celular secundário para usar o bot.
