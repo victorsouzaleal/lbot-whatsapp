@@ -25,7 +25,7 @@
 </h3>
 <br>
 
-## Última Atualização : 14/04/2024 - v2.00.2
+## Última Atualização : 14/04/2024 - v2.0.2
 **[CORREÇÃO]** Foi corrigido o erro ao adicionar o bot em um grupo<br>
 **[MUDANÇA]** Mudança na configuração do Socket para melhorar o recebimento das mensagens<br>
 <br>
