@@ -25,9 +25,9 @@
 </h3>
 <br>
 
-## Última Atualização : 14/04/2024 - v2.00.1
-**[CORREÇÃO]** Foi corrigido problema com as váriaveis .env na inicialização<br>
-**[MUDANÇA]** Agora não é necessário digitar o número do dono na inicialização, pode ser feito depois no .env<br>
+## Última Atualização : 14/04/2024 - v2.00.2
+**[CORREÇÃO]** Foi corrigido o erro ao adicionar o bot em um grupo<br>
+**[MUDANÇA]** Mudança na configuração do Socket para melhorar o recebimento das mensagens<br>
 <br>
 OBRIGATÓRIO INSTALAR DO ZERO PARA QUE TUDO FUNCIONE CORRETAMENTE.
 <br>
