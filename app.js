@@ -8,7 +8,7 @@ require('dotenv').config()
 const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('./lib/util')
 const {verificacaoListaNegraGeral, verificarUsuarioListaNegra} = require(`./lib/listaNegra`)
 const {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizacaoDadosGrupo} = require("./lib/atualizacaoGrupos")
-const {inicioCadastrarGrupo, mensagemCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} = require('./lib/cadastrarGrupo')
+const {inicioCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} = require('./lib/cadastrarGrupo')
 const db = require('./db-modulos/database')
 const checagemMensagem = require("./lib/checagemMensagem")
 const chamadaComando = require("./lib/chamadaComando")
@@ -101,7 +101,6 @@ async function connectToWhatsApp(){
                     const messageTranslated = await messageData(m)
                     const {broadcast} = messageTranslated
                     if(broadcast) return
-                    await mensagemCadastrarGrupo(c, messageTranslated)
                     if(!await antiLink(c, messageTranslated)) return
                     if(!await antiFlood(c, messageTranslated)) return
                     if(!await checagemMensagem(c, messageTranslated)) return
