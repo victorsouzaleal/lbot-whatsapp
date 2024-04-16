@@ -13,8 +13,9 @@ const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 module.exports = grupo = async(c,messageTranslated) => {
     try{
         const { id, chatId, sender, isGroupMsg, caption, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
-        if (!isGroupMsg) return socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis(), msgs_texto = obterMensagensTexto()
+        if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
+        
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -32,8 +33,6 @@ module.exports = grupo = async(c,messageTranslated) => {
         //VERIFICAÇÃO DE PERMISSÃO
         const isGroupAdmins = groupAdmins.includes(sender)
         const isBotGroupAdmins = groupAdmins.includes(botNumber)
-
-        const msgs_texto = obterMensagensTexto()
 
 
         switch(cmdSemPrefixo){
