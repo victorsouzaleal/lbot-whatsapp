@@ -25,10 +25,9 @@
 </h3>
 <br>
 
-## Última Atualização : 16/04/2024 - v2.1.1
-**[CORRIGIDO]** Corrigido problema de cadastro/remoção de grupos no banco de dados que acontecia quando o bot era adicionado/removido de grupos enquanto estava offline.<br>
-**[CORRIGIDO]** Corrigido a verificação de tamanho máximo do video (5 minutos) nos comandos **play** e **yt**.<br>
-**[MELHORIA]** Melhor tratamento de erro na API de pesquisa do Youtube no caso de um video ter restrição de idade.<br>
+## Última Atualização : 17/04/2024 - v2.1.2
+**[CORRIGIDO]** Corrigida a mensagem de verifição de grupo não estava sendo exibida.<br>
+**[CORRIGIDO]** Corrigida a mensagem de verifição de dono não estava sendo exibida.<br>
 <br>
 
 
