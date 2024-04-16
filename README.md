@@ -25,11 +25,10 @@
 </h3>
 <br>
 
-## Última Atualização : 16/04/2024 - v2.1.0
-**[REMOVIDO]** Removido do .env os campos para colocar NOME_BOT, NOME_ADMINISTRADOR E NOME_FIGURINHAS, agora existem comandos próprios para isso.<br>
-**[ADMIN-NOVO]** Novo comando **!prefixo** para mudar o prefixo dos comandos.<br>
-**[ADMIN-NOVO]** Novos comandos **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar os nomes em menus e stickers.<br>
-**[MUDANÇA]** Menu ADMIN foi reorganizado para incluir os novos comandos de configuração do bot.<br>
+## Última Atualização : 16/04/2024 - v2.1.1
+**[CORRIGIDO]** Corrigido problema de cadastro/remoção de grupos no banco de dados que acontecia quando o bot era adicionado/removido de grupos enquanto estava offline.<br>
+**[CORRIGIDO]** Corrigido a verificação de tamanho máximo do video (5 minutos) nos comandos **play** e **yt**.<br>
+**[MELHORIA]** Melhor tratamento de erro na API de pesquisa do Youtube no caso de um video ter restrição de idade.<br>
 <br>
 
 
