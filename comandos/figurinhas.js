@@ -1,30 +1,34 @@
 //REQUERINDO MÓDULOS
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const {erroComandoMsg, consoleErro, removerNegritoComando, criarTexto} = require("../lib/util")
 const { Sticker, StickerTypes } = require("@victorsouzaleal/wa-sticker-formatter")
 const socket = require("../lib-baileys/socket-funcoes")
 const {MessageTypes}  = require("../lib-baileys/mensagem")
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
 const fs = require('fs-extra')
-const path = require("path")
 const {stickerToPng} = require("../lib/conversao")
-
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 
 module.exports = figurinhas = async(c,messageTranslated) => {
     try{
-        const { type, id, sender, chatId, caption, isMedia, mimetype, quotedMsg, seconds, messageId, quotedMsgObjInfo, quotedMsgObj, body} = messageTranslated
+        const { type, id, chatId, caption, isMedia, mimetype, quotedMsg, seconds, messageId, quotedMsgObjInfo, quotedMsgObj, body} = messageTranslated
+        const {prefixo, nome_sticker, nome_bot } = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
-        switch(command){      
-            case '!s':
+        var cmdSemPrefixo = command.replace(prefixo, "")
+
+        const msgs_texto = obterMensagensTexto()
+
+        switch(cmdSemPrefixo){      
+            case 's':
                 try{
                     if(isMedia || quotedMsg){
                         var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
                         var stickerMetadata = {
-                            pack: `${process.env.NOME_AUTOR_FIGURINHAS?.trim()} Stickers`, 
-                            author: process.env.NOME_AUTOR_FIGURINHAS?.trim(),
+                            pack: nome_sticker?.trim(), 
+                            author: nome_bot?.trim(),
                             type: StickerTypes.CROPPED,
                             quality: 100,
                             fps: 7,
@@ -70,7 +74,7 @@ module.exports = figurinhas = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!simg':
+            case 'simg':
                 try{
                     if(quotedMsg && quotedMsgObjInfo.type == MessageTypes.sticker){
                         var mensagemQuoted = quotedMsgObj, imagemSaida

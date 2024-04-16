@@ -481,16 +481,16 @@
     defer-to-connect "^1.0.1"
 
 "@thi.ng/bitstream@^2.2.12":
-  version "2.2.56"
-  resolved "https://registry.yarnpkg.com/@thi.ng/bitstream/-/bitstream-2.2.56.tgz#3306504c158cfa903a0d2d80a5161e0b376576d6"
-  integrity sha512-am3KJBjNkViek6QInjBaG6uMgIjy0h0f3qp96cD0r1ccg/gI/JRA4lF+F1tDlkjNJgTTeEZI097UwFCtVrPrcA==
+  version "2.2.57"
+  resolved "https://registry.yarnpkg.com/@thi.ng/bitstream/-/bitstream-2.2.57.tgz#b46ea5bd420321b6d64876b2b3400e441302fa9e"
+  integrity sha512-XEJtMwrObzB5Ky/4DbLFA5jcymXLwx46q+Jn55lXRCNbocenwxUJBC/GU/oJQALOLjVmFLqxhso7Z7ggCeFARw==
   dependencies:
-    "@thi.ng/errors" "^2.5.3"
+    "@thi.ng/errors" "^2.5.4"
 
-"@thi.ng/errors@^2.5.3":
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/@thi.ng/errors/-/errors-2.5.3.tgz#3ab6a102c229c8a93380c8beb343d3c719e9c231"
-  integrity sha512-AX2MiSuBd+tV+qXgdwMYB+xahxRZEFFa8LjK4d8K+7bKU3l15dYWl291RoRs8ZeOVOvyP/UoIlLEtzMcZoOwXA==
+"@thi.ng/errors@^2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@thi.ng/errors/-/errors-2.5.4.tgz#c87be6921a58bf2d7881c0acc93435d9447ef253"
+  integrity sha512-ZwlKNchTWg5vKWFZ+YgjLm509JCrKnxCwVTCY0NFpu/KbEXAvjdObfY8bGXI3rBj9rRlzJ3HAQGNYB8ieSuj4w==
 
 "@tobyg74/tiktok-api-dl@^1.1.2":
   version "1.1.2"
@@ -548,9 +548,9 @@
     form-data "^4.0.0"
 
 "@types/node@*", "@types/node@>=13.7.0":
-  version "20.12.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.6.tgz#72d068870518d7da1d97b49db401e2d6a1805294"
-  integrity sha512-3KurE8taB8GCvZBPngVbp0lk5CKi8M9f9k1rsADh0Evdz5SzJ+Q+Hx9uHoFGsLnLnd1xmkDQr2hVhlA0Mn0lKQ==
+  version "20.12.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.7.tgz#04080362fa3dd6c5822061aa3124f5c152cff384"
+  integrity sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==
   dependencies:
     undici-types "~5.26.4"
 
@@ -2315,9 +2315,9 @@ next-tick@^1.1.0:
   integrity sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==
 
 node-abi@^3.3.0:
-  version "3.57.0"
-  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-3.57.0.tgz#d772cb899236c0aa46778d0d25256917cf15eb15"
-  integrity sha512-Dp+A9JWxRaKuHP35H77I4kCKesDy5HUDEmScia2FyncMTOXASMyg251F5PhFoDA5uqBrDDffiLpbqnrZmNXW+g==
+  version "3.58.0"
+  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-3.58.0.tgz#3df24fb742e27c3d2a56375ade5dcc68e9aa9710"
+  integrity sha512-pXY1jnGf5T7b8UNzWzIqf0EkX4bx/w8N2AvwlGnk2SYYA/kzDVPaH0Dh0UG4EwxBB5eKOIZKPr8VAHSHL1DPGg==
   dependencies:
     semver "^7.3.5"
 
@@ -2760,9 +2760,9 @@ qrcode-terminal@^0.12.0:
   integrity sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==
 
 qs@^6.11.2, qs@^6.12.0:
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.12.0.tgz#edd40c3b823995946a8a0b1f208669c7a200db77"
-  integrity sha512-trVZiI6RMOkO476zLGaBIzszOdFPnCCXHPG9kn0yuS1uz6xdVxPfZdB3vUig9pxPFDM9BRAgz/YUIVQ1/vuiUg==
+  version "6.12.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.12.1.tgz#39422111ca7cbdb70425541cba20c7d7b216599a"
+  integrity sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==
   dependencies:
     side-channel "^1.0.6"
 
@@ -3274,9 +3274,9 @@ undici-types@~5.26.4:
   integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 undici@^6.11.1:
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-6.12.0.tgz#396d4dbd2ea2351094c00be44655d489afe4fb8a"
-  integrity sha512-d87yk8lqSFUYtR5fTFe2frpkMIrUEz+lgoJmhcL+J3StVl+8fj8ytE4lLnJOTPCE12YbumNGzf4LYsQyusdV5g==
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-6.13.0.tgz#7edbf4b7f3aac5f8a681d515151bf55cb3589d72"
+  integrity sha512-Q2rtqmZWrbP8nePMq7mOJIN98M0fYvSgV89vwl/BQRT4mDOeY2GXZngfGpcBBhtky3woM7G24wZV3Q304Bv6cw==
 
 unique-string@^2.0.0:
   version "2.0.0"
@@ -3502,9 +3502,9 @@ yn@3.1.1:
   integrity sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
 
 youtube-sr@^4.2.0:
-  version "4.3.10"
-  resolved "https://registry.yarnpkg.com/youtube-sr/-/youtube-sr-4.3.10.tgz#6e0fdc5c1c1c23b6476cb480825b3df8eff0f895"
-  integrity sha512-YTpIWy2c1XLN4VpsUuZTDNXpJ2sLZQyG0kX1vq3nymHhDKro2SoeODey3pZazW+6AjfmNxoSnI8pCSzPrEa3jw==
+  version "4.3.11"
+  resolved "https://registry.yarnpkg.com/youtube-sr/-/youtube-sr-4.3.11.tgz#626663ba03c9a81edf82bd03541234ca59073a6c"
+  integrity sha512-3oHiS2x7PpMiDRW7Cq8nz1bkAIBOJHoOwkPl/oncM/+A9/3xxMDgMLGW2dsBEP1DHFyRXYTVABgfbdwHF8sXXQ==
 
 ytdl-core@4.11.5, ytdl-core@^4.11.5:
   version "4.11.5"

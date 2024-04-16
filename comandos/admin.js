@@ -2,7 +2,7 @@
 const menu = require('../lib/menu')
 const moment = require("moment-timezone")
 const { version } = require('../package.json');
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData, consoleErro} = require('../lib/util')
 const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
 const db = require('../db-modulos/database')
@@ -10,16 +10,17 @@ const fs = require("fs-extra")
 const path = require("path")
 const socket = require('../lib-baileys/socket-funcoes')
 const socketdb = require('../lib-baileys/socket-db-funcoes')
-const {botAlterarLimitador, botInfo, botAlterarLimiteDiario, botQtdLimiteDiario, botAlterarLimitarMensagensPv, botAlterarAutoSticker, botAlterarPvLiberado} = require('../db-modulos/bot')
+const bot  = require('../db-modulos/bot')
 const {obterTodosUsuarios, obterTodosGrupos} = require("../db-modulos/database");
 const { MessageTypes } = require('../lib-baileys/mensagem');
 const {downloadMediaMessage} = require('@whiskeysockets/baileys')
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 
 
 module.exports = admin = async(c,messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, t, body, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = messageTranslated
-        
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         //VERIFICAÇÃO DE DONO
         const ownerNumber = process.env.NUMERO_DONO?.trim()
         const isOwner = ownerNumber == sender.replace("@s.whatsapp.net", '')
@@ -28,15 +29,19 @@ module.exports = admin = async(c,messageTranslated) => {
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
+        var cmdSemPrefixo = command.replace(prefixo, "")
         const args =  commands.split(' ')
         const groupId = isGroupMsg ? chatId : null
 
         //OBTENDO DADOS SOBRE O BOT
         const botNumber = await socketdb.getHostNumberFromBotJSON()
         const blockNumber = await socket.getBlockedIds(c)
+        const botInfo = bot.botInfo()
 
-        switch(command){
-            case "!admin":
+        const msgs_texto = obterMensagensTexto()
+
+        switch(cmdSemPrefixo){
+            case "admin":
                 try{
                     await socket.sendText(c, chatId, menu.menuAdmin())
                 } catch(err){
@@ -46,13 +51,13 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!infocompleta":
+            case "infocompleta":
                 try{
                     var fotoBot = await socket.getProfilePicFromServer(c, botNumber)
                     var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
-                    var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, process.env.NOME_ADMINISTRADOR.trim(), process.env.NOME_BOT.trim(), botInicializacaoData, version)
+                    var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, version)
                     // AUTO-STICKER
                     resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
                     // PV LIBERADO
@@ -76,7 +81,7 @@ module.exports = admin = async(c,messageTranslated) => {
 
                 break
                 
-            case '!entrargrupo':
+            case 'entrargrupo':
                 try{
                     if (args.length < 2) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var linkGrupo = args[1]
@@ -97,7 +102,7 @@ module.exports = admin = async(c,messageTranslated) => {
 
                 break
 
-            case '!sair':
+            case 'sair':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     await socket.sendText(c, chatId, msgs_texto.admin.sair.sair_sucesso)
@@ -109,7 +114,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!listablock':
+            case 'listablock':
                 try{
                     if(blockNumber.length == 0) return socket.reply(c, chatId, msgs_texto.admin.listablock.lista_vazia, id)
                     var resposta = criarTexto(msgs_texto.admin.listablock.resposta_titulo, blockNumber.length)
@@ -122,7 +127,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!bcmdglobal":
+            case "bcmdglobal":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
                     var usuarioComandos = body.slice(12).split(" "), respostaBloqueio = await bloquearComandosGlobal(usuarioComandos)
@@ -134,7 +139,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!dcmdglobal":
+            case "dcmdglobal":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     var usuarioComandos = body.slice(12).split(" "), respostaDesbloqueio = await desbloquearComandosGlobal(usuarioComandos)
@@ -146,7 +151,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!rconfig':
+            case 'rconfig':
                 try{
                     await db.resetarGrupos()
                     await socket.reply(c, chatId,msgs_texto.admin.rconfig.reset_sucesso,id)
@@ -157,7 +162,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!sairgrupos':
+            case 'sairgrupos':
                 try{
                     var grupos = await socketdb.getAllGroupsFromDb()
                     for (var grupo of grupos) await socket.leaveGroup(c, grupo.id_grupo)
@@ -170,7 +175,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!bloquear":
+            case "bloquear":
                 try{
                     var usuariosBloqueados = []
                     if(quotedMsg){
@@ -201,7 +206,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break      
 
-            case "!desbloquear":
+            case "desbloquear":
                 try{
                     let usuariosDesbloqueados = []
                     if(quotedMsg){
@@ -228,14 +233,14 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!autostickerpv":
+            case "autostickerpv":
                 try{
-                    var novoEstado = !botInfo().autosticker
+                    var novoEstado = !botInfo.autosticker
                     if(novoEstado){
-                        botAlterarAutoSticker(true)
+                        bot.botAlterarAutoSticker(true)
                         await socket.reply(c, chatId, msgs_texto.admin.autostickerpv.ativado,id)
                     } else {
-                        botAlterarAutoSticker(false)
+                        bot.botAlterarAutoSticker(false)
                         await socket.reply(c, chatId, msgs_texto.admin.autostickerpv.desativado,id)
                     } 
                 } catch(err){
@@ -245,14 +250,14 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!pvliberado":
+            case "pvliberado":
                 try{
-                    var novoEstado = !botInfo().pvliberado
+                    var novoEstado = !botInfo.pvliberado
                     if(novoEstado){
-                        botAlterarPvLiberado(true)
+                        bot.botAlterarPvLiberado(true)
                         await socket.reply(c, chatId, msgs_texto.admin.pvliberado.ativado,id)
                     } else {
-                        botAlterarPvLiberado(false)
+                        bot.botAlterarPvLiberado(false)
                         await socket.reply(c, chatId, msgs_texto.admin.pvliberado.desativado,id)
                     } 
                 } catch(err){
@@ -262,7 +267,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!fotobot":
+            case "fotobot":
                 try{
                     if(isMedia || quotedMsg){
                         var dadosMensagem = {
@@ -287,14 +292,14 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!limitediario":
+            case "limitediario":
                 try{
-                    var novoEstado = !botInfo().limite_diario.status
+                    var novoEstado = !botInfo.limite_diario.status
                     if(novoEstado){
-                        botAlterarLimiteDiario(true)
+                        bot.botAlterarLimiteDiario(true)
                         await socket.reply(c, chatId, msgs_texto.admin.limitediario.ativado, id)
                     } else {
-                        botAlterarLimiteDiario(false)
+                        bot.botAlterarLimiteDiario(false)
                         await socket.reply(c, chatId, msgs_texto.admin.limitediario.desativado, id)
                     } 
                 } catch(err){
@@ -305,18 +310,18 @@ module.exports = admin = async(c,messageTranslated) => {
 
                 break
 
-            case "!taxalimite":
+            case "taxalimite":
                 try{
-                    var novoEstado = !botInfo().limitecomandos.status
+                    var novoEstado = !botInfo.limitecomandos.status
                     if(novoEstado){
                         if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                         var qtd_max_minuto = args[1], tempo_bloqueio = args[2]
                         if(isNaN(qtd_max_minuto) || qtd_max_minuto < 3) return await socket.reply(c, chatId,msgs_texto.admin.limitecomandos.qtd_invalida, id)
                         if(isNaN(tempo_bloqueio) || tempo_bloqueio < 10) return await socket.reply(c, chatId,msgs_texto.admin.limitecomandos.tempo_invalido, id)
-                        botAlterarLimitador(true, parseInt(qtd_max_minuto), parseInt(tempo_bloqueio))
+                        bot.botAlterarLimitador(true, parseInt(qtd_max_minuto), parseInt(tempo_bloqueio))
                         await socket.reply(c, chatId, msgs_texto.admin.limitecomandos.ativado, id)
                     } else {
-                        botAlterarLimitador(false)
+                        bot.botAlterarLimitador(false)
                         await socket.reply(c, chatId, msgs_texto.admin.limitecomandos.desativado, id)
                     }
                 } catch(err){
@@ -325,19 +330,72 @@ module.exports = admin = async(c,messageTranslated) => {
                     throw err
                 }
                 break
-            
-            case "!limitarmsgs":
+
+            case "nomebot":
                 try{
-                    var novoEstado = !botInfo().limitarmensagens.status
+                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    var usuarioTexto = body.slice(9).trim()
+                    bot.botAlterarNomeBot(usuarioTexto)
+                    await socket.reply(c, chatId, msgs_texto.admin.nomebot.sucesso, id)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+            
+            case "nomeadm":
+                try{
+                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    var usuarioTexto = body.slice(9).trim()
+                    bot.botAlterarNomeAdm(usuarioTexto)
+                    await socket.reply(c, chatId, msgs_texto.admin.nomeadm.sucesso, id)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
+            case "nomesticker":
+                try{
+                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    var usuarioTexto = body.slice(13).trim()
+                    bot.botAlterarNomeFigurinhas(usuarioTexto)
+                    await socket.reply(c, chatId, msgs_texto.admin.nomesticker.sucesso, id)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
+            case "prefixo":
+                try{
+                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    var usuarioTexto = body.slice(9).trim(), prefixosSuportados = ["!", "#", ".", "*"]
+                    if(!prefixosSuportados.includes(usuarioTexto)) return await socket.reply(c, chatId, msgs_texto.admin.prefixo.nao_suportado, id)
+                    bot.botAlterarPrefixo(usuarioTexto)
+                    await socket.reply(c, chatId, msgs_texto.admin.prefixo.sucesso, id)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+            
+            case "limitarmsgs":
+                try{
+                    var novoEstado = !botInfo.limitarmensagens.status
                     if(novoEstado){
                         if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                         let max_msg = args[1], msgs_intervalo = args[2]
                         if(isNaN(max_msg) || max_msg < 3) return await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.qtd_invalida, id)
                         if(isNaN(msgs_intervalo) || msgs_intervalo < 10) return await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.tempo_invalido, id)
-                        botAlterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
+                        bot.botAlterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
                         await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.ativado, id)
                     } else {
-                        botAlterarLimitarMensagensPv(false)
+                        bot.botAlterarLimitarMensagensPv(false)
                         await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.desativado, id)
                     }
                 } catch(err){
@@ -347,13 +405,13 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!mudarlimite":
+            case "mudarlimite":
                 try{
-                    if(!botInfo().limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.erro_limite_diario, id)
+                    if(!botInfo.limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.erro_limite_diario, id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var tipo = args[1].toLowerCase(), qtd = args[2]
                     if(qtd != -1) if(isNaN(qtd) || qtd < 5) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.invalido, id)
-                    var alterou = await botQtdLimiteDiario(tipo, parseInt(qtd))
+                    var alterou = await bot.botQtdLimiteDiario(tipo, parseInt(qtd))
                     if(!alterou) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.tipo_invalido, id)
                     await socket.reply(c, chatId, criarTexto(msgs_texto.admin.mudarlimite.sucesso, tipo.toUpperCase(), qtd == -1 ? "∞" : qtd), id)
                 } catch(err){
@@ -363,7 +421,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!usuarios":
+            case "usuarios":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var tipo = args[1].toLowerCase()
@@ -380,7 +438,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!limpartipo":
+            case "limpartipo":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var tipo = args[1].toLowerCase()
@@ -394,7 +452,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!alterartipo":
+            case "alterartipo":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuario_tipo = ""
@@ -418,9 +476,9 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
         
-            case "!tipos":
+            case "tipos":
                 try{
-                    var tipos = botInfo().limite_diario.limite_tipos, respostaTipos = ''
+                    var tipos = botInfo.limite_diario.limite_tipos, respostaTipos = ''
                     for (var tipo in tipos) respostaTipos += criarTexto(msgs_texto.admin.tipos.item_tipo, msgs_texto.tipos[tipo], tipos[tipo] || "∞")
                     await socket.reply(c, chatId, criarTexto(msgs_texto.admin.tipos.resposta, respostaTipos), id)
                 } catch(err){
@@ -430,9 +488,9 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!rtodos":
+            case "rtodos":
                 try{
-                    if(!botInfo().limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.rtodos.erro_limite_diario,id)
+                    if(!botInfo.limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.rtodos.erro_limite_diario,id)
                     await db.resetarComandosDia()
                     await socket.reply(c, chatId, msgs_texto.admin.rtodos.sucesso,id)
                 } catch(err){
@@ -442,9 +500,9 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!r":
+            case "r":
                 try{
-                    if(!botInfo().limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.r.erro_limite_diario,id)
+                    if(!botInfo.limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.r.erro_limite_diario,id)
                     if(quotedMsg){
                         let r_registrado = await db.verificarRegistro(quotedMsgObjInfo.sender)
                         if(r_registrado){
@@ -484,7 +542,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break  
                 
-            case "!verdados":
+            case "verdados":
                 try{
                     var idUsuario = "", dadosUsuario = {}
                     if(quotedMsg) idUsuario = quotedMsgObjInfo.sender
@@ -498,7 +556,7 @@ module.exports = admin = async(c,messageTranslated) => {
                     var tipoUsuario = msgs_texto.tipos[dadosUsuario.tipo]
                     var nomeUsuario =  dadosUsuario.nome || "Ainda não obtido"
                     var resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, nomeUsuario, tipoUsuario, dadosUsuario.id_usuario.replace("@s.whatsapp.net",""))
-                    if(botInfo().limite_diario.status) resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
+                    if(botInfo.limite_diario.status) resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, dadosUsuario.comandos_total)
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
@@ -508,7 +566,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
                      
-            case '!bcgrupos':
+            case 'bcgrupos':
                 try{
                     if(args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
                     var mensagem = body.slice(10).trim(), grupos = await socketdb.getAllGroupsFromDb()
@@ -531,7 +589,7 @@ module.exports = admin = async(c,messageTranslated) => {
 
                 break
             
-            case "!grupos":
+            case "grupos":
                 try{
                     var grupos = await socketdb.getAllGroupsFromDb(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, grupos.length)
                     for (var grupo of grupos){
@@ -549,7 +607,7 @@ module.exports = admin = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!estado':
+            case 'estado':
                 try{
                     if(args.length != 2)  return socket.reply(c, chatId,erroComandoMsg(command),id)
                     switch(args[1]){
@@ -576,7 +634,7 @@ module.exports = admin = async(c,messageTranslated) => {
 
                 break
 
-            case '!desligar':
+            case 'desligar':
                 try{
                     await socket.reply(c, chatId, msgs_texto.admin.desligar.sucesso, id).then(async()=>{
                         await socket.botLogout(c)
@@ -589,7 +647,7 @@ module.exports = admin = async(c,messageTranslated) => {
 
                 break
             
-            case "!ping":
+            case "ping":
                 try{
                     var os = require('os')
                     var tempoResposta = (moment.now()/1000) - t
@@ -607,7 +665,7 @@ module.exports = admin = async(c,messageTranslated) => {
                     tempoResposta.toFixed(3),
                     contatos.length,
                     grupos.length,
-                    timestampParaData(botInfo().iniciado)), id)
+                    timestampParaData(botInfo.iniciado)), id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`

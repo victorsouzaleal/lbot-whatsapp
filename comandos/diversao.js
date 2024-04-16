@@ -1,19 +1,24 @@
 //REQUERINDO MODULOS
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, removerNegritoComando, consoleErro} = require("../lib/util")
 const path = require("path")
 const api = require('../lib/api')
 const socket = require("../lib-baileys/socket-funcoes")
 const socketdb = require("../lib-baileys/socket-db-funcoes")
 const { MessageTypes } = require('../lib-baileys/mensagem')
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+
 
 module.exports = diversao = async(c,messageTranslated) => {
     try {
         const {id, chatId, sender, isGroupMsg, caption, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
+        var cmdSemPrefixo = command.replace(prefixo, "")
+
         const ownerNumber = process.env.NUMERO_DONO?.trim() // Número do administrador do bot
         const botNumber = await socketdb.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null
@@ -24,9 +29,11 @@ module.exports = diversao = async(c,messageTranslated) => {
         const groupOwner = isGroupMsg ? grupoInfo.dono : null
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber) : false
+
+        const msgs_texto = obterMensagensTexto()
         
-        switch(command){
-            case '!detector' :
+        switch(cmdSemPrefixo){
+            case 'detector' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(!quotedMsg) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
@@ -41,7 +48,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!viadometro' :
+            case 'viadometro' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -60,7 +67,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!bafometro' :
+            case 'bafometro' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -79,7 +86,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!chance' :
+            case 'chance' :
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var num = Math.floor(Math.random() * 100), temaChance = body.slice(8).trim()
@@ -95,7 +102,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!caracoroa":
+            case "caracoroa":
                 try{
                     var ladosMoeda = ["cara","coroa"], indexAleatorio = Math.floor(Math.random() * ladosMoeda.length)
                     await socket.reply(c, chatId, msgs_texto.diversao.caracoroa.espera, id)
@@ -108,7 +115,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!ppt":
+            case "ppt":
                 try{
                     var ppt = ["pedra","papel","tesoura"], indexAleatorio = Math.floor(Math.random() * ppt.length)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -142,8 +149,8 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!massacote":
-            case '!mascote':
+            case "massacote":
+            case 'mascote':
                 try{
                     var mascoteFotoURL = "https://i.imgur.com/mVwa7q4.png"
                     await socket.replyFileFromUrl(c, MessageTypes.image,chatId, mascoteFotoURL, 'Whatsapp Jr.', id)
@@ -154,7 +161,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break 
 
-            case '!malacos':
+            case 'malacos':
                 try{
                     const malacosFotoURL = "https://i.imgur.com/7bcn2TK.jpg"
                     await socket.replyFileFromUrl(c, MessageTypes.image, chatId, malacosFotoURL,'Somos o problema', id)
@@ -165,7 +172,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!roletarussa':
+            case 'roletarussa':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
@@ -187,7 +194,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!casal':
+            case 'casal':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     var idParticipantesAtuais = await socket.getGroupMembersId(c, groupId)
@@ -206,7 +213,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!gadometro':
+            case 'gadometro':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
@@ -225,7 +232,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!top5':
+            case 'top5':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -261,7 +268,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!par':
+            case 'par':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(mentionedJidList.length !== 2) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
@@ -276,7 +283,7 @@ module.exports = diversao = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!fch":
+            case "fch":
                 try{
                     var respostaFrase = await api.obterCartasContraHu()
                     await socket.reply(c, chatId, respostaFrase, id)

@@ -1,32 +1,37 @@
 //REQUERINDO MÓDULOS
 const fs = require('fs-extra')
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} = require("../lib/util")
 const api = require("../lib/api")
 const socket = require("../lib-baileys/socket-funcoes")
 const {MessageTypes}  = require("../lib-baileys/mensagem")
 const axios = require("axios")
-const path = require('path')
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 
 
 module.exports = downloads = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, quotedMsg, body, caption} = messageTranslated
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
+        var cmdSemPrefixo = command.replace(prefixo, "")
 
-        switch(command){      
-            case "!play":
+        const msgs_texto = obterMensagensTexto()
+
+        switch(cmdSemPrefixo){      
+            case "play":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     var usuarioTexto = body.slice(6).trim(), videoInfo = await api.obterInfoVideoYT(usuarioTexto)
-                    if(videoInfo == null) return await socket.reply(c, chatId, msgs_texto.downloads.play.nao_encontrado, id)
-                    if(videoInfo.duration > 300000) return await socket.reply(c, chatId, msgs_texto.downloads.play.limite, id)
+                    if(!videoInfo) return await socket.reply(c, chatId, msgs_texto.downloads.play.erro_pesquisa, id)
+                    if(videoInfo.isLiveContent) return await socket.reply(c, chatId,msgs_texto.downloads.play.erro_live,id)
+                    if(videoInfo.lengthSeconds > 300000) return await socket.reply(c, chatId, msgs_texto.downloads.play.limite, id)
                     var mensagemEspera = criarTexto(msgs_texto.downloads.play.espera, videoInfo.title, videoInfo.durationFormatted)
                     await socket.reply(c, chatId, mensagemEspera, id)
-                    var caminhoAudio = await api.obterYTMP3(videoInfo.id)
+                    var caminhoAudio = await api.obterYTMP3(videoInfo.videoId)
                     await socket.replyFile(c, MessageTypes.audio, chatId, caminhoAudio, '', id, 'audio/mpeg')
                     fs.unlinkSync(caminhoAudio)
                 } catch(err){
@@ -37,15 +42,16 @@ module.exports = downloads = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!yt":
+            case "yt":
                 try{
                     if(args.length === 1) return await socket.reply(c,chatId,erroComandoMsg(command),id)
                     var usuarioTexto = body.slice(4).trim(), videoInfo = await api.obterInfoVideoYT(usuarioTexto)
-                    if(videoInfo == null) return await socket.reply(c, chatId,msgs_texto.downloads.yt.nao_encontrado,id)
-                    if(videoInfo.duration > 300000) return await socket.reply(c, chatId,msgs_texto.downloads.yt.limite,id)
+                    if(!videoInfo) return await socket.reply(c, chatId,msgs_texto.downloads.yt.erro_pesquisa,id)
+                    if(videoInfo.isLiveContent) return await socket.reply(c, chatId,msgs_texto.downloads.yt.erro_live,id)
+                    if(videoInfo.lengthSeconds > 300000) return await socket.reply(c, chatId,msgs_texto.downloads.yt.limite,id)
                     var mensagemEspera = criarTexto(msgs_texto.downloads.yt.espera, videoInfo.title, videoInfo.durationFormatted)
                     await socket.reply(c, chatId, mensagemEspera, id)
-                    var caminhoVideo = await api.obterYTMP4(videoInfo.id)
+                    var caminhoVideo = await api.obterYTMP4(videoInfo.videoId)
                     await socket.replyFile(c, MessageTypes.video, chatId, caminhoVideo, '', id, 'video/mp4')
                     fs.unlinkSync(caminhoVideo)
                 } catch(err){
@@ -56,7 +62,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!fb":
+            case "fb":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioURL = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioURL)
@@ -68,7 +74,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 } 
                 break
 
-            case "!ig":
+            case "ig":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     await socket.reply(c, chatId, msgs_texto.downloads.ig.espera, id)
@@ -93,7 +99,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!tw":
+            case "tw":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     await socket.reply(c, chatId,msgs_texto.downloads.tw.espera,id)
@@ -111,7 +117,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!tk":
+            case "tk":
                 try{
                     if(args.length === 1) return await socket.reply(chatId,erroComandoMsg(command),id)
                     var usuarioTexto = body.slice(4).trim(), resultadoTiktok= await api.obterMidiaTiktok(usuarioTexto)
@@ -125,7 +131,7 @@ module.exports = downloads = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!img':
+            case 'img':
                 try{
                     if(quotedMsg || (type != MessageTypes.text && type != MessageTypes.extendedText) || args.length === 1) {
                         return await socket.reply(c, chatId, erroComandoMsg(command), id)

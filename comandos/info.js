@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 const fs = require('fs-extra')
 const menu = require('../lib/menu')
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const { version } = require('../package.json')
 const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = require("../lib/util")
 const path = require('path')
@@ -10,10 +10,13 @@ const {botInfo} = require(path.resolve("db-modulos/bot.js"))
 const socket = require("../lib-baileys/socket-funcoes")
 const socketdb = require("../lib-baileys/socket-db-funcoes")
 const {MessageTypes}  = require("../lib-baileys/mensagem")
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 
-module.exports = info = async(c, abrirMenu, messageTranslated) => {
+
+module.exports = info = async(c, messageTranslated) => {
     try{
-        const {id, chatId, sender, chat, isGroupMsg, caption, body, username} = messageTranslated
+        const {id, chatId, sender, isGroupMsg, caption, body, username} = messageTranslated
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -23,15 +26,17 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
         const groupAdmins = isGroupMsg ? await socketdb.getGroupAdminsFromDb(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
         const ownerNumber = process.env.NUMERO_DONO?.trim()
-        if(abrirMenu) command = "!menu"
+        var cmdSemPrefixo = command.replace(prefixo, "")
 
-        switch(command){
-            case "!info":
+        const msgs_texto = obterMensagensTexto()
+
+        switch(cmdSemPrefixo){
+            case `info`:
                 try{
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
                     var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
-                    var resposta = criarTexto(msgs_texto.info.info.resposta, process.env.NOME_ADMINISTRADOR?.trim(), process.env.NOME_BOT?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
+                    var resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
                     if(botFotoURL != undefined){
                         await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                     } else {
@@ -45,7 +50,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                 
                 break
             
-            case "!reportar":
+            case `reportar`:
                 try{
                     if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command) ,id)
                     var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
@@ -59,7 +64,7 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                 
                 break
             
-            case '!meusdados':
+            case `meusdados`:
                 try{
                     var dadosUsuario = await db.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
@@ -80,16 +85,16 @@ module.exports = info = async(c, abrirMenu, messageTranslated) => {
                 }
                 break
             
-            case '!menu':
-            case '!ajuda':
+            case `menu`:
                 try{
-                    var dadosUsuario = await db.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite" 
+                    var dadosUsuario = await db.obterUsuario(sender)
+                    var tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
                     var dadosResposta = '', nomeUsuario = username
                     if(botInfo().limite_diario.status){
-                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario)
+                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos)
                     } else {
-                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario)
+                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario, totalComandos)
                     }
                     dadosResposta += `═════════════════\n`
 

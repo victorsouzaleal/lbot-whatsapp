@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} = require('../lib/util')
 const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
 const db = require('../db-modulos/database')
@@ -7,15 +7,18 @@ const socket = require('../lib-baileys/socket-funcoes')
 const socketdb = require('../lib-baileys/socket-db-funcoes')
 const { MessageTypes } = require('../lib-baileys/mensagem')
 const { downloadMediaMessage } = require('@whiskeysockets/baileys')
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+
 
 module.exports = grupo = async(c,messageTranslated) => {
     try{
         const { id, chatId, sender, isGroupMsg, caption, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
         if (!isGroupMsg) return socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
+        var cmdSemPrefixo = command.replace(prefixo, "")
         const args =  commands.split(' ')
         const groupId = chatId
         const botNumber = await socketdb.getHostNumberFromBotJSON()
@@ -30,9 +33,11 @@ module.exports = grupo = async(c,messageTranslated) => {
         const isGroupAdmins = groupAdmins.includes(sender)
         const isBotGroupAdmins = groupAdmins.includes(botNumber)
 
+        const msgs_texto = obterMensagensTexto()
 
-        switch(command){
-            case '!regras':
+
+        switch(cmdSemPrefixo){
+            case 'regras':
                 try{
                     var grupoDescricao = grupoInfo.descricao || msgs_texto.grupo.regras.sem_descrição
                     await socket.getProfilePicFromServer(c, groupId).then((grupoFoto)=>{
@@ -47,7 +52,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!fotogrupo":
+            case "fotogrupo":
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -75,7 +80,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 break
                 
             
-            case '!status':
+            case 'status':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var resposta = msgs_texto.grupo.status.resposta_titulo
@@ -106,7 +111,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
             
-            case '!bv':
+            case 'bv':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var estadoNovo = !grupoInfo.bemvindo.status
@@ -126,7 +131,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 
                 break
 
-            case "!blista": //FAZER MELHORIA EM FUTURAS VERSÕES PARA BANIR SE O USUARIO ADICIONADO A LISTA NEGRA ESTIVER NO GRUPO
+            case "blista": //FAZER MELHORIA EM FUTURAS VERSÕES PARA BANIR SE O USUARIO ADICIONADO A LISTA NEGRA ESTIVER NO GRUPO
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -152,7 +157,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!dlista":
+            case "dlista":
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -170,7 +175,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!listanegra":
+            case "listanegra":
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -179,7 +184,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                     for(let usuario_lista of lista_negra_grupo){
                         resposta_listanegra += criarTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace(/@s.whatsapp.net/g, ''))
                     }
-                    resposta_listanegra += `╚═〘 ${process.env.NOME_BOT?.trim()}®〙`
+                    resposta_listanegra += `╚═〘 ${nome_bot?.trim()}®〙`
                     await socket.sendText(c, chatId, resposta_listanegra)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -188,7 +193,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!alink':
+            case 'alink':
                 try{
                     if (!isGroupAdmins) return await socket.reply(c,chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -207,7 +212,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!autosticker':
+            case 'autosticker':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var estadoNovo = !grupoInfo.autosticker
@@ -225,7 +230,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
                     
-            case '!rlink':
+            case 'rlink':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -241,7 +246,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break        
 
-            case '!afake':
+            case 'afake':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -261,7 +266,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!mutar":
+            case "mutar":
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var estadoNovo = !grupoInfo.mutar
@@ -279,7 +284,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
                     
-            case '!contador':
+            case 'contador':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var estadoNovo = !grupoInfo.contador.status
@@ -300,7 +305,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!atividade":
+            case "atividade":
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if(!grupoInfo.contador.status) return socket.reply(c, chatId, msgs_texto.grupo.atividade.erro_contador, id)
@@ -325,7 +330,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!alterarcont":
+            case "alterarcont":
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length == 1)  return socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -345,7 +350,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!imarcar":
+            case "imarcar":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
@@ -365,7 +370,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                                 mencionarUsuarios.push(usuario.id_usuario)
                             }
                         }
-                        inativosResposta += `╚═〘 ${process.env.NOME_BOT?.trim()}® 〙`
+                        inativosResposta += `╚═〘 ${nome_bot?.trim()}® 〙`
                         await socket.sendTextWithMentions(c, chatId, inativosResposta, mencionarUsuarios)
                     } else {
                         await socket.reply(c, chatId,msgs_texto.grupo.minativos.sem_inativo, id)
@@ -377,7 +382,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
                 
-            case "!ibanir":
+            case "ibanir":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -401,7 +406,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!topativos":
+            case "topativos":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
@@ -430,7 +435,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                         respostaTop += criarTexto(msgs_texto.grupo.topativos.resposta_itens, medalha, i+1, usuariosAtivos[i].id_usuario.replace(/@s.whatsapp.net/g, ''), usuariosAtivos[i].msg)
                         usuariosMencionados.push(usuariosAtivos[i].id_usuario)   
                     }
-                    respostaTop += `╠\n╚═〘 ${process.env.NOME_BOT?.trim()}® 〙`
+                    respostaTop += `╠\n╚═〘 ${nome_bot?.trim()}® 〙`
                     await socket.sendTextWithMentions(c, chatId, respostaTop, usuariosMencionados)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -439,7 +444,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!enquete":
+            case "enquete":
                 try{
                     if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
                     var enquetePergunta = body.slice(9).split(",")[0], enqueteOpcoes = body.slice(9).split(",").slice(1)
@@ -452,7 +457,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
           
-            case '!aflood':
+            case 'aflood':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
@@ -489,7 +494,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!bcmd":
+            case "bcmd":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
@@ -502,7 +507,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }   
                 break
             
-            case "!dcmd":
+            case "dcmd":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command),id)
@@ -515,7 +520,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!link':
+            case 'link':
                 try{
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
@@ -529,7 +534,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!adms':
+            case 'adms':
                 try{
                     var mensagemAlvo = quotedMsg ? quotedMsgObj : id
                     var admsResposta = msgs_texto.grupo.adms.resposta_titulo
@@ -544,7 +549,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!dono":
+            case "dono":
                 try{
                     if(donoGrupo) await socket.replyWithMentions(c, chatId, criarTexto(msgs_texto.grupo.dono.resposta, donoGrupo.replace("@s.whatsapp.net", "")), [donoGrupo], id)
                     else await socket.reply(c, chatId, msgs_texto.grupo.dono.sem_dono, id)
@@ -555,7 +560,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!mt':
+            case 'mt':
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     var usuarioTexto = body.slice(4).trim()
@@ -563,7 +568,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                     for(let membro of membrosGrupo){
                         respostaMarcar += criarTexto(msgs_texto.grupo.mt.resposta_itens, membro.replace("@s.whatsapp.net", ""))
                     }
-                    respostaMarcar += `╚═〘 ${process.env.NOME_BOT?.trim()}®〙`
+                    respostaMarcar += `╚═〘 ${nome_bot?.trim()}®〙`
                     await socket.sendTextWithMentions(c, chatId, respostaMarcar, membrosGrupo)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -572,7 +577,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
                 
-            case '!mm':
+            case 'mm':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     var membrosMarcados = []
@@ -584,7 +589,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                             membrosMarcados.push(membro)
                         }
                     }
-                    respostaMarcar += `╚═〘 ${process.env.NOME_BOT?.trim()}®〙`
+                    respostaMarcar += `╚═〘 ${nome_bot?.trim()}®〙`
                     if(membrosMarcados.length == 0) return await socket.reply(c, chatId, msgs_texto.grupo.mm.sem_membros, id)
                     await socket.sendTextWithMentions(c, chatId, respostaMarcar, membrosMarcados)
                 } catch(err){
@@ -594,7 +599,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break  
             
-            case '!bantodos':
+            case 'bantodos':
                 try{
                     var verificarDono = sender == donoGrupo
                     if (!verificarDono) return socket.reply(c, chatId, msgs_texto.permissao.apenas_dono_grupo, id)           
@@ -610,7 +615,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break  
             
-            case '!add':
+            case 'add':
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
@@ -628,7 +633,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!ban':
+            case 'ban':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
@@ -658,7 +663,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!promover':
+            case 'promover':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
@@ -684,7 +689,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!rebaixar':
+            case 'rebaixar':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
@@ -710,7 +715,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!apg':
+            case 'apg':
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!quotedMsg) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -722,7 +727,7 @@ module.exports = grupo = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!f':
+            case 'f':
                 try{
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)

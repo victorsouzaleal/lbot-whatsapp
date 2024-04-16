@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require("fs-extra")
-const msgs_texto = require("../lib/msgs")
+const obterMensagensTexto = require("../lib/msgs")
 const moment = require("moment-timezone")
 const {getHostNumber} = require("../lib-baileys/socket-funcoes")
 
@@ -8,6 +8,10 @@ module.exports = {
     botCriarArquivo : async ()=>{
         const bot = {
             iniciado: 0,
+            nome_bot: "LBOT",
+            nome_adm: "Leal",
+            nome_pack: "LBOT Stickers",
+            prefixo: "!",
             cmds_executados:0,
             autosticker: false,
             bloqueio_cmds:[],
@@ -51,6 +55,7 @@ module.exports = {
 
     botStart : async (c)=>{
         try{
+            let msgs_texto = obterMensagensTexto()
             let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
             bot.iniciado = moment.now()
             bot.hostNumber = await getHostNumber(c)
@@ -60,6 +65,35 @@ module.exports = {
             err.message = `botStart - ${err.message}`
             throw err
         }
+    },
+
+    // Alterar nome do bot
+    botAlterarNomeBot: async(nomeBot)=>{
+        let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+        bot.nome_bot = nomeBot
+        fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    },
+
+
+    // Alterar nome do administrador
+    botAlterarNomeAdm: async(nomeAdm)=>{
+        let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+        bot.nome_adm = nomeAdm
+        fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    },
+
+    // Alterar nome do pack de figurinhas
+    botAlterarNomeFigurinhas: async(nomeAutor)=>{
+        let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+        bot.nome_pack = nomeAutor
+        fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    },
+
+    // Alterar prefixo dos comandos
+    botAlterarPrefixo: async(prefixo)=>{
+        let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+        bot.prefixo = prefixo
+        fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
     },
 
     // * PV Liberado
@@ -131,6 +165,7 @@ module.exports = {
     },
 
     botLimitarComando : async (usuario_id, tipo_usuario, isAdmin)=>{
+        let msgs_texto = obterMensagensTexto()
         const {criarTexto} = require(path.resolve("lib/util.js"))
         let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json'))),timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
         //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
@@ -188,6 +223,7 @@ module.exports = {
     },
 
     botLimitarMensagensPv : async (usuario_msg,usuario_tipo)=>{
+        let msgs_texto = obterMensagensTexto()
         let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json'))), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
         //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
         for(let i = 0; i < bot.limitarmensagens.msgs.length; i++){

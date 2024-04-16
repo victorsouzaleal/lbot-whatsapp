@@ -12,8 +12,8 @@ const {inicioCadastrarGrupo, mensagemCadastrarGrupo, adicionadoCadastrarGrupo, r
 const db = require('./db-modulos/database')
 const checagemMensagem = require("./lib/checagemMensagem")
 const chamadaComando = require("./lib/chamadaComando")
-const msgs_texto = require("./lib/msgs")
 const recarregarContagem = require("./lib/recarregarContagem")
+const obterMensagensTexto = require("./lib/msgs")
 const {botStart} = require('./db-modulos/bot')
 const {verificarEnv} = require('./lib/env')
 const socket = require("./lib-baileys/socket-funcoes")
@@ -22,8 +22,8 @@ const antiFake = require("./lib/antiFake"), bemVindo = require("./lib/bemVindo")
 const pino  = require("pino")
 const fs = require('fs-extra')
 
-
 async function connectToWhatsApp(){
+
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
     const store = makeInMemoryStore({})
     const c = makeWASocket({
@@ -39,6 +39,7 @@ async function connectToWhatsApp(){
             }
         }
     })
+    const msgs_texto = obterMensagensTexto()
 
     store.bind(c.ev)
 
@@ -123,7 +124,7 @@ async function connectToWhatsApp(){
             if(g_info == null) return
             if (event.action == 'add') {
                 if(!isBotUpdate){
-                        //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
+                    //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
                     if(!await verificarUsuarioListaNegra(c,event)) return
                     //ANTIFAKE
                     if(!await antiFake(c,event,g_info)) return

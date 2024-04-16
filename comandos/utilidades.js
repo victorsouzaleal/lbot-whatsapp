@@ -1,6 +1,6 @@
 //REQUERINDO MÓDULOS
 const fs = require('fs-extra')
-const msgs_texto = require('../lib/msgs')
+const obterMensagensTexto = require('../lib/msgs')
 const {criarTexto, erroComandoMsg, obterNomeAleatorio, removerNegritoComando, consoleErro} = require("../lib/util")
 const path = require('path')
 const api = require("../lib/api")
@@ -8,19 +8,23 @@ const socket = require("../lib-baileys/socket-funcoes")
 const { MessageTypes } = require('../lib-baileys/mensagem')
 const { downloadMediaMessage } = require('@whiskeysockets/baileys')
 const {converterMp4ParaMp3} = require("../lib/conversao")
-const { error } = require('console')
+const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 
 
 module.exports = utilidades = async(c,messageTranslated) => {
     try{
-        const { type, id, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, body} = messageTranslated
+        const { type, id, chatId, caption, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, body} = messageTranslated
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
         const args =  commands.split(' ')
+        var cmdSemPrefixo = command.replace(prefixo, "")
+        
+        const msgs_texto = obterMensagensTexto()
 
-        switch(command){      
-            case "!tabela":
+        switch(cmdSemPrefixo){      
+            case "tabela":
                 try{
                     var tabela = await api.obterTabelaNick()
                     await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.tabela.resposta, tabela), id)
@@ -31,7 +35,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!letra":
+            case "letra":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioTexto = body.slice(7).trim(), dadosMusica = await api.obterLetraMusica(usuarioTexto)
@@ -44,7 +48,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!ouvir":
+            case "ouvir":
                 try{
                     if(!quotedMsg || quotedMsgObjInfo?.type != MessageTypes.audio) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     if(quotedMsgObjInfo.seconds > 90) return await socket.reply(c, chatId, msgs_texto.utilidades.ouvir.erro_limite, id)
@@ -61,7 +65,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
                 
-            case "!ddd":
+            case "ddd":
                 try{
                     var DDD = null
                     if(quotedMsg){
@@ -84,7 +88,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!audio":
+            case "audio":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var efeitosSuportados = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], tipoEfeito = body.slice(7).trim()
@@ -110,7 +114,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!qualmusica":
+            case "qualmusica":
                 try{
                     var typeMessage = quotedMsg ? quotedMsgObjInfo.type : type
                     if(typeMessage != MessageTypes.video && typeMessage != MessageTypes.audio) return await socket.reply(c, chatId, erroComandoMsg(command), id)
@@ -142,7 +146,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
 
                 break
 
-            case "!clima":
+            case "clima":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command),id)
                     var usuarioTexto = body.slice(7).trim(), clima = await api.obterClima(usuarioTexto)
@@ -155,7 +159,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!moeda":
+            case "moeda":
                 try{
                     if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioMoedaInserida = args[1], usuarioValorInserido = args[2], conversaoMoeda = await api.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido)
@@ -171,7 +175,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case "!pesquisa":
+            case "pesquisa":
                 try{
                     if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command) , id)
                     var usuarioTexto = body.slice(10).trim(), pesquisaResultados = await api.obterPesquisaWeb(usuarioTexto)
@@ -189,7 +193,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!rastreio':
+            case 'rastreio':
                 try{
                     if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioCodigoRastreio = body.slice(10).trim(), rastreioDados = await api.obterRastreioCorreios(usuarioCodigoRastreio)
@@ -208,7 +212,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!anime":
+            case "anime":
                 try{
                     var dadosMensagem = {
                         tipo: (quotedMsg)? quotedMsgObjInfo.type : type,
@@ -238,7 +242,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
             
-            case "!traduz":
+            case "traduz":
                 try{
                     var usuarioTexto = "", idiomaTraducao = 'pt'
                     if(quotedMsg  && quotedMsgObjInfo.type == MessageTypes.text){
@@ -262,7 +266,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break  
             
-            case '!voz':
+            case 'voz':
                 try{
                     var usuarioTexto = ''
                     if (args.length === 1) {
@@ -288,7 +292,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break
 
-            case '!noticias':
+            case 'noticias':
                 try{
                     var listaNoticias = await api.obterNoticias()
                     var respostaNoticias = msgs_texto.utilidades.noticia.resposta_titulo
@@ -303,7 +307,7 @@ module.exports = utilidades = async(c,messageTranslated) => {
                 }
                 break;
 
-            case '!calc':
+            case 'calc':
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
                     var usuarioExpressaoMatematica = body.slice(6).trim()
