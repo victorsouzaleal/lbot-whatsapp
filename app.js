@@ -121,26 +121,23 @@ async function connectToWhatsApp(){
         try{
             const isBotUpdate = event.participants[0] == await socketdb.getHostNumberFromBotJSON()
             const g_info = await socketdb.getGroupInfoFromDb(event.id)
-            if(g_info == null) return
             if (event.action == 'add') {
-                if(!isBotUpdate){
-                    //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
-                    if(!await verificarUsuarioListaNegra(c,event)) return
-                    //ANTIFAKE
-                    if(!await antiFake(c,event,g_info)) return
-                    //BEM-VINDO
-                    await bemVindo(c,event,g_info)
-                }
+                //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
+                if(!await verificarUsuarioListaNegra(c,event)) return
+                //ANTIFAKE
+                if(!await antiFake(c,event,g_info)) return
+                //BEM-VINDO
+                await bemVindo(c,event,g_info)
                 //CONTADOR
                 if(g_info.contador) await db.registrarContagem(event.id, event.participants[0])
                 await adicionarParticipante(event.id, event.participants[0])
             } else if(event.action == "remove"){
                 if(isBotUpdate){
-                    if(g_info.contador) await db.removerContagemGrupo(event.id)
+                    if(g_info?.contador) await db.removerContagemGrupo(event.id)
                     await removerGrupo(event.id)
                 } else{
                     await removerParticipante(event.id, event.participants[0])
-                    if(g_info.contador) await db.removerContagem(event.id, event.participants[0])
+                    if(g_info?.contador) await db.removerContagem(event.id, event.participants[0])
                 }
             } else if(event.action == "promote"){
                 await adicionarAdmin(event.id, event.participants[0])
@@ -157,7 +154,7 @@ async function connectToWhatsApp(){
     c.ev.on('groups.upsert', async (groupData)=>{
         try{
             await adicionadoCadastrarGrupo(groupData[0])
-            await socket.sendText(c, groupData[0].id, criarTexto(msgs_texto.geral.entrada_grupo, groupData[0].subject))
+            await socket.sendText(c, groupData[0].id, criarTexto(msgs_texto.geral.entrada_grupo, groupData[0].subject)).catch(()=>{})
         } catch(err){
             consoleErro(err, "GROUPS.UPSERT")
         }

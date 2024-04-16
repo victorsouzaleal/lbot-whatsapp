@@ -153,7 +153,7 @@ module.exports = {
     },
 
     removerGrupo: async(id_grupo)=>{
-        await db.grupos.asyncRemove({id_grupo})
+        await db.grupos.asyncRemove({id_grupo}, {multi: true})
     },
 
     obterTodosGrupos : async()=>{
