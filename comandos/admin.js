@@ -20,12 +20,13 @@ const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
 module.exports = admin = async(c,messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, t, body, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
+        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis(), msgs_texto = obterMensagensTexto()
+
         //VERIFICAÇÃO DE DONO
         const ownerNumber = process.env.NUMERO_DONO?.trim()
         const isOwner = ownerNumber == sender.replace("@s.whatsapp.net", '')
-        if (!isOwner) return socket.reply(c, chatId, msgs_texto.permissao.apenas_dono_bot, id)
-
+        if (!isOwner) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_dono_bot, id)
+       
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         command = removerNegritoComando(command)
@@ -38,7 +39,7 @@ module.exports = admin = async(c,messageTranslated) => {
         const blockNumber = await socket.getBlockedIds(c)
         const botInfo = bot.botInfo()
 
-        const msgs_texto = obterMensagensTexto()
+      
 
         switch(cmdSemPrefixo){
             case "admin":
