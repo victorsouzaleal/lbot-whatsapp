@@ -245,11 +245,11 @@ module.exports = utilidades = async(c,messageTranslated) => {
             case "traduz":
                 try{
                     var usuarioTexto = "", idiomaTraducao = 'pt'
-                    if(quotedMsg  && quotedMsgObjInfo.type == MessageTypes.text){
+                    if(quotedMsg  && (quotedMsgObjInfo.type == MessageTypes.text || quotedMsgObjInfo.type == MessageTypes.extendedText)){
                         if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
                         idiomaTraducao = args[1]
                         usuarioTexto = quotedMsgObjInfo.body || quotedMsgObjInfo.caption
-                    } else if(!quotedMsg && type == MessageTypes.text ){
+                    } else if(!quotedMsg && (type == MessageTypes.text || type == MessageTypes.extendedText)){
                         if(args.length < 3) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
                         idiomaTraducao = args[1]
                         usuarioTexto = args.slice(2).join(" ")
