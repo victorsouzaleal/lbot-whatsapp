@@ -31,10 +31,10 @@
 
 
 ## REQUERIMENTOS :
-- Um número de celular secundário para usar o bot.
+- Um número de celular **SECUNDÁRIO** conectado ao WhatsApp para ler o QR Code e conectar o bot.
 - [NODE VERSÃO LTS](https://nodejs.org/en/) 
 
-Isso tudo é necessário para o bot funcionar corretamente.
+<br>
 
 ## 1 - Faça download da ultima versão :
 Faça o download da última versão lançada no link abaixo (extraia o zip e entre na pasta para os passos seguintes):
@@ -78,42 +78,44 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 <br><br>
 **!menu** - Dá acesso ao MENU PRINCIPAL.
 <br>
-**!admin** - Dá acesso ao MENU de ADMINISTRADOR/DONO DO BOT.
+**!admin** - Dá acesso ao MENU de ADMINISTRADOR/DONO DO BOT. (Precisa de configuração no .env, veja abaixo como)
 <br><br>
 Todos os comandos agora tem um guia ao digitar **!comando guia**
+<br><br>
 
-### Pronto! Seu bot já está funcionando!!
+### Pronto! Seu bot já está ONLINE, mas ainda não acabou continue lendo o próximo passo para configuração!!
+<br>
 
-**Obs**: Se você deseja utilizar os comandos **!noticias** (noticias atuais), **!qualmusica**(reconhecimento de músicas) , **!ouvir** (áudio para texto)  e comandos de **ADMIN** vá para o **passo 5**.
 
 <br>
 
-## 5 - Configuração do arquivo .env :
+## 5 - Configuração do bot e arquivo .env :
 
-#### Abra o arquivo .env na raiz do projeto e edite manualmente : </br>
-        #############  DADOS DO BOT ############# 
-
-        NOME_ADMINISTRADOR= Digite seu nome
-        NOME_BOT= Digite o nome que o bot vai ter
-        NOME_AUTOR_FIGURINHAS = Digite o nome que vai aparecer como autor das figurinhas
-
-        ############ CONFIGURAÇÕES DO BOT ############# 
+### Ao abrir o arquivo .env na raiz do projeto após iniciar o bot pela primeira vez ele vai se parecer com isso : </br>
+        ############ CONFIGURAÇÕES DO DONO ############# 
         # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
-        NÚMERO_DONO = SEU número com o código do país incluido. ex: 55219xxxxxxxx
+        NUMERO_DONO=55219xxxxxxxx
 
-        # NEWSAPI - NOTICIAS 
-        API_NEWS_ORG = recebe a chave da conta que voce criar no site newsapi.org 
+        # NEWSAPI- Coloque abaixo sua chave API do site newsapi.org (NOTICIAIS ATUAIS)
+        API_NEWS_ORG=?????
 
-        # ACRCLOUD - RECONHECIMENTO DE MÚSICAS
-        acr_host= recebe seu endereço de host obtido no https://acrcloud.com/
-        acr_access_key= recebe seu access_key obtido no https://acrcloud.com/
-        acr_access_secret= recebe seu access_secret obtido no https://acrcloud.com/
+        # ACRCLOUD - Coloque abaixo suas chaves do ACRCloud (Reconhecimento de Músicas)
+        acr_host=?????
+        acr_access_key=?????
+        acr_access_secret=?????
 
         # DEEPGRAM - Coloque abaixo sua chave do DEEPGRAM (Transcrição de aúdio para texto)
-        dg_secret_key= recebe a chave da conta que voce criar no site https://deepgram.com/
+        dg_secret_key=??????
 
-**Obs**: Para usar as funções de administrador coloque o seu número principal que irá administrar o bot em **NUMERO_DONO**<br>
 
+#### Como configurar o ADMINISTRADOR :
+Para usar as funções de **ADMINISTRADOR** coloque o seu número principal que irá administrar o bot em **NUMERO_DONO**, com código do país (ex: Brasil é 55) e DDD (ex: Rio de Janeiro é 21).<br><br>
+Reinicie o bot para as alterações terem efeito e agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
+
+<br><br>
+
+#### Como obter as chaves API para usar em comandos específicos :
+Para usar comandos específicos como **!noticias**, **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API no .env, abaixo tem um guia completo com imagens para obter as chaves.<br><br>
 **Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](CHAVESAPI.md)
 
 <br>
@@ -209,29 +211,21 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 ## 7 - Solução de Problemas :
 
-#### SOLUÇÃO DE PROBLEMAS - WINDOWS :
-Só faça os passos abaixo se você tiver algum erro :
+#### 1 - MEU NÚMERO NO .ENV ESTÁ CORRETO MAS NÃO ME IDENTIFICOU COMO ADMINISTRADOR :
+Se o seu número está correto no .env e ele não te indentifica como administrador tente tirar o 9 na frente do número, isso acontece porque em alguns DDD o WhatsApp não entende o 9 sendo parte do número do usuário.
 
-- Se houver um erro na inicialização ou o comando !yt não funcionar corretamente, faça a instalação do Google Chrome : https://www.google.com/intl/pt-BR/chrome/
+<br>
 
-
-#### SOLUÇÃO DE PROBLEMAS - LINUX :
-Só faça os passos abaixo se você tiver algum erro :
-
-- Se houve algum problema na inicialização do script, instale o Google Chrome:
-   ```bash
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    sudo apt install ./google-chrome-stable_current_amd64.deb
-    ```
-
-#### SOLUÇÃO DE PROBLEMAS - COMANDO NÃO FUNCIONANDO :
+#### 2 - COMANDO NÃO FUNCIONANDO :
 Se algum comando por acaso não estiver funcionando antes de tentar baixar uma nova versão ou relatar o erro tente usar dentro da pasta do projeto o comando :
 ```bash
 yarn install 
 ```
 Esse comando atualiza as dependências e pode resolver algum problema que você tenha sem precisar baixar ou esperar uma nova versão do bot.<br><br>
 
-**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal)
+**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal) 
+
+<br>
 
 ## 8 - Contato/Doação (NÃO É O BOT, É O NUMERO APENAS PARA TIRAR DÚVIDAS OU AJUDAR COM O PROJETO)
 Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
