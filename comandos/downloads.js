@@ -7,6 +7,7 @@ import * as socket from '../lib-baileys/socket-funcoes.js'
 import {MessageTypes} from '../lib-baileys/mensagem.js'
 import axios from 'axios'
 import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import duration from 'format-duration-time'
 
 
 export const downloads = async(c,messageTranslated) => {
@@ -66,6 +67,9 @@ export const downloads = async(c,messageTranslated) => {
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioURL = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioURL)
+                    if(resultadosMidia.duration_ms > 180000) return await socket.reply(c, chatId, msgs_texto.downloads.fb.limite, id)
+                    var mensagemEspera = criarTexto(msgs_texto.downloads.fb.espera, resultadosMidia.title, duration.default(resultadosMidia.duration_ms).format('m:ss'))
+                    await socket.reply(c, chatId, mensagemEspera, id)
                     await socket.replyFileFromUrl(c, MessageTypes.video, chatId, resultadosMidia.sd, '', id, 'video/mp4')
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
