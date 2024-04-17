@@ -2,7 +2,7 @@
 import fs from 'fs-extra'
 import * as menu from '../lib/menu.js'
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} from '../lib/util.js'
+import {criarTexto, erroComandoMsg, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
 import * as db from '../db-modulos/database.js'
 import {botInfo} from "../db-modulos/bot.js"
@@ -18,7 +18,6 @@ export const info = async(c, messageTranslated) => {
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
-        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         const botNumber = await socketdb.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null

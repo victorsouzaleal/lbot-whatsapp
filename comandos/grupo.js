@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} from '../lib/util.js'
+import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {bloquearComandosGrupo, desbloquearComandosGrupo} from '../lib/bloqueioComandos.js'
 import * as db from '../db-modulos/database.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
@@ -18,7 +18,6 @@ export const grupo = async(c,messageTranslated) => {
         
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
-        command = removerNegritoComando(command)
         var cmdSemPrefixo = command.replace(prefixo, "")
         const args =  commands.split(' ')
         const groupId = chatId

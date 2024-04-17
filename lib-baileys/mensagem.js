@@ -61,5 +61,15 @@ export const MessageTypes = {
     audio: "audioMessage"
 }
 
+export const allowedMessageTypes = [
+    "conversation",
+    "extendedTextMessage",
+    "imageMessage",
+    "documentMessage",
+    "videoMessage",
+    "stickerMessage",
+    "audioMessage"
+]
+
 
 

@@ -1,6 +1,6 @@
 //REQUERINDO MÓDULOS
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {erroComandoMsg, consoleErro, removerNegritoComando, criarTexto} from '../lib/util.js'
+import {erroComandoMsg, consoleErro, criarTexto} from '../lib/util.js'
 import { Sticker, StickerTypes } from '@victorsouzaleal/wa-sticker-formatter'
 import * as socket from '../lib-baileys/socket-funcoes.js'
 import {MessageTypes} from '../lib-baileys/mensagem.js'
@@ -15,7 +15,6 @@ export const figurinhas = async(c,messageTranslated) => {
         const {prefixo, nome_sticker, nome_bot } = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
-        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         var cmdSemPrefixo = command.replace(prefixo, "")
 

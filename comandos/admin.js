@@ -2,7 +2,7 @@
 import * as menu from '../lib/menu.js'
 import moment from "moment-timezone"
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData, consoleErro} from '../lib/util.js'
+import {criarTexto,erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import {desbloquearComandosGlobal, bloquearComandosGlobal} from "../lib/bloqueioComandos.js"
 import * as db from '../db-modulos/database.js'
 import fs from 'fs-extra'
@@ -27,7 +27,6 @@ export const admin = async(c,messageTranslated) => {
        
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
-        command = removerNegritoComando(command)
         var cmdSemPrefixo = command.replace(prefixo, "")
         const args =  commands.split(' ')
         const groupId = isGroupMsg ? chatId : null

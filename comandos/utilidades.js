@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 import fs from 'fs-extra'
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {criarTexto, erroComandoMsg, obterNomeAleatorio, removerNegritoComando, consoleErro} from '../lib/util.js'
+import {criarTexto, erroComandoMsg, obterNomeAleatorio, consoleErro} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
@@ -17,7 +17,6 @@ export const utilidades = async(c,messageTranslated) => {
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
-        command = removerNegritoComando(command)
         const args =  commands.split(' ')
         var cmdSemPrefixo = command.replace(prefixo, "")
         
