@@ -139,17 +139,23 @@ export const downloads = async(c,messageTranslated) => {
                     if(quotedMsg || (type != MessageTypes.text && type != MessageTypes.extendedText) || args.length === 1) {
                         return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     }
-                    var usuarioTexto = body.slice(5).trim(), imagensUrl = await api.obterImagens(usuarioTexto), imagemValida = false
-                    while(imagemValida == false){
+                    var usuarioTexto = body.slice(5).trim(), imagensUrl = await api.obterImagens(usuarioTexto)
+                    var tentativasMax = imagensUrl.length < 3 ? imagensUrl.length : 3, sucessoMensagem = false
+                    //Tentativas de enviar a imagem
+                    for (let i = 0; i < tentativasMax; i++){
                         try{
-                            var imgResponse = await axios.get(imagensUrl[Math.floor(Math.random() * imagensUrl.length)].url,  { responseType: 'arraybuffer' })
+                            var indexAleatorio = Math.floor(Math.random() * imagensUrl.length)
+                            var imgResponse = await axios.get(imagensUrl[indexAleatorio].url,  { responseType: 'arraybuffer' })
+                            imagensUrl.splice(indexAleatorio, 1)
                             var bufferImg = Buffer.from(imgResponse.data, "utf-8")
                             await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferImg, '', id)
-                            imagemValida = true
+                            sucessoMensagem = true
+                            i = 3
                         } catch {
-                            imagemValida = false
+                            sucessoMensagem = false
                         }
                     }
+                    if(!sucessoMensagem) await socket.reply(c, chatId, msgs_texto.downloads.img.erro_imagem, '', id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
