@@ -25,9 +25,12 @@
 </h3>
 <br>
 
-## Última Atualização : 17/04/2024 - v2.1.2
-**[CORRIGIDO]** Corrigida a mensagem de verifição de grupo não estava sendo exibida.<br>
-**[CORRIGIDO]** Corrigida a mensagem de verifição de dono não estava sendo exibida.<br>
+## Última Atualização : 17/04/2024 - v2.2.0
+**[CÓDIGO]** Todos os módulos do projetos foram migrados do descontinuado CommonJS para ESM<br>
+**[CÓDIGO]** Melhor filtragem nos tipos de mensagens que o bot receber, para evitar processamento desnecessário.<br>
+**[COMANDO]** Comando **img** teve a api melhorada para minimizar erros e agora faz 3 tentativas de enviar uma imagem válida.<br>
+**[COMANDO]** Comando **fb** atualizado para enviar o titulo e duração do vídeo, tendo agora limite máximo de 3 minutos<br>
+**[CORREÇÃO]** Prefixo * que não estava funcionando foi corrigido.<br>
 <br>
 
 
