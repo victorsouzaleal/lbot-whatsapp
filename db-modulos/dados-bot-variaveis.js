@@ -1,7 +1,7 @@
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra'
+import path from 'node:path'
 
-module.exports = botPegarDadosGerais = () => {
+export const obterBotVariaveis = () => {
     const existeBotJson = fs.existsSync(path.resolve('database/bot.json')) 
     let nome_bot, nome_adm, nome_sticker, prefixo = "!"
     if(existeBotJson){

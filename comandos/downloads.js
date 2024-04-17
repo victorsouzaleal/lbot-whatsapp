@@ -1,15 +1,15 @@
 //REQUERINDO MÓDULOS
-const fs = require('fs-extra')
-const obterMensagensTexto = require('../lib/msgs')
-const {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} = require("../lib/util")
-const api = require("../lib/api")
-const socket = require("../lib-baileys/socket-funcoes")
-const {MessageTypes}  = require("../lib-baileys/mensagem")
-const axios = require("axios")
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import fs from 'fs-extra'
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} from '../lib/util.js'
+import * as api from '../lib/api.js'
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import {MessageTypes} from '../lib-baileys/mensagem.js'
+import axios from 'axios'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
 
-module.exports = downloads = async(c,messageTranslated) => {
+export const downloads = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, quotedMsg, body, caption} = messageTranslated
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()

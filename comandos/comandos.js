@@ -1,7 +1,7 @@
 
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
-module.exports = comandos = () => {
+export const listarComandos = () => {
     let {prefixo} = obterBotVariaveis()
     return {
         utilidades :[

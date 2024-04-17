@@ -1,16 +1,16 @@
 //REQUERINDO MODULOS
-const obterMensagensTexto = require('../lib/msgs')
-const {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} = require('../lib/util')
-const {bloquearComandosGrupo, desbloquearComandosGrupo} = require('../lib/bloqueioComandos')
-const db = require('../db-modulos/database')
-const socket = require('../lib-baileys/socket-funcoes')
-const socketdb = require('../lib-baileys/socket-db-funcoes')
-const { MessageTypes } = require('../lib-baileys/mensagem')
-const { downloadMediaMessage } = require('@whiskeysockets/baileys')
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {criarTexto, erroComandoMsg, removerNegritoComando, consoleErro} from '../lib/util.js'
+import {bloquearComandosGrupo, desbloquearComandosGrupo} from '../lib/bloqueioComandos.js'
+import * as db from '../db-modulos/database.js'
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
+import { MessageTypes } from '../lib-baileys/mensagem.js'
+import { downloadMediaMessage } from '@whiskeysockets/baileys'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
 
-module.exports = grupo = async(c,messageTranslated) => {
+export const grupo = async(c,messageTranslated) => {
     try{
         const { id, chatId, sender, isGroupMsg, caption, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis(), msgs_texto = obterMensagensTexto()

@@ -1,23 +1,21 @@
 //REQUERINDO MODULOS
-const menu = require('../lib/menu')
-const moment = require("moment-timezone")
-const { version } = require('../package.json');
-const obterMensagensTexto = require('../lib/msgs')
-const {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData, consoleErro} = require('../lib/util')
-const {desbloquearComandosGlobal, bloquearComandosGlobal} = require("../lib/bloqueioComandos")
-const db = require('../db-modulos/database')
-const fs = require("fs-extra")
-const path = require("path")
-const socket = require('../lib-baileys/socket-funcoes')
-const socketdb = require('../lib-baileys/socket-db-funcoes')
-const bot  = require('../db-modulos/bot')
-const {obterTodosUsuarios, obterTodosGrupos} = require("../db-modulos/database");
-const { MessageTypes } = require('../lib-baileys/mensagem');
-const {downloadMediaMessage} = require('@whiskeysockets/baileys')
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import * as menu from '../lib/menu.js'
+import moment from "moment-timezone"
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {criarTexto,erroComandoMsg, removerNegritoComando, timestampParaData, consoleErro} from '../lib/util.js'
+import {desbloquearComandosGlobal, bloquearComandosGlobal} from "../lib/bloqueioComandos.js"
+import * as db from '../db-modulos/database.js'
+import fs from 'fs-extra'
+import path from 'node:path'
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
+import * as bot from '../db-modulos/bot.js'
+import { MessageTypes } from '../lib-baileys/mensagem.js'
+import { downloadMediaMessage } from '@whiskeysockets/baileys'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import os from 'node:os'
 
-
-module.exports = admin = async(c,messageTranslated) => {
+export const admin = async(c,messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, t, body, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = messageTranslated
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis(), msgs_texto = obterMensagensTexto()
@@ -55,6 +53,7 @@ module.exports = admin = async(c,messageTranslated) => {
             case "infocompleta":
                 try{
                     var fotoBot = await socket.getProfilePicFromServer(c, botNumber)
+                    var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
                     var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
@@ -650,13 +649,12 @@ module.exports = admin = async(c,messageTranslated) => {
             
             case "ping":
                 try{
-                    var os = require('os')
                     var tempoResposta = (moment.now()/1000) - t
                     var memoriaTotal = os.totalmem()/1024000000, memoriaUsada = (os.totalmem() - os.freemem())/1024000000
                     var sistemaOperacional = `${os.type()} ${os.release()}`
                     var nomeProcessador = os.cpus()[0].model
-                    var grupos = await obterTodosGrupos()
-                    var contatos = await obterTodosUsuarios()
+                    var grupos = await db.obterTodosGrupos()
+                    var contatos = await db.obterTodosUsuarios()
                     await socket.reply(c, chatId, criarTexto(
                     msgs_texto.admin.ping.resposta, 
                     sistemaOperacional, 

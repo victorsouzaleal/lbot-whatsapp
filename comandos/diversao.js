@@ -1,15 +1,15 @@
 //REQUERINDO MODULOS
-const obterMensagensTexto = require('../lib/msgs')
-const {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, removerNegritoComando, consoleErro} = require("../lib/util")
-const path = require("path")
-const api = require('../lib/api')
-const socket = require("../lib-baileys/socket-funcoes")
-const socketdb = require("../lib-baileys/socket-db-funcoes")
-const { MessageTypes } = require('../lib-baileys/mensagem')
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, removerNegritoComando, consoleErro} from '../lib/util.js'
+import path from 'node:path'
+import * as api from '../lib/api.js'
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
+import { MessageTypes } from '../lib-baileys/mensagem.js'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
 
-module.exports = diversao = async(c,messageTranslated) => {
+export const diversao = async(c,messageTranslated) => {
     try {
         const {id, chatId, sender, isGroupMsg, caption, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()

@@ -1,29 +1,30 @@
 //REQUERINDO MODULOS
-const {makeWASocket, useMultiFileAuthState, DisconnectReason, makeInMemoryStore} = require('@whiskeysockets/baileys')
-const {messageData} = require("./lib-baileys/mensagem")
-const { Boom } = require('@hapi/boom')
-const moment = require("moment-timezone")
+import {makeWASocket, useMultiFileAuthState, DisconnectReason, makeInMemoryStore} from '@whiskeysockets/baileys'
+import {messageData}  from './lib-baileys/mensagem.js'
+import { Boom } from '@hapi/boom'
+import moment from "moment-timezone"
+import dotenv from 'dotenv'
+import {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} from'./lib/util.js'
+import {verificacaoListaNegraGeral, verificarUsuarioListaNegra} from './lib/listaNegra.js'
+import {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizacaoDadosGrupo} from './lib/atualizacaoGrupos.js'
+import {inicioCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} from './lib/cadastrarGrupo.js'
+import * as db from './db-modulos/database.js'
+import {checagemMensagem} from './lib/checagemMensagem.js'
+import {chamadaComando} from './lib/chamadaComando.js'
+import {recarregarContagem} from './lib/recarregarContagem.js'
+import { obterMensagensTexto } from './lib/msgs.js' 
+import {botStart} from './db-modulos/bot.js'
+import {verificarEnv} from './lib/env.js'
+import * as socket from './lib-baileys/socket-funcoes.js'
+import * as socketdb from './lib-baileys/socket-db-funcoes.js'
+import {antiFake} from './lib/antiFake.js'; import {bemVindo} from './lib/bemVindo.js'; import {antiLink} from './lib/antiLink.js'; import {antiFlood} from './lib/antiFlood.js'
+import pino from 'pino'
+import fs from 'fs-extra'
+
 moment.tz.setDefault('America/Sao_Paulo')
-require('dotenv').config()
-const {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} = require('./lib/util')
-const {verificacaoListaNegraGeral, verificarUsuarioListaNegra} = require(`./lib/listaNegra`)
-const {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizacaoDadosGrupo} = require("./lib/atualizacaoGrupos")
-const {inicioCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} = require('./lib/cadastrarGrupo')
-const db = require('./db-modulos/database')
-const checagemMensagem = require("./lib/checagemMensagem")
-const chamadaComando = require("./lib/chamadaComando")
-const recarregarContagem = require("./lib/recarregarContagem")
-const obterMensagensTexto = require("./lib/msgs")
-const {botStart} = require('./db-modulos/bot')
-const {verificarEnv} = require('./lib/env')
-const socket = require("./lib-baileys/socket-funcoes")
-const socketdb = require("./lib-baileys/socket-db-funcoes")
-const antiFake = require("./lib/antiFake"), bemVindo = require("./lib/bemVindo"), antiLink = require('./lib/antiLink'), antiFlood = require('./lib/antiFlood')
-const pino  = require("pino")
-const fs = require('fs-extra')
+dotenv.config()
 
 async function connectToWhatsApp(){
-
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
     const store = makeInMemoryStore({})
     const c = makeWASocket({

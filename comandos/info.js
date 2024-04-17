@@ -1,19 +1,18 @@
 //REQUERINDO MÓDULOS
-const fs = require('fs-extra')
-const menu = require('../lib/menu')
-const obterMensagensTexto = require('../lib/msgs')
-const { version } = require('../package.json')
-const {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} = require("../lib/util")
-const path = require('path')
-const db = require('../db-modulos/database')
-const {botInfo} = require(path.resolve("db-modulos/bot.js"))
-const socket = require("../lib-baileys/socket-funcoes")
-const socketdb = require("../lib-baileys/socket-db-funcoes")
-const {MessageTypes}  = require("../lib-baileys/mensagem")
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import fs from 'fs-extra'
+import * as menu from '../lib/menu.js'
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {criarTexto, erroComandoMsg, removerNegritoComando, timestampParaData} from '../lib/util.js'
+import path from 'node:path'
+import * as db from '../db-modulos/database.js'
+import {botInfo} from "../db-modulos/bot.js"
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
+import {MessageTypes} from '../lib-baileys/mensagem.js'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
 
-module.exports = info = async(c, messageTranslated) => {
+export const info = async(c, messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, caption, body, username} = messageTranslated
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
@@ -33,6 +32,7 @@ module.exports = info = async(c, messageTranslated) => {
         switch(cmdSemPrefixo){
             case `info`:
                 try{
+                    var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
                     var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)

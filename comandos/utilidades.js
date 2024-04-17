@@ -1,17 +1,17 @@
 //REQUERINDO MÓDULOS
-const fs = require('fs-extra')
-const obterMensagensTexto = require('../lib/msgs')
-const {criarTexto, erroComandoMsg, obterNomeAleatorio, removerNegritoComando, consoleErro} = require("../lib/util")
-const path = require('path')
-const api = require("../lib/api")
-const socket = require("../lib-baileys/socket-funcoes")
-const { MessageTypes } = require('../lib-baileys/mensagem')
-const { downloadMediaMessage } = require('@whiskeysockets/baileys')
-const {converterMp4ParaMp3} = require("../lib/conversao")
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import fs from 'fs-extra'
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {criarTexto, erroComandoMsg, obterNomeAleatorio, removerNegritoComando, consoleErro} from '../lib/util.js'
+import path from 'node:path'
+import * as api from '../lib/api.js'
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import { MessageTypes } from '../lib-baileys/mensagem.js'
+import { downloadMediaMessage } from '@whiskeysockets/baileys'
+import {converterMp4ParaMp3} from '../lib/conversao.js'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
 
-module.exports = utilidades = async(c,messageTranslated) => {
+export const utilidades = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, caption, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, body} = messageTranslated
         const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()

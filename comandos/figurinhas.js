@@ -1,15 +1,15 @@
 //REQUERINDO MÓDULOS
-const obterMensagensTexto = require('../lib/msgs')
-const {erroComandoMsg, consoleErro, removerNegritoComando, criarTexto} = require("../lib/util")
-const { Sticker, StickerTypes } = require("@victorsouzaleal/wa-sticker-formatter")
-const socket = require("../lib-baileys/socket-funcoes")
-const {MessageTypes}  = require("../lib-baileys/mensagem")
-const {downloadMediaMessage} = require('@whiskeysockets/baileys')
-const fs = require('fs-extra')
-const {stickerToPng} = require("../lib/conversao")
-const obterBotVariaveis = require("../db-modulos/dados-bot-variaveis")
+import { obterMensagensTexto } from '../lib/msgs.js' 
+import {erroComandoMsg, consoleErro, removerNegritoComando, criarTexto} from '../lib/util.js'
+import { Sticker, StickerTypes } from '@victorsouzaleal/wa-sticker-formatter'
+import * as socket from '../lib-baileys/socket-funcoes.js'
+import {MessageTypes} from '../lib-baileys/mensagem.js'
+import { downloadMediaMessage } from '@whiskeysockets/baileys'
+import fs from 'fs-extra'
+import {stickerToPng} from '../lib/conversao.js'
+import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 
-module.exports = figurinhas = async(c,messageTranslated) => {
+export const figurinhas = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, caption, isMedia, mimetype, quotedMsg, seconds, messageId, quotedMsgObjInfo, quotedMsgObj, body} = messageTranslated
         const {prefixo, nome_sticker, nome_bot } = obterBotVariaveis()
