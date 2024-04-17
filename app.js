@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import {makeWASocket, useMultiFileAuthState, DisconnectReason, makeInMemoryStore} from '@whiskeysockets/baileys'
-import {messageData}  from './lib-baileys/mensagem.js'
+import {messageData, allowedMessageTypes}  from './lib-baileys/mensagem.js'
 import { Boom } from '@hapi/boom'
 import moment from "moment-timezone"
 import dotenv from 'dotenv'
@@ -26,6 +26,7 @@ dotenv.config()
 
 async function connectToWhatsApp(){
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
+    const msgs_texto = obterMensagensTexto()
     const store = makeInMemoryStore({})
     const c = makeWASocket({
         printQRInTerminal: true,
@@ -40,7 +41,6 @@ async function connectToWhatsApp(){
             }
         }
     })
-    const msgs_texto = obterMensagensTexto()
 
     store.bind(c.ev)
 
@@ -50,19 +50,19 @@ async function connectToWhatsApp(){
         if(connection === 'close') {
             const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
             if(lastDisconnect.error.message == "Comando"){
-                consoleErro('A conexão com o WhatsApp foi encerrada pelo comando do Administrador.', "DESCONECTADO")
+                consoleErro(msgs_texto.geral.desconectado.comando, "DESCONECTADO")
             } else if(lastDisconnect.error.message == "arquivos"){
-                consoleErro('O bot foi encerrado para criação de arquivos necessários, inicie novamente.', "DESCONECTADO")
+                consoleErro(msgs_texto.geral.desconectado.arquivos, "DESCONECTADO")
             } else if( lastDisconnect.error.message == "erro_geral"){
-                consoleErro('A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.', "DESCONECTADO")
+                consoleErro(msgs_texto.geral.desconectado.falha_grave, "DESCONECTADO")
             } else {
                 if(erroCodigo == DisconnectReason?.loggedOut){
                     fs.rmSync("./auth_info_baileys", {recursive: true, force: true})
-                    consoleErro('A sua sessão com o WhatsApp foi deslogada, leia o código QR novamente.', "DESCONECTADO")
+                    consoleErro(msgs_texto.geral.desconectado.deslogado, "DESCONECTADO")
                 } else if(erroCodigo == DisconnectReason?.restartRequired){
-                    consoleErro('A sua conexão com o WhatsApp precisa ser reiniciada, tentando reconectar...', "DESCONECTADO")
+                    consoleErro(msgs_texto.geral.desconectado.reiniciar, "DESCONECTADO")
                 } else {
-                    consoleErro(`A sua conexão com o WhatsApp foi encerrada, tentando reconectar... Motivo : ${erroCodigo} - ${lastDisconnect.error.message}`, "DESCONECTADO")
+                    consoleErro(criarTexto(msgs_texto.geral.desconectado.conexao, erroCodigo, lastDisconnect.error.message), "DESCONECTADO")
                 }
                 connectToWhatsApp()
             }
@@ -82,8 +82,8 @@ async function connectToWhatsApp(){
                     console.log(corTexto(await botStart(c)))
                     //Verificando se os campos do .env foram modificados e envia para o console
                     verificarEnv()
-                    console.log('[SERVIDOR] Servidor iniciado!')
-                    console.log('[ATUALIZAÇÃO] Atualizando e verificando os dados dos grupos.')
+                    console.log(msgs_texto.inicio.servidor_iniciado)
+                    console.log(msgs_texto.inicio.atualizacao_grupos)
                 } catch(err){
                     consoleErro(err, "Inicialização")
                     c.end(new Error("erro_geral"))
@@ -100,8 +100,7 @@ async function connectToWhatsApp(){
                 case "notify":
                     if(m.messages[0].message == undefined) return
                     const messageTranslated = await messageData(m)
-                    const {broadcast} = messageTranslated
-                    if(broadcast) return
+                    if(!allowedMessageTypes.includes(messageTranslated.type) || messageTranslated.broadcast) return
                     if(!await antiLink(c, messageTranslated)) return
                     if(!await antiFlood(c, messageTranslated)) return
                     if(!await checagemMensagem(c, messageTranslated)) return
