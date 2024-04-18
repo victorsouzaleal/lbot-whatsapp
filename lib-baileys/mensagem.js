@@ -24,6 +24,7 @@ export const messageData = async(m) =>{
             fromMe : m.key.fromMe,
             chatId: m.key.remoteJid,
             isGroupMsg : m.key.remoteJid.includes("@g.us"),
+            participant: m.key.participant,
             isMedia : type == MessageTypes.image || type == MessageTypes.video,
             seconds : m.message[type].seconds,
             fileLength: m.message[type].fileLength,

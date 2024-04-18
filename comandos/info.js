@@ -2,7 +2,7 @@
 import fs from 'fs-extra'
 import * as menu from '../lib/menu.js'
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {criarTexto, erroComandoMsg, timestampParaData} from '../lib/util.js'
+import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import path from 'node:path'
 import * as db from '../db-modulos/database.js'
 import {botInfo} from "../db-modulos/bot.js"

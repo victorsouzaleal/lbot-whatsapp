@@ -1,5 +1,6 @@
 import {MessageTypes} from './mensagem.js'
 import {getVideoThumbnail} from '../lib/conversao.js'
+import {delayAleatorio} from '../lib/util.js'
 
 // GENERAL FUNCTIONS
 export const deleteMessage = async(c, message, isQuoted = false)=>{
@@ -15,6 +16,14 @@ export const deleteMessage = async(c, message, isQuoted = false)=>{
         deleteMessage = message.key
     }
     return await c.sendMessage(message.key.remoteJid, {delete: deleteMessage})
+}
+
+export const readMessage = async(c, chatId, participant, messageId) =>{
+    return await c.sendReceipt(chatId, participant, [messageId], 'read')
+}
+
+export const updatePresence = async(c, chatId, type)=>{
+    return await c.sendPresenceUpdate(type, chatId)
 }
 
 export const setProfilePic = async(c, id, buffer)=>{
@@ -52,8 +61,10 @@ export const getBlockedIds = async(c)=>{
 
 
 // SEND MESSAGES/MEDIAS FUNCTIONS
-export const sendText = async(c, id, text)=>{ 
-    return await c.sendMessage(id, {text, linkPreview: null})
+export const sendText = async(c, chatId, text)=>{
+    await updatePresence(c, chatId, "composing")
+    await delayAleatorio(400, 1000)
+    await c.sendMessage(chatId, {text, linkPreview: null})
 }
 
 export const sendPoll = async(c, chatId, pollName, pollValues)=>{
@@ -61,11 +72,15 @@ export const sendPoll = async(c, chatId, pollName, pollValues)=>{
 }
 
 export const sendLinkWithAutoPreview = async(c, chatId, textWithLink) =>{
+    await updatePresence(c, chatId, "composing")
+    await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text: textWithLink})
 }
 
-export const sendTextWithMentions = async(c, id, text, mentionedIdsArray)=>{  
-    return await c.sendMessage(id, {text , mentions: mentionedIdsArray})
+export const sendTextWithMentions = async(c, chatId, text, mentionedIdsArray)=>{ 
+    await updatePresence(c, chatId, "composing")
+    await delayAleatorio(400, 1000) 
+    return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray})
 }
 
 export const sendSticker = async(c,id, sticker)=>{ 
@@ -79,6 +94,8 @@ export const sendFileFromUrl = async(c, type, chatId, filePath, caption) =>{
 }
 
 export const reply = async(c, chatId, text, quotedMessage)=>{ 
+    await updatePresence(c, chatId, "composing")
+    await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text, linkPreview: null}, {quoted: quotedMessage})
 }
 
@@ -114,6 +131,8 @@ export const replyFileFromBuffer = async(c, type, chatId, buffer, caption, quote
 }
 
 export const replyWithMentions = async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ 
+    await updatePresence(c, chatId, "composing")
+    await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray}, {quoted: quotedMessage})
 }
 
