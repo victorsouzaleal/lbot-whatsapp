@@ -79,6 +79,7 @@ export const listarComandos = () => {
         ],
         diversao:[
             `${prefixo}mascote`,
+            `${prefixo}simi`,
             `${prefixo}viadometro`,
             `${prefixo}detector`,
             `${prefixo}massacote`,

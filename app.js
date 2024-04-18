@@ -4,6 +4,7 @@ import {atualizarConexao, receberMensagem, adicionadoEmGrupo, atualizacaoPartici
 import configSocket from './lib-baileys/configSocket.js'
 import moment from "moment-timezone"
 import dotenv from 'dotenv'
+
 moment.tz.setDefault('America/Sao_Paulo')
 dotenv.config()
 

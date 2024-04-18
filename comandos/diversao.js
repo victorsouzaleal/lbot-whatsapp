@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import { obterMensagensTexto } from '../lib/msgs.js' 
-import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro} from '../lib/util.js'
+import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
@@ -40,6 +40,20 @@ export const diversao = async(c,messageTranslated) => {
                     var indexAleatorio = Math.floor(Math.random() * imgsDetector.length)
                     await socket.replyFile(c,MessageTypes.image, chatId, './media/detector/calibrando.png', msgs_texto.diversao.detector.espera, id)
                     await socket.replyFile(c,MessageTypes.image, chatId, `./media/detector/${imgsDetector[indexAleatorio]}.png`, '', quotedMsgObj)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
+            case 'simi':
+                try{
+                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    let perguntaSimi = body.slice(6).trim()
+                    let respostaSimi = await api.simiResponde(perguntaSimi)
+                    if(!respostaSimi.sucesso) return await socket.reply(c, chatId, msgs_texto.diversao.simi.erro, id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), respostaSimi.resposta), id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
