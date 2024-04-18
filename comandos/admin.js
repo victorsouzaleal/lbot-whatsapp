@@ -12,13 +12,12 @@ import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import * as bot from '../db-modulos/bot.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
 import os from 'node:os'
 
 export const admin = async(c,messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, t, body, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis(), msgs_texto = obterMensagensTexto()
+        const {prefixo, nome_bot, nome_adm} = bot.botInfo(), msgs_texto = obterMensagensTexto()
 
         //VERIFICAÇÃO DE DONO
         const ownerNumber = process.env.NUMERO_DONO?.trim()

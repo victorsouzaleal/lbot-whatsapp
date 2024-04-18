@@ -1,8 +1,8 @@
 
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import {botInfo} from '../db-modulos/bot.js'
 
 export const listarComandos = () => {
-    let {prefixo} = obterBotVariaveis()
+    let {prefixo} = botInfo()
     return {
         utilidades :[
             `${prefixo}tabela`,

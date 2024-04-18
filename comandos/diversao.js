@@ -6,13 +6,13 @@ import * as api from '../lib/api.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
 import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import {botInfo} from '../db-modulos/bot.js'
 
 
 export const diversao = async(c,messageTranslated) => {
     try {
         const {id, chatId, sender, isGroupMsg, caption, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
+        const {prefixo, nome_bot, nome_adm} = botInfo()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')

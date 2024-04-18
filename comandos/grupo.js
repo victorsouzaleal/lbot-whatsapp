@@ -7,13 +7,13 @@ import * as socket from '../lib-baileys/socket-funcoes.js'
 import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import {botInfo} from '../db-modulos/bot.js'
 
 
 export const grupo = async(c,messageTranslated) => {
     try{
         const { id, chatId, sender, isGroupMsg, caption, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis(), msgs_texto = obterMensagensTexto()
+        const {prefixo, nome_bot, nome_adm} = botInfo(), msgs_texto = obterMensagensTexto()
         if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
         
         const commands = caption || body || ''

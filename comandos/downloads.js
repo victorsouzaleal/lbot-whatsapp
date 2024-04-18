@@ -6,14 +6,14 @@ import * as api from '../lib/api.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
 import {MessageTypes} from '../lib-baileys/mensagem.js'
 import axios from 'axios'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import {botInfo} from '../db-modulos/bot.js'
 import duration from 'format-duration-time'
 
 
 export const downloads = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, quotedMsg, body, caption} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
+        const {prefixo, nome_bot, nome_adm} = botInfo()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')

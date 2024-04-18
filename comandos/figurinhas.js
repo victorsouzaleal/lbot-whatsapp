@@ -7,12 +7,12 @@ import {MessageTypes} from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {stickerToPng} from '../lib/conversao.js'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import {botInfo} from '../db-modulos/bot.js'
 
 export const figurinhas = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, caption, isMedia, mimetype, quotedMsg, seconds, messageId, quotedMsgObjInfo, quotedMsgObj, body} = messageTranslated
-        const {prefixo, nome_sticker, nome_bot } = obterBotVariaveis()
+        const {prefixo, nome_sticker, nome_bot } = botInfo()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')

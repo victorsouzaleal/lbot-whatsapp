@@ -9,13 +9,13 @@ import {botInfo} from "../db-modulos/bot.js"
 import * as socket from '../lib-baileys/socket-funcoes.js'
 import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import {MessageTypes} from '../lib-baileys/mensagem.js'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+
 
 
 export const info = async(c, messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, caption, body, username} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
+        const botInfoJSON = botInfo(), {prefixo, nome_bot, nome_adm} = botInfoJSON
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
@@ -68,7 +68,7 @@ export const info = async(c, messageTranslated) => {
                     var dadosUsuario = await db.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
                     var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
-                    if(botInfo().limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
+                    if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
                         var dadosGrupo = await socketdb.getGroupInfoFromDb(groupId)
                         if(dadosGrupo.contador.status){
@@ -90,7 +90,7 @@ export const info = async(c, messageTranslated) => {
                     var tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
                     var dadosResposta = '', nomeUsuario = username
-                    if(botInfo().limite_diario.status){
+                    if(botInfoJSON.limite_diario.status){
                         dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos)
                     } else {
                         dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario, totalComandos)

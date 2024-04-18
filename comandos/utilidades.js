@@ -8,13 +8,13 @@ import * as socket from '../lib-baileys/socket-funcoes.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import {converterMp4ParaMp3} from '../lib/conversao.js'
-import {obterBotVariaveis} from '../db-modulos/dados-bot-variaveis.js'
+import {botInfo} from '../db-modulos/bot.js'
 
 
 export const utilidades = async(c,messageTranslated) => {
     try{
         const { type, id, chatId, caption, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = obterBotVariaveis()
+        const {prefixo, nome_bot, nome_adm} = botInfo()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
