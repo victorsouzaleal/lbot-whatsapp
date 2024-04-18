@@ -1,5 +1,4 @@
 
-import {MessageTypes} from './mensagem.js'
 import * as db from '../db-modulos/database.js'
 import fs from 'fs-extra'
 import path from 'node:path'

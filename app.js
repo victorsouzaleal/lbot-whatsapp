@@ -1,182 +1,43 @@
 //REQUERINDO MODULOS
-import {makeWASocket, useMultiFileAuthState, DisconnectReason, makeInMemoryStore} from '@whiskeysockets/baileys'
-import {messageData, allowedMessageTypes}  from './lib-baileys/mensagem.js'
-import { Boom } from '@hapi/boom'
+import {makeWASocket, useMultiFileAuthState, makeInMemoryStore} from '@whiskeysockets/baileys'
+import {atualizarConexao, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo} from './lib-baileys/acoesEventosSocket.js'
+import configSocket from './lib-baileys/configSocket.js'
 import moment from "moment-timezone"
 import dotenv from 'dotenv'
-import {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} from'./lib/util.js'
-import {verificacaoListaNegraGeral, verificarUsuarioListaNegra} from './lib/listaNegra.js'
-import {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizacaoDadosGrupo} from './lib/atualizacaoGrupos.js'
-import {inicioCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} from './lib/cadastrarGrupo.js'
-import * as db from './db-modulos/database.js'
-import {checagemMensagem} from './lib/checagemMensagem.js'
-import {chamadaComando} from './lib/chamadaComando.js'
-import {recarregarContagem} from './lib/recarregarContagem.js'
-import { obterMensagensTexto } from './lib/msgs.js' 
-import {botStart} from './db-modulos/bot.js'
-import {verificarEnv} from './lib/env.js'
-import * as socket from './lib-baileys/socket-funcoes.js'
-import * as socketdb from './lib-baileys/socket-db-funcoes.js'
-import {antiFake} from './lib/antiFake.js'; import {bemVindo} from './lib/bemVindo.js'; import {antiLink} from './lib/antiLink.js'; import {antiFlood} from './lib/antiFlood.js'
-import pino from 'pino'
-import fs from 'fs-extra'
-
 moment.tz.setDefault('America/Sao_Paulo')
 dotenv.config()
 
 async function connectToWhatsApp(){
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
-    const msgs_texto = obterMensagensTexto()
     const store = makeInMemoryStore({})
-    const c = makeWASocket({
-        printQRInTerminal: true,
-        auth:state,
-        emitOwnEvents: false,
-        keepAliveIntervalMs: 60000,
-        logger: pino({level : "silent"}),
-        getMessage: async (key) => {
-            if (store) {
-                const msg = await store.loadMessage(key.remoteJid, key.id)
-                return msg.message || undefined
-            }
-        }
-    })
+    const c = makeWASocket(configSocket(state, store))
 
     store.bind(c.ev)
 
-    //INICIO DO SERVIDOR
+    //Status da conexão
     c.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update
-        if(connection === 'close') {
-            const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
-            if(lastDisconnect.error.message == "Comando"){
-                consoleErro(msgs_texto.geral.desconectado.comando, "DESCONECTADO")
-            } else if(lastDisconnect.error.message == "arquivos"){
-                consoleErro(msgs_texto.geral.desconectado.arquivos, "DESCONECTADO")
-            } else if( lastDisconnect.error.message == "erro_geral"){
-                consoleErro(msgs_texto.geral.desconectado.falha_grave, "DESCONECTADO")
-            } else {
-                if(erroCodigo == DisconnectReason?.loggedOut){
-                    fs.rmSync("./auth_info_baileys", {recursive: true, force: true})
-                    consoleErro(msgs_texto.geral.desconectado.deslogado, "DESCONECTADO")
-                } else if(erroCodigo == DisconnectReason?.restartRequired){
-                    consoleErro(msgs_texto.geral.desconectado.reiniciar, "DESCONECTADO")
-                } else {
-                    consoleErro(criarTexto(msgs_texto.geral.desconectado.conexao, erroCodigo, lastDisconnect.error.message), "DESCONECTADO")
-                }
-                connectToWhatsApp()
-            }
-        } else if(connection === 'open') {
-            //VERIFICA SE É NECESSÁRIO CRIAR ALGUM TIPO DE ARQUIVO NECESSÁRIO
-            let necessitaCriar = await criarArquivosNecessarios()
-            if(necessitaCriar){
-                console.log(corTexto(msgs_texto.inicio.arquivos_criados))
-                setTimeout(()=>{
-                    c.ev.removeAllListeners()
-                    return c.end(new Error("arquivos"))
-                },3000)
-            } else {
-                try{
-                    await socket.getAllGroups(c)
-                    //Pegando hora de inicialização do BOT e o número do telefone.
-                    console.log(corTexto(await botStart(c)))
-                    //Verificando se os campos do .env foram modificados e envia para o console
-                    verificarEnv()
-                    console.log(msgs_texto.inicio.servidor_iniciado)
-                    console.log(msgs_texto.inicio.atualizacao_grupos)
-                } catch(err){
-                    consoleErro(err, "Inicialização")
-                    c.end(new Error("erro_geral"))
-                }
-
-            }
-        }
+        let necessarioReconectar = await atualizarConexao(c, update)
+        if(necessarioReconectar) connectToWhatsApp()
     })
 
     // Ao receber novas mensagens
     c.ev.on('messages.upsert', async(m) => {
-        try{
-            switch (m.type) {
-                case "notify":
-                    if(m.messages[0].message == undefined) return
-                    const messageTranslated = await messageData(m)
-                    if(!allowedMessageTypes.includes(messageTranslated.type) || messageTranslated.broadcast) return
-                    if(!await antiLink(c, messageTranslated)) return
-                    if(!await antiFlood(c, messageTranslated)) return
-                    if(!await checagemMensagem(c, messageTranslated)) return
-                    await chamadaComando(c, messageTranslated)
-                    break
-                case "append":
-                    break
-            }
-        } catch(err){
-            consoleErro(err, "MESSAGES.UPSERT")
-            c.end(new Error("erro_geral"))
-        }
+        await receberMensagem(c, m)
     })
 
     //Ao haver mudanças nos participantes de um grupo
     c.ev.on('group-participants.update', async (event)=>{
-        try{
-            const isBotUpdate = event.participants[0] == await socketdb.getHostNumberFromBotJSON()
-            const g_info = await socketdb.getGroupInfoFromDb(event.id)
-            if (event.action == 'add') {
-                //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
-                if(!await verificarUsuarioListaNegra(c,event)) return
-                //ANTIFAKE
-                if(!await antiFake(c,event,g_info)) return
-                //BEM-VINDO
-                await bemVindo(c,event,g_info)
-                //CONTADOR
-                if(g_info.contador) await db.registrarContagem(event.id, event.participants[0])
-                await adicionarParticipante(event.id, event.participants[0])
-            } else if(event.action == "remove"){
-                if(isBotUpdate){
-                    if(g_info?.contador) await db.removerContagemGrupo(event.id)
-                    await removerGrupo(event.id)
-                } else{
-                    await removerParticipante(event.id, event.participants[0])
-                    if(g_info?.contador) await db.removerContagem(event.id, event.participants[0])
-                }
-            } else if(event.action == "promote"){
-                await adicionarAdmin(event.id, event.participants[0])
-            } else if(event.action == "demote"){
-                await removerAdmin(event.id, event.participants[0])
-            }
-        } catch(err){
-            consoleErro(err, "GROUP-PARTICIPANTS.UPDATE")
-            c.end(new Error("erro_geral"))
-        }
+        await atualizacaoParticipantesGrupo(c, event)
     })
 
     //Ao ser adicionado em novos grupos
     c.ev.on('groups.upsert', async (groupData)=>{
-        try{
-            await adicionadoCadastrarGrupo(groupData[0])
-            await socket.sendText(c, groupData[0].id, criarTexto(msgs_texto.geral.entrada_grupo, groupData[0].subject)).catch(()=>{})
-        } catch(err){
-            consoleErro(err, "GROUPS.UPSERT")
-        }
+        await adicionadoEmGrupo(c, groupData)
     })
 
-    
+    //Ao atualizar dados do grupo
     c.ev.on('groups.update', async(groupsUpdate)=>{
-        try{
-            if(groupsUpdate.length != 0 && groupsUpdate[0].participants != undefined ){
-                //Cadastro de grupos
-                console.log(corTexto(await inicioCadastrarGrupo(groupsUpdate)))
-                //Atualização dos participantes dos grupos
-                console.log(corTexto(await atualizarGrupos(groupsUpdate)))
-                //Verificar lista negra dos grupos
-                console.log(corTexto(await verificacaoListaNegraGeral(c, groupsUpdate)))
-                //Atualização da contagem de mensagens
-                console.log(corTexto(await recarregarContagem(groupsUpdate)))
-            } else if (groupsUpdate.length == 1 && groupsUpdate[0].participants == undefined){
-                await atualizacaoDadosGrupo(groupsUpdate[0])
-            }
-        } catch(err){
-            consoleErro(err, "GROUPS.UPDATE")
-        }
+        await atualizacaoDadosGrupo(c, groupsUpdate)
     })
 
     // Credenciais
