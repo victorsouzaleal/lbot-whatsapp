@@ -124,6 +124,8 @@ export const downloads = async(c,messageTranslated) => {
                 try{
                     if(args.length === 1) return await socket.reply(chatId,erroComandoMsg(command),id)
                     var usuarioTexto = body.slice(4).trim(), resultadoTiktok= await api.obterMidiaTiktok(usuarioTexto)
+                    if(!resultadoTiktok.sucesso) return await socket.reply(chatId, msgs_texto.downloads.tk.erro_download ,id)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultadoTiktok.autor_perfil, resultadoTiktok.autor_nome, resultadoTiktok.titulo, resultadoTiktok.duracao),id)                
                     var tkResponse = await axios.get(resultadoTiktok.url,  { responseType: 'arraybuffer' })
                     var bufferTk = Buffer.from(tkResponse.data, "utf-8")
                     await socket.replyFileFromBuffer(c, MessageTypes.video, chatId, bufferTk, '', id, "video/mp4")
