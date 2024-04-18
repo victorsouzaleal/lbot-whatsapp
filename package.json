@@ -40,6 +40,7 @@
     "moment-timezone": "^0.5.31",
     "nedb-async": "^0.1.6",
     "node-gtts": "^2.0.2",
+    "p-queue": "^8.0.1",
     "pino": "^8.19.0",
     "pretty-num": "^0.5.0",
     "prompt": "^1.1.0",
