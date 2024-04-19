@@ -141,23 +141,25 @@ export const downloads = async(c,messageTranslated) => {
                     if(quotedMsg || (type != MessageTypes.text && type != MessageTypes.extendedText) || args.length === 1) {
                         return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     }
-                    var usuarioTexto = body.slice(5).trim(), imagensUrl = await api.obterImagens(usuarioTexto)
-                    var tentativasMax = imagensUrl.length < 3 ? imagensUrl.length : 3, sucessoMensagem = false
-                    //Tentativas de enviar a imagem
+                    let usuarioTexto = body.slice(5).trim(), imagensUrl = await api.obterImagens(usuarioTexto)
+                    if(!imagensUrl.sucesso) return await socket.reply(c, chatId, msgs_texto.downloads.img.nao_encontrado, id)
+                    let tentativasMax = imagensUrl.imagens.length < 3 ? imagensUrl.imagens.length : 3, sucessoMensagem = false
                     for (let i = 0; i < tentativasMax; i++){
                         try{
-                            var indexAleatorio = Math.floor(Math.random() * imagensUrl.length)
-                            var imgResponse = await axios.get(imagensUrl[indexAleatorio].url,  { responseType: 'arraybuffer' })
-                            imagensUrl.splice(indexAleatorio, 1)
-                            var bufferImg = Buffer.from(imgResponse.data, "utf-8")
-                            await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferImg, '', id)
-                            sucessoMensagem = true
-                            i = 3
-                        } catch {
+                            let indexAleatorio = Math.floor(Math.random() * (imagensUrl.imagens.length > 50 ? 50 : imagensUrl.imagens.length))
+                            let imagemEscolhida = imagensUrl.imagens[indexAleatorio].url
+                            imagensUrl.imagens.splice(indexAleatorio, 1)
+                            let {data, headers} = await axios.get(imagemEscolhida, {responseType: 'arraybuffer'})
+                            if (headers['content-type'] == "image/png" || headers['content-type'] == "image/jpeg"){
+                                let bufferImg = Buffer.from(data, "utf-8")
+                                await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferImg, '', id)
+                                sucessoMensagem = true
+                                i = 3
+                            }
+                        } catch{
                             sucessoMensagem = false
                         }
                     }
-                    if(!sucessoMensagem) await socket.reply(c, chatId, msgs_texto.downloads.img.erro_imagem, '', id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`

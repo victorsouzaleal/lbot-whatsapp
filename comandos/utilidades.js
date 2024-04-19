@@ -178,7 +178,7 @@ export const utilidades = async(c,messageTranslated) => {
                 try{
                     if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command) , id)
                     var usuarioTexto = body.slice(10).trim(), pesquisaResultados = await api.obterPesquisaWeb(usuarioTexto)
-                    if(!pesquisaResultados.success) return await socket.reply(c, chatId, pesquisaResultados.error_message, id)
+                    if(!pesquisaResultados.sucesso) return await socket.reply(c, chatId, msgs_texto.utilidades.pesquisa.sem_resultados, id)
                     var pesquisaResposta = criarTexto(msgs_texto.utilidades.pesquisa.resposta_titulo, usuarioTexto)
                     for(let resultado of pesquisaResultados.resultados){
                         pesquisaResposta += "═════════════════\n"
