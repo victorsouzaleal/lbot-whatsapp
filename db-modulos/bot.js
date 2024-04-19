@@ -6,41 +6,44 @@ import {getHostNumber} from '../lib-baileys/socket-funcoes.js'
 import * as db from '../db-modulos/database.js'
 import {criarTexto} from '../lib/util.js'
 
+export const botObjeto = {
+    iniciado: 0,
+    nome_bot: "LBOT",
+    nome_adm: "Leal",
+    nome_pack: "LBOT Stickers",
+    prefixo: "!",
+    numero_dono:"",
+    cmds_executados:0,
+    autosticker: false,
+    bloqueio_cmds:[],
+    limite_diario:{
+        status: false,
+        expiracao: 0,
+        limite_tipos: {
+            bronze : 25,
+            prata: 50,
+            ouro: 100,
+            vip: null
+        }
+    },
+    limitarmensagens:{
+        status:false,
+        max: 10,
+        intervalo: 10,
+        msgs:[]
+    },
+    limitecomandos:{
+        status: false,
+        cmds_minuto_max: 5,
+        tempo_bloqueio: 60,
+        usuarios: [],
+        usuarios_limitados: []
+    },
+    pvliberado: true
+}
+
 export const botCriarArquivo = async ()=>{
-    const bot = {
-        iniciado: 0,
-        nome_bot: "LBOT",
-        nome_adm: "Leal",
-        nome_pack: "LBOT Stickers",
-        prefixo: "!",
-        cmds_executados:0,
-        autosticker: false,
-        bloqueio_cmds:[],
-        limite_diario:{
-            status: false,
-            expiracao: 0,
-            limite_tipos: {
-                bronze : 25,
-                prata: 50,
-                ouro: 100,
-                vip: null
-            }
-        },
-        limitarmensagens:{
-            status:false,
-            max: 10,
-            intervalo: 10,
-            msgs:[]
-        },
-        limitecomandos:{
-            status: false,
-            cmds_minuto_max: 5,
-            tempo_bloqueio: 60,
-            usuarios: [],
-            usuarios_limitados: []
-        },
-        pvliberado: true
-    }
+    const bot = botObjeto
     await fs.writeFile(path.resolve("database/bot.json"), JSON.stringify(bot))
 }
 
@@ -51,7 +54,12 @@ export const botInfoUpdate = ()=>{
 }
 
 export const botInfo = ()=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot
+    if(!fs.existsSync(path.resolve('database/bot.json'))){
+        bot = botObjeto
+    } else {
+        bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    }
     return bot
 }
 
@@ -68,6 +76,14 @@ export const botStart = async (c)=>{
         throw err
     }
 }
+
+// Alterar numero do dono
+export const botAlterarNumeroDono = async(numeroDono)=>{
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    bot.numero_dono = numeroDono
+    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+}
+
 
 // Alterar nome do bot
 export const botAlterarNomeBot = async(nomeBot)=>{

@@ -279,7 +279,7 @@ export const utilidades = async(c,messageTranslated) => {
                     if (usuarioTexto.length > 200) return await socket.reply(c, chatId, msgs_texto.utilidades.voz.texto_longo, id)
                     var idioma = body.slice(5, 7).toLowerCase()
                     var respostaAudio = await api.textoParaVoz(idioma, usuarioTexto)
-                    if(!respostaAudio.success) return await socket.reply(c, chatId, respostaAudio.error_message, id)
+                    if(!respostaAudio.success) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     await socket.replyFile(c, MessageTypes.audio, chatId, respostaAudio.audio, '', id, 'audio/mpeg').then(()=>{
                         fs.unlinkSync(respostaAudio.audio)
                     })

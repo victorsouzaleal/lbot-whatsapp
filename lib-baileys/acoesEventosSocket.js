@@ -1,12 +1,13 @@
 import {DisconnectReason} from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
-import {criarArquivosNecessarios, criarTexto, consoleErro, corTexto} from'../lib/util.js'
+import {criarTexto, consoleErro, corTexto} from'../lib/util.js'
+import {criarArquivosNecessarios, verificarNumeroDono}  from '../lib/verificacaoInicialArquivos.js'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
 import * as socketdb from './socket-db-funcoes.js'
 import {botStart} from '../db-modulos/bot.js'
-import {verificarEnv} from '../lib/env.js'
+import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
 import {messageData as converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {antiFake} from '../lib/antiFake.js'; import {bemVindo} from '../lib/bemVindo.js'; import {antiLink} from '../lib/antiLink.js'; import {antiFlood} from '../lib/antiFlood.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
@@ -41,28 +42,19 @@ export const atualizarConexao = async (c, conexao)=>{
             reconectar = true
         }
     } else if(connection === 'open') {
-        //VERIFICA SE É NECESSÁRIO CRIAR ALGUM TIPO DE ARQUIVO NECESSÁRIO
-        let necessitaCriar = await criarArquivosNecessarios()
-        if(necessitaCriar){
-            console.log(corTexto(msgs_texto.inicio.arquivos_criados))
-            setTimeout(()=>{
-                c.ev.removeAllListeners()
-                return c.end(new Error("arquivos"))
-            },3000)
-        } else {
-            try{
-                await socket.getAllGroups(c)
-                //Pegando hora de inicialização do BOT e o número do telefone.
-                console.log(corTexto(await botStart(c)))
-                //Verificando se os campos do .env foram modificados e envia para o console
-                verificarEnv()
-                console.log(msgs_texto.inicio.servidor_iniciado)
-                console.log(msgs_texto.inicio.atualizacao_grupos)
-            } catch(err){
-                consoleErro(err, "Inicialização")
-                c.end(new Error("erro_geral"))
-            }
+        try{
+            await criarArquivosNecessarios()
+            await socket.getAllGroups(c)
+            console.log(corTexto(await botStart(c)))
+            verificarEnv()
+            await verificarNumeroDono()
+            console.log(msgs_texto.inicio.servidor_iniciado)
+            console.log(msgs_texto.inicio.atualizacao_grupos)
+        } catch(err){
+            consoleErro(err, "Inicialização")
+            c.end(new Error("erro_geral"))
         }
+        
     }
     return reconectar
 }

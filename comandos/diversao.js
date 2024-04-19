@@ -12,13 +12,13 @@ import {botInfo} from '../db-modulos/bot.js'
 export const diversao = async(c,messageTranslated) => {
     try {
         const {id, chatId, sender, isGroupMsg, caption, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = botInfo()
+        const {prefixo, nome_bot, nome_adm, numero_dono} = botInfo()
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
         var cmdSemPrefixo = command.replace(prefixo, "")
 
-        const ownerNumber = process.env.NUMERO_DONO?.trim() // Número do administrador do bot
+        const ownerNumber = numero_dono
         const botNumber = await socketdb.getHostNumberFromBotJSON()
         const groupId = isGroupMsg ? chatId : null
 
@@ -68,8 +68,8 @@ export const diversao = async(c,messageTranslated) => {
                     if(mentionedJidList.length > 1) return await socket.reply(c, chatId, msgs_texto.diversao.viadometro.apenas_um, id)
                     var respostas = msgs_texto.diversao.viadometro.respostas
                     var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
-                    if(mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0].replace("@s.whatsapp.net", "")
-                    else idResposta = quotedMsgObj, alvo = quotedMsgObjInfo.sender.replace("@s.whatsapp.net", "")
+                    if(mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0]
+                    else idResposta = quotedMsgObj, alvo = quotedMsgObjInfo.sender
                     if(ownerNumber == alvo) indexAleatorio = 0
                     var respostaTexto = criarTexto(msgs_texto.diversao.viadometro.resposta,respostas[indexAleatorio])
                     await socket.reply(c, chatId, respostaTexto, idResposta)
@@ -87,8 +87,8 @@ export const diversao = async(c,messageTranslated) => {
                     if (mentionedJidList.length > 1) return await socket.reply(c, chatId, msgs_texto.diversao.bafometro.apenas_um, id)
                     var respostas = msgs_texto.diversao.bafometro.respostas
                     var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
-                    if(mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0].replace("@s.whatsapp.net", '')
-                    else idResposta = quotedMsgObj, alvo = quotedMsgObjInfo.sender.replace("@s.whatsapp.net", '')
+                    if(mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0]
+                    else idResposta = quotedMsgObj, alvo = quotedMsgObjInfo.sender
                     if(ownerNumber == alvo) indexAleatorio = 0
                     var respostaTexto = criarTexto(msgs_texto.diversao.bafometro.resposta, respostas[indexAleatorio])
                     await socket.reply(c, chatId, respostaTexto, idResposta)
@@ -233,8 +233,8 @@ export const diversao = async(c,messageTranslated) => {
                     if(mentionedJidList.length > 1) return await socket.reply(c, chatId, msgs_texto.diversao.gadometro.apenas_um , id)
                     var respostas = msgs_texto.diversao.gadometro.respostas 
                     var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
-                    if (mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0].replace("@s.whatsapp.net", '')
-                    else idResposta = quotedMsgObj, alvo = quotedMsgObjInfo.sender.replace("@s.whatsapp.net", '')
+                    if (mentionedJidList.length == 1) idResposta = id, alvo = mentionedJidList[0]
+                    else idResposta = quotedMsgObj, alvo = quotedMsgObjInfo.sender
                     if(ownerNumber == alvo) indexAleatorio = 0
                     var respostaTexto = criarTexto(msgs_texto.diversao.gadometro.resposta, respostas[indexAleatorio])
                     await socket.reply(c, chatId, respostaTexto, idResposta)       

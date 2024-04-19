@@ -17,11 +17,11 @@ import os from 'node:os'
 export const admin = async(c,messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, t, body, caption, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = bot.botInfo(), msgs_texto = obterMensagensTexto()
+        const {prefixo, nome_bot, nome_adm, numero_dono} = bot.botInfo(), msgs_texto = obterMensagensTexto()
 
         //VERIFICAÇÃO DE DONO
-        const ownerNumber = process.env.NUMERO_DONO?.trim()
-        const isOwner = ownerNumber == sender.replace("@s.whatsapp.net", '')
+        const ownerNumber = numero_dono
+        const isOwner = ownerNumber == sender
         if (!isOwner) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_dono_bot, id)
        
         const commands = caption || body || ''
@@ -36,7 +36,6 @@ export const admin = async(c,messageTranslated) => {
         const botInfo = bot.botInfo()
 
       
-
         switch(cmdSemPrefixo){
             case "admin":
                 try{
@@ -68,7 +67,7 @@ export const admin = async(c,messageTranslated) => {
                     resposta += (infoBot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, infoBot.limitarmensagens.max, infoBot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                     // BLOQUEIO DE COMANDOS
                     resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, infoBot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
-                    resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, infoBot.cmds_executados, ownerNumber)
+                    resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""))
                     if(fotoBot) await socket.replyFileFromUrl(c, MessageTypes.image, chatId, fotoBot, resposta, id)
                     else await socket.reply(c, chatId, resposta, id)
                 } catch(err){
@@ -165,7 +164,7 @@ export const admin = async(c,messageTranslated) => {
                     var grupos = await socketdb.getAllGroupsFromDb()
                     for (var grupo of grupos) await socket.leaveGroup(c, grupo.id_grupo)
                     var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
-                    await socket.reply(c, ownerNumber+"@s.whatsapp.net", resposta, id)
+                    await socket.reply(c, ownerNumber, resposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -186,7 +185,7 @@ export const admin = async(c,messageTranslated) => {
                         usuariosBloqueados.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
                     }
                     for (var usuario of usuariosBloqueados){
-                            if(ownerNumber == usuario.replace(/@s.whatsapp.net/g, '')){
+                            if(ownerNumber == usuario){
                                 await socket.reply(c, chatId, criarTexto(msgs_texto.admin.bloquear.erro_dono, usuario.replace(/@s.whatsapp.net/g, '')), id)
                             } else {
                                 if(blockNumber.includes(usuario)) {
@@ -458,7 +457,7 @@ export const admin = async(c,messageTranslated) => {
                     else if(mentionedJidList.length === 1) usuario_tipo = mentionedJidList[0]
                     else if(args.length > 2) usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")+"@s.whatsapp.net"
                     else return await socket.reply(c, chatId, erroComandoMsg(command),id)
-                    if(ownerNumber == usuario_tipo.replace("@s.whatsapp.net","")) return await socket.reply(c, chatId, msgs_texto.admin.alterartipo.tipo_dono, id)
+                    if(ownerNumber == usuario_tipo) return await socket.reply(c, chatId, msgs_texto.admin.alterartipo.tipo_dono, id)
                     let c_registrado = await db.verificarRegistro(usuario_tipo)
                     if(c_registrado){
                         var alterou = await db.alterarTipoUsuario(usuario_tipo, args[1])

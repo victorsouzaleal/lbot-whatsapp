@@ -15,7 +15,7 @@ import {MessageTypes} from '../lib-baileys/mensagem.js'
 export const info = async(c, messageTranslated) => {
     try{
         const {id, chatId, sender, isGroupMsg, caption, body, username} = messageTranslated
-        const botInfoJSON = botInfo(), {prefixo, nome_bot, nome_adm} = botInfoJSON
+        const botInfoJSON = botInfo(), {prefixo, nome_bot, nome_adm, numero_dono} = botInfoJSON
         const commands = caption || body || ''
         var command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
@@ -23,7 +23,7 @@ export const info = async(c, messageTranslated) => {
         const groupId = isGroupMsg ? chatId : null
         const groupAdmins = isGroupMsg ? await socketdb.getGroupAdminsFromDb(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
-        const ownerNumber = process.env.NUMERO_DONO?.trim()
+        const ownerNumber = numero_dono
         var cmdSemPrefixo = command.replace(prefixo, "")
 
         const msgs_texto = obterMensagensTexto()
@@ -35,7 +35,7 @@ export const info = async(c, messageTranslated) => {
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
                     var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
-                    var resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber, version)
+                    var resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
                     if(botFotoURL != undefined){
                         await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                     } else {
@@ -53,7 +53,7 @@ export const info = async(c, messageTranslated) => {
                 try{
                     if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command) ,id)
                     var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
-                    await socket.sendText(c,ownerNumber+"@s.whatsapp.net", resposta)
+                    await socket.sendText(c,ownerNumber, resposta)
                     await socket.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
