@@ -1,6 +1,5 @@
 //REQUERINDO MÓDULOS
 import fs from 'fs-extra'
-import { obterMensagensTexto } from '../lib/msgs.js' 
 import {criarTexto, erroComandoMsg, obterNomeAleatorio, consoleErro} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
@@ -8,20 +7,16 @@ import * as socket from '../lib-baileys/socket-funcoes.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import {converterMp4ParaMp3} from '../lib/conversao.js'
-import {botInfo} from '../db-modulos/bot.js'
 
 
-export const utilidades = async(c,messageTranslated) => {
+export const utilidades = async(c, mensagemInfoCompleta) => {
     try{
-        const { type, id, chatId, caption, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = botInfo()
-        const commands = caption || body || ''
-        var command = commands.toLowerCase().split(' ')[0] || ''
-        const args =  commands.split(' ')
-        var cmdSemPrefixo = command.replace(prefixo, "")
+        const {msgs_texto} = mensagemInfoCompleta
+        const {botInfoJSON} = mensagemInfoCompleta.bot
+        const {textoRecebido, command, args, type, id, chatId, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo} = mensagemInfoCompleta.mensagem
+        const {prefixo} = botInfoJSON
+        let cmdSemPrefixo = command.replace(prefixo, "")
         
-        const msgs_texto = obterMensagensTexto()
-
         switch(cmdSemPrefixo){      
             case "tabela":
                 try{
@@ -37,7 +32,7 @@ export const utilidades = async(c,messageTranslated) => {
             case "letra":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var usuarioTexto = body.slice(7).trim(), dadosMusica = await api.obterLetraMusica(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(7).trim(), dadosMusica = await api.obterLetraMusica(usuarioTexto)
                     if(!dadosMusica.success) return await socket.reply(c, chatId, dadosMusica.error_message, id)
                     await socket.replyFile(c, MessageTypes.image, chatId, dadosMusica.imagem, criarTexto(msgs_texto.utilidades.letra.resposta, dadosMusica.titulo, dadosMusica.artista, dadosMusica.letra), id)
                 } catch(err){
@@ -90,7 +85,7 @@ export const utilidades = async(c,messageTranslated) => {
             case "audio":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var efeitosSuportados = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], tipoEfeito = body.slice(7).trim()
+                    var efeitosSuportados = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], tipoEfeito = textoRecebido.slice(7).trim()
                     if(!efeitosSuportados.includes(tipoEfeito)) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     if(quotedMsg && (quotedMsgObjInfo.type == MessageTypes.audio) ){
                         var bufferQuotedMessage = await downloadMediaMessage(quotedMsgObj, "buffer")
@@ -148,7 +143,7 @@ export const utilidades = async(c,messageTranslated) => {
             case "clima":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command),id)
-                    var usuarioTexto = body.slice(7).trim(), clima = await api.obterClima(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(7).trim(), clima = await api.obterClima(usuarioTexto)
                     var respostaClimaTexto = criarTexto(msgs_texto.utilidades.clima.resposta, clima.texto), respostaClimaFoto = clima.foto_clima
                     await socket.reply(c, chatId, respostaClimaTexto, id)
                 } catch(err){
@@ -177,7 +172,7 @@ export const utilidades = async(c,messageTranslated) => {
             case "pesquisa":
                 try{
                     if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command) , id)
-                    var usuarioTexto = body.slice(10).trim(), pesquisaResultados = await api.obterPesquisaWeb(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(10).trim(), pesquisaResultados = await api.obterPesquisaWeb(usuarioTexto)
                     if(!pesquisaResultados.sucesso) return await socket.reply(c, chatId, msgs_texto.utilidades.pesquisa.sem_resultados, id)
                     var pesquisaResposta = criarTexto(msgs_texto.utilidades.pesquisa.resposta_titulo, usuarioTexto)
                     for(let resultado of pesquisaResultados.resultados){
@@ -195,7 +190,7 @@ export const utilidades = async(c,messageTranslated) => {
             case 'rastreio':
                 try{
                     if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var usuarioCodigoRastreio = body.slice(10).trim(), rastreioDados = await api.obterRastreioCorreios(usuarioCodigoRastreio)
+                    var usuarioCodigoRastreio = textoRecebido.slice(10).trim(), rastreioDados = await api.obterRastreioCorreios(usuarioCodigoRastreio)
                     if(!rastreioDados.success) return socket.reply(c, chatId, rastreioDados.error_message, id)
                     var rastreioResposta = msgs_texto.utilidades.rastreio.resposta_titulo
                     for(let dado of rastreioDados.rastreio){
@@ -271,13 +266,13 @@ export const utilidades = async(c,messageTranslated) => {
                     if (args.length === 1) {
                         return socket.reply(c, chatId, erroComandoMsg(command) ,id)
                     } else if(quotedMsg  && (quotedMsgObjInfo.type == MessageTypes.extendedText || quotedMsgObjInfo.type == MessageTypes.text)){
-                        usuarioTexto = (args.length == 2) ? quotedMsgObjInfo.body || quotedMsgObjInfo.caption : body.slice(8).trim()
+                        usuarioTexto = (args.length == 2) ? quotedMsgObjInfo.body || quotedMsgObjInfo.caption : textoRecebido.slice(8).trim()
                     } else {
-                        usuarioTexto = body.slice(8).trim()
+                        usuarioTexto = textoRecebido.slice(8).trim()
                     }
                     if (!usuarioTexto) return socket.reply(c, chatId, msgs_texto.utilidades.voz.texto_vazio , id)
                     if (usuarioTexto.length > 200) return await socket.reply(c, chatId, msgs_texto.utilidades.voz.texto_longo, id)
-                    var idioma = body.slice(5, 7).toLowerCase()
+                    var idioma = textoRecebido.slice(5, 7).toLowerCase()
                     var respostaAudio = await api.textoParaVoz(idioma, usuarioTexto)
                     if(!respostaAudio.success) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     await socket.replyFile(c, MessageTypes.audio, chatId, respostaAudio.audio, '', id, 'audio/mpeg').then(()=>{
@@ -296,7 +291,7 @@ export const utilidades = async(c,messageTranslated) => {
                     var listaNoticias = await api.obterNoticias()
                     var respostaNoticias = msgs_texto.utilidades.noticia.resposta_titulo
                     for(let noticia of listaNoticias){
-                        respostaNoticias += criarTexto(msgs_texto.utilidades.noticia.resposta_itens, noticia.titulo, noticia.descricao || "Sem descrição", noticia.url)
+                        respostaNoticias += criarTexto(msgs_texto.utilidades.noticia.resposta_itens, noticia.titulo, noticia.autor, noticia.publicadoHa, noticia.url)
                     }
                     await socket.reply(c, chatId, respostaNoticias, id)
                 } catch(err){
@@ -309,7 +304,7 @@ export const utilidades = async(c,messageTranslated) => {
             case 'calc':
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
-                    var usuarioExpressaoMatematica = body.slice(6).trim()
+                    var usuarioExpressaoMatematica = textoRecebido.slice(6).trim()
                     var resultadoCalculo = await api.obterCalculo(usuarioExpressaoMatematica)
                     if(!resultadoCalculo.success) return await socket.reply(c, chatId, resultadoCalculo.error_message, id)
                     var respostaCalc = criarTexto(msgs_texto.utilidades.calc.resposta, resultadoCalculo.resultado)

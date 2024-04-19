@@ -1,5 +1,4 @@
 //REQUERINDO MÓDULOS
-import { obterMensagensTexto } from '../lib/msgs.js' 
 import {erroComandoMsg, consoleErro, criarTexto} from '../lib/util.js'
 import { Sticker, StickerTypes } from '@victorsouzaleal/wa-sticker-formatter'
 import * as socket from '../lib-baileys/socket-funcoes.js'
@@ -7,18 +6,15 @@ import {MessageTypes} from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {stickerToPng} from '../lib/conversao.js'
-import {botInfo} from '../db-modulos/bot.js'
 
-export const figurinhas = async(c,messageTranslated) => {
+
+export const figurinhas = async(c, mensagemInfoCompleta) => {
     try{
-        const { type, id, chatId, caption, isMedia, mimetype, quotedMsg, seconds, messageId, quotedMsgObjInfo, quotedMsgObj, body} = messageTranslated
-        const {prefixo, nome_pack, nome_bot } = botInfo()
-        const commands = caption || body || ''
-        var command = commands.toLowerCase().split(' ')[0] || ''
-        const args =  commands.split(' ')
-        var cmdSemPrefixo = command.replace(prefixo, "")
-
-        const msgs_texto = obterMensagensTexto()
+        const {msgs_texto} = mensagemInfoCompleta
+        const {botInfoJSON} = mensagemInfoCompleta.bot
+        const {command, args, type, id, chatId, isMedia, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemInfoCompleta.mensagem
+        const {prefixo, nome_pack, nome_bot } = botInfoJSON
+        let cmdSemPrefixo = command.replace(prefixo, "")
 
         switch(cmdSemPrefixo){      
             case 's':
@@ -83,7 +79,7 @@ export const figurinhas = async(c,messageTranslated) => {
                         imagemSaida = conversaoResultado.saida
                         if(!conversaoResultado.success){
                             fs.unlinkSync(imagemSaida)
-                            throw new Error("Erro na conversão")
+                            await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.erro_conversao, id)
                         } else{
                             await socket.replyFile(c, MessageTypes.image, chatId, imagemSaida, '', id)
                             fs.unlinkSync(imagemSaida)

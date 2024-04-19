@@ -1,32 +1,23 @@
 //REQUERINDO MÓDULOS
 import fs from 'fs-extra'
 import * as menu from '../lib/menu.js'
-import { obterMensagensTexto } from '../lib/msgs.js' 
 import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import path from 'node:path'
 import * as db from '../db-modulos/database.js'
-import {botInfo} from "../db-modulos/bot.js"
 import * as socket from '../lib-baileys/socket-funcoes.js'
 import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import {MessageTypes} from '../lib-baileys/mensagem.js'
 
 
 
-export const info = async(c, messageTranslated) => {
+export const info = async(c, mensagemInfoCompleta) => {
     try{
-        const {id, chatId, sender, isGroupMsg, caption, body, username} = messageTranslated
-        const botInfoJSON = botInfo(), {prefixo, nome_bot, nome_adm, numero_dono} = botInfoJSON
-        const commands = caption || body || ''
-        var command = commands.toLowerCase().split(' ')[0] || ''
-        const args =  commands.split(' ')
-        const botNumber = await socketdb.getHostNumberFromBotJSON()
-        const groupId = isGroupMsg ? chatId : null
-        const groupAdmins = isGroupMsg ? await socketdb.getGroupAdminsFromDb(groupId) : ''
-        const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
-        const ownerNumber = numero_dono
-        var cmdSemPrefixo = command.replace(prefixo, "")
-
-        const msgs_texto = obterMensagensTexto()
+        const {msgs_texto, ownerNumber} = mensagemInfoCompleta
+        const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
+        const {groupId, isGroupAdmins} = mensagemInfoCompleta.grupo
+        const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username} = mensagemInfoCompleta.mensagem
+        const {prefixo, nome_bot, nome_adm} = botInfoJSON
+        let cmdSemPrefixo = command.replace(prefixo, "")
 
         switch(cmdSemPrefixo){
             case `info`:
@@ -52,7 +43,7 @@ export const info = async(c, messageTranslated) => {
             case `reportar`:
                 try{
                     if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command) ,id)
-                    var usuarioMensagem = body.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
+                    var usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
                     await socket.sendText(c,ownerNumber, resposta)
                     await socket.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
                 } catch(err){

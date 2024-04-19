@@ -8,7 +8,7 @@ import * as socket from './socket-funcoes.js'
 import * as socketdb from './socket-db-funcoes.js'
 import {botStart} from '../db-modulos/bot.js'
 import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
-import {messageData as converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
+import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {antiFake} from '../lib/antiFake.js'; import {bemVindo} from '../lib/bemVindo.js'; import {antiLink} from '../lib/antiLink.js'; import {antiFlood} from '../lib/antiFlood.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
 import {chamadaComando} from '../lib/chamadaComando.js'
@@ -65,7 +65,7 @@ export const receberMensagem = async (c, mensagem)=>{
             case "notify":
                 if(mensagem.messages[0].message == undefined) return
                 const mensagemBaileys = await converterMensagem(mensagem)
-                if(!tiposPermitidosMensagens.includes(mensagemBaileys.type) || mensagemBaileys.broadcast) return
+                if(!tiposPermitidosMensagens.includes(mensagemBaileys.mensagem.type) || mensagemBaileys.mensagem.broadcast) return
                 if(!await antiLink(c, mensagemBaileys)) return
                 if(!await antiFlood(c, mensagemBaileys)) return
                 if(!await checagemMensagem(c, mensagemBaileys)) return

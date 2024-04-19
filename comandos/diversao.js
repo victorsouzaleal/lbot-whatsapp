@@ -1,35 +1,19 @@
 //REQUERINDO MODULOS
-import { obterMensagensTexto } from '../lib/msgs.js' 
 import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
-import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
-import {botInfo} from '../db-modulos/bot.js'
 
 
-export const diversao = async(c,messageTranslated) => {
+export const diversao = async(c, mensagemInfoCompleta) => {
     try {
-        const {id, chatId, sender, isGroupMsg, caption, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm, numero_dono} = botInfo()
-        const commands = caption || body || ''
-        var command = commands.toLowerCase().split(' ')[0] || ''
-        const args =  commands.split(' ')
-        var cmdSemPrefixo = command.replace(prefixo, "")
-
-        const ownerNumber = numero_dono
-        const botNumber = await socketdb.getHostNumberFromBotJSON()
-        const groupId = isGroupMsg ? chatId : null
-
-        //OBTENDO DADOS DO GRUPO
-        const grupoInfo = isGroupMsg ? await socketdb.getGroupInfoFromDb(groupId) : null
-        const groupAdmins = isGroupMsg ? grupoInfo.admins : null
-        const groupOwner = isGroupMsg ? grupoInfo.dono : null
-        const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : false
-        const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber) : false
-
-        const msgs_texto = obterMensagensTexto()
+        const {msgs_texto, ownerNumber} = mensagemInfoCompleta
+        const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
+        const {groupId, groupOwner, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
+        const {command, textoRecebido, args, id, chatId, isGroupMsg, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemInfoCompleta.mensagem
+        const {prefixo} = botInfoJSON
+        let cmdSemPrefixo = command.replace(prefixo, "")
         
         switch(cmdSemPrefixo){
             case 'detector' :
@@ -50,7 +34,7 @@ export const diversao = async(c,messageTranslated) => {
             case 'simi':
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    let perguntaSimi = body.slice(6).trim()
+                    let perguntaSimi = textoRecebido.slice(6).trim()
                     let respostaSimi = await api.simiResponde(perguntaSimi)
                     if(!respostaSimi.sucesso) return await socket.reply(c, chatId, msgs_texto.diversao.simi.erro, id)
                     await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), respostaSimi.resposta), id)
@@ -102,7 +86,7 @@ export const diversao = async(c,messageTranslated) => {
             case 'chance' :
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var num = Math.floor(Math.random() * 100), temaChance = body.slice(8).trim()
+                    var num = Math.floor(Math.random() * 100), temaChance = textoRecebido.slice(8).trim()
                     if(quotedMsg){  //SE O COMANDO TIVER SIDO USADO EM RESPOSTA
                         await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.chance.resposta, num, temaChance), quotedMsgObj)
                     } else {
@@ -249,7 +233,7 @@ export const diversao = async(c,messageTranslated) => {
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var temaRanking = body.slice(6).trim(), idParticipantesAtuais = await socket.getGroupMembersId(c, groupId)
+                    var temaRanking = textoRecebido.slice(6).trim(), idParticipantesAtuais = await socket.getGroupMembersId(c, groupId)
                     if(idParticipantesAtuais.length < 5) return await socket.reply(c, chatId,msgs_texto.diversao.top5.erro_membros, id)
                     var respostaTexto = criarTexto(msgs_texto.diversao.top5.resposta_titulo, temaRanking), mencionarMembros = []
                     for (let i = 0 ; i < 5 ; i++){

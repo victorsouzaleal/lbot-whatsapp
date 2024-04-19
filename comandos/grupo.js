@@ -1,38 +1,21 @@
 //REQUERINDO MODULOS
-import { obterMensagensTexto } from '../lib/msgs.js' 
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {bloquearComandosGrupo, desbloquearComandosGrupo} from '../lib/bloqueioComandos.js'
 import * as db from '../db-modulos/database.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
-import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 import { MessageTypes } from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
-import {botInfo} from '../db-modulos/bot.js'
 
 
-export const grupo = async(c,messageTranslated) => {
+export const grupo = async(c, mensagemInfoCompleta) => {
     try{
-        const { id, chatId, sender, isGroupMsg, caption, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList, body} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = botInfo(), msgs_texto = obterMensagensTexto()
+        const {msgs_texto} = mensagemInfoCompleta
+        const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
+        const {groupId, grupoInfo, groupOwner, groupMembers, groupAdmins, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
+        const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemInfoCompleta.mensagem
+        const {prefixo, nome_bot} = botInfoJSON
         if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-        
-        const commands = caption || body || ''
-        var command = commands.toLowerCase().split(' ')[0] || ''
-        var cmdSemPrefixo = command.replace(prefixo, "")
-        const args =  commands.split(' ')
-        const groupId = chatId
-        const botNumber = await socketdb.getHostNumberFromBotJSON()
-
-        //OBTENDO DADOS DO GRUPO
-        const grupoInfo = await socketdb.getGroupInfoFromDb(groupId)
-        const donoGrupo = grupoInfo.dono
-        const groupAdmins = grupoInfo.admins
-        const membrosGrupo = grupoInfo.participantes
-
-        //VERIFICAÇÃO DE PERMISSÃO
-        const isGroupAdmins = groupAdmins.includes(sender)
-        const isBotGroupAdmins = groupAdmins.includes(botNumber)
-
+        let cmdSemPrefixo = command.replace(prefixo, "")
 
         switch(cmdSemPrefixo){
             case 'regras':
@@ -138,7 +121,7 @@ export const grupo = async(c,messageTranslated) => {
                         blista_numero = quotedMsgObjInfo.sender
                     } else{
                         if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
-                        blista_numero = body.slice(8).trim().replace(/\W+/g,"")
+                        blista_numero = textoRecebido.slice(8).trim().replace(/\W+/g,"")
                         if(blista_numero.length == 0) return socket.reply(c, chatId, msgs_texto.grupo.blista.numero_vazio , id)
                         blista_numero = blista_numero+"@s.whatsapp.net"
                     }
@@ -160,7 +143,7 @@ export const grupo = async(c,messageTranslated) => {
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
                     if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
-                    let dlista_numero = body.slice(8).trim().replace(/\W+/g,"")
+                    let dlista_numero = textoRecebido.slice(8).trim().replace(/\W+/g,"")
                     if(dlista_numero.length == 0) return socket.reply(c, chatId, msgs_texto.grupo.dlista.numero_vazio, id)
                     let dlista_grupo_lista = await db.obterListaNegra(groupId), dlista_id_usuario = dlista_numero+"@s.whatsapp.net"
                     if(!dlista_grupo_lista.includes(dlista_id_usuario)) return socket.reply(c, chatId, msgs_texto.grupo.dlista.nao_listado, id)
@@ -250,7 +233,7 @@ export const grupo = async(c,messageTranslated) => {
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
                     var estadoNovo = !grupoInfo.antifake.status
                     if (estadoNovo) {
-                        var DDIAutorizados = (body.slice(7).length == 0) ? ["55"] : body.slice(7).split(" ")
+                        var DDIAutorizados = (textoRecebido.slice(7).length == 0) ? ["55"] : textoRecebido.slice(7).split(" ")
                         await db.alterarAntiFake(groupId, true, DDIAutorizados)
                         await socket.reply(c, chatId,  msgs_texto.grupo.antifake.ligado, id)
                     } else {
@@ -445,7 +428,7 @@ export const grupo = async(c,messageTranslated) => {
             case "enquete":
                 try{
                     if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
-                    var enquetePergunta = body.slice(9).split(",")[0], enqueteOpcoes = body.slice(9).split(",").slice(1)
+                    var enquetePergunta = textoRecebido.slice(9).split(",")[0], enqueteOpcoes = textoRecebido.slice(9).split(",").slice(1)
                     if(enqueteOpcoes.length < 2) return socket.reply(c, chatId, msgs_texto.grupo.enquete.min_opcao , id)
                     await socket.sendPoll(c, chatId, enquetePergunta, enqueteOpcoes)
                 } catch(err){
@@ -496,7 +479,7 @@ export const grupo = async(c,messageTranslated) => {
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
-                    var usuarioComandos = body.slice(6).split(" "), respostaBloqueio = await bloquearComandosGrupo(usuarioComandos, groupId)
+                    var usuarioComandos = textoRecebido.slice(6).split(" "), respostaBloqueio = await bloquearComandosGrupo(usuarioComandos, groupId)
                     await socket.reply(c, chatId, respostaBloqueio, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -509,7 +492,7 @@ export const grupo = async(c,messageTranslated) => {
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command),id)
-                    var usuarioComandos = body.slice(6).split(" "), respostaDesbloqueio = await desbloquearComandosGrupo(usuarioComandos, groupId)
+                    var usuarioComandos = textoRecebido.slice(6).split(" "), respostaDesbloqueio = await desbloquearComandosGrupo(usuarioComandos, groupId)
                     await socket.reply(c, chatId, respostaDesbloqueio, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -549,7 +532,7 @@ export const grupo = async(c,messageTranslated) => {
 
             case "dono":
                 try{
-                    if(donoGrupo) await socket.replyWithMentions(c, chatId, criarTexto(msgs_texto.grupo.dono.resposta, donoGrupo.replace("@s.whatsapp.net", "")), [donoGrupo], id)
+                    if(groupOwner) await socket.replyWithMentions(c, chatId, criarTexto(msgs_texto.grupo.dono.resposta, groupOwner.replace("@s.whatsapp.net", "")), [groupOwner], id)
                     else await socket.reply(c, chatId, msgs_texto.grupo.dono.sem_dono, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -561,13 +544,13 @@ export const grupo = async(c,messageTranslated) => {
             case 'mt':
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
-                    var usuarioTexto = body.slice(4).trim()
+                    var usuarioTexto = textoRecebido.slice(4).trim()
                     var respostaMarcar = (args.length > 1) ? criarTexto(msgs_texto.grupo.mt.resposta_titulo_variavel, usuarioTexto) : msgs_texto.grupo.mt.resposta_titulo_comum
-                    for(let membro of membrosGrupo){
+                    for(let membro of groupMembers){
                         respostaMarcar += criarTexto(msgs_texto.grupo.mt.resposta_itens, membro.replace("@s.whatsapp.net", ""))
                     }
                     respostaMarcar += `╚═〘 ${nome_bot?.trim()}®〙`
-                    await socket.sendTextWithMentions(c, chatId, respostaMarcar, membrosGrupo)
+                    await socket.sendTextWithMentions(c, chatId, respostaMarcar, groupMembers)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -579,9 +562,9 @@ export const grupo = async(c,messageTranslated) => {
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     var membrosMarcados = []
-                    var usuarioTexto = body.slice(4).trim()
+                    var usuarioTexto = textoRecebido.slice(4).trim()
                     var respostaMarcar = (args.length > 1) ? criarTexto(msgs_texto.grupo.mm.resposta_titulo_variavel, usuarioTexto) : msgs_texto.grupo.mm.resposta_titulo_comum
-                    for(let membro of membrosGrupo){
+                    for(let membro of groupMembers){
                         if(!groupAdmins.includes(membro)) {
                             respostaMarcar += criarTexto(msgs_texto.grupo.mm.resposta_itens, membro.replace("@s.whatsapp.net", ""))
                             membrosMarcados.push(membro)
@@ -599,10 +582,10 @@ export const grupo = async(c,messageTranslated) => {
             
             case 'bantodos':
                 try{
-                    var verificarDono = sender == donoGrupo
+                    var verificarDono = sender == groupOwner
                     if (!verificarDono) return socket.reply(c, chatId, msgs_texto.permissao.apenas_dono_grupo, id)           
                     if (!isBotGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
-                    for(let membro of membrosGrupo){
+                    for(let membro of groupMembers){
                         if (!groupAdmins.includes(membro)) await socket.removeParticipant(c, groupId, membro)
                     }
                     await socket.reply(c, chatId, msgs_texto.grupo.banirtodos.banir_sucesso, id)
@@ -618,7 +601,7 @@ export const grupo = async(c,messageTranslated) => {
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.bot_admin, id)
                     if (args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var usuarioNumeros = body.slice(5).split(",")
+                    var usuarioNumeros = textoRecebido.slice(5).split(",")
                     for(let numero of usuarioNumeros){
                         var numeroCompleto = numero.trim().replace(/\W+/g,"")+"@s.whatsapp.net"
                         let res = await socket.addParticipant(c, chatId, numeroCompleto)
@@ -639,7 +622,7 @@ export const grupo = async(c,messageTranslated) => {
                     if(mentionedJidList.length === 0 && quotedMsg) usuariosSelecionados.push(quotedMsgObjInfo.sender)
                     else if(mentionedJidList.length > 0) usuariosSelecionados = mentionedJidList
                     else return socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var idParticipantesAtuais = membrosGrupo
+                    var idParticipantesAtuais = groupMembers
                     for(let usuario of usuariosSelecionados){
                         if(idParticipantesAtuais.includes(usuario)){
                             if(!groupAdmins.includes(usuario)){

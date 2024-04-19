@@ -1,31 +1,26 @@
 //REQUERINDO MÓDULOS
 import fs from 'fs-extra'
-import { obterMensagensTexto } from '../lib/msgs.js' 
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import * as api from '../lib/api.js'
 import * as socket from '../lib-baileys/socket-funcoes.js'
 import {MessageTypes} from '../lib-baileys/mensagem.js'
 import axios from 'axios'
-import {botInfo} from '../db-modulos/bot.js'
 import duration from 'format-duration-time'
 
 
-export const downloads = async(c,messageTranslated) => {
+export const downloads = async(c, mensagemInfoCompleta) => {
     try{
-        const { type, id, chatId, quotedMsg, body, caption} = messageTranslated
-        const {prefixo, nome_bot, nome_adm} = botInfo()
-        const commands = caption || body || ''
-        var command = commands.toLowerCase().split(' ')[0] || ''
-        const args =  commands.split(' ')
-        var cmdSemPrefixo = command.replace(prefixo, "")
-
-        const msgs_texto = obterMensagensTexto()
+        const {msgs_texto} = mensagemInfoCompleta
+        const {botInfoJSON} = mensagemInfoCompleta.bot
+        const {textoRecebido, command, args, type, id, chatId, quotedMsg} = mensagemInfoCompleta.mensagem
+        const {prefixo} = botInfoJSON
+        let cmdSemPrefixo = command.replace(prefixo, "")
 
         switch(cmdSemPrefixo){      
             case "play":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
-                    var usuarioTexto = body.slice(6).trim(), videoInfo = await api.obterInfoVideoYT(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(6).trim(), videoInfo = await api.obterInfoVideoYT(usuarioTexto)
                     if(!videoInfo) return await socket.reply(c, chatId, msgs_texto.downloads.play.erro_pesquisa, id)
                     if(videoInfo.isLiveContent) return await socket.reply(c, chatId,msgs_texto.downloads.play.erro_live,id)
                     if(videoInfo.lengthSeconds > 300) return await socket.reply(c, chatId, msgs_texto.downloads.play.limite, id)
@@ -45,7 +40,7 @@ export const downloads = async(c,messageTranslated) => {
             case "yt":
                 try{
                     if(args.length === 1) return await socket.reply(c,chatId,erroComandoMsg(command),id)
-                    var usuarioTexto = body.slice(4).trim(), videoInfo = await api.obterInfoVideoYT(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(4).trim(), videoInfo = await api.obterInfoVideoYT(usuarioTexto)
                     if(!videoInfo) return await socket.reply(c, chatId,msgs_texto.downloads.yt.erro_pesquisa,id)
                     if(videoInfo.isLiveContent) return await socket.reply(c, chatId,msgs_texto.downloads.yt.erro_live,id)
                     if(videoInfo.lengthSeconds > 300) return await socket.reply(c, chatId,msgs_texto.downloads.yt.limite,id)
@@ -65,7 +60,7 @@ export const downloads = async(c,messageTranslated) => {
             case "fb":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var usuarioURL = body.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioURL)
+                    var usuarioURL = textoRecebido.slice(4).trim(), resultadosMidia = await api.obterMidiaFacebook(usuarioURL)
                     if(resultadosMidia.duration_ms > 180000) return await socket.reply(c, chatId, msgs_texto.downloads.fb.limite, id)
                     var mensagemEspera = criarTexto(msgs_texto.downloads.fb.espera, resultadosMidia.title, duration.default(resultadosMidia.duration_ms).format('m:ss'))
                     await socket.reply(c, chatId, mensagemEspera, id)
@@ -81,7 +76,7 @@ export const downloads = async(c,messageTranslated) => {
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     await socket.reply(c, chatId, msgs_texto.downloads.ig.espera, id)
-                    var usuarioTexto = body.slice(4).trim(), indexEscolhido = 0, resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(4).trim(), indexEscolhido = 0, resultadosMidia = await api.obterMidiaInstagram(usuarioTexto)
                     if(args.length > 2) {
                         indexEscolhido = args[2]
                         if(isNaN(indexEscolhido)) return await socket.reply(c, chatId,erroComandoMsg(command),id)
@@ -106,7 +101,7 @@ export const downloads = async(c,messageTranslated) => {
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
                     await socket.reply(c, chatId,msgs_texto.downloads.tw.espera,id)
-                    var usuarioTexto = body.slice(4).trim(), resultadosMidia = await api.obterMidiaTwitter(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(4).trim(), resultadosMidia = await api.obterMidiaTwitter(usuarioTexto)
                     if(!resultadosMidia.found) return await socket.reply(c, chatId, msgs_texto.downloads.tw.nao_encontrado, id)
                     if(resultadosMidia.type == "image"){
                         await socket.replyFileFromUrl(c, MessageTypes.image, chatId, resultadosMidia.media[0].url, resultadosMidia.text, id)
@@ -123,7 +118,7 @@ export const downloads = async(c,messageTranslated) => {
             case "tk":
                 try{
                     if(args.length === 1) return await socket.reply(chatId,erroComandoMsg(command),id)
-                    var usuarioTexto = body.slice(4).trim(), resultadoTiktok= await api.obterMidiaTiktok(usuarioTexto)
+                    var usuarioTexto = textoRecebido.slice(4).trim(), resultadoTiktok= await api.obterMidiaTiktok(usuarioTexto)
                     if(!resultadoTiktok.sucesso) return await socket.reply(chatId, msgs_texto.downloads.tk.erro_download ,id)
                     await socket.reply(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultadoTiktok.autor_perfil, resultadoTiktok.autor_nome, resultadoTiktok.titulo, resultadoTiktok.duracao),id)                
                     var tkResponse = await axios.get(resultadoTiktok.url,  { responseType: 'arraybuffer' })
@@ -141,7 +136,7 @@ export const downloads = async(c,messageTranslated) => {
                     if(quotedMsg || (type != MessageTypes.text && type != MessageTypes.extendedText) || args.length === 1) {
                         return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     }
-                    let usuarioTexto = body.slice(5).trim(), imagensUrl = await api.obterImagens(usuarioTexto)
+                    let usuarioTexto = textoRecebido.slice(5).trim(), imagensUrl = await api.obterImagens(usuarioTexto)
                     if(!imagensUrl.sucesso) return await socket.reply(c, chatId, msgs_texto.downloads.img.nao_encontrado, id)
                     let tentativasMax = imagensUrl.imagens.length < 3 ? imagensUrl.imagens.length : 3, sucessoMensagem = false
                     for (let i = 0; i < tentativasMax; i++){
