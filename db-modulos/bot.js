@@ -20,9 +20,8 @@ export const botObjeto = {
         status: false,
         expiracao: 0,
         limite_tipos: {
-            bronze : 25,
-            prata: 50,
-            ouro: 100,
+            comum : 50,
+            premium: 100,
             vip: null
         }
     },

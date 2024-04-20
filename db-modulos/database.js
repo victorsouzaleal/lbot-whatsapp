@@ -41,8 +41,8 @@ export const registrarUsuario = async(id_usuario, nome) =>{
         nome,
         comandos_total: 0,
         comandos_dia: 0,
-        max_comandos_dia : limite_diario.limite_tipos.bronze,
-        tipo: "bronze"
+        max_comandos_dia : limite_diario.limite_tipos.comum,
+        tipo: "comum"
     }
     await db.usuarios.asyncInsert(cadastro_usuario)
 }
@@ -63,7 +63,7 @@ export const verificarDonoAtual = async(id_usuario)=>{
     let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
     var usuario = await db.usuarios.asyncFindOne({id_usuario, tipo: "dono"})
     if(!usuario){
-        await db.usuarios.asyncUpdate({tipo: "dono"}, {$set:{tipo: "bronze",  max_comandos_dia : limite_diario.limite_tipos.bronze}}, {multi: true})
+        await db.usuarios.asyncUpdate({tipo: "dono"}, {$set:{tipo: "comum",  max_comandos_dia : limite_diario.limite_tipos.comum}}, {multi: true})
         await db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo : "dono", max_comandos_dia: null}})
     }
 }
@@ -80,8 +80,8 @@ export const alterarTipoUsuario = async(id_usuario, tipo)=>{
 
 export const limparTipo = async(tipo)=>{
     let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
-    if(limite_diario.limite_tipos[tipo] === undefined || tipo === "bronze") return false
-    await db.usuarios.asyncUpdate({tipo}, {$set: {tipo: "bronze", max_comandos_dia: limite_diario.limite_tipos.bronze}}, {multi: true})
+    if(limite_diario.limite_tipos[tipo] === undefined || tipo === "comum") return false
+    await db.usuarios.asyncUpdate({tipo}, {$set: {tipo: "comum", max_comandos_dia: limite_diario.limite_tipos.comum}}, {multi: true})
     return true
 }
 
