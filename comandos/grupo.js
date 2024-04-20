@@ -608,8 +608,12 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     var usuarioNumeros = textoRecebido.slice(5).split(",")
                     for(let numero of usuarioNumeros){
                         var numeroCompleto = numero.trim().replace(/\W+/g,"")+"@s.whatsapp.net"
-                        let res = await socket.addParticipant(c, chatId, numeroCompleto)
-                        if (res.status != 200) await socket.reply(c, chatId, criarTexto(msgs_texto.grupo.add.add_erro, numeroCompleto.replace("@s.whatsapp.net", "")), id)
+                        await socket.addParticipant(c, chatId, numeroCompleto).then(async (res)=>{
+                            if (res.status != 200) await socket.reply(c, chatId, criarTexto(msgs_texto.grupo.add.add_erro, numeroCompleto.replace("@s.whatsapp.net", "")), id)
+                        })
+                        .catch(async ()=>{
+                            await socket.reply(c, chatId, criarTexto(msgs_texto.grupo.add.numero_invalido, numeroCompleto.replace("@s.whatsapp.net", "")), id)
+                        })
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -630,10 +634,11 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     for(let usuario of usuariosSelecionados){
                         if(idParticipantesAtuais.includes(usuario)){
                             if(!groupAdmins.includes(usuario)){
-                                await socket.removeParticipant(c, groupId, usuario)
-                                if(usuariosSelecionados.length === 1) {
-                                    await socket.sendTextWithMentions(c, chatId, criarTexto(msgs_texto.geral.resposta_ban, usuario.replace("@s.whatsapp.net", ""), msgs_texto.grupo.banir.motivo, username))
-                                }
+                                await socket.removeParticipant(c, groupId, usuario).then(async ()=>{
+                                    if(usuariosSelecionados.length === 1) {
+                                        await socket.sendTextWithMentions(c, chatId, criarTexto(msgs_texto.geral.resposta_ban, usuario.replace("@s.whatsapp.net", ""), msgs_texto.grupo.banir.motivo, username))
+                                    }
+                                })
                             } else {
                                 if(usuariosSelecionados.length === 1) await socket.reply(c, chatId, msgs_texto.grupo.banir.banir_admin, id)
                             }
