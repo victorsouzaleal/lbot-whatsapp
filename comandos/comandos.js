@@ -6,6 +6,7 @@ export const listarComandos = () => {
     return {
         utilidades :[
             `${prefixo}tabela`,
+            `${prefixo}rbg`,
             `${prefixo}ouvir`,
             `${prefixo}audio`,
             `${prefixo}traduz`,
@@ -30,7 +31,8 @@ export const listarComandos = () => {
         ],
         figurinhas: [
             `${prefixo}s`,
-            `${prefixo}simg`
+            `${prefixo}simg`,
+            `${prefixo}ssf`
         ],
         downloads: [
             `${prefixo}play`,

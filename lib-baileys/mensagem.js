@@ -5,7 +5,6 @@ import {obterMensagensTexto} from '../lib/msgs.js'
 import {botInfo} from '../db-modulos/bot.js'
 import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
 
-// TRADUZIR CONTEUDO DA MENSAGEM PARA A BIBLIOTECA BAILEYS
 export const converterMensagem = async(m) =>{
     try {
         m = m.messages[0]

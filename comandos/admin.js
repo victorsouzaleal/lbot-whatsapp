@@ -54,7 +54,11 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     // LIMITE MENSAGENS PV
                     resposta += (infoBot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, infoBot.limitarmensagens.max, infoBot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                     // BLOQUEIO DE COMANDOS
-                    resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, infoBot.bloqueio_cmds.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
+                    let comandosBloqueados = []
+                    for(let comandoBloqueado of infoBot.bloqueio_cmds){
+                        comandosBloqueados.push(prefixo+comandoBloqueado)
+                    }
+                    resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, comandosBloqueados.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
                     resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""))
                     if(fotoBot) await socket.replyFileFromUrl(c, MessageTypes.image, chatId, fotoBot, resposta, id)
                     else await socket.reply(c, chatId, resposta, id)

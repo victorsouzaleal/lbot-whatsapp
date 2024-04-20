@@ -6,6 +6,7 @@ import {MessageTypes} from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {stickerToPng} from '../lib/conversao.js'
+import {removerFundo} from '../lib/api.js'
 
 
 export const figurinhas = async(c, mensagemInfoCompleta) => {
@@ -95,6 +96,51 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                 }
                 
                 break      
+
+            case "ssf":
+                try{
+                    if(isMedia|| quotedMsg){
+                        var argSticker = args.length > 1 ? args[1].toLowerCase() : ""
+                        var stickerMetadata = {
+                            pack: nome_pack?.trim(), 
+                            author: nome_bot?.trim(),
+                            type: StickerTypes.CROPPED,
+                            quality: 100,
+                            fps: 7,
+                            background: '#000000' 
+                        }
+    
+                        if(argSticker == "1"){
+                            stickerMetadata.type = StickerTypes.CIRCLE
+                        } else if (argSticker == "2"){
+                            stickerMetadata.type = StickerTypes.FULL
+                        }
+    
+                        var dadosMensagem = {
+                            tipo : (isMedia) ? type : quotedMsgObjInfo.type,
+                            mimetype : (isMedia)? mimetype : quotedMsgObjInfo.mimetype,
+                            message: (quotedMsg)? quotedMsgObj  : id,
+                            seconds: (quotedMsg)? quotedMsgObjInfo.seconds : seconds
+                        }
+    
+                        if(dadosMensagem.tipo == MessageTypes.image){
+                            await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_espera , id)
+                            var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
+                            let bufferImagemSemFundo = await removerFundo(bufferMessage)
+                            const stker = new Sticker(bufferImagemSemFundo, stickerMetadata)
+                            await socket.sendSticker(c,chatId, await stker.toMessage())
+                        } else {
+                            return await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_imagem , id)
+                        }
+                    } else {
+                        return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                    }
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
         }
     } catch(err){
         consoleErro(err, "FIGURINHAS")

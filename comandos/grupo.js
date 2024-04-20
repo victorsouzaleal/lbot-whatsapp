@@ -81,7 +81,11 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     //Contador
                     resposta += (grupoInfo.contador.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, grupoInfo.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
                     //Bloqueio de CMDS
-                    resposta += (grupoInfo.block_cmds.length != 0) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.on, grupoInfo.block_cmds.toString()) : msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.off
+                    let comandosBloqueados = []
+                    for (let comandoBloqueado of grupoInfo.block_cmds){
+                        comandosBloqueados.push(prefixo+comandoBloqueado)
+                    }
+                    resposta += (grupoInfo.block_cmds.length != 0) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.on, comandosBloqueados.toString()) : msgs_texto.grupo.status.resposta_variavel.bloqueiocmds.off
                     //Lista Negra
                     resposta += criarTexto(msgs_texto.grupo.status.resposta_variavel.listanegra, grupoInfo.lista_negra.length)
                     await socket.sendText(c, chatId, resposta)

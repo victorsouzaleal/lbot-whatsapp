@@ -280,15 +280,15 @@ export const botLimitarMensagensPv = async (usuario_msg,usuario_tipo)=>{
 //
 
 //BLOQUEIO DE COMANDOS
-export const botBloquearComando = async cmds =>{
+export const botBloquearComando = async (cmds) =>{
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
     for(let cmd of cmds){
         bot.bloqueio_cmds.push(cmd)
     }
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
 }
 
-export const botDesbloquearComando = async cmds =>{
+export const botDesbloquearComando = async (cmds) =>{
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
     for(let cmd of cmds){
         let index = bot.bloqueio_cmds.findIndex(cmd_block=> cmd_block == cmd)
@@ -296,5 +296,5 @@ export const botDesbloquearComando = async cmds =>{
             bot.bloqueio_cmds.splice(index,1)
         }
     }
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
 }

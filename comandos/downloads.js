@@ -141,7 +141,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                     let tentativasMax = imagensUrl.imagens.length < 3 ? imagensUrl.imagens.length : 3, sucessoMensagem = false
                     for (let i = 0; i < tentativasMax; i++){
                         try{
-                            let indexAleatorio = Math.floor(Math.random() * (imagensUrl.imagens.length > 50 ? 50 : imagensUrl.imagens.length))
+                            let indexAleatorio = Math.floor(Math.random() * (imagensUrl.imagens.length > 30 ? 30 : imagensUrl.imagens.length))
                             let imagemEscolhida = imagensUrl.imagens[indexAleatorio].url
                             imagensUrl.imagens.splice(indexAleatorio, 1)
                             let {data, headers} = await axios.get(imagemEscolhida, {responseType: 'arraybuffer'})

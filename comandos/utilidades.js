@@ -13,11 +13,37 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
     try{
         const {msgs_texto} = mensagemInfoCompleta
         const {botInfoJSON} = mensagemInfoCompleta.bot
-        const {textoRecebido, command, args, type, id, chatId, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo} = mensagemInfoCompleta.mensagem
+        const {textoRecebido, command, isMedia, args, type, id, chatId, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo} = mensagemInfoCompleta.mensagem
         const {prefixo} = botInfoJSON
         let cmdSemPrefixo = command.replace(prefixo, "")
         
-        switch(cmdSemPrefixo){      
+        switch(cmdSemPrefixo){    
+            case "rbg":
+                try{
+                    if(isMedia|| quotedMsg){
+                        var dadosMensagem = {
+                            tipo : (isMedia) ? type : quotedMsgObjInfo.type,
+                            mimetype : (isMedia)? mimetype : quotedMsgObjInfo.mimetype,
+                            message: (quotedMsg)? quotedMsgObj  : id,
+                        }
+                        if(dadosMensagem.tipo == MessageTypes.image){
+                            await socket.reply(c, chatId, msgs_texto.utilidades.rbg.espera, id)
+                            var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
+                            let bufferImagemSemFundo = await api.removerFundo(bufferMessage)
+                            await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferImagemSemFundo, '', id)
+                        } else {
+                            return await socket.reply(c, chatId, msgs_texto.utilidades.rbg.invalido , id)
+                        }
+                    } else {
+                        return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                    }
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+            
             case "tabela":
                 try{
                     var tabela = await api.obterTabelaNick()
