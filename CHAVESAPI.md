@@ -1,17 +1,6 @@
 # Tutorial para obter as chaves das API's
 
-## 1 - NewsAPI (Noticias)
-
-### Crie uma conta no site https://newsapi.org/register
-
-Após a criação da conta a sua **chave** já será exibida para ser usada no campo **API_NEWS_ORG** no .env do Bot.
-<img src="https://i.imgur.com/WteuFSj.png">
-
-### Pronto, você já tem sua chave NewsAPI configurada.
-
-<br>
-
-## 2 - ACRCloud - Reconhecimento de Músicas
+## 1 - ACRCloud - Reconhecimento de Músicas
 
 #### Limite Gratuito: 14 dias de uso ou 5000 reconhecimentos, após isso o limite é de 100 reconhecimentos/dia.
 
@@ -34,7 +23,7 @@ Nessa tela agora você tem seu **acr_host**, **acr_access_key** e **acr_access_s
 
 ### Pronto, você já tem suas chaves ACRCloud configuradas .
 
-## 3 - DEEPGRAM - Transcrição Áudio para Texto
+## 2 - DEEPGRAM - Transcrição Áudio para Texto
 
 #### Limite Gratuito: $200 em transcrição, que é equivalente a aproximadamente 750 horas em transcrição.
 
