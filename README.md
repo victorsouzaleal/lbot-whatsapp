@@ -25,12 +25,21 @@
 </h3>
 <br>
 
-## Última Atualização : 17/04/2024 - v2.2.0
-**[CÓDIGO]** Todos os módulos do projetos foram migrados do descontinuado CommonJS para ESM<br>
-**[CÓDIGO]** Melhor filtragem nos tipos de mensagens que o bot receber, para evitar processamento desnecessário.<br>
-**[COMANDO]** Comando **img** teve a api melhorada para minimizar erros e agora faz 3 tentativas de enviar uma imagem válida.<br>
-**[COMANDO]** Comando **fb** atualizado para enviar o titulo e duração do vídeo, tendo agora limite máximo de 3 minutos<br>
-**[CORREÇÃO]** Prefixo * que não estava funcionando foi corrigido.<br>
+## Última Atualização : 20/04/2024 - v2.3.0
+**[NOVO]** Número do DONO agora é configurado automaticamente ao digitar **!admin** após iniciar o bot<br>
+**[NOVO]** Adicionado P-QUEUE para administrar uma fila de comandos e evitar sobrecarga no bot.<br>
+**[NOVO]** Bot responderá no PV com boas vindas e ensinando a usar o **MENU** caso seja um novo usuário e não digite um comando<br>
+**[NOVO]** O bot agora exibe que leu as mensagens e simula "Digitando..." em respostas de texto.<br>
+**[NOVO]** Novo comando diversão **simi**, para conversar com o SimSimi.<br>
+**[NOVO]** Novo comando figurinha **ssf**, para remover o fundo da imagem e enviar como figurinha.<br>
+**[NOVO]** Novo comando utilidade **rbg**, para remover o fundo da imagem.<br>
+**[COMANDO]** Comando **tk** teve a resposta melhorada e exibe mais dados sobre o video baixado.<br>
+**[COMANDO]** Substituida a api do **!noticias** não sendo mais necessário a configuração no .ENV para este comando.<br>
+**[CORREÇÃO]** Corrigido !qualmusica e !anime que estavam com erro na api.<br>
+**[CORREÇÃO]** Corrigido os comandos de bloquear/desbloquear comandos com prefixos diferentes.<br>
+**[CÓDIGO]** Otimização e correções de bugs em geral no código.<br>
+
+
 <br>
 
 
@@ -82,7 +91,7 @@ Após todos os passos anteriores feitos, seu bot já deve estar iniciando normal
 <br><br>
 **!menu** - Dá acesso ao MENU PRINCIPAL.
 <br>
-**!admin** - Dá acesso ao MENU de ADMINISTRADOR/DONO DO BOT. (Precisa de configuração no .env, veja abaixo como)
+**!admin** - Dá acesso ao MENU de ADMINISTRADOR/DONO DO BOT.
 <br><br>
 Todos os comandos agora tem um guia ao digitar **!comando guia**
 <br><br>
@@ -96,12 +105,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 ## 5 - Configuração do bot e arquivo .env :
 
 ### Ao abrir o arquivo .env na raiz do projeto após iniciar o bot pela primeira vez ele vai se parecer com isso : </br>
-        ############ CONFIGURAÇÕES DO DONO ############# 
-        # LEMBRE-SE SEU NÚMERO DE WHATSAPP E NÃO O DO BOT.
-        NUMERO_DONO=55219xxxxxxxx
-
-        # NEWSAPI- Coloque abaixo sua chave API do site newsapi.org (NOTICIAIS ATUAIS)
-        API_NEWS_ORG=?????
+        # CONFIGURAÇÃO DE API KEYS PARA COMANDOS
 
         # ACRCLOUD - Coloque abaixo suas chaves do ACRCloud (Reconhecimento de Músicas)
         acr_host=?????
@@ -113,13 +117,13 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 
 #### Como configurar o ADMINISTRADOR :
-Para usar as funções de **ADMINISTRADOR** coloque o seu número principal que irá administrar o bot em **NUMERO_DONO**, com código do país (ex: Brasil é 55) e DDD (ex: Rio de Janeiro é 21).<br><br>
-Reinicie o bot para as alterações terem efeito e agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
+Para usar as funções de **ADMINISTRADOR** digite **!admin** pela primeira vez ao iniciar ao BOT e ai seu número será cadastrado como dono.<br><br>
+Pronto, gora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
 
 <br><br>
 
 #### Como obter as chaves API para usar em comandos específicos :
-Para usar comandos específicos como **!noticias**, **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API no .env, abaixo tem um guia completo com imagens para obter as chaves.<br><br>
+Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API no .env, abaixo tem um guia completo com imagens para obter as chaves.<br><br>
 **Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](CHAVESAPI.md)
 
 <br>
@@ -134,6 +138,7 @@ Para usar comandos específicos como **!noticias**, **!qualmusica** e **!ouvir**
 |       ✅       | Sticker para foto              |
 |       ✅       | Video/GIF para Sticker |
 |       ✅       | Sticker circular |
+|       ✅       | Sticker sem fundo |
 |       ✅       | Auto Sticker |
 
 ### Downloads 
@@ -215,8 +220,8 @@ Para usar comandos específicos como **!noticias**, **!qualmusica** e **!ouvir**
 
 ## 7 - Solução de Problemas :
 
-#### 1 - MEU NÚMERO NO .ENV ESTÁ CORRETO MAS NÃO ME IDENTIFICOU COMO ADMINISTRADOR :
-Se o seu número está correto no .env e ele não te indentifica como administrador tente tirar o 9 na frente do número, isso acontece porque em alguns DDD o WhatsApp não entende o 9 sendo parte do número do usuário.
+#### 1 - YARN NÃO É IDENTIFICADO COMO COMANDO:
+Provavelmente o seu Node não está com o PATH configurado nas variáveis de ambiente, recomendo deletar o Node e instalar novamente para ele configurar corretamente o PATH. Ou procure um tutorial de como adicionar o PATH para o npm/yarn.
 
 <br>
 
@@ -231,11 +236,10 @@ Esse comando atualiza as dependências e pode resolver algum problema que você 
 
 <br>
 
-## 8 - Contato/Doação (NÃO É O BOT, É O NUMERO APENAS PARA TIRAR DÚVIDAS OU AJUDAR COM O PROJETO)
+## 8 - Contato/Doação 
 Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
 
 * **WhatsApp :** https://wa.me/5521995612287
-* **Chave PIX :** victorsouzaleal@gmail.com
 
 ## 9 - Agradecimentos
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys)
