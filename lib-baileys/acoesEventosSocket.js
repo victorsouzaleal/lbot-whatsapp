@@ -43,13 +43,21 @@ export const atualizarConexao = async (c, conexao)=>{
         }
     } else if(connection === 'open') {
         try{
-            await criarArquivosNecessarios()
-            await socket.getAllGroups(c)
-            console.log(corTexto(await botStart(c)))
-            verificarEnv()
-            await verificarNumeroDono()
-            console.log(msgs_texto.inicio.servidor_iniciado)
-            console.log(msgs_texto.inicio.atualizacao_grupos)
+            let necessitaCriar = await criarArquivosNecessarios()
+            if(necessitaCriar){
+                console.log(corTexto(msgs_texto.inicio.arquivos_criados))
+                setTimeout(()=>{
+                    c.ev.removeAllListeners()
+                    return c.end(new Error("arquivos"))
+                },3000)
+            } else{
+                await socket.getAllGroups(c)
+                console.log(corTexto(await botStart(c)))
+                verificarEnv()
+                await verificarNumeroDono()
+                console.log(msgs_texto.inicio.servidor_iniciado)
+                console.log(msgs_texto.inicio.atualizacao_grupos)
+            }
         } catch(err){
             consoleErro(err, "Inicialização")
             c.end(new Error("erro_geral"))
