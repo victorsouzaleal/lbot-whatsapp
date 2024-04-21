@@ -17,7 +17,36 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
         const {prefixo} = botInfoJSON
         let cmdSemPrefixo = command.replace(prefixo, "")
         
-        switch(cmdSemPrefixo){    
+        switch(cmdSemPrefixo){  
+            case "gpt":
+                try{
+                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    let usuarioTexto = textoRecebido.slice(5).trim()
+                    let {sucesso, texto, erro} = await api.respostaHercaiTexto(usuarioTexto)
+                    if(!sucesso) return await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, erro) , id)
+                    else await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.gpt.resposta, texto), id)
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+            
+            case "criarimg":
+                try{
+                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    let usuarioTexto = textoRecebido.slice(10).trim()
+                    await socket.reply(c, chatId, msgs_texto.utilidades.criarimg.espera, id)
+                    let {sucesso, url, erro} = await api.respostaHercaiImagem(usuarioTexto)
+                    if(!sucesso) return await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, erro) , id)
+                    else await socket.replyFileFromUrl(c, MessageTypes.image, chatId, url, '', id)     
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
             case "rbg":
                 try{
                     if(isMedia|| quotedMsg){
@@ -30,7 +59,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                             await socket.reply(c, chatId, msgs_texto.utilidades.rbg.espera, id)
                             var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
                             let bufferImagemSemFundo = await api.removerFundo(bufferMessage)
-                            await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferImagemSemFundo, '', id)
+                            await socket.replyFileFromBuffer(c, MessageTypes.image, chatId, bufferImagemSemFundo.imagemBuffer, '', id)
                         } else {
                             return await socket.reply(c, chatId, msgs_texto.utilidades.rbg.invalido , id)
                         }

@@ -13,6 +13,8 @@ import { MessageTypes } from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import os from 'node:os'
 
+
+
 export const admin = async(c, mensagemInfoCompleta) => {
     try{
         const {msgs_texto, ownerNumber} = mensagemInfoCompleta
@@ -660,6 +662,18 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     throw err
                 }
                 break
+
+            case 'devtest':
+                try{
+                    //PARA TESTES
+                    await converterTextoParaImagem("Testando a conversão")
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
         }
     } catch(err){
         consoleErro(err, "ADMIN")

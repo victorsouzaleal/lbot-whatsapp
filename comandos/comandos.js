@@ -5,6 +5,8 @@ export const listarComandos = () => {
     let {prefixo} = botInfo()
     return {
         utilidades :[
+            `${prefixo}gpt`,
+            `${prefixo}criarimg`,
             `${prefixo}tabela`,
             `${prefixo}rbg`,
             `${prefixo}ouvir`,
@@ -32,7 +34,8 @@ export const listarComandos = () => {
         figurinhas: [
             `${prefixo}s`,
             `${prefixo}simg`,
-            `${prefixo}ssf`
+            `${prefixo}ssf`,
+            `${prefixo}emojimix`
         ],
         downloads: [
             `${prefixo}play`,
@@ -132,7 +135,8 @@ export const listarComandos = () => {
             `${prefixo}r`,
             `${prefixo}verdados`,
             `${prefixo}desligar`,
-            `${prefixo}ping`
+            `${prefixo}ping`,
+            `${prefixo}devtest`
         ],
         excecoes_contagem: [
             `${prefixo}meusdados`,

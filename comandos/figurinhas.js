@@ -6,14 +6,14 @@ import {MessageTypes} from '../lib-baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {stickerToPng} from '../lib/conversao.js'
-import {removerFundo} from '../lib/api.js'
+import {misturarEmojis, removerFundo} from '../lib/api.js'
 
 
 export const figurinhas = async(c, mensagemInfoCompleta) => {
     try{
         const {msgs_texto} = mensagemInfoCompleta
         const {botInfoJSON} = mensagemInfoCompleta.bot
-        const {command, args, type, id, chatId, isMedia, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemInfoCompleta.mensagem
+        const {textoRecebido, command, args, type, id, chatId, isMedia, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemInfoCompleta.mensagem
         const {prefixo, nome_pack, nome_bot } = botInfoJSON
         let cmdSemPrefixo = command.replace(prefixo, "")
 
@@ -95,7 +95,31 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                     throw err
                 }
                 
-                break      
+                break 
+                
+            case 'emojimix':
+                try{
+                    if(args.length === 1) return await socket.reply(chatId,erroComandoMsg(command),id)
+                    let usuarioTexto = textoRecebido.slice(10).trim(), emojis = usuarioTexto.split("+")
+                    if(emojis.length == 0) return await socket.reply(chatId,erroComandoMsg(command),id)
+                    var stickerMetadata = {
+                        pack: nome_pack?.trim(), 
+                        author: nome_bot?.trim(),
+                        type: StickerTypes.CROPPED,
+                        quality: 100,
+                        background: '#000000' 
+                    }
+                    let {sucesso, url, erro} = misturarEmojis(emojis[0], emojis[1])
+                    if(!sucesso) return await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, erro) , id)
+                    const stker = new Sticker(url, stickerMetadata)
+                    await socket.sendSticker(c, chatId, await stker.toMessage())
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+
+                break
 
             case "ssf":
                 try{
@@ -126,9 +150,12 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         if(dadosMensagem.tipo == MessageTypes.image){
                             await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_espera , id)
                             var bufferMessage = await downloadMediaMessage(dadosMensagem.message, "buffer")
-                            let bufferImagemSemFundo = await removerFundo(bufferMessage)
-                            const stker = new Sticker(bufferImagemSemFundo, stickerMetadata)
-                            await socket.sendSticker(c,chatId, await stker.toMessage())
+                            let {sucesso, imagemBuffer, erro} = await removerFundo(bufferMessage)
+                            if(!sucesso) return await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, erro) , id)
+                            else {
+                                const stker = new Sticker(imagemBuffer, stickerMetadata)
+                                await socket.sendSticker(c,chatId, await stker.toMessage())
+                            }
                         } else {
                             return await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_imagem , id)
                         }
