@@ -25,21 +25,12 @@
 </h3>
 <br>
 
-## Última Atualização : 20/04/2024 - v2.3.0
-**[NOVO]** Número do DONO agora é configurado automaticamente ao digitar **!admin** após iniciar o bot<br>
-**[NOVO]** Adicionado P-QUEUE para administrar uma fila de comandos e evitar sobrecarga no bot.<br>
-**[NOVO]** Bot responderá no PV com boas vindas e ensinando a usar o **MENU** caso seja um novo usuário e não digite um comando<br>
-**[NOVO]** O bot agora exibe que leu as mensagens e simula "Digitando..." em respostas de texto.<br>
-**[NOVO]** Novo comando diversão **simi**, para conversar com o SimSimi.<br>
-**[NOVO]** Novo comando figurinha **ssf**, para remover o fundo da imagem e enviar como figurinha.<br>
-**[NOVO]** Novo comando utilidade **rbg**, para remover o fundo da imagem.<br>
-**[COMANDO]** Comando **tk** teve a resposta melhorada e exibe mais dados sobre o video baixado.<br>
-**[COMANDO]** Substituida a api do **!noticias** não sendo mais necessário a configuração no .ENV para este comando.<br>
-**[CORREÇÃO]** Corrigido !qualmusica e !anime que estavam com erro na api.<br>
-**[CORREÇÃO]** Corrigido os comandos de bloquear/desbloquear comandos com prefixos diferentes.<br>
-**[CÓDIGO]** Otimização e correções de bugs em geral no código.<br>
-
-
+## Última Atualização : 20/04/2024 - v2.3.1
+**[ALTERAÇÃO]** Os tipos de usuário para controle de comandos agora são divididos em **Comum**, **Premium** e **VIP**.<br>
+**[CÓDIGO]** Melhoria na mensagem de erro ao tentar adicionar um membro ao grupo com número inválido.<br>
+**[NOVO]** Novo comando utilidade **gpt** para fazer perguntas ao ChatGPT.<br>
+**[NOVO]** Novo comando utilidade **criarimg** para criar imagens a partir de texto usando a IA.<br>
+**[NOVO]** Novo comando figurinha **emojimix** para juntar 2 emojis e enviar em sticker.<br>
 <br>
 
 
