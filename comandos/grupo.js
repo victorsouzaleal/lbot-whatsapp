@@ -521,12 +521,14 @@ export const grupo = async(c, mensagemInfoCompleta) => {
 
             case 'adms':
                 try{
-                    var mensagemAlvo = quotedMsg ? quotedMsgObj : id
-                    var admsResposta = msgs_texto.grupo.adms.resposta_titulo
+                    let usuarioTexto = textoRecebido.slice(6).trim()
+                    let respostaMarcar = criarTexto(msgs_texto.grupo.adms.resposta_titulo, groupAdmins.length)
+                    if(usuarioTexto.length > 0) respostaMarcar += criarTexto(msgs_texto.grupo.adms.mensagem, usuarioTexto)
                     for (let adm of groupAdmins) {
-                        admsResposta += criarTexto(msgs_texto.grupo.adms.resposta_itens, adm.replace(/@s.whatsapp.net/g, ''))
+                        respostaMarcar += criarTexto(msgs_texto.grupo.adms.resposta_itens, adm.replace(/@s.whatsapp.net/g, ''))
                     }
-                    await socket.replyWithMentions(c, chatId, admsResposta, groupAdmins, mensagemAlvo)
+                    var mensagemAlvo = quotedMsg ? quotedMsgObj : id
+                    await socket.replyWithMentions(c, chatId, respostaMarcar, groupAdmins, mensagemAlvo)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -549,11 +551,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     var usuarioTexto = textoRecebido.slice(4).trim()
-                    var respostaMarcar = (args.length > 1) ? criarTexto(msgs_texto.grupo.mt.resposta_titulo_variavel, usuarioTexto) : msgs_texto.grupo.mt.resposta_titulo_comum
-                    for(let membro of groupMembers){
-                        respostaMarcar += criarTexto(msgs_texto.grupo.mt.resposta_itens, membro.replace("@s.whatsapp.net", ""))
-                    }
-                    respostaMarcar += `╚═〘 ${nome_bot?.trim()}®〙`
+                    let respostaMarcar = usuarioTexto.length > 0 ? criarTexto(msgs_texto.grupo.mt.resposta_motivo, groupMembers.length, usuarioTexto) : criarTexto(msgs_texto.grupo.mt.resposta, groupMembers.length)
                     await socket.sendTextWithMentions(c, chatId, respostaMarcar, groupMembers)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -565,17 +563,15 @@ export const grupo = async(c, mensagemInfoCompleta) => {
             case 'mm':
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
-                    var membrosMarcados = []
-                    var usuarioTexto = textoRecebido.slice(4).trim()
-                    var respostaMarcar = (args.length > 1) ? criarTexto(msgs_texto.grupo.mm.resposta_titulo_variavel, usuarioTexto) : msgs_texto.grupo.mm.resposta_titulo_comum
+                    let membrosMarcados = []
+                    let usuarioTexto = textoRecebido.slice(4).trim()
                     for(let membro of groupMembers){
                         if(!groupAdmins.includes(membro)) {
-                            respostaMarcar += criarTexto(msgs_texto.grupo.mm.resposta_itens, membro.replace("@s.whatsapp.net", ""))
                             membrosMarcados.push(membro)
                         }
                     }
-                    respostaMarcar += `╚═〘 ${nome_bot?.trim()}®〙`
                     if(membrosMarcados.length == 0) return await socket.reply(c, chatId, msgs_texto.grupo.mm.sem_membros, id)
+                    let respostaMarcar = usuarioTexto.length > 0 ? criarTexto(msgs_texto.grupo.mm.resposta_motivo, membrosMarcados.length, usuarioTexto) : criarTexto(msgs_texto.grupo.mm.resposta, membrosMarcados.length)
                     await socket.sendTextWithMentions(c, chatId, respostaMarcar, membrosMarcados)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
