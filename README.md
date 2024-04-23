@@ -25,9 +25,10 @@
 </h3>
 <br>
 
-## Última Atualização : 23/04/2024 - v2.3.2
-**[CORREÇÃO]** Comando **ig** corrigido e trocada a api de download.<br>
-**[CÓDIGO]** Melhorias gerais de código e melhor exibição de erro em comandos que usam api/bibliotecas<br>
+## Última Atualização : 23/04/2024 - v2.3.3
+**[CORREÇÃO]** Comando **reportar** corrigido nos casos que o dono ainda não estava cadastrado.<br>
+**[CORREÇÃO]** Correção de erros que poderiam ocorrer durante a inicialização.<br>
+**[COMANDO]** Os comandos **mm** e **mt** agora marcam sem exibir todas as marcações para evitar textos muito grandes.<br>
 <br>
 
 
