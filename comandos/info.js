@@ -45,6 +45,7 @@ export const info = async(c, mensagemInfoCompleta) => {
             case `reportar`:
                 try{
                     if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                    if(ownerNumber == '') return socket.reply(c, chatId, msgs_texto.info.reportar.erro, id)
                     var usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
                     await socket.sendText(c,ownerNumber, resposta)
                     await socket.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
