@@ -56,7 +56,6 @@ export const atualizarConexao = async (c, conexao)=>{
                 verificarEnv()
                 await verificarNumeroDono()
                 console.log(msgs_texto.inicio.servidor_iniciado)
-                console.log(msgs_texto.inicio.atualizacao_grupos)
             }
         } catch(err){
             consoleErro(err, "Inicialização")
@@ -147,9 +146,13 @@ export const atualizacaoDadosGrupos = async (c, novosDadosGrupo)=>{
     }
 }
 
-export const atualizacaoDadosGrupo = async (novosDadosGrupo)=>{
+export const realizarEventosEspera = async(c, eventosEsperando)=>{
+    for(let ev of eventosEsperando) c.ev.emit(ev.evento, ev.dados)
+}
+
+export const atualizacaoDadosGrupo = async (dadosGrupo)=>{
     try{
-        await atualizarDadosGrupo(novosDadosGrupo[0])
+        await atualizarDadosGrupo(dadosGrupo)
     } catch(err){
         consoleErro(err, "GROUPS.UPDATE")
     }

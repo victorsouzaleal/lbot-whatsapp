@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import {makeWASocket, useMultiFileAuthState, makeInMemoryStore} from '@whiskeysockets/baileys'
-import {atualizarConexao, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos} from './baileys/acoesEventosSocket.js'
+import {atualizarConexao, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './baileys/acoesEventosSocket.js'
 import configSocket from './baileys/configSocket.js'
 import moment from "moment-timezone"
 import dotenv from 'dotenv'
@@ -9,10 +9,10 @@ moment.tz.setDefault('America/Sao_Paulo')
 dotenv.config()
 
 async function connectToWhatsApp(){
+    var inicializacaoCompleta = false, eventosEsperando = []
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
     const store = makeInMemoryStore({})
     const c = makeWASocket(configSocket(state, store))
-    var gruposVerificados = false
 
     store.bind(c.ev)
 
@@ -22,30 +22,32 @@ async function connectToWhatsApp(){
         if(necessarioReconectar) connectToWhatsApp()
     })
 
-
     // Ao receber novas mensagens
     c.ev.on('messages.upsert', async(m) => {
-        if(gruposVerificados){
-            await receberMensagem(c, m)
-        }
+        if(inicializacaoCompleta) await receberMensagem(c, m)
+        else eventosEsperando.push({evento: 'messages.upsert', dados: m})
     })
 
     //Ao haver mudanças nos participantes de um grupo
     c.ev.on('group-participants.update', async (event)=>{
-        await atualizacaoParticipantesGrupo(c, event)
+        if(inicializacaoCompleta) await atualizacaoParticipantesGrupo(c, event)
+        else eventosEsperando.push({evento: 'group-participants.update', dados: event})
     })
 
     //Ao ser adicionado em novos grupos
     c.ev.on('groups.upsert', async (groupData)=>{
-        await adicionadoEmGrupo(c, groupData)
+        if(inicializacaoCompleta) await adicionadoEmGrupo(c, groupData)
+        else eventosEsperando.push({evento: 'groups.upsert', dados: groupData})
     })
 
     //Ao atualizar dados do grupo
     c.ev.on('groups.update', async(groupsUpdate)=>{
         if(groupsUpdate.length != 0 && groupsUpdate[0].participants != undefined ){
-            gruposVerificados = await atualizacaoDadosGrupos(c, groupsUpdate)
+            inicializacaoCompleta = await atualizacaoDadosGrupos(c, groupsUpdate)
+            await realizarEventosEspera(c, eventosEsperando)
         } else if (groupsUpdate.length == 1 && groupsUpdate[0].participants == undefined){
-            await atualizacaoDadosGrupo(c, groupsUpdate)
+            if(inicializacaoCompleta) await atualizacaoDadosGrupo(groupsUpdate[0])
+            else eventosEsperando.push({evento: 'groups.update', dados: groupsUpdate})
         }
     })
 
