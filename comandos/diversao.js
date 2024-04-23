@@ -2,8 +2,8 @@
 import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
-import * as socket from '../lib-baileys/socket-funcoes.js'
-import { MessageTypes } from '../lib-baileys/mensagem.js'
+import * as socket from '../baileys/socket-funcoes.js'
+import { MessageTypes } from '../baileys/mensagem.js'
 
 
 export const diversao = async(c, mensagemInfoCompleta) => {

@@ -3,7 +3,7 @@ import pino from 'pino'
 import {listarComandos} from '../comandos/comandos.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
 import {botInfo} from '../db-modulos/bot.js'
-import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
+import * as socketdb from '../baileys/socket-db-funcoes.js'
 
 export const converterMensagem = async(m) =>{
     try {

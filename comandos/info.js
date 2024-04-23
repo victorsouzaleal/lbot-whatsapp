@@ -4,9 +4,9 @@ import * as menu from '../lib/menu.js'
 import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import path from 'node:path'
 import * as db from '../db-modulos/database.js'
-import * as socket from '../lib-baileys/socket-funcoes.js'
-import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
-import {MessageTypes} from '../lib-baileys/mensagem.js'
+import * as socket from '../baileys/socket-funcoes.js'
+import * as socketdb from '../baileys/socket-db-funcoes.js'
+import {MessageTypes} from '../baileys/mensagem.js'
 
 
 

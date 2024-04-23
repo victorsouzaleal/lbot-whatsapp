@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import moment from "moment-timezone"
-import {getHostNumber} from '../lib-baileys/socket-funcoes.js'
+import {getHostNumber} from '../baileys/socket-funcoes.js'
 import * as db from '../db-modulos/database.js'
 import {criarTexto} from '../lib/util.js'
 

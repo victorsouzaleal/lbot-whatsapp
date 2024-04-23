@@ -1,8 +1,8 @@
 //REQUERINDO MÓDULOS
 import {erroComandoMsg, consoleErro, criarTexto} from '../lib/util.js'
 import { Sticker, StickerTypes } from '@victorsouzaleal/wa-sticker-formatter'
-import * as socket from '../lib-baileys/socket-funcoes.js'
-import {MessageTypes} from '../lib-baileys/mensagem.js'
+import * as socket from '../baileys/socket-funcoes.js'
+import {MessageTypes} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {stickerToPng} from '../lib/conversao.js'

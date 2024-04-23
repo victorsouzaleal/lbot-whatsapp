@@ -1,5 +1,5 @@
 import { AsyncNedb } from 'nedb-async'
-import {MessageTypes} from '../lib-baileys/mensagem.js'
+import {MessageTypes} from '../baileys/mensagem.js'
 import path from 'node:path'
 import fs from 'fs-extra'
 import moment from "moment-timezone"

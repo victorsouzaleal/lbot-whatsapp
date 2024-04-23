@@ -6,10 +6,10 @@ import {desbloquearComandosGlobal, bloquearComandosGlobal} from "../lib/bloqueio
 import * as db from '../db-modulos/database.js'
 import fs from 'fs-extra'
 import path from 'node:path'
-import * as socket from '../lib-baileys/socket-funcoes.js'
-import * as socketdb from '../lib-baileys/socket-db-funcoes.js'
+import * as socket from '../baileys/socket-funcoes.js'
+import * as socketdb from '../baileys/socket-db-funcoes.js'
 import * as bot from '../db-modulos/bot.js'
-import { MessageTypes } from '../lib-baileys/mensagem.js'
+import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import os from 'node:os'
 

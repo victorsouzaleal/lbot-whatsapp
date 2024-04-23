@@ -2,8 +2,8 @@
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {bloquearComandosGrupo, desbloquearComandosGrupo} from '../lib/bloqueioComandos.js'
 import * as db from '../db-modulos/database.js'
-import * as socket from '../lib-baileys/socket-funcoes.js'
-import { MessageTypes } from '../lib-baileys/mensagem.js'
+import * as socket from '../baileys/socket-funcoes.js'
+import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 
 
