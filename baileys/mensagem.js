@@ -13,7 +13,7 @@ export const converterMensagem = async(m) =>{
         let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
         let sender =  m.key.participant || m.key.remoteJid
         let lista_comandos = listarComandos(),  msgs_texto = obterMensagensTexto(), botInfoJSON = botInfo()
-        let textoRecebido = m.message[type].caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
+        let textoRecebido = m.message[type]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
         let ownerNumber = botInfoJSON.numero_dono
         let isOwner = ownerNumber == sender
         let isGroupMsg = m.key.remoteJid.includes("@g.us")

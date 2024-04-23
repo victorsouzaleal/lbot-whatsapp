@@ -131,21 +131,28 @@ export const atualizacaoParticipantesGrupo = async (c, evento)=>{
     }
 }
 
-export const atualizacaoDadosGrupo = async (c, novosDadosGrupo)=>{
+export const atualizacaoDadosGrupos = async (c, novosDadosGrupo)=>{
     try{
-        if(novosDadosGrupo.length != 0 && novosDadosGrupo[0].participants != undefined ){
-            //Cadastro de grupos
-            console.log(corTexto(await inicioCadastrarGrupo(novosDadosGrupo)))
-            //Atualização dos participantes dos grupos
-            console.log(corTexto(await atualizarGrupos(novosDadosGrupo)))
-            //Verificar lista negra dos grupos
-            console.log(corTexto(await verificacaoListaNegraGeral(c, novosDadosGrupo)))
-            //Atualização da contagem de mensagens
-            console.log(corTexto(await recarregarContagem(novosDadosGrupo)))
-        } else if (novosDadosGrupo.length == 1 && novosDadosGrupo[0].participants == undefined){
-            await atualizarDadosGrupo(novosDadosGrupo[0])
-        }
+        //Cadastro de grupos
+        console.log(corTexto(await inicioCadastrarGrupo(novosDadosGrupo)))
+        //Atualização dos participantes dos grupos
+        console.log(corTexto(await atualizarGrupos(novosDadosGrupo)))
+        //Verificar lista negra dos grupos
+        console.log(corTexto(await verificacaoListaNegraGeral(c, novosDadosGrupo)))
+        //Atualização da contagem de mensagens
+        console.log(corTexto(await recarregarContagem(novosDadosGrupo)))
+        return true
     } catch(err){
         consoleErro(err, "GROUPS.UPDATE")
     }
 }
+
+export const atualizacaoDadosGrupo = async (novosDadosGrupo)=>{
+    try{
+        await atualizarDadosGrupo(novosDadosGrupo[0])
+    } catch(err){
+        consoleErro(err, "GROUPS.UPDATE")
+    }
+}
+
+
