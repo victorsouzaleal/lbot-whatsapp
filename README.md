@@ -25,12 +25,9 @@
 </h3>
 <br>
 
-## Última Atualização : 20/04/2024 - v2.3.1
-**[ALTERAÇÃO]** Os tipos de usuário para controle de comandos agora são divididos em **Comum**, **Premium** e **VIP**.<br>
-**[CÓDIGO]** Melhoria na mensagem de erro ao tentar adicionar um membro ao grupo com número inválido.<br>
-**[NOVO]** Novo comando utilidade **gpt** para fazer perguntas ao ChatGPT.<br>
-**[NOVO]** Novo comando utilidade **criarimg** para criar imagens a partir de texto usando a IA.<br>
-**[NOVO]** Novo comando figurinha **emojimix** para juntar 2 emojis e enviar em sticker.<br>
+## Última Atualização : 23/04/2024 - v2.3.2
+**[CORREÇÃO]** Comando **ig** corrigido e trocada a api de download.<br>
+**[CÓDIGO]** Melhorias gerais de código e melhor exibição de erro em comandos que usam api/bibliotecas<br>
 <br>
 
 
