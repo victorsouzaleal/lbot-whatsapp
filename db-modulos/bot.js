@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import moment from "moment-timezone"
 import {getHostNumber} from '../baileys/socket-funcoes.js'
-import * as db from '../db-modulos/database.js'
+import * as usuariosdb from '../db-modulos/usuarios.js'
 import {criarTexto} from '../lib/util.js'
 
 export const botObjeto = {
@@ -134,7 +134,7 @@ export const botQtdLimiteDiario = async (tipo, limite)=>{
     if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
     bot.limite_diario.limite_tipos[tipo] = parseInt(limite)
     await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
-    await db.definirLimite(tipo, parseInt(limite))
+    await usuariosdb.definirLimite(tipo, parseInt(limite))
     return true
 }
 
@@ -146,12 +146,12 @@ export const botAlterarLimiteDiario = async (status)=>{
     await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
     if(status){
         for(var tipo in bot.limite_diario.limite_tipos){
-            await db.definirLimite(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
+            await usuariosdb.definirLimite(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
         }
     } else {
-        await db.resetarComandosDia()
+        await usuariosdb.resetarComandosDia()
         for(var tipo in bot.limite_diario.limite_tipos){
-            await db.definirLimite(tipo, null)
+            await usuariosdb.definirLimite(tipo, null)
         }
     }
 }
@@ -160,7 +160,7 @@ export const botVerificarExpiracaoLimite = async ()=>{
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
     let timestamp_atual = Math.round(new Date().getTime()/1000)
     if(timestamp_atual >= bot.limite_diario.expiracao){
-        await db.resetarComandosDia()
+        await usuariosdb.resetarComandosDia()
         bot.limite_diario.expiracao = timestamp_atual + 86400
         await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
     } 

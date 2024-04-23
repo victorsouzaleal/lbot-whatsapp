@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {bloquearComandosGrupo, desbloquearComandosGrupo} from '../lib/bloqueioComandos.js'
-import * as db from '../db-modulos/database.js'
+import * as gruposdb from '../db-modulos/grupos.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
@@ -76,7 +76,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     //Anti-fake
                     resposta += (grupoInfo.antifake.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.antifake.on, grupoInfo.antifake.ddi_liberados.toString()) : msgs_texto.grupo.status.resposta_variavel.antifake.off
                     //Anti-flood
-                    let infoAntiFlood = db.grupoInfoAntiFlood(groupId)
+                    let infoAntiFlood = gruposdb.grupoInfoAntiFlood(groupId)
                     resposta += (grupoInfo.antiflood) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, infoAntiFlood.max, infoAntiFlood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
                     //Contador
                     resposta += (grupoInfo.contador.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, grupoInfo.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
@@ -102,10 +102,10 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     var estadoNovo = !grupoInfo.bemvindo.status
                     if (estadoNovo) {
                         var usuarioMensagem = args.slice(1).join(" ")
-                        await db.alterarBemVindo(groupId, true, usuarioMensagem)
+                        await gruposdb.alterarBemVindo(groupId, true, usuarioMensagem)
                         await socket.reply(c, chatId, msgs_texto.grupo.bemvindo.ligado, id)
                     } else {
-                        await db.alterarBemVindo(groupId, false)
+                        await gruposdb.alterarBemVindo(groupId, false)
                         await socket.reply(c, chatId, msgs_texto.grupo.bemvindo.desligado, id)
                     }
                 } catch(err){
@@ -131,9 +131,9 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     }
                     if(blista_numero == botNumber) return socket.reply(c, chatId, msgs_texto.grupo.blista.bot_erro , id)
                     else if(groupAdmins.includes(blista_numero)) return socket.reply(c, chatId, msgs_texto.grupo.blista.admin_erro , id)
-                    let blista_grupo_lista = await db.obterListaNegra(groupId)
+                    let blista_grupo_lista = await gruposdb.obterListaNegra(groupId)
                     if(blista_grupo_lista.includes(blista_numero)) return socket.reply(c, chatId, msgs_texto.grupo.blista.ja_listado, id)
-                    await db.adicionarListaNegra(groupId, blista_numero)
+                    await gruposdb.adicionarListaNegra(groupId, blista_numero)
                     await socket.reply(c, chatId, msgs_texto.grupo.blista.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -149,9 +149,9 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
                     let dlista_numero = textoRecebido.slice(8).trim().replace(/\W+/g,"")
                     if(dlista_numero.length == 0) return socket.reply(c, chatId, msgs_texto.grupo.dlista.numero_vazio, id)
-                    let dlista_grupo_lista = await db.obterListaNegra(groupId), dlista_id_usuario = dlista_numero+"@s.whatsapp.net"
+                    let dlista_grupo_lista = await gruposdb.obterListaNegra(groupId), dlista_id_usuario = dlista_numero+"@s.whatsapp.net"
                     if(!dlista_grupo_lista.includes(dlista_id_usuario)) return socket.reply(c, chatId, msgs_texto.grupo.dlista.nao_listado, id)
-                    await db.removerListaNegra(groupId, dlista_id_usuario)
+                    await gruposdb.removerListaNegra(groupId, dlista_id_usuario)
                     await socket.reply(c, chatId, msgs_texto.grupo.dlista.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -164,7 +164,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
-                    let lista_negra_grupo = await db.obterListaNegra(groupId), resposta_listanegra = msgs_texto.grupo.listanegra.resposta_titulo
+                    let lista_negra_grupo = await gruposdb.obterListaNegra(groupId), resposta_listanegra = msgs_texto.grupo.listanegra.resposta_titulo
                     if(lista_negra_grupo.length == 0) return socket.reply(c, chatId, msgs_texto.grupo.listanegra.lista_vazia, id)
                     for(let usuario_lista of lista_negra_grupo){
                         resposta_listanegra += criarTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace(/@s.whatsapp.net/g, ''))
@@ -184,10 +184,10 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
                     var estadoNovo = !grupoInfo.antilink
                     if (estadoNovo) {
-                        await db.alterarAntiLink(groupId, true)
+                        await gruposdb.alterarAntiLink(groupId, true)
                         await socket.reply(c, chatId, msgs_texto.grupo.antilink.ligado, id)
                     } else {
-                        await db.alterarAntiLink(groupId, false)
+                        await gruposdb.alterarAntiLink(groupId, false)
                         await socket.reply(c, chatId, msgs_texto.grupo.antilink.desligado, id)
                     }
                 } catch(err){
@@ -202,10 +202,10 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var estadoNovo = !grupoInfo.autosticker
                     if (estadoNovo) {
-                        await db.alterarAutoSticker(groupId, true)
+                        await gruposdb.alterarAutoSticker(groupId, true)
                         await socket.reply(c, chatId, msgs_texto.grupo.autosticker.ligado, id)
                     } else {
-                        await db.alterarAutoSticker(groupId, false)
+                        await gruposdb.alterarAutoSticker(groupId, false)
                         await socket.reply(c, chatId, msgs_texto.grupo.autosticker.desligado, id)
                     }
                 } catch(err){
@@ -238,10 +238,10 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     var estadoNovo = !grupoInfo.antifake.status
                     if (estadoNovo) {
                         var DDIAutorizados = (textoRecebido.slice(7).length == 0) ? ["55"] : textoRecebido.slice(7).split(" ")
-                        await db.alterarAntiFake(groupId, true, DDIAutorizados)
+                        await gruposdb.alterarAntiFake(groupId, true, DDIAutorizados)
                         await socket.reply(c, chatId,  msgs_texto.grupo.antifake.ligado, id)
                     } else {
-                        await db.alterarAntiFake(groupId, false)
+                        await gruposdb.alterarAntiFake(groupId, false)
                         await socket.reply(c, chatId,  msgs_texto.grupo.antifake.desligado, id)
                     } 
                 } catch(err){
@@ -256,10 +256,10 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     var estadoNovo = !grupoInfo.mutar
                     if (estadoNovo) {
-                        await db.alterarMutar(groupId)
+                        await gruposdb.alterarMutar(groupId)
                         await socket.reply(c, chatId,  msgs_texto.grupo.mutar.ligado, id)
                     } else {
-                        await db.alterarMutar(groupId,false)
+                        await gruposdb.alterarMutar(groupId,false)
                         await socket.reply(c, chatId, msgs_texto.grupo.mutar.desligado, id)
                     }
                 } catch(err){
@@ -275,12 +275,12 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     var estadoNovo = !grupoInfo.contador.status
                     var membrosAtuais = grupoInfo.participantes
                     if (estadoNovo) {
-                        await db.alterarContador(groupId)
-                        await db.registrarContagemTodos(groupId, membrosAtuais)
+                        await gruposdb.alterarContador(groupId)
+                        await gruposdb.registrarContagemTodos(groupId, membrosAtuais)
                         await socket.reply(c, chatId, msgs_texto.grupo.contador.ligado, id)
                     } else {
-                        await db.alterarContador(groupId, false)
-                        await db.removerContagemGrupo(groupId)
+                        await gruposdb.alterarContador(groupId, false)
+                        await gruposdb.removerContagemGrupo(groupId)
                         await socket.reply(c, chatId, msgs_texto.grupo.contador.desligado, id)
                     } 
                 } catch(err){
@@ -297,11 +297,11 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     var atividadeUsuario
                     if(quotedMsg){
                         if(quotedMsgObjInfo.sender == botNumber) return socket.reply(c, chatId, msgs_texto.grupo.atividade.bot_erro, id)
-                        atividadeUsuario = await db.obterAtividade(groupId, quotedMsgObjInfo.sender)
+                        atividadeUsuario = await gruposdb.obterAtividade(groupId, quotedMsgObjInfo.sender)
                         if(atividadeUsuario == null) return socket.reply(c, chatId, msgs_texto.grupo.atividade.fora_grupo, id)
                     } else if (mentionedJidList.length === 1){
                         if(mentionedJidList[0] == botNumber) return socket.reply(c, chatId, msgs_texto.grupo.atividade.bot_erro, id)
-                        atividadeUsuario = await db.obterAtividade(groupId, mentionedJidList[0])
+                        atividadeUsuario = await gruposdb.obterAtividade(groupId, mentionedJidList[0])
                         if(atividadeUsuario == null) return socket.reply(c, chatId, msgs_texto.grupo.atividade.fora_grupo, id)
                     } else {
                         return socket.reply(chatId, erroComandoMsg(command),id)
@@ -324,9 +324,9 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.erro_contador, id)
                     if(!quotedMsg && mentionedJidList.length != 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     var usuarioSelecionado = quotedMsg ? quotedMsgObjInfo.sender : mentionedJidList[0]
-                    var contagemUsuario = await db.obterAtividade(groupId, usuarioSelecionado)
+                    var contagemUsuario = await gruposdb.obterAtividade(groupId, usuarioSelecionado)
                     if(!contagemUsuario) return await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.fora_grupo, id) 
-                    await db.alterarContagemUsuario(groupId, usuarioSelecionado, usuarioNumeroMsg)
+                    await gruposdb.alterarContagemUsuario(groupId, usuarioSelecionado, usuarioNumeroMsg)
                     await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -343,7 +343,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(isNaN(qtdMensagem)) return await socket.reply(c, chatId, msgs_texto.grupo.minativos.erro_qtd , id)
                     if(qtdMensagem < 1 || qtdMensagem > 50) return await socket.reply(c, chatId, msgs_texto.grupo.minativos.limite_qtd, id)
                     if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.minativos.erro_contador, id)
-                    var usuariosInativos = await db.obterUsuariosInativos(groupId, qtdMensagem)
+                    var usuariosInativos = await gruposdb.obterUsuariosInativos(groupId, qtdMensagem)
                     var qtdInativos = usuariosInativos.length - 1
                     if(qtdInativos > 0){
                         var mencionarUsuarios
@@ -375,7 +375,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(isNaN(qtdMensagem)) return await socket.reply(c, chatId, msgs_texto.grupo.binativos.erro_qtd , id)
                     if(qtdMensagem < 1 || qtdMensagem > 50) return await socket.reply(c, chatId, msgs_texto.grupo.binativos.limite_qtd, id)
                     if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.binativos.erro_contador , id)
-                    var usuariosInativos = await db.obterUsuariosInativos(groupId, qtdMensagem)
+                    var usuariosInativos = await gruposdb.obterUsuariosInativos(groupId, qtdMensagem)
                     if(usuariosInativos.length != 0){
                         for(let usuario of usuariosInativos){
                             if(usuario.id_usuario != botNumber) await socket.removeParticipant(c, chatId, usuario.id_usuario)
@@ -399,7 +399,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(isNaN(qtdUsuarios)) return await socket.reply(c, chatId, msgs_texto.grupo.topativos.erro_qtd , id)
                     if(qtdUsuarios < 1 || qtdUsuarios > 50) return await socket.reply(c, chatId, msgs_texto.grupo.topativos.limite_qtd , id)
                     if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.topativos.erro_contador , id)
-                    var usuariosAtivos = await db.obterUsuariosAtivos(groupId, qtdUsuarios)
+                    var usuariosAtivos = await gruposdb.obterUsuariosAtivos(groupId, qtdUsuarios)
                     var usuariosMencionados = []
                     var respostaTop = criarTexto(msgs_texto.grupo.topativos.resposta_titulo, qtdUsuarios)
                     for (let i = 0 ; i < usuariosAtivos.length ; i++){
@@ -466,10 +466,10 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                         }
                     }
                     if(estadoNovo) {
-                        await db.alterarAntiFlood(groupId, true, maxMensagem, intervalo)
+                        await gruposdb.alterarAntiFlood(groupId, true, maxMensagem, intervalo)
                         await socket.reply(c, chatId, criarTexto(msgs_texto.grupo.antiflood.ligado, maxMensagem, intervalo), id)
                     } else {
-                        await db.alterarAntiFlood(groupId, false)
+                        await gruposdb.alterarAntiFlood(groupId, false)
                         await socket.reply(c, chatId,  msgs_texto.grupo.antiflood.desligado, id)
                     }
                 } catch(err){

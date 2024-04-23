@@ -1,5 +1,5 @@
 
-import * as db from '../db-modulos/database.js'
+import * as gruposdb from '../db-modulos/grupos.js'
 import fs from 'fs-extra'
 import path from 'node:path'
 
@@ -12,31 +12,31 @@ export const getHostNumberFromBotJSON = async()=>{
 
 // GROUP INFOS
 export const getGroupInfoFromDb = async(groupId)=>{ 
-    return await db.obterGrupo(groupId)
+    return await gruposdb.obterGrupo(groupId)
 }
 
 export const getAllGroupsFromDb = async()=>{
-    let groups = await db.obterTodosGrupos()
+    let groups = await gruposdb.obterTodosGrupos()
     return groups
 }
 
 export const getGroupAdminsFromDb = async(groupId)=>{ 
-    let groupAdmins = await db.obterAdminsGrupo(groupId)
+    let groupAdmins = await gruposdb.obterAdminsGrupo(groupId)
     return groupAdmins
 }
 
 export const getGroupOwnerFromDb = async(groupId)=>{ 
-    let ownerGroup = await db.obterDonoGrupo(groupId)
+    let ownerGroup = await gruposdb.obterDonoGrupo(groupId)
     return ownerGroup
 }
 
 export const getGroupAnnounceFromDb = async(groupId)=>{ 
-    let announceGroup = await db.obterStatusRestritoMsg(groupId)
+    let announceGroup = await gruposdb.obterStatusRestritoMsg(groupId)
     return announceGroup
 }
 
 export const getGroupMembersIdFromDb = async(groupId)=>{ 
-    let groupMembers = await db.obterParticipantesGrupo(groupId)
+    let groupMembers = await gruposdb.obterParticipantesGrupo(groupId)
     return groupMembers
 }
 

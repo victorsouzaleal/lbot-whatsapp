@@ -15,7 +15,7 @@ import {chamadaComando} from '../lib/chamadaComando.js'
 import {inicioCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} from '../lib/cadastrarGrupo.js'
 import {verificacaoListaNegraGeral, verificarUsuarioListaNegra} from '../lib/listaNegra.js'
 import {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizarDadosGrupo} from '../lib/atualizacaoGrupos.js'
-import * as db from '../db-modulos/database.js'
+import * as gruposdb from '../db-modulos/grupos.js'
 import {recarregarContagem} from '../lib/recarregarContagem.js'
 
 export const atualizarConexao = async (c, conexao)=>{
@@ -110,15 +110,15 @@ export const atualizacaoParticipantesGrupo = async (c, evento)=>{
             //BEM-VINDO
             await bemVindo(c,evento,g_info)
             //CONTADOR
-            if(g_info.contador) await db.registrarContagem(evento.id, evento.participants[0])
+            if(g_info.contador) await gruposdb.registrarContagem(evento.id, evento.participants[0])
             await adicionarParticipante(evento.id, evento.participants[0])
         } else if(evento.action == "remove"){
             if(isBotUpdate){
-                if(g_info?.contador) await db.removerContagemGrupo(evento.id)
+                if(g_info?.contador) await gruposdb.removerContagemGrupo(evento.id)
                 await removerGrupo(evento.id)
             } else{
                 await removerParticipante(evento.id, evento.participants[0])
-                if(g_info?.contador) await db.removerContagem(evento.id, evento.participants[0])
+                if(g_info?.contador) await gruposdb.removerContagem(evento.id, evento.participants[0])
             }
         } else if(evento.action == "promote"){
             await adicionarAdmin(evento.id, evento.participants[0])

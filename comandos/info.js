@@ -3,10 +3,12 @@ import fs from 'fs-extra'
 import * as menu from '../lib/menu.js'
 import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import path from 'node:path'
-import * as db from '../db-modulos/database.js'
+import * as gruposdb from '../db-modulos/grupos.js'
+import * as usuariosdb from '../db-modulos/usuarios.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import * as socketdb from '../baileys/socket-db-funcoes.js'
 import {MessageTypes} from '../baileys/mensagem.js'
+import { grupo } from './grupo.js'
 
 
 
@@ -56,14 +58,14 @@ export const info = async(c, mensagemInfoCompleta) => {
             
             case `meusdados`:
                 try{
-                    var dadosUsuario = await db.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
+                    var dadosUsuario = await usuariosdb.obterUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
                     var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
                         var dadosGrupo = await socketdb.getGroupInfoFromDb(groupId)
                         if(dadosGrupo.contador.status){
-                            var usuarioAtividade = await db.obterAtividade(groupId,sender)
+                            var usuarioAtividade = await gruposdb.obterAtividade(groupId,sender)
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                         }   
                     }
@@ -77,7 +79,7 @@ export const info = async(c, mensagemInfoCompleta) => {
             
             case `menu`:
                 try{
-                    var dadosUsuario = await db.obterUsuario(sender)
+                    var dadosUsuario = await usuariosdb.obterUsuario(sender)
                     var tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
                     var dadosResposta = '', nomeUsuario = username
