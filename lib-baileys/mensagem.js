@@ -17,12 +17,12 @@ export const converterMensagem = async(m) =>{
         let ownerNumber = botInfoJSON.numero_dono
         let isOwner = ownerNumber == sender
         let isGroupMsg = m.key.remoteJid.includes("@g.us")
-        let groupId = m.key.remoteJid.includes("@g.us") ? m.key.remoteJid : null
+        let groupId = isGroupMsg ? m.key.remoteJid : null
         let grupoInfo = isGroupMsg ? await socketdb.getGroupInfoFromDb(groupId) : null
-        let groupAdmins = isGroupMsg ? grupoInfo.admins : null
-        let isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender) : null
+        let groupAdmins = (isGroupMsg && grupoInfo) ? grupoInfo.admins : null
+        let isGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(sender) : null
         let botNumber = await socketdb.getHostNumberFromBotJSON()
-        let isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber) : null
+        let isBotGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(botNumber) : null
 
         respostaInformacoes = {
             mensagem:{

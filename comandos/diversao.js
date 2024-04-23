@@ -35,9 +35,12 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
                     let perguntaSimi = textoRecebido.slice(6).trim()
-                    let respostaSimi = await api.simiResponde(perguntaSimi)
-                    if(!respostaSimi.sucesso) return await socket.reply(c, chatId, msgs_texto.diversao.simi.erro, id)
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), respostaSimi.resposta), id)
+                    await api.simiResponde(perguntaSimi).then(async ({resultado})=>{
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultado), id)
+                    }).catch(async(err)=>{
+                        if(!err.erro) throw err
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                    })
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -282,8 +285,12 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
             case "fch":
                 try{
-                    var respostaFrase = await api.obterCartasContraHu()
-                    await socket.reply(c, chatId, respostaFrase, id)
+                    await api.obterCartasContraHu().then(async({resultado})=>{
+                        await socket.reply(c, chatId, resultado, id)
+                    }).catch(async err=>{
+                        if(!err.erro) throw err
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                    })
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
