@@ -32,7 +32,7 @@ async function connectToWhatsApp(){
 
     //Ao haver mudanças nos participantes de um grupo
     c.ev.on('group-participants.update', async (event)=>{
-        await atualizacaoParticipantesGrupos(c, event)
+        await atualizacaoParticipantesGrupo(c, event)
     })
 
     //Ao ser adicionado em novos grupos
