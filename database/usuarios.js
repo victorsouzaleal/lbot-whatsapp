@@ -3,7 +3,7 @@ import {MessageTypes} from '../baileys/mensagem.js'
 import path from 'node:path'
 import fs from 'fs-extra'
 import moment from "moment-timezone"
-var db = {usuarios: new AsyncNedb({filename : './database/usuarios.db', autoload: true})}
+var db = {usuarios: new AsyncNedb({filename : './database/db/usuarios.db', autoload: true})}
 
 // ######################## FUNCOES USUARIO #####################
 export const obterUsuario = async (id_usuario) =>{
@@ -31,12 +31,17 @@ export const atualizarNome = async(id_usuario,nome) =>{
 }
 
 export const registrarUsuario = async(id_usuario, nome) =>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
+    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
     var cadastro_usuario = {
         id_usuario,
         nome,
         comandos_total: 0,
         comandos_dia: 0,
+        moedas: 1000,
+        salario:{
+            valor: 1000,
+            proximo: Date.now() + 86400 * 1000
+        },
         max_comandos_dia : limite_diario.limite_tipos.comum,
         tipo: "comum"
     }
@@ -49,14 +54,32 @@ export const registrarDono = async(id_usuario, nome)=>{
         nome,
         comandos_total: 0,
         comandos_dia: 0,
+        moedas: 10000,
+        salario:{
+            valor: 1000,
+            proximo: Date.now() + 86400 * 1000
+        },
         max_comandos_dia : null,
         tipo: "dono"
     }
     await db.usuarios.asyncInsert(cadastro_usuario_dono)
 }
 
+export const adicionarMoedasUsuario = async(id_usuario, moedas)=>{
+    await db.usuarios.asyncUpdate({id_usuario}, {$inc: {moedas}})
+}
+
+export const removerMoedasUsuario = async(id_usuario, moedas)=>{
+    await db.usuarios.asyncUpdate({id_usuario}, {$inc: {moedas: -moedas}})
+}
+
+export const alterarProximoSalario = async(id_usuario, tAtual)=>{
+    let tProximo = tAtual + 86400 * 1000
+    await db.usuarios.asyncUpdate({id_usuario}, {$set: {'salario.proximo': tProximo}})
+}
+
 export const verificarDonoAtual = async(id_usuario)=>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
+    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
     var usuario = await db.usuarios.asyncFindOne({id_usuario, tipo: "dono"})
     if(!usuario){
         await db.usuarios.asyncUpdate({tipo: "dono"}, {$set:{tipo: "comum",  max_comandos_dia : limite_diario.limite_tipos.comum}}, {multi: true})
@@ -65,7 +88,7 @@ export const verificarDonoAtual = async(id_usuario)=>{
 }
 
 export const alterarTipoUsuario = async(id_usuario, tipo)=>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
+    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
     if(limite_diario.limite_tipos[tipo] || limite_diario.limite_tipos[tipo] == null){
         await db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: limite_diario.limite_tipos[tipo]}})
         return true
@@ -75,7 +98,7 @@ export const alterarTipoUsuario = async(id_usuario, tipo)=>{
 }
 
 export const limparTipo = async(tipo)=>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
+    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
     if(limite_diario.limite_tipos[tipo] === undefined || tipo === "comum") return false
     await db.usuarios.asyncUpdate({tipo}, {$set: {tipo: "comum", max_comandos_dia: limite_diario.limite_tipos.comum}}, {multi: true})
     return true

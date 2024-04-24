@@ -6,7 +6,7 @@ import { obterMensagensTexto } from '../lib/msgs.js'
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
 import * as socketdb from './socket-db-funcoes.js'
-import {botStart} from '../db-modulos/bot.js'
+import {botStart} from '../database/bot.js'
 import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
 import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {antiFake} from '../lib/antiFake.js'; import {bemVindo} from '../lib/bemVindo.js'; import {antiLink} from '../lib/antiLink.js'; import {antiFlood} from '../lib/antiFlood.js'
@@ -15,7 +15,7 @@ import {chamadaComando} from '../lib/chamadaComando.js'
 import {inicioCadastrarGrupo, adicionadoCadastrarGrupo, removerGrupo} from '../lib/cadastrarGrupo.js'
 import {verificacaoListaNegraGeral, verificarUsuarioListaNegra} from '../lib/listaNegra.js'
 import {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizarDadosGrupo} from '../lib/atualizacaoGrupos.js'
-import * as gruposdb from '../db-modulos/grupos.js'
+import * as gruposdb from '../database/grupos.js'
 import {recarregarContagem} from '../lib/recarregarContagem.js'
 
 export const atualizarConexao = async (c, conexao)=>{

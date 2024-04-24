@@ -1,12 +1,12 @@
 
-import * as gruposdb from '../db-modulos/grupos.js'
+import * as gruposdb from '../database/grupos.js'
 import fs from 'fs-extra'
 import path from 'node:path'
 
 
 // BOT INFOS
 export const getHostNumberFromBotJSON = async()=>{ 
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     return bot.hostNumber
 }
 

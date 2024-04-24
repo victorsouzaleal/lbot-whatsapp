@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {bloquearComandosGrupo, desbloquearComandosGrupo} from '../lib/bloqueioComandos.js'
-import * as gruposdb from '../db-modulos/grupos.js'
+import * as gruposdb from '../database/grupos.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'

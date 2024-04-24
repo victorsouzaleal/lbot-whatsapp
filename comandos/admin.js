@@ -3,13 +3,13 @@ import * as menu from '../lib/menu.js'
 import moment from "moment-timezone"
 import {criarTexto,erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import {desbloquearComandosGlobal, bloquearComandosGlobal} from "../lib/bloqueioComandos.js"
-import * as gruposdb from '../db-modulos/grupos.js'
-import * as usuariosdb from '../db-modulos/usuarios.js'
+import * as gruposdb from '../database/grupos.js'
+import * as usuariosdb from '../database/usuarios.js'
 import fs from 'fs-extra'
 import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
 import * as socketdb from '../baileys/socket-db-funcoes.js'
-import * as bot from '../db-modulos/bot.js'
+import * as bot from '../database/bot.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import os from 'node:os'
@@ -42,7 +42,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var fotoBot = await socket.getProfilePicFromServer(c, botNumber)
                     var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
-                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
+                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
                     var expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
                     var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, version)

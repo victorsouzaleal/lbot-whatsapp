@@ -3,8 +3,8 @@ import fs from 'fs-extra'
 import * as menu from '../lib/menu.js'
 import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import path from 'node:path'
-import * as gruposdb from '../db-modulos/grupos.js'
-import * as usuariosdb from '../db-modulos/usuarios.js'
+import * as gruposdb from '../database/grupos.js'
+import * as usuariosdb from '../database/usuarios.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import * as socketdb from '../baileys/socket-db-funcoes.js'
 import {MessageTypes} from '../baileys/mensagem.js'
@@ -26,7 +26,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                 try{
                     var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
-                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/bot.json")))
+                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
                     var resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
                     if(botFotoURL != undefined){

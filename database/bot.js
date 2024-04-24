@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import moment from "moment-timezone"
 import {getHostNumber} from '../baileys/socket-funcoes.js'
-import * as usuariosdb from '../db-modulos/usuarios.js'
+import * as usuariosdb from '../database/usuarios.js'
 import {criarTexto} from '../lib/util.js'
 
 export const botObjeto = {
@@ -43,21 +43,21 @@ export const botObjeto = {
 
 export const botCriarArquivo = async ()=>{
     const bot = botObjeto
-    await fs.writeFile(path.resolve("database/bot.json"), JSON.stringify(bot))
+    await fs.writeFile(path.resolve("database/db/bot.json"), JSON.stringify(bot))
 }
 
 export const botInfoUpdate = ()=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.cmds_executados = bot.cmds_executados + 1
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 export const botInfo = ()=>{
     let bot
-    if(!fs.existsSync(path.resolve('database/bot.json'))){
+    if(!fs.existsSync(path.resolve('database/db/bot.json'))){
         bot = botObjeto
     } else {
-        bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+        bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     }
     return bot
 }
@@ -65,10 +65,10 @@ export const botInfo = ()=>{
 export const botStart = async (c)=>{
     try{
         let msgs_texto = obterMensagensTexto()
-        let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+        let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
         bot.iniciado = moment.now()
         bot.hostNumber = await getHostNumber(c)
-        fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+        fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
         return msgs_texto.inicio.dados_bot
     }catch(err){
         err.message = `botStart - ${err.message}`
@@ -78,72 +78,72 @@ export const botStart = async (c)=>{
 
 // Alterar numero do dono
 export const botAlterarNumeroDono = async(numeroDono)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.numero_dono = numeroDono
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 
 // Alterar nome do bot
 export const botAlterarNomeBot = async(nomeBot)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.nome_bot = nomeBot
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 
 // Alterar nome do administrador
 export const botAlterarNomeAdm = async(nomeAdm)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.nome_adm = nomeAdm
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 // Alterar nome do pack de figurinhas
 export const botAlterarNomeFigurinhas = async(nomeAutor)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.nome_pack = nomeAutor
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 // Alterar prefixo dos comandos
 export const botAlterarPrefixo = async(prefixo)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.prefixo = prefixo
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 // * PV Liberado
 export const botAlterarPvLiberado = async (status= true)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.pvliberado = status
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 // * AUTO-STICKER PRIVADO
 export const botAlterarAutoSticker = async (status= true)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.autosticker = status
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 // * LIMITE DIARIO DE COMANDOS
 export const botQtdLimiteDiario = async (tipo, limite)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     if(limite == -1) limite = null
     if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
     bot.limite_diario.limite_tipos[tipo] = parseInt(limite)
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
     await usuariosdb.definirLimite(tipo, parseInt(limite))
     return true
 }
 
 export const botAlterarLimiteDiario = async (status)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     let timestamp_atual = Math.round(new Date().getTime()/1000)
     bot.limite_diario.expiracao = (status) ? timestamp_atual+86400 : 0
     bot.limite_diario.status = status
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
     if(status){
         for(var tipo in bot.limite_diario.limite_tipos){
             await usuariosdb.definirLimite(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
@@ -157,30 +157,30 @@ export const botAlterarLimiteDiario = async (status)=>{
 }
 
 export const botVerificarExpiracaoLimite = async ()=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     let timestamp_atual = Math.round(new Date().getTime()/1000)
     if(timestamp_atual >= bot.limite_diario.expiracao){
         await usuariosdb.resetarComandosDia()
         bot.limite_diario.expiracao = timestamp_atual + 86400
-        await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+        await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
     } 
 }
 //
 
 // * LIMITE DE COMANDOS POR MINUTO
 export const botAlterarLimitador = async (status= true, cmds_minuto = 5, tempo_bloqueio= 60)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.limitecomandos.status = status
     bot.limitecomandos.cmds_minuto_max = cmds_minuto
     bot.limitecomandos.tempo_bloqueio = tempo_bloqueio
     bot.limitecomandos.usuarios = []
     bot.limitecomandos.usuarios_limitados = []
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 export const botLimitarComando = async (usuario_id, tipo_usuario, isAdmin)=>{
     let msgs_texto = obterMensagensTexto()
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json'))),timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json'))),timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
     //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
     for (let i = 0; i < bot.limitecomandos.usuarios_limitados.length; i++){
         if(bot.limitecomandos.usuarios_limitados[i].horario_liberacao <= timestamp_atual) bot.limitecomandos.usuarios_limitados.splice(i,1)
@@ -221,23 +221,23 @@ export const botLimitarComando = async (usuario_id, tipo_usuario, isAdmin)=>{
         }
     }
 
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot)) //ATUALIZA OS DADOS NO ARQUIVO E RETORNO
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot)) //ATUALIZA OS DADOS NO ARQUIVO E RETORNO
     return resposta
 }
 //
 
 // * LIMITE DE MENSAGENS NO PRIVADO
 export const botAlterarLimitarMensagensPv = async (status, max = 10, intervalo= 10)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.limitarmensagens.status = status
     bot.limitarmensagens.max = max
     bot.limitarmensagens.intervalo = intervalo
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 export const botLimitarMensagensPv = async (usuario_msg,usuario_tipo)=>{
     let msgs_texto = obterMensagensTexto()
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json'))), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json'))), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
     //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
     for(let i = 0; i < bot.limitarmensagens.msgs.length; i++){
         if(timestamp_atual >= bot.limitarmensagens.msgs[i].expiracao) bot.limitarmensagens.msgs.splice(i,1)
@@ -273,27 +273,27 @@ export const botLimitarMensagensPv = async (usuario_msg,usuario_tipo)=>{
         }
     }
     //ATUALIZAÇÃO DOS DADOS E RETORNO
-    await fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
     return resposta
 }
 //
 
 //BLOQUEIO DE COMANDOS
 export const botBloquearComando = async (cmds) =>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     for(let cmd of cmds){
         bot.bloqueio_cmds.push(cmd)
     }
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }
 
 export const botDesbloquearComando = async (cmds) =>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/bot.json')))
+    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     for(let cmd of cmds){
         let index = bot.bloqueio_cmds.findIndex(cmd_block=> cmd_block == cmd)
         if(index != -1){
             bot.bloqueio_cmds.splice(index,1)
         }
     }
-    fs.writeFileSync(path.resolve('database/bot.json'), JSON.stringify(bot))
+    fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
 }

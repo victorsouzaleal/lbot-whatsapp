@@ -1,5 +1,5 @@
 
-import {botInfo} from '../db-modulos/bot.js'
+import {botInfo} from '../database/bot.js'
 
 export const listarComandos = () => {
     let {prefixo} = botInfo()

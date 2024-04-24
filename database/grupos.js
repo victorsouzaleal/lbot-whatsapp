@@ -3,7 +3,7 @@ import {MessageTypes} from '../baileys/mensagem.js'
 import path from 'node:path'
 import fs from 'fs-extra'
 import moment from "moment-timezone"
-var db = {grupos: new AsyncNedb({filename : './database/grupos.db', autoload: true}), contador : new AsyncNedb({filename : './database/contador.db', autoload: true})}
+var db = {grupos: new AsyncNedb({filename : './database/db/grupos.db', autoload: true}), contador : new AsyncNedb({filename : './database/db/contador.db', autoload: true})}
 
 
 //##################### FUNCOES GRUPO #########################
@@ -160,7 +160,7 @@ export const alterarContador = async(id_grupo, status = true)=>{
 
 export const alterarAntiFlood = async(id_grupo, status = true, max = 10, intervalo=10)=>{
     db.grupos.asyncUpdate({id_grupo}, {$set:{antiflood:status}})
-    let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/antiflood.json')))
+    let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/db/antiflood.json')))
     if(status){
         antifloodJson.push({
             id_grupo: id_grupo,
@@ -171,7 +171,7 @@ export const alterarAntiFlood = async(id_grupo, status = true, max = 10, interva
     } else {
         antifloodJson.splice(antifloodJson.findIndex(item => item.id_grupo == id_grupo), 1)
     }
-    fs.writeFileSync(path.resolve('database/antiflood.json'), JSON.stringify(antifloodJson))
+    fs.writeFileSync(path.resolve('database/db/antiflood.json'), JSON.stringify(antifloodJson))
 }
 
 //### LISTA NEGRA
@@ -191,13 +191,13 @@ export const removerListaNegra = async(id_grupo, id_usuario)=>{
 
 //### ANTIFLOOD GRUPO
 export const grupoInfoAntiFlood = (id_grupo)=>{
-    let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/antiflood.json'))), grupoIndex = antifloodJson.findIndex(item => item.id_grupo == id_grupo)
+    let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/db/antiflood.json'))), grupoIndex = antifloodJson.findIndex(item => item.id_grupo == id_grupo)
     return antifloodJson[grupoIndex]
 }
 
 export const addMsgFlood = async(id_grupo, usuario_msg)=>{
     try{
-        let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/antiflood.json'))), grupoIndex = antifloodJson.findIndex(item => item.id_grupo == id_grupo)
+        let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/db/antiflood.json'))), grupoIndex = antifloodJson.findIndex(item => item.id_grupo == id_grupo)
         let grupo_info = antifloodJson[grupoIndex], timestamp_atual = Math.round(new Date().getTime()/1000),  resposta = false
         //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
         for(let i = 0; i < grupo_info.msgs.length; i++){
@@ -229,7 +229,7 @@ export const addMsgFlood = async(id_grupo, usuario_msg)=>{
 
         //ATUALIZAÇÃO DO JSON E RETORNO
         antifloodJson[grupoIndex] = grupo_info
-        await fs.writeFileSync(path.resolve('database/antiflood.json'), JSON.stringify(antifloodJson))
+        await fs.writeFileSync(path.resolve('database/db/antiflood.json'), JSON.stringify(antifloodJson))
         return resposta
     } catch(err){
         throw new Error(err)
