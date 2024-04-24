@@ -6,10 +6,8 @@ import path from 'node:path'
 import * as gruposdb from '../database/grupos.js'
 import * as usuariosdb from '../database/usuarios.js'
 import * as socket from '../baileys/socket-funcoes.js'
-import * as socketdb from '../baileys/socket-db-funcoes.js'
+import * as grupos from '../controle/gruposControle.js'
 import {MessageTypes} from '../baileys/mensagem.js'
-import { grupo } from './grupo.js'
-
 
 
 export const info = async(c, mensagemInfoCompleta) => {
@@ -26,7 +24,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                 try{
                     var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
-                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
+                    var infoBot = botInfoJSON
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
                     var resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
                     if(botFotoURL != undefined){
@@ -44,7 +42,7 @@ export const info = async(c, mensagemInfoCompleta) => {
             
             case `reportar`:
                 try{
-                    if(args.length == 1) return socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                    if(args.length == 1) return socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                     if(ownerNumber == '') return socket.reply(c, chatId, msgs_texto.info.reportar.erro, id)
                     var usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
                     await socket.sendText(c,ownerNumber, resposta)
@@ -64,7 +62,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                     var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
-                        var dadosGrupo = await socketdb.getGroupInfoFromDb(groupId)
+                        var dadosGrupo = await grupos.obterGrupoInfo(groupId)
                         if(dadosGrupo.contador.status){
                             var usuarioAtividade = await gruposdb.obterAtividade(groupId,sender)
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
@@ -92,33 +90,33 @@ export const info = async(c, mensagemInfoCompleta) => {
                     dadosResposta += `═════════════════\n`
 
                     if(args.length == 1){
-                        var menuResposta = menu.menuPrincipal()
+                        var menuResposta = await menu.menuPrincipal()
                         await socket.sendText(c, chatId, dadosResposta+menuResposta)
                     } else {
                         var usuarioOpcao = args[1]
-                        var menuResposta = menu.menuPrincipal()
+                        var menuResposta = await menu.menuPrincipal()
                         switch(usuarioOpcao){
                             case "0":
-                                menuResposta = menu.menuInfoSuporte()
+                                menuResposta = await menu.menuInfoSuporte()
                                 break
                             case "1":
-                                menuResposta = menu.menuFigurinhas()
+                                menuResposta = await menu.menuFigurinhas()
                                 break
                             case "2":
-                                menuResposta = menu.menuUtilidades()
+                                menuResposta = await menu.menuUtilidades()
                                 break
                             case "3":
-                                menuResposta = menu.menuDownload()
+                                menuResposta = await menu.menuDownload()
                                 break
                             case "4":
-                                if(isGroupMsg) menuResposta = menu.menuGrupo(isGroupAdmins)
+                                if(isGroupMsg) menuResposta = await menu.menuGrupo(isGroupAdmins)
                                 else return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
                                 break
                             case "5":
-                                menuResposta = menu.menuDiversao(isGroupMsg)
+                                menuResposta = await menu.menuDiversao(isGroupMsg)
                                 break
                             case "6":
-                                menuResposta = menu.menuCreditos()
+                                menuResposta = await menu.menuCreditos()
                                 break
                         }
                         await socket.sendText(c, chatId, dadosResposta+menuResposta)

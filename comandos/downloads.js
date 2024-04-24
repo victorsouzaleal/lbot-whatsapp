@@ -19,7 +19,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){      
             case "play":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(c, chatId,await erroComandoMsg(command),id)
                     var usuarioTexto = textoRecebido.slice(6).trim()
                     await api.obterInfoVideoYT(usuarioTexto).then(async({resultado})=>{
                         if(resultado.isLiveContent) await socket.reply(c, chatId,msgs_texto.downloads.play.erro_live,id)
@@ -48,7 +48,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
             
             case "yt":
                 try{
-                    if(args.length === 1) return await socket.reply(c,chatId,erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(c,chatId,await erroComandoMsg(command),id)
                     var usuarioTexto = textoRecebido.slice(4).trim()
                     await api.obterInfoVideoYT(usuarioTexto).then(async({resultado})=>{
                         if(resultado.isLiveContent) await socket.reply(c, chatId,msgs_texto.downloads.yt.erro_live,id)
@@ -77,7 +77,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
 
             case "fb":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioURL = textoRecebido.slice(4).trim()
                     await api.obterMidiaFacebook(usuarioURL).then(async ({resultado})=>{
                         if(resultado.duration_ms > 180000) await socket.reply(c, chatId, msgs_texto.downloads.fb.limite, id)
@@ -99,8 +99,8 @@ export const downloads = async(c, mensagemInfoCompleta) => {
 
             case "ig":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
-                    if(args.length > 2 && isNaN(args[2])) return await socket.reply(c, chatId,erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(c, chatId,await erroComandoMsg(command),id)
+                    if(args.length > 2 && isNaN(args[2])) return await socket.reply(c, chatId,await erroComandoMsg(command),id)
                     await socket.reply(c, chatId, msgs_texto.downloads.ig.espera, id)
                     let usuarioTexto = textoRecebido.slice(4).trim(), indexEscolhido = 0
                     await api.obterMidiaInstagram(usuarioTexto).then(async({resultado})=>{
@@ -128,7 +128,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
 
             case "tw":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(c, chatId,await erroComandoMsg(command),id)
                     await socket.reply(c, chatId, msgs_texto.downloads.tw.espera, id)
                     let usuarioTexto = textoRecebido.slice(4).trim()
                     await api.obterMidiaTwitter(usuarioTexto).then(async ({resultado})=>{
@@ -148,7 +148,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
 
             case "tk":
                 try{
-                    if(args.length === 1) return await socket.reply(chatId,erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(chatId,await erroComandoMsg(command),id)
                     var usuarioTexto = textoRecebido.slice(4).trim()
                     await api.obterMidiaTiktok(usuarioTexto).then(async ({resultado}) =>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultado.autor_perfil, resultado.autor_nome, resultado.titulo, resultado.duracao),id)
@@ -167,7 +167,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
             case 'img':
                 try{
                     if(quotedMsg || (type != MessageTypes.text && type != MessageTypes.extendedText) || args.length === 1) {
-                        return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                        return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     }
                     let usuarioTexto = textoRecebido.slice(5).trim()
                     await api.obterImagens(usuarioTexto).then(async ({resultado})=>{

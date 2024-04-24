@@ -1,8 +1,8 @@
 
-import {botInfo} from '../database/bot.js'
+import * as bot from '../controle/botControle.js'
 
-export const listarComandos = () => {
-    let {prefixo} = botInfo()
+export const listarComandos = async () => {
+    let {prefixo} = await bot.obterInformacoesBot()
     return {
         utilidades :[
             `${prefixo}gpt`,

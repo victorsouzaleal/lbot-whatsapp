@@ -8,12 +8,11 @@ import * as usuariosdb from '../database/usuarios.js'
 import fs from 'fs-extra'
 import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
-import * as socketdb from '../baileys/socket-db-funcoes.js'
-import * as bot from '../database/bot.js'
+import * as bot from '../controle/botControle.js'
+import * as grupos from '../controle/gruposControle.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import os from 'node:os'
-
 
 
 export const admin = async(c, mensagemInfoCompleta) => {
@@ -30,7 +29,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){
             case "admin":
                 try{
-                    await socket.sendText(c, chatId, menu.menuAdmin())
+                    await socket.sendText(c, chatId, await menu.menuAdmin())
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -42,7 +41,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var fotoBot = await socket.getProfilePicFromServer(c, botNumber)
                     var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
-                    var infoBot = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
+                    var infoBot = botInfoJSON
                     var expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                     var botInicializacaoData = timestampParaData(infoBot.iniciado)
                     var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, version)
@@ -75,7 +74,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 
             case 'entrargrupo':
                 try{
-                    if (args.length < 2) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if (args.length < 2) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var linkGrupo = args[1]
                     var linkValido = linkGrupo.match(/(https:\/\/chat.whatsapp.com)/gi)
                     if (!linkValido) return await socket.reply(c, chatId, msgs_texto.admin.entrar_grupo.link_invalido, id)
@@ -121,7 +120,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "bcmdglobal":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                     var usuarioComandos = textoRecebido.slice(12).split(" "), respostaBloqueio = await bloquearComandosGlobal(usuarioComandos)
                     await socket.reply(c, chatId, respostaBloqueio, id)
                 } catch(err){
@@ -133,7 +132,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
             
             case "dcmdglobal":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId,erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(c, chatId,await erroComandoMsg(command),id)
                     var usuarioComandos = textoRecebido.slice(12).split(" "), respostaDesbloqueio = await desbloquearComandosGlobal(usuarioComandos)
                     await socket.reply(c, chatId, respostaDesbloqueio, id)
                 } catch(err){
@@ -156,9 +155,9 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case 'sairgrupos':
                 try{
-                    var grupos = await socketdb.getAllGroupsFromDb()
-                    for (var grupo of grupos) await socket.leaveGroup(c, grupo.id_grupo)
-                    var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, grupos.length)
+                    let gruposAtuais = await grupos.obterTodosGruposInfo()
+                    for (var grupo of gruposAtuais) await socket.leaveGroup(c, grupo.id_grupo)
+                    var resposta = criarTexto(msgs_texto.admin.sairtodos.resposta, gruposAtuais.length)
                     await socket.reply(c, ownerNumber, resposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -176,7 +175,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                         usuariosBloqueados = mentionedJidList
                     } else {
                         var numeroInserido = textoRecebido.slice(10).trim()
-                        if(numeroInserido.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                        if(numeroInserido.length == 0) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                         usuariosBloqueados.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
                     }
                     for (var usuario of usuariosBloqueados){
@@ -207,7 +206,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                         usuariosDesbloqueados = mentionedJidList
                     } else {
                         var numeroInserido = textoRecebido.slice(13).trim()
-                        if(numeroInserido.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                        if(numeroInserido.length == 0) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                         usuariosDesbloqueados.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
                     }
                     for (var usuario of usuariosDesbloqueados){
@@ -229,10 +228,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var novoEstado = !botInfoJSON.autosticker
                     if(novoEstado){
-                        bot.botAlterarAutoSticker(true)
+                        bot.alterarAutoSticker(true)
                         await socket.reply(c, chatId, msgs_texto.admin.autostickerpv.ativado,id)
                     } else {
-                        bot.botAlterarAutoSticker(false)
+                        bot.alterarAutoSticker(false)
                         await socket.reply(c, chatId, msgs_texto.admin.autostickerpv.desativado,id)
                     } 
                 } catch(err){
@@ -246,10 +245,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var novoEstado = !botInfoJSON.pvliberado
                     if(novoEstado){
-                        bot.botAlterarPvLiberado(true)
+                        bot.alterarPvLiberado(true)
                         await socket.reply(c, chatId, msgs_texto.admin.pvliberado.ativado,id)
                     } else {
-                        bot.botAlterarPvLiberado(false)
+                        bot.alterarPvLiberado(false)
                         await socket.reply(c, chatId, msgs_texto.admin.pvliberado.desativado,id)
                     } 
                 } catch(err){
@@ -272,10 +271,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
                             await socket.setProfilePic(c, botNumber, fotoBuffer)
                             await socket.reply(c, chatId, msgs_texto.admin.fotobot.sucesso, id)
                         } else {
-                            return socket.reply(c, chatId, erroComandoMsg(command) , id)
+                            return socket.reply(c, chatId, await erroComandoMsg(command) , id)
                         }
                     } else {
-                        return socket.reply(c, chatId, erroComandoMsg(command) , id)
+                        return socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -288,10 +287,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var novoEstado = !botInfoJSON.limite_diario.status
                     if(novoEstado){
-                        bot.botAlterarLimiteDiario(true)
+                        bot.alterarLimiteDiario(true)
                         await socket.reply(c, chatId, msgs_texto.admin.limitediario.ativado, id)
                     } else {
-                        bot.botAlterarLimiteDiario(false)
+                        bot.alterarLimiteDiario(false)
                         await socket.reply(c, chatId, msgs_texto.admin.limitediario.desativado, id)
                     } 
                 } catch(err){
@@ -306,14 +305,14 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var novoEstado = !botInfoJSON.limitecomandos.status
                     if(novoEstado){
-                        if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                        if(args.length !== 3) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                         var qtd_max_minuto = args[1], tempo_bloqueio = args[2]
                         if(isNaN(qtd_max_minuto) || qtd_max_minuto < 3) return await socket.reply(c, chatId,msgs_texto.admin.limitecomandos.qtd_invalida, id)
                         if(isNaN(tempo_bloqueio) || tempo_bloqueio < 10) return await socket.reply(c, chatId,msgs_texto.admin.limitecomandos.tempo_invalido, id)
-                        bot.botAlterarLimitador(true, parseInt(qtd_max_minuto), parseInt(tempo_bloqueio))
+                        bot.alterarLimitador(true, parseInt(qtd_max_minuto), parseInt(tempo_bloqueio))
                         await socket.reply(c, chatId, msgs_texto.admin.limitecomandos.ativado, id)
                     } else {
-                        bot.botAlterarLimitador(false)
+                        bot.alterarLimitador(false)
                         await socket.reply(c, chatId, msgs_texto.admin.limitecomandos.desativado, id)
                     }
                 } catch(err){
@@ -325,9 +324,9 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "nomebot":
                 try{
-                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioTexto = textoRecebido.slice(9).trim()
-                    bot.botAlterarNomeBot(usuarioTexto)
+                    bot.alterarNomeBot(usuarioTexto)
                     await socket.reply(c, chatId, msgs_texto.admin.nomebot.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -338,9 +337,9 @@ export const admin = async(c, mensagemInfoCompleta) => {
             
             case "nomeadm":
                 try{
-                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioTexto = textoRecebido.slice(9).trim()
-                    bot.botAlterarNomeAdm(usuarioTexto)
+                    bot.alterarNomeAdm(usuarioTexto)
                     await socket.reply(c, chatId, msgs_texto.admin.nomeadm.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -351,9 +350,9 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "nomesticker":
                 try{
-                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioTexto = textoRecebido.slice(13).trim()
-                    bot.botAlterarNomeFigurinhas(usuarioTexto)
+                    bot.alterarNomeFigurinhas(usuarioTexto)
                     await socket.reply(c, chatId, msgs_texto.admin.nomesticker.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -364,10 +363,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "prefixo":
                 try{
-                    if(args.length == 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioTexto = textoRecebido.slice(9).trim(), prefixosSuportados = ["!", "#", ".", "*"]
                     if(!prefixosSuportados.includes(usuarioTexto)) return await socket.reply(c, chatId, msgs_texto.admin.prefixo.nao_suportado, id)
-                    bot.botAlterarPrefixo(usuarioTexto)
+                    bot.alterarPrefixo(usuarioTexto)
                     await socket.reply(c, chatId, msgs_texto.admin.prefixo.sucesso, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -380,14 +379,14 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 try{
                     var novoEstado = !botInfoJSON.limitarmensagens.status
                     if(novoEstado){
-                        if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                        if(args.length !== 3) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                         let max_msg = args[1], msgs_intervalo = args[2]
                         if(isNaN(max_msg) || max_msg < 3) return await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.qtd_invalida, id)
                         if(isNaN(msgs_intervalo) || msgs_intervalo < 10) return await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.tempo_invalido, id)
-                        bot.botAlterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
+                        bot.alterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
                         await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.ativado, id)
                     } else {
-                        bot.botAlterarLimitarMensagensPv(false)
+                        bot.alterarLimitarMensagensPv(false)
                         await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.desativado, id)
                     }
                 } catch(err){
@@ -400,10 +399,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
             case "mudarlimite":
                 try{
                     if(!botInfoJSON.limite_diario.status) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.erro_limite_diario, id)
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var tipo = args[1].toLowerCase(), qtd = args[2]
                     if(qtd != -1) if(isNaN(qtd) || qtd < 5) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.invalido, id)
-                    var alterou = await bot.botQtdLimiteDiario(tipo, parseInt(qtd))
+                    var alterou = await bot.alterarQtdLimiteDiarioTipo(tipo, parseInt(qtd))
                     if(!alterou) return await socket.reply(c, chatId, msgs_texto.admin.mudarlimite.tipo_invalido, id)
                     await socket.reply(c, chatId, criarTexto(msgs_texto.admin.mudarlimite.sucesso, tipo.toUpperCase(), qtd == -1 ? "∞" : qtd), id)
                 } catch(err){
@@ -415,7 +414,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
             
             case "usuarios":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var tipo = args[1].toLowerCase()
                     var usuarios = await usuariosdb.obterUsuariosTipo(tipo)
                     if(usuarios.length == 0) return await socket.reply(c, chatId, msgs_texto.admin.usuarios.nao_encontrado, id)
@@ -432,7 +431,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "limpartipo":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var tipo = args[1].toLowerCase()
                     var limpou = await usuariosdb.limparTipo(tipo)
                     if(!limpou) return await socket.reply(c, chatId, msgs_texto.admin.limpartipo.erro, id)
@@ -446,12 +445,12 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "alterartipo":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuario_tipo = ""
                     if(quotedMsg) usuario_tipo = quotedMsgObjInfo.sender
                     else if(mentionedJidList.length === 1) usuario_tipo = mentionedJidList[0]
                     else if(args.length > 2) usuario_tipo = args.slice(2).join("").replace(/\W+/g,"")+"@s.whatsapp.net"
-                    else return await socket.reply(c, chatId, erroComandoMsg(command),id)
+                    else return await socket.reply(c, chatId, await erroComandoMsg(command),id)
                     if(ownerNumber == usuario_tipo) return await socket.reply(c, chatId, msgs_texto.admin.alterartipo.tipo_dono, id)
                     let c_registrado = await usuariosdb.verificarRegistro(usuario_tipo)
                     if(c_registrado){
@@ -525,7 +524,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                             await socket.reply(c, chatId, msgs_texto.admin.r.nao_registrado,id)
                         }
                     } else {
-                        await socket.reply(c, chatId, erroComandoMsg(command),id)
+                        await socket.reply(c, chatId, await erroComandoMsg(command),id)
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -540,7 +539,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     if(quotedMsg) idUsuario = quotedMsgObjInfo.sender
                     else if(mentionedJidList.length === 1) idUsuario = mentionedJidList[0]
                     else if(args.length >= 1) idUsuario =  args.slice(1).join("").replace(/\W+/g,"")+"@s.whatsapp.net"
-                    else return await socket.reply(c, chatId, erroComandoMsg(command),id)
+                    else return await socket.reply(c, chatId, await erroComandoMsg(command),id)
                     var usuarioRegistrado = await usuariosdb.verificarRegistro(idUsuario)
                     if(usuarioRegistrado) dadosUsuario = await usuariosdb.obterUsuario(idUsuario)
                     else return await socket.reply(c, chatId,msgs_texto.admin.verdados.nao_registrado,id)
@@ -560,10 +559,10 @@ export const admin = async(c, mensagemInfoCompleta) => {
                      
             case 'bcgrupos':
                 try{
-                    if(args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
-                    var mensagem = textoRecebido.slice(10).trim(), grupos = await socketdb.getAllGroupsFromDb()
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.admin.bcgrupos.espera, grupos.length, grupos.length) , id)
-                    for (var grupo of grupos) {
+                    if(args.length === 1) return socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    let mensagem = textoRecebido.slice(10).trim(), gruposAtuais = await grupos.obterTodosGruposInfo()
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.admin.bcgrupos.espera, gruposAtuais.length, gruposAtuais.length) , id)
+                    for (var grupo of gruposAtuais) {
                         if (!grupo.restrito_msg) {
                             await new Promise((resolve)=>{
                                 setTimeout(async ()=>{
@@ -583,8 +582,8 @@ export const admin = async(c, mensagemInfoCompleta) => {
             
             case "grupos":
                 try{
-                    var grupos = await socketdb.getAllGroupsFromDb(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, grupos.length)
-                    for (var grupo of grupos){
+                    let gruposAtuais = await grupos.obterTodosGruposInfo(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, gruposAtuais.length)
+                    for (var grupo of gruposAtuais){
                         var adminsGrupo = grupo.admins
                         var botAdmin = adminsGrupo.includes(botNumber)
                         var linkGrupo = "Não Disponível"
@@ -601,7 +600,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
             
             case 'estado':
                 try{
-                    if(args.length != 2)  return socket.reply(c, chatId,erroComandoMsg(command),id)
+                    if(args.length != 2)  return socket.reply(c, chatId,await erroComandoMsg(command),id)
                     switch(args[1]){
                         case 'online':
                             await socket.setMyStatus(c, "< 🟢 Online />")
@@ -616,7 +615,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                             await socket.reply(c, chatId,msgs_texto.admin.estado.sucesso,id)
                             break
                         default:
-                            await socket.reply(c, chatId, erroComandoMsg(command), id)
+                            await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -641,11 +640,11 @@ export const admin = async(c, mensagemInfoCompleta) => {
             
             case "ping":
                 try{
-                    var tempoResposta = (moment.now()/1000) - t
-                    var memoriaTotal = os.totalmem()/1024000000, memoriaUsada = (os.totalmem() - os.freemem())/1024000000
-                    var sistemaOperacional = `${os.type()} ${os.release()}`
-                    var nomeProcessador = os.cpus()[0].model
-                    var grupos = await gruposdb.obterTodosGrupos()
+                    let tempoResposta = (moment.now()/1000) - t
+                    let memoriaTotal = os.totalmem()/1024000000, memoriaUsada = (os.totalmem() - os.freemem())/1024000000
+                    let sistemaOperacional = `${os.type()} ${os.release()}`
+                    let nomeProcessador = os.cpus()[0].model
+                    let gruposAtuais = await gruposdb.obterTodosGrupos()
                     var contatos = await usuariosdb.obterTodosUsuarios()
                     await socket.reply(c, chatId, criarTexto(
                     msgs_texto.admin.ping.resposta, 
@@ -655,7 +654,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     memoriaTotal.toFixed(2), 
                     tempoResposta.toFixed(3),
                     contatos.length,
-                    grupos.length,
+                    gruposAtuais.length,
                     timestampParaData(botInfoJSON.iniciado)), id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)

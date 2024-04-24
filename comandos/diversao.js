@@ -19,7 +19,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case 'detector' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    if(!quotedMsg) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                    if(!quotedMsg) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     var imgsDetector = ['verdade','vaipra','mentiroso','meengana','kao','incerteza','estresse','conversapraboi']
                     var indexAleatorio = Math.floor(Math.random() * imgsDetector.length)
                     await socket.replyFile(c,MessageTypes.image, chatId, './media/detector/calibrando.png', msgs_texto.diversao.detector.espera, id)
@@ -33,7 +33,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
             case 'simi':
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let perguntaSimi = textoRecebido.slice(6).trim()
                     await api.simiResponde(perguntaSimi).then(async ({resultado})=>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultado), id)
@@ -51,7 +51,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case 'viadometro' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if(mentionedJidList.length > 1) return await socket.reply(c, chatId, msgs_texto.diversao.viadometro.apenas_um, id)
                     var respostas = msgs_texto.diversao.viadometro.respostas
                     var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
@@ -70,7 +70,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case 'bafometro' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if (mentionedJidList.length > 1) return await socket.reply(c, chatId, msgs_texto.diversao.bafometro.apenas_um, id)
                     var respostas = msgs_texto.diversao.bafometro.respostas
                     var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
@@ -88,7 +88,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
             case 'chance' :
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var num = Math.floor(Math.random() * 100), temaChance = textoRecebido.slice(8).trim()
                     if(quotedMsg){  //SE O COMANDO TIVER SIDO USADO EM RESPOSTA
                         await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.chance.resposta, num, temaChance), quotedMsgObj)
@@ -118,7 +118,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case "ppt":
                 try{
                     var ppt = ["pedra","papel","tesoura"], indexAleatorio = Math.floor(Math.random() * ppt.length)
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if(!ppt.includes(args[1].toLowerCase())) return await socket.reply(c, chatId, msgs_texto.diversao.ppt.opcao_erro, id)
                     var escolhaBot = ppt[indexAleatorio], iconeEscolhaBot = null, escolhaUsuario = args[1].toLowerCase(), iconeEscolhaUsuario = null, vitoriaUsuario = null
                     if(escolhaBot == "pedra"){
@@ -216,7 +216,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case 'gadometro':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                    if(!quotedMsg && mentionedJidList.length == 0) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     if(mentionedJidList.length > 1) return await socket.reply(c, chatId, msgs_texto.diversao.gadometro.apenas_um , id)
                     var respostas = msgs_texto.diversao.gadometro.respostas 
                     var indexAleatorio = Math.floor(Math.random() * respostas.length), idResposta = null, alvo = null
@@ -235,7 +235,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case 'top5':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var temaRanking = textoRecebido.slice(6).trim(), idParticipantesAtuais = await socket.getGroupMembersId(c, groupId)
                     if(idParticipantesAtuais.length < 5) return await socket.reply(c, chatId,msgs_texto.diversao.top5.erro_membros, id)
                     var respostaTexto = criarTexto(msgs_texto.diversao.top5.resposta_titulo, temaRanking), mencionarMembros = []
@@ -271,7 +271,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case 'par':
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    if(mentionedJidList.length !== 2) return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                    if(mentionedJidList.length !== 2) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     var respostas = msgs_texto.diversao.par.respostas
                     var indexAleatorio = Math.floor(Math.random() * respostas.length)
                     var respostaTexto = criarTexto(msgs_texto.diversao.par.resposta, mentionedJidList[0].replace("@s.whatsapp.net", ''), mentionedJidList[1].replace("@s.whatsapp.net", ''), respostas[indexAleatorio])

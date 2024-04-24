@@ -1,8 +1,6 @@
 import { AsyncNedb } from 'nedb-async'
-import {MessageTypes} from '../baileys/mensagem.js'
-import path from 'node:path'
-import fs from 'fs-extra'
-import moment from "moment-timezone"
+import * as bot from '../controle/botControle.js'
+
 var db = {usuarios: new AsyncNedb({filename : './database/db/usuarios.db', autoload: true})}
 
 // ######################## FUNCOES USUARIO #####################
@@ -31,7 +29,7 @@ export const atualizarNome = async(id_usuario,nome) =>{
 }
 
 export const registrarUsuario = async(id_usuario, nome) =>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
+    let {limite_diario} = await bot.obterInformacoesBot()
     var cadastro_usuario = {
         id_usuario,
         nome,
@@ -79,7 +77,7 @@ export const alterarProximoSalario = async(id_usuario, tAtual)=>{
 }
 
 export const verificarDonoAtual = async(id_usuario)=>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
+    let {limite_diario} = await bot.obterInformacoesBot()
     var usuario = await db.usuarios.asyncFindOne({id_usuario, tipo: "dono"})
     if(!usuario){
         await db.usuarios.asyncUpdate({tipo: "dono"}, {$set:{tipo: "comum",  max_comandos_dia : limite_diario.limite_tipos.comum}}, {multi: true})
@@ -88,7 +86,7 @@ export const verificarDonoAtual = async(id_usuario)=>{
 }
 
 export const alterarTipoUsuario = async(id_usuario, tipo)=>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
+    let {limite_diario} = await bot.obterInformacoesBot()
     if(limite_diario.limite_tipos[tipo] || limite_diario.limite_tipos[tipo] == null){
         await db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: limite_diario.limite_tipos[tipo]}})
         return true
@@ -98,7 +96,7 @@ export const alterarTipoUsuario = async(id_usuario, tipo)=>{
 }
 
 export const limparTipo = async(tipo)=>{
-    let {limite_diario} = JSON.parse(fs.readFileSync(path.resolve("database/db/bot.json")))
+    let {limite_diario} = await bot.obterInformacoesBot()
     if(limite_diario.limite_tipos[tipo] === undefined || tipo === "comum") return false
     await db.usuarios.asyncUpdate({tipo}, {$set: {tipo: "comum", max_comandos_dia: limite_diario.limite_tipos.comum}}, {multi: true})
     return true

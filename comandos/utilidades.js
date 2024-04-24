@@ -20,7 +20,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){  
             case "gpt":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let usuarioTexto = textoRecebido.slice(5).trim()
                     await api.respostaHercaiTexto(usuarioTexto, sender).then(async ({resultado})=>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.gpt.resposta, resultado), id)
@@ -37,7 +37,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
             
             case "criarimg":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let usuarioTexto = textoRecebido.slice(10).trim()
                     await socket.reply(c, chatId, msgs_texto.utilidades.criarimg.espera, id)
                     await api.respostaHercaiImagem(usuarioTexto).then(async ({resultado})=>{
@@ -74,7 +74,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                             return await socket.reply(c, chatId, msgs_texto.utilidades.rbg.invalido , id)
                         }
                     } else {
-                        return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                        return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -100,7 +100,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case "letra":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioTexto = textoRecebido.slice(7).trim()
                     await api.obterLetraMusica(usuarioTexto).then(async({resultado})=>{
                         await socket.replyFile(c, MessageTypes.image, chatId, resultado.imagem, criarTexto(msgs_texto.utilidades.letra.resposta, resultado.titulo, resultado.artista, resultado.letra), id)
@@ -117,7 +117,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case "ouvir":
                 try{
-                    if(!quotedMsg || quotedMsgObjInfo?.type != MessageTypes.audio) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(!quotedMsg || quotedMsgObjInfo?.type != MessageTypes.audio) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if(quotedMsgObjInfo.seconds > 90) return await socket.reply(c, chatId, msgs_texto.utilidades.ouvir.erro_limite, id)
                     let bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer"), caminhoAudio = path.resolve(`temp/${obterNomeAleatorio(".mp3")}`)
                     fs.writeFileSync(caminhoAudio, bufferAudio)
@@ -145,7 +145,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                     } else if(args.length > 1){
                         if(args[1].length != 2) return await socket.reply(c, chatId, msgs_texto.utilidades.ddd.nao_encontrado ,id)
                         DDD = args[1]
-                    } else return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    } else return await socket.reply(c, chatId, await erroComandoMsg(command), id)
 
                     await api.obterInfoDDD(DDD).then(async({resultado})=>{
                         await socket.reply(c, chatId, resultado, id)
@@ -162,10 +162,10 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case "audio":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let efeitosSuportados = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], tipoEfeito = textoRecebido.slice(7).trim()
-                    if(!efeitosSuportados.includes(tipoEfeito)) return await socket.reply(c, chatId, erroComandoMsg(command), id)
-                    if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.audio) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(!efeitosSuportados.includes(tipoEfeito)) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.audio) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let bufferQuotedMessage = await downloadMediaMessage(quotedMsgObj, "buffer")
                     let audioOriginal = path.resolve(`./temp/${obterNomeAleatorio(".mp3")}`)
                     fs.writeFileSync(audioOriginal, bufferQuotedMessage)
@@ -190,7 +190,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
             case "qualmusica":
                 try{
                     var typeMessage = quotedMsg ? quotedMsgObjInfo.type : type
-                    if(typeMessage != MessageTypes.video && typeMessage != MessageTypes.audio) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(typeMessage != MessageTypes.video && typeMessage != MessageTypes.audio) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var messageData = quotedMsg ? quotedMsgObj : id             
                     var caminhoAudio, caminhoVideo
                     var bufferMessageData = await downloadMediaMessage(messageData, "buffer")
@@ -222,7 +222,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case "clima":
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command),id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command),id)
                     var usuarioTexto = textoRecebido.slice(7).trim()
                     await api.obterClima(usuarioTexto).then(async({resultado})=>{
                         let respostaClimaTexto = criarTexto(msgs_texto.utilidades.clima.resposta, resultado.texto), respostaClimaFoto = resultado.foto_clima
@@ -240,7 +240,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case "moeda":
                 try{
-                    if(args.length !== 3) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length !== 3) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var usuarioMoedaInserida = args[1], usuarioValorInserido = args[2]
                     await api.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido).then(async({resultado})=>{
                         let itens = ''
@@ -260,7 +260,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case "pesquisa":
                 try{
-                    if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command) , id)
+                    if (args.length === 1) return socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     var usuarioTexto = textoRecebido.slice(10).trim() 
                     await api.obterPesquisaWeb(usuarioTexto).then(async({resultados})=>{
                         let pesquisaResposta = criarTexto(msgs_texto.utilidades.pesquisa.resposta_titulo, usuarioTexto)
@@ -282,7 +282,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case 'rastreio':
                 try{
-                    if (args.length === 1) return socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if (args.length === 1) return socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let usuarioCodigoRastreio = textoRecebido.slice(10).trim()
                     if(usuarioCodigoRastreio.length != 13) return await socket.reply(c, chatId, msgs_texto.utilidades.rastreio.codigo_invalido, id)
                     await api.obterRastreioCorreios(usuarioCodigoRastreio).then(async({resultado})=>{   
@@ -330,7 +330,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                             await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                         })
                     } else {
-                        await socket.reply(c, chatId,erroComandoMsg(command), id)
+                        await socket.reply(c, chatId,await erroComandoMsg(command), id)
                     }
                 } catch(err){
                     if(fs.existsSync(caminhoImagem)) fs.unlinkSync(caminhoImagem)
@@ -344,15 +344,15 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                 try{
                     var usuarioTexto = "", idiomaTraducao = 'pt'
                     if(quotedMsg  && (quotedMsgObjInfo.type == MessageTypes.text || quotedMsgObjInfo.type == MessageTypes.extendedText)){
-                        if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                        if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                         idiomaTraducao = args[1]
                         usuarioTexto = quotedMsgObjInfo.body || quotedMsgObjInfo.caption
                     } else if(!quotedMsg && (type == MessageTypes.text || type == MessageTypes.extendedText)){
-                        if(args.length < 3) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                        if(args.length < 3) return await socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                         idiomaTraducao = args[1]
                         usuarioTexto = args.slice(2).join(" ")
                     } else {
-                        return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                        return await socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                     }
                     let idiomasSuportados = ["pt", "es", "en", "ja", "it", "ru", "ko"]
                     if(!idiomasSuportados.includes(idiomaTraducao)) return await socket.reply(c, chatId, msgs_texto.utilidades.traduz.nao_suportado, id)
@@ -373,7 +373,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                 try{
                     let usuarioTexto = ''
                     if (args.length === 1) {
-                        return socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                        return socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                     } else if(quotedMsg  && (quotedMsgObjInfo.type == MessageTypes.extendedText || quotedMsgObjInfo.type == MessageTypes.text)){
                         usuarioTexto = (args.length == 2) ? quotedMsgObjInfo.body || quotedMsgObjInfo.caption : textoRecebido.slice(8).trim()
                     } else {
@@ -419,7 +419,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
 
             case 'calc':
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command) ,id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                     var usuarioExpressaoMatematica = textoRecebido.slice(6).trim()
                     await api.obterCalculo(usuarioExpressaoMatematica).then(async ({resultado})=>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.calc.resposta, resultado), id)

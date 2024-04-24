@@ -5,8 +5,6 @@ import {criarArquivosNecessarios, verificarNumeroDono}  from '../lib/verificacao
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
-import * as socketdb from './socket-db-funcoes.js'
-import {botStart} from '../database/bot.js'
 import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
 import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {antiFake} from '../lib/antiFake.js'; import {bemVindo} from '../lib/bemVindo.js'; import {antiLink} from '../lib/antiLink.js'; import {antiFlood} from '../lib/antiFlood.js'
@@ -17,9 +15,11 @@ import {verificacaoListaNegraGeral, verificarUsuarioListaNegra} from '../lib/lis
 import {adicionarParticipante, removerParticipante, atualizarGrupos, adicionarAdmin, removerAdmin, atualizarDadosGrupo} from '../lib/atualizacaoGrupos.js'
 import * as gruposdb from '../database/grupos.js'
 import {recarregarContagem} from '../lib/recarregarContagem.js'
+import * as bot from '../controle/botControle.js'
+import * as grupos from '../controle/gruposControle.js'
 
 export const atualizarConexao = async (c, conexao)=>{
-    const msgs_texto = obterMensagensTexto()
+    const msgs_texto = await obterMensagensTexto()
     const { connection, lastDisconnect } = conexao
     var reconectar = false
     if(connection === 'close') {
@@ -52,8 +52,8 @@ export const atualizarConexao = async (c, conexao)=>{
                 },3000)
             } else{
                 await socket.getAllGroups(c)
-                console.log(corTexto(await botStart(c)))
-                verificarEnv()
+                await bot.inicializarBot(c)
+                await verificarEnv()
                 await verificarNumeroDono()
                 console.log(msgs_texto.inicio.servidor_iniciado)
             }
@@ -99,8 +99,8 @@ export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
 
 export const atualizacaoParticipantesGrupo = async (c, evento)=>{
     try{
-        const isBotUpdate = evento.participants[0] == await socketdb.getHostNumberFromBotJSON()
-        const g_info = await socketdb.getGroupInfoFromDb(evento.id)
+        const isBotUpdate = evento.participants[0] == await bot.obterNumeroBot()
+        const g_info = await grupos.obterGrupoInfo(evento.id)
         if (evento.action == 'add') {
             //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
             if(!await verificarUsuarioListaNegra(c,evento)) return

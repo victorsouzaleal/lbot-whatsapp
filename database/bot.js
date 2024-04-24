@@ -64,12 +64,10 @@ export const botInfo = ()=>{
 
 export const botStart = async (c)=>{
     try{
-        let msgs_texto = obterMensagensTexto()
         let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
         bot.iniciado = moment.now()
         bot.hostNumber = await getHostNumber(c)
         fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
-        return msgs_texto.inicio.dados_bot
     }catch(err){
         err.message = `botStart - ${err.message}`
         throw err
@@ -168,7 +166,7 @@ export const botVerificarExpiracaoLimite = async ()=>{
 //
 
 // * LIMITE DE COMANDOS POR MINUTO
-export const botAlterarLimitador = async (status= true, cmds_minuto = 5, tempo_bloqueio= 60)=>{
+export const botAlterarLimitador = async (status, cmds_minuto, tempo_bloqueio)=>{
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.limitecomandos.status = status
     bot.limitecomandos.cmds_minuto_max = cmds_minuto
@@ -179,7 +177,7 @@ export const botAlterarLimitador = async (status= true, cmds_minuto = 5, tempo_b
 }
 
 export const botLimitarComando = async (usuario_id, tipo_usuario, isAdmin)=>{
-    let msgs_texto = obterMensagensTexto()
+    let msgs_texto = await obterMensagensTexto()
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json'))),timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
     //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
     for (let i = 0; i < bot.limitecomandos.usuarios_limitados.length; i++){
@@ -227,7 +225,7 @@ export const botLimitarComando = async (usuario_id, tipo_usuario, isAdmin)=>{
 //
 
 // * LIMITE DE MENSAGENS NO PRIVADO
-export const botAlterarLimitarMensagensPv = async (status, max = 10, intervalo= 10)=>{
+export const botAlterarLimitarMensagensPv = async (status, max, intervalo)=>{
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     bot.limitarmensagens.status = status
     bot.limitarmensagens.max = max
@@ -236,7 +234,7 @@ export const botAlterarLimitarMensagensPv = async (status, max = 10, intervalo= 
 }
 
 export const botLimitarMensagensPv = async (usuario_msg,usuario_tipo)=>{
-    let msgs_texto = obterMensagensTexto()
+    let msgs_texto = await obterMensagensTexto()
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json'))), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
     //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
     for(let i = 0; i < bot.limitarmensagens.msgs.length; i++){

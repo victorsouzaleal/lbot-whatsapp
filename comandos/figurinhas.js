@@ -58,10 +58,10 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                                 return socket.reply(c,chatId, msgs_texto.figurinhas.sticker.video_invalido, id)
                             }
                         } else {
-                            return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                            return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                         }
                     } else {
-                        return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                        return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -86,7 +86,7 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                             fs.unlinkSync(imagemSaida)
                         }
                     } else {
-                        await socket.reply(c, chatId, erroComandoMsg(command), id)
+                        await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     }
                 } catch(err){
                     if(fs.existsSync(imagemSaida)) fs.unlinkSync(imagemSaida)
@@ -99,9 +99,9 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                 
             case 'emojimix':
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let usuarioTexto = textoRecebido.slice(10).trim(), emojis = usuarioTexto.split("+")
-                    if(emojis.length == 0 || !emojis[0] || !emojis[1]) return await socket.reply(c, chatId, erroComandoMsg(command), id)
+                    if(emojis.length == 0 || !emojis[0] || !emojis[1]) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     var stickerMetadata = {
                         pack: nome_pack?.trim(), 
                         author: nome_bot?.trim(),
@@ -164,7 +164,7 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                             return await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_imagem , id)
                         }
                     } else {
-                        return await socket.reply(c, chatId, erroComandoMsg(command) , id)
+                        return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)

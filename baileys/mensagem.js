@@ -2,8 +2,9 @@ import {generateWAMessageFromContent, getContentType} from '@whiskeysockets/bail
 import pino from 'pino'
 import {listarComandos} from '../comandos/comandos.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
-import {botInfo} from '../database/bot.js'
-import * as socketdb from '../baileys/socket-db-funcoes.js'
+import * as bot from '../controle/botControle.js'
+import * as grupos from '../controle/gruposControle.js'
+
 
 export const converterMensagem = async(m) =>{
     try {
@@ -12,16 +13,16 @@ export const converterMensagem = async(m) =>{
         let type = getContentType(m.message)
         let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
         let sender =  m.key.participant || m.key.remoteJid
-        let lista_comandos = listarComandos(),  msgs_texto = obterMensagensTexto(), botInfoJSON = botInfo()
+        let lista_comandos = await listarComandos(),  msgs_texto = await obterMensagensTexto(), botInfoJSON = await bot.obterInformacoesBot()
         let textoRecebido = m.message[type]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
         let ownerNumber = botInfoJSON.numero_dono
         let isOwner = ownerNumber == sender
         let isGroupMsg = m.key.remoteJid.includes("@g.us")
         let groupId = isGroupMsg ? m.key.remoteJid : null
-        let grupoInfo = isGroupMsg ? await socketdb.getGroupInfoFromDb(groupId) : null
+        let grupoInfo = isGroupMsg ? await grupos.obterGrupoInfo(groupId) : null
         let groupAdmins = (isGroupMsg && grupoInfo) ? grupoInfo.admins : null
         let isGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(sender) : null
-        let botNumber = await socketdb.getHostNumberFromBotJSON()
+        let botNumber = await bot.obterNumeroBot()
         let isBotGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(botNumber) : null
 
         respostaInformacoes = {
@@ -33,22 +34,22 @@ export const converterMensagem = async(m) =>{
                 isOwner,
                 username : m.pushName,
                 broadcast : m.key.remoteJid == "status@broadcast",
-                caption : m.message[type].caption,
+                caption : m.message[type]?.caption,
                 messageId : m.key.id,
                 body : m.message.conversation || m.message.extendedTextMessage?.text,
                 id: m,
                 type,
                 t : m.messageTimestamp,
-                mentionedJidList: m.message[type].contextInfo?.mentionedJid || [],
-                mimetype: m.message[type].mimetype,
-                mediaUrl: m.message[type].url,
+                mentionedJidList: m.message[type]?.contextInfo?.mentionedJid || [],
+                mimetype: m.message[type]?.mimetype,
+                mediaUrl: m.message[type]?.url,
                 fromMe : m.key.fromMe,
                 chatId: m.key.remoteJid,
                 isGroupMsg,
                 participant: m.key.participant,
                 isMedia : type == MessageTypes.image || type == MessageTypes.video,
-                seconds : m.message[type].seconds,
-                fileLength: m.message[type].fileLength,
+                seconds : m.message[type]?.seconds,
+                fileLength: m.message[type]?.fileLength,
                 quotedMsg
             },
             bot:{
