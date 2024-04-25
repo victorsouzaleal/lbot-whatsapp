@@ -122,7 +122,6 @@ export const listarComandos = async () => {
             `${prefixo}limpartipo`,
             `${prefixo}limitediario`,
             `${prefixo}taxalimite`,
-            `${prefixo}limitarmsgs`,
             `${prefixo}desbloquear`,
             `${prefixo}estado`,
             `${prefixo}admin`,

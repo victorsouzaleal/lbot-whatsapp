@@ -30,11 +30,6 @@ export const verificarExpiracaoLimite = async()=>{
     await bot.botVerificarExpiracaoLimite()
 }
 
-export const verificarLimitarMensagensPv = async(usuario, tipo)=>{
-    let resposta = bot.botLimitarMensagensPv(usuario, tipo)
-    return resposta
-}
-
 export const bloquearComandos = async(comandos)=>{
     await bot.botBloquearComando(comandos)
 }
@@ -164,10 +159,6 @@ export const alterarNumeroDono = async(numero)=>{
 
 export const alterarPrefixo = async(prefixo)=>{
     await bot.botAlterarPrefixo(prefixo)
-}
-
-export const alterarLimitarMensagensPv = async(status, max= 10, intervalo= 10)=>{
-    await bot.botAlterarLimitarMensagensPv(status, max, intervalo)
 }
 
 export const alterarQtdLimiteDiarioTipo = async(tipo, limite)=>{

@@ -51,8 +51,6 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     resposta += (infoBot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on,  expiracaoLimiteDiario) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
                     // LIMITE COMANDOS POR MINUTO
                     resposta += (infoBot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, infoBot.limitecomandos.cmds_minuto_max, infoBot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
-                    // LIMITE MENSAGENS PV
-                    resposta += (infoBot.limitarmensagens.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.on, infoBot.limitarmensagens.max, infoBot.limitarmensagens.intervalo) : msgs_texto.admin.infocompleta.resposta_variavel.limitarmsgs.off
                     // BLOQUEIO DE COMANDOS
                     let comandosBloqueados = []
                     for(let comandoBloqueado of infoBot.bloqueio_cmds){
@@ -366,27 +364,6 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     if(!prefixosSuportados.includes(usuarioTexto)) return await socket.reply(c, chatId, msgs_texto.admin.prefixo.nao_suportado, id)
                     bot.alterarPrefixo(usuarioTexto)
                     await socket.reply(c, chatId, msgs_texto.admin.prefixo.sucesso, id)
-                } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
-                    throw err
-                }
-                break
-            
-            case "limitarmsgs":
-                try{
-                    var novoEstado = !botInfoJSON.limitarmensagens.status
-                    if(novoEstado){
-                        if(args.length !== 3) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
-                        let max_msg = args[1], msgs_intervalo = args[2]
-                        if(isNaN(max_msg) || max_msg < 3) return await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.qtd_invalida, id)
-                        if(isNaN(msgs_intervalo) || msgs_intervalo < 10) return await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.tempo_invalido, id)
-                        bot.alterarLimitarMensagensPv(true,parseInt(max_msg),parseInt(msgs_intervalo))
-                        await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.ativado, id)
-                    } else {
-                        bot.alterarLimitarMensagensPv(false)
-                        await socket.reply(c, chatId, msgs_texto.admin.limitarmsgs.desativado, id)
-                    }
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`

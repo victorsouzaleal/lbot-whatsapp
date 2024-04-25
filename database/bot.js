@@ -25,12 +25,6 @@ export const botObjeto = {
             vip: null
         }
     },
-    limitarmensagens:{
-        status:false,
-        max: 10,
-        intervalo: 10,
-        msgs:[]
-    },
     limitecomandos:{
         status: false,
         cmds_minuto_max: 5,
@@ -222,59 +216,7 @@ export const botLimitarComando = async (usuario_id, tipo_usuario, isAdmin)=>{
     await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot)) //ATUALIZA OS DADOS NO ARQUIVO E RETORNO
     return resposta
 }
-//
 
-// * LIMITE DE MENSAGENS NO PRIVADO
-export const botAlterarLimitarMensagensPv = async (status, max, intervalo)=>{
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
-    bot.limitarmensagens.status = status
-    bot.limitarmensagens.max = max
-    bot.limitarmensagens.intervalo = intervalo
-    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
-}
-
-export const botLimitarMensagensPv = async (usuario_msg,usuario_tipo)=>{
-    let msgs_texto = await obterMensagensTexto()
-    let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json'))), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
-    //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
-    for(let i = 0; i < bot.limitarmensagens.msgs.length; i++){
-        if(timestamp_atual >= bot.limitarmensagens.msgs[i].expiracao) bot.limitarmensagens.msgs.splice(i,1)
-    }
-    //SE O USUARIO NÃO FOR DO TIPO DONO RETORNE FALSO
-    if(usuario_tipo == "dono") {
-        resposta = {bloquear_usuario : false}
-    } else {
-        //PESQUISA O INDICE DO USUARIO
-        let usuarioIndex = bot.limitarmensagens.msgs.findIndex(usuario=> usuario.id_usuario == usuario_msg)
-        //SE O USUARIO JÁ ESTIVER NA LISTA
-        if(usuarioIndex != -1){
-            //INCREMENTA A CONTAGEM
-            bot.limitarmensagens.msgs[usuarioIndex].qtd++
-            let max_msg = bot.limitarmensagens.max
-            if(bot.limitarmensagens.msgs[usuarioIndex].qtd >= max_msg){
-                bot.limitarmensagens.msgs.splice(usuarioIndex,1)
-                resposta = {
-                    bloquear_usuario : true,
-                    msg: msgs_texto.admin.limitarmsgs.resposta_usuario_bloqueado
-                }
-            } else{
-                resposta = {bloquear_usuario : false}
-            }
-        } else {
-            //ADICIONA O USUARIO NA LISTA
-            bot.limitarmensagens.msgs.push({
-                id_usuario: usuario_msg,
-                expiracao: timestamp_atual + bot.limitarmensagens.intervalo,
-                qtd: 1
-            })
-            resposta = {bloquear_usuario : false}
-        }
-    }
-    //ATUALIZAÇÃO DOS DADOS E RETORNO
-    await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
-    return resposta
-}
-//
 
 //BLOQUEIO DE COMANDOS
 export const botBloquearComando = async (cmds) =>{
