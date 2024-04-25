@@ -20,15 +20,13 @@
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
 
-<h3 align="center">
-    Estou voltando a atualizar o bot, para contato e ajuda com a projeto vá para o <a href="#8---contatodoação-não-é-o-bot-é-o-numero-apenas-para-tirar-dúvidas-ou-ajudar-com-o-projeto">Passo 8</a>
-</h3>
+
 <br>
 
-## Última Atualização : 23/04/2024 - v2.3.3
-**[CORREÇÃO]** Comando **reportar** corrigido nos casos que o dono ainda não estava cadastrado.<br>
-**[CORREÇÃO]** Correção de erros que poderiam ocorrer durante a inicialização.<br>
-**[COMANDO]** Os comandos **mm** e **mt** agora marcam sem exibir todas as marcações para evitar textos muito grandes.<br>
+## Última Atualização : 25/04/2024 - v2.4.0
+**[CORREÇÃO]** Corrigido alguns erros que poderiam ocorrer ao receber mensagens<br>
+**[ALTERAÇÃO]** O bot agora só mostra que leu a mensagem quando é um comando válido.<br>
+**[CÓDIGO]** Grandes alterações no código e na estrutura no projeto para uma futura atualização.<br>
 <br>
 
 
@@ -199,7 +197,6 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 |       ✅        |   Sistema de Tipos de Usuários        |
 |       ✅        |   Limitador comandos diários (por usuário)            |
 |       ✅        |   Limitador de comandos por minuto (por usuário)          |
-|       ✅        |   Limitador de mensagens privadas (Anti-flood)    |
 |       ✅        |   Auto Sticker Privado   |
 |       ✅        |   Sair do grupo                     |
 |       ✅        |   Obter lista de usuários bloqueados                |
