@@ -149,6 +149,11 @@ export const verificarComandosBloqueadosGlobal = async(comando, botInfoJSON)=>{
 }
 
 export const obterNumeroBot = async()=>{
+    let {hostNumber} = bot.botInfo()
+    return hostNumber
+}
+
+export const obterNumeroDono = async()=>{
     let {numero_dono} = bot.botInfo()
     return numero_dono
 }
