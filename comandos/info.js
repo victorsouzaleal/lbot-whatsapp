@@ -77,23 +77,23 @@ export const info = async(c, mensagemInfoCompleta) => {
             
             case `menu`:
                 try{
-                    var dadosUsuario = await usuarios.obterDadosUsuario(sender)
-                    var tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total
+                    let dadosUsuario = await usuarios.obterDadosUsuario(sender)
+                    let tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total, moedasUsuario = dadosUsuario.moedas
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
-                    var dadosResposta = '', nomeUsuario = username
+                    let dadosResposta = '', nomeUsuario = username
                     if(botInfoJSON.limite_diario.status){
-                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos)
+                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos, moedasUsuario)
                     } else {
-                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario, totalComandos)
+                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario, totalComandos, moedasUsuario)
                     }
                     dadosResposta += `═════════════════\n`
 
                     if(args.length == 1){
-                        var menuResposta = await menu.menuPrincipal()
+                        let menuResposta = await menu.menuPrincipal()
                         await socket.sendText(c, chatId, dadosResposta+menuResposta)
                     } else {
-                        var usuarioOpcao = args[1]
-                        var menuResposta = await menu.menuPrincipal()
+                        let usuarioOpcao = args[1]
+                        let menuResposta = await menu.menuPrincipal()
                         switch(usuarioOpcao){
                             case "0":
                                 menuResposta = await menu.menuInfoSuporte()
