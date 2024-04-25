@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import moment from "moment-timezone"
 import {getHostNumber} from '../baileys/socket-funcoes.js'
-import * as usuariosdb from '../database/usuarios.js'
+import * as usuarios from '../controle/usuariosControle.js'
 import {criarTexto} from '../lib/util.js'
 
 export const botObjeto = {
@@ -132,7 +132,7 @@ export const botQtdLimiteDiario = async (tipo, limite)=>{
     if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
     bot.limite_diario.limite_tipos[tipo] = parseInt(limite)
     await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
-    await usuariosdb.definirLimite(tipo, parseInt(limite))
+    await usuarios.alterarLimiteComandosTipo(tipo, parseInt(limite))
     return true
 }
 
@@ -144,12 +144,12 @@ export const botAlterarLimiteDiario = async (status)=>{
     await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
     if(status){
         for(var tipo in bot.limite_diario.limite_tipos){
-            await usuariosdb.definirLimite(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
+            await usuarios.alterarLimiteComandosTipo(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
         }
     } else {
-        await usuariosdb.resetarComandosDia()
+        await usuarios.resetarComandosDia()
         for(var tipo in bot.limite_diario.limite_tipos){
-            await usuariosdb.definirLimite(tipo, null)
+            await usuarios.alterarLimiteComandosTipo(tipo, null)
         }
     }
 }
@@ -158,7 +158,7 @@ export const botVerificarExpiracaoLimite = async ()=>{
     let bot = JSON.parse(fs.readFileSync(path.resolve('database/db/bot.json')))
     let timestamp_atual = Math.round(new Date().getTime()/1000)
     if(timestamp_atual >= bot.limite_diario.expiracao){
-        await usuariosdb.resetarComandosDia()
+        await usuarios.resetarComandosDia()
         bot.limite_diario.expiracao = timestamp_atual + 86400
         await fs.writeFileSync(path.resolve('database/db/bot.json'), JSON.stringify(bot))
     } 

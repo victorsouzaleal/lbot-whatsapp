@@ -3,7 +3,6 @@ import * as bot from '../controle/botControle.js'
 
 var db = {usuarios: new AsyncNedb({filename : './database/db/usuarios.db', autoload: true})}
 
-// ######################## FUNCOES USUARIO #####################
 export const obterUsuario = async (id_usuario) =>{
     let usuario = await db.usuarios.asyncFindOne({id_usuario : id_usuario})
     return usuario
@@ -127,4 +126,3 @@ export const resetarComandosDia = async() =>{
 export const resetarComandosDiaUsuario = async(id_usuario) =>{
     db.usuarios.asyncUpdate({id_usuario}, {$set:{comandos_dia : 0}})
 }
-//###########################################################

@@ -14,15 +14,15 @@ export const verificarGrupo = async(id_grupo) =>{
     return (resp != null)
 }
 
-export const registrarGrupo = async(id_grupo, ...dados)=>{
+export const registrarGrupo = async(id_grupo, dados)=>{
     let cadastro_grupo = {
         id_grupo,
-        nome : dados[0],
-        descricao : dados[1],
-        participantes: dados[2],
-        admins: dados[3],
-        dono: dados[4],
-        restrito_msg: dados[5],
+        nome : dados.titulo,
+        descricao : dados.descricao,
+        participantes: dados.participantes,
+        admins: dados.admins,
+        dono: dados.dono,
+        restrito_msg: dados.restrito,
         mutar: false,
         bemvindo: {status: false, msg: ""},
         antifake: {status: false, ddi_liberados:[]},
@@ -92,8 +92,15 @@ export const obterStatusRestritoMsg = async (id_grupo)=>{
     return grupo.restrito_msg
 }
 
-export const atualizarGrupo = async(id_grupo, ...dados)=>{  
-    await db.grupos.asyncUpdate({id_grupo}, {$set: {nome: dados[0], descricao: dados[1], participantes: dados[2], admins: dados[3], dono: dados[4], restrito_msg: dados[5]}})
+export const atualizarGrupo = async(id_grupo, dados)=>{  
+    await db.grupos.asyncUpdate({id_grupo}, {$set: {
+        nome: dados.titulo,
+        descricao: dados.descricao,
+        participantes: dados.participantes,
+        admins: dados.admins,
+        dono: dados.dono,
+        restrito_msg: dados.restrito
+    }})
 }
 
 export const atualizarNomeGrupo = async(id_grupo, nome)=>{
@@ -133,27 +140,27 @@ export const verificarAdmin = async (id_grupo, id_usuario)=>{
 //###
 
 //### ALTERAR RECURSOS
-export const alterarBemVindo = async(id_grupo, status, msg = "")=>{
+export const alterarBemVindo = async(id_grupo, status, msg)=>{
     await db.grupos.asyncUpdate({id_grupo}, {$set:{"bemvindo.status": status, "bemvindo.msg":msg}})
 }
 
-export const alterarAntiFake = async(id_grupo, status = true, ddi=[])=>{
+export const alterarAntiFake = async(id_grupo, status, ddi)=>{
     await db.grupos.asyncUpdate({id_grupo}, {$set:{"antifake.status": status, "antifake.ddi_liberados": ddi}})
 }
 
-export const alterarMutar = async(id_grupo, status = true)=>{
+export const alterarMutar = async(id_grupo, status)=>{
     await db.grupos.asyncUpdate({id_grupo}, {$set:{mutar: status}})
 }
 
-export const alterarAntiLink = async(id_grupo, status = true)=>{
+export const alterarAntiLink = async(id_grupo, status)=>{
     await db.grupos.asyncUpdate({id_grupo}, {$set:{antilink: status}})
 }
 
-export const alterarAutoSticker = async(id_grupo, status = true)=>{
+export const alterarAutoSticker = async(id_grupo, status)=>{
     await db.grupos.asyncUpdate({id_grupo}, {$set:{autosticker: status}})
 }
 
-export const alterarContador = async(id_grupo, status = true)=>{
+export const alterarContador = async(id_grupo, status)=>{
     let data_atual = (status) ? moment(moment.now()).format("DD/MM HH:mm:ss") : ''
     await db.grupos.asyncUpdate({id_grupo}, {$set:{"contador.status":status, "contador.inicio":data_atual}})
 }
