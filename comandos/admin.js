@@ -513,17 +513,18 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     var idUsuario = "", dadosUsuario = {}
                     if(quotedMsg) idUsuario = quotedMsgObjInfo.sender
                     else if(mentionedJidList.length === 1) idUsuario = mentionedJidList[0]
-                    else if(args.length >= 1) idUsuario =  args.slice(1).join("").replace(/\W+/g,"")+"@s.whatsapp.net"
+                    else if(args.length > 1) idUsuario =  args.slice(1).join("").replace(/\W+/g,"")+"@s.whatsapp.net"
                     else return await socket.reply(c, chatId, await erroComandoMsg(command),id)
-                    var usuarioRegistrado = await usuarios.verificarRegistro(idUsuario)
+                    let usuarioRegistrado = await usuarios.verificarRegistro(idUsuario)
                     if(usuarioRegistrado) dadosUsuario = await usuarios.obterDadosUsuario(idUsuario)
                     else return await socket.reply(c, chatId,msgs_texto.admin.verdados.nao_registrado,id)
-                    var maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite"
-                    var tipoUsuario = msgs_texto.tipos[dadosUsuario.tipo]
-                    var nomeUsuario =  dadosUsuario.nome || "Ainda não obtido"
-                    var resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, nomeUsuario, tipoUsuario, dadosUsuario.id_usuario.replace("@s.whatsapp.net",""))
+                    let maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite"
+                    let tipoUsuario = msgs_texto.tipos[dadosUsuario.tipo]
+                    let nomeUsuario =  dadosUsuario.nome || "Ainda não obtido"
+                    let moedasUsuario = dadosUsuario.moedas, proximoSalario = timestampParaData(dadosUsuario.salario.proximo)
+                    let resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, nomeUsuario, tipoUsuario, dadosUsuario.id_usuario.replace("@s.whatsapp.net",""))
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
-                    resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, dadosUsuario.comandos_total)
+                    resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, dadosUsuario.comandos_total, moedasUsuario, proximoSalario)
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)

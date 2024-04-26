@@ -56,9 +56,10 @@ export const info = async(c, mensagemInfoCompleta) => {
             
             case `meusdados`:
                 try{
-                    var dadosUsuario = await usuarios.obterDadosUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
+                    let dadosUsuario = await usuarios.obterDadosUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
-                    var nomeUsuario = username , resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
+                    let nomeUsuario = username , moedasUsuario = dadosUsuario.moedas, proximoSalario = timestampParaData(dadosUsuario.salario.proximo)
+                    let resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
                         var dadosGrupo = await grupos.obterGrupoInfo(groupId)
@@ -67,6 +68,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                         }   
                     }
+                    resposta += criarTexto(msgs_texto.info.meusdados.moedas, moedasUsuario, proximoSalario)
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)

@@ -293,7 +293,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                 try{
                     if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if(!grupoInfo.contador.status) return socket.reply(c, chatId, msgs_texto.grupo.atividade.erro_contador, id)
-                    var atividadeUsuario
+                    let atividadeUsuario
                     if(quotedMsg){
                         if(quotedMsgObjInfo.sender == botNumber) return socket.reply(c, chatId, msgs_texto.grupo.atividade.bot_erro, id)
                         atividadeUsuario = await grupos.obterAtividadeParticipante(groupId, quotedMsgObjInfo.sender)
@@ -305,7 +305,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     } else {
                         return socket.reply(chatId, await erroComandoMsg(command),id)
                     }
-                    var atividadeResposta = criarTexto(msgs_texto.grupo.atividade.resposta, atividadeUsuario.msg, atividadeUsuario.texto, atividadeUsuario.imagem, atividadeUsuario.video, atividadeUsuario.sticker, atividadeUsuario.audio, atividadeUsuario.outro)
+                    let atividadeResposta = criarTexto(msgs_texto.grupo.atividade.resposta, atividadeUsuario.msg, atividadeUsuario.texto, atividadeUsuario.imagem, atividadeUsuario.video, atividadeUsuario.sticker, atividadeUsuario.audio, atividadeUsuario.outro)
                     await socket.reply(c, chatId, atividadeResposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)

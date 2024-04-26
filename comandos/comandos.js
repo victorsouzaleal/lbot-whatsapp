@@ -25,7 +25,6 @@ export const listarComandos = async () => {
             `${prefixo}qualmusica`
         ],
         info:[
-            `${prefixo}ajuda`,
             `${prefixo}menu`,
             `${prefixo}reportar`,
             `${prefixo}meusdados`,
