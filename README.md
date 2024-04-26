@@ -23,10 +23,9 @@
 
 <br>
 
-## Última Atualização : 25/04/2024 - v2.4.0
-**[CORREÇÃO]** Corrigido alguns erros que poderiam ocorrer ao receber mensagens<br>
-**[ALTERAÇÃO]** O bot agora só mostra que leu a mensagem quando é um comando válido.<br>
-**[CÓDIGO]** Grandes alterações no código e na estrutura no projeto para uma futura atualização.<br>
+## Última Atualização : 26/04/2024 - v2.4.1
+**[ALTERAÇÃO]** Pequenos ajustes visuais no menu<br>
+**[CÓDIGO]** Retirados códigos que não vão ser mais utilizados.<br>
 <br>
 
 
