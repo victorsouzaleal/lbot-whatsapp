@@ -3,6 +3,7 @@ import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timesta
 import path from 'node:path'
 import * as api from '../lib/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
+import * as usuarios from '../controle/usuariosControle.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 
 
@@ -11,7 +12,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
         const {msgs_texto, ownerNumber} = mensagemInfoCompleta
         const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
         const {groupId, groupOwner, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
-        const {command, textoRecebido, args, id, chatId, isGroupMsg, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemInfoCompleta.mensagem
+        const {command, sender, textoRecebido, args, id, chatId, isGroupMsg, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemInfoCompleta.mensagem
         const {prefixo} = botInfoJSON
         let cmdSemPrefixo = command.replace(prefixo, "")
         
@@ -104,10 +105,20 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
             case "caracoroa":
                 try{
-                    var ladosMoeda = ["cara","coroa"], indexAleatorio = Math.floor(Math.random() * ladosMoeda.length)
+                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    let ladosMoeda = ["cara","coroa"]
+                    let textoUsuario = textoRecebido.slice(11).toLowerCase().trim()
+                    if(!ladosMoeda.includes(textoUsuario)) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     await socket.reply(c, chatId, msgs_texto.diversao.caracoroa.espera, id)
-                    var respostaTexto = criarTexto(msgs_texto.diversao.caracoroa.resposta, primeiraLetraMaiuscula(ladosMoeda[indexAleatorio]))
-                    await socket.replyFileFromUrl(c, MessageTypes.image, chatId, path.resolve(`media/caracoroa/${ladosMoeda[indexAleatorio]}.png`), respostaTexto, id)
+                    let indexAleatorio = Math.floor(Math.random() * ladosMoeda.length)
+                    let vitoriaUsuario = ladosMoeda[indexAleatorio] == textoUsuario
+                    let textoResultado
+                    if(vitoriaUsuario){
+                        textoResultado = criarTexto(msgs_texto.diversao.caracoroa.resposta.vitoria, primeiraLetraMaiuscula(ladosMoeda[indexAleatorio]))
+                    } else {
+                        textoResultado = criarTexto(msgs_texto.diversao.caracoroa.resposta.derrota, primeiraLetraMaiuscula(ladosMoeda[indexAleatorio]))
+                    }
+                    await socket.replyFileFromUrl(c, MessageTypes.image, chatId, path.resolve(`media/caracoroa/${ladosMoeda[indexAleatorio]}.png`), textoResultado, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
@@ -117,7 +128,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
             case "ppt":
                 try{
-                    var ppt = ["pedra","papel","tesoura"], indexAleatorio = Math.floor(Math.random() * ppt.length)
+                    let ppt = ["pedra","papel","tesoura"], indexAleatorio = Math.floor(Math.random() * ppt.length)
                     if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if(!ppt.includes(args[1].toLowerCase())) return await socket.reply(c, chatId, msgs_texto.diversao.ppt.opcao_erro, id)
                     var escolhaBot = ppt[indexAleatorio], iconeEscolhaBot = null, escolhaUsuario = args[1].toLowerCase(), iconeEscolhaUsuario = null, vitoriaUsuario = null
@@ -137,11 +148,15 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                         if(escolhaUsuario == "tesoura") vitoriaUsuario = null, iconeEscolhaUsuario = "✌️"
                         if(escolhaUsuario == "papel") vitoriaUsuario = false, iconeEscolhaUsuario = "✋"
                     }
-                    var textoResultado = ''
-                    if(vitoriaUsuario == true) textoResultado = msgs_texto.diversao.ppt.resposta.vitoria
-                    else if(vitoriaUsuario == false) textoResultado = msgs_texto.diversao.ppt.resposta.derrota
-                    else textoResultado = msgs_texto.diversao.ppt.resposta.empate
-                    await socket.reply(c, chatId, criarTexto(textoResultado, iconeEscolhaUsuario, iconeEscolhaBot), id)
+                    let textoResultado = ''
+                    if(vitoriaUsuario == true) {
+                        textoResultado = criarTexto(msgs_texto.diversao.ppt.resposta.vitoria, iconeEscolhaUsuario, iconeEscolhaBot)
+                    }else if(vitoriaUsuario == false){
+                        textoResultado = criarTexto(msgs_texto.diversao.ppt.resposta.derrota, iconeEscolhaUsuario, iconeEscolhaBot)
+                    } else {
+                        textoResultado = criarTexto(msgs_texto.diversao.ppt.resposta.empate, iconeEscolhaUsuario, iconeEscolhaBot)
+                    }
+                    await socket.reply(c, chatId, textoResultado, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
