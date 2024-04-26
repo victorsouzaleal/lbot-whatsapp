@@ -58,7 +58,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                 try{
                     let dadosUsuario = await usuarios.obterDadosUsuario(sender), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
-                    let nomeUsuario = username , moedasUsuario = dadosUsuario.moedas, proximoSalario = timestampParaData(dadosUsuario.salario.proximo)
+                    let nomeUsuario = username
                     let resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
@@ -68,7 +68,6 @@ export const info = async(c, mensagemInfoCompleta) => {
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                         }   
                     }
-                    resposta += criarTexto(msgs_texto.info.meusdados.moedas, moedasUsuario, proximoSalario)
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
@@ -80,13 +79,13 @@ export const info = async(c, mensagemInfoCompleta) => {
             case `menu`:
                 try{
                     let dadosUsuario = await usuarios.obterDadosUsuario(sender)
-                    let tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total, moedasUsuario = dadosUsuario.moedas
+                    let tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total
                     tipoUsuario = msgs_texto.tipos[tipoUsuario]
                     let dadosResposta = '', nomeUsuario = username
                     if(botInfoJSON.limite_diario.status){
-                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos, moedasUsuario)
+                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos)
                     } else {
-                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario, totalComandos, moedasUsuario)
+                        dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_comum, nomeUsuario, tipoUsuario, totalComandos)
                     }
                     dadosResposta += `═════════════════\n`
 

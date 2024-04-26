@@ -34,11 +34,6 @@ export const registrarUsuario = async(id_usuario, nome) =>{
         nome,
         comandos_total: 0,
         comandos_dia: 0,
-        moedas: 1000,
-        salario:{
-            valor: 1000,
-            proximo: Date.now() + 86400 * 1000
-        },
         max_comandos_dia : limite_diario.limite_tipos.comum,
         tipo: "comum"
     }
@@ -51,28 +46,10 @@ export const registrarDono = async(id_usuario, nome)=>{
         nome,
         comandos_total: 0,
         comandos_dia: 0,
-        moedas: 10000,
-        salario:{
-            valor: 1000,
-            proximo: Date.now() + 86400 * 1000
-        },
         max_comandos_dia : null,
         tipo: "dono"
     }
     await db.usuarios.asyncInsert(cadastro_usuario_dono)
-}
-
-export const adicionarMoedasUsuario = async(id_usuario, moedas)=>{
-    await db.usuarios.asyncUpdate({id_usuario}, {$inc: {moedas}})
-}
-
-export const removerMoedasUsuario = async(id_usuario, moedas)=>{
-    await db.usuarios.asyncUpdate({id_usuario}, {$inc: {moedas: -moedas}})
-}
-
-export const alterarProximoSalario = async(id_usuario, tAtual)=>{
-    let tProximo = tAtual + 86400 * 1000
-    await db.usuarios.asyncUpdate({id_usuario}, {$set: {'salario.proximo': tProximo}})
 }
 
 export const verificarDonoAtual = async(id_usuario)=>{

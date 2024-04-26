@@ -521,10 +521,9 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     let maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite"
                     let tipoUsuario = msgs_texto.tipos[dadosUsuario.tipo]
                     let nomeUsuario =  dadosUsuario.nome || "Ainda não obtido"
-                    let moedasUsuario = dadosUsuario.moedas, proximoSalario = timestampParaData(dadosUsuario.salario.proximo)
                     let resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, nomeUsuario, tipoUsuario, dadosUsuario.id_usuario.replace("@s.whatsapp.net",""))
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
-                    resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, dadosUsuario.comandos_total, moedasUsuario, proximoSalario)
+                    resposta += criarTexto(msgs_texto.admin.verdados.resposta_inferior, dadosUsuario.comandos_total)
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
