@@ -23,9 +23,8 @@
 
 <br>
 
-## Última Atualização : 26/04/2024 - v2.4.1
-**[ALTERAÇÃO]** Pequenos ajustes visuais no menu<br>
-**[CÓDIGO]** Retirados códigos que não vão ser mais utilizados.<br>
+## Última Atualização : 26/04/2024 - v2.4.2
+**[CORREÇÃO]** Foi corrigido um problema que o bot não respondia se não tivesse em nenhum grupo<br>
 <br>
 
 
