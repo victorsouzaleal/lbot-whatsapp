@@ -42,6 +42,7 @@ async function connectToWhatsApp(){
 
     //Ao atualizar dados do grupo
     c.ev.on('groups.update', async(groupsUpdate)=>{
+        if(!groupsUpdate.length) inicializacaoCompleta = true
         if(groupsUpdate.length != 0 && groupsUpdate[0].participants != undefined ){
             inicializacaoCompleta = await atualizacaoDadosGrupos(c, groupsUpdate)
             await realizarEventosEspera(c, eventosEsperando)
