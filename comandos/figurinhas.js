@@ -6,7 +6,7 @@ import {MessageTypes} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {stickerToPng} from '../lib/conversao.js'
-import {misturarEmojis, removerFundo} from '../lib/api.js'
+import {misturarEmojis, removerFundo, textoParaImagem} from '../lib/api.js'
 
 
 export const figurinhas = async(c, mensagemInfoCompleta) => {
@@ -167,6 +167,55 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     }
                 } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
+            case 'tps':
+                try{
+                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
+                    let usuarioTexto = textoRecebido.slice(5).trim()
+                    let stickerMetadata = {
+                        pack: nome_pack?.trim(), 
+                        author: nome_bot?.trim(),
+                        type: StickerTypes.FULL,
+                        quality: 100
+                    }
+                    await textoParaImagem(usuarioTexto).then(async ({resultado})=>{
+                        const stker = new Sticker(resultado, stickerMetadata)
+                        await socket.sendSticker(c, chatId, await stker.toMessage())
+                    }).catch(async err=>{
+                        if(!err.erro) throw err
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                    })
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
+            case 'atps':
+                try{
+                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
+                    let usuarioTexto = textoRecebido.slice(5).trim()
+                    let stickerMetadata = {
+                        pack: nome_pack?.trim(), 
+                        author: nome_bot?.trim(),
+                        type: StickerTypes.FULL,
+                        quality: 100,
+                        background: '#000000' 
+                    }
+                    await textoParaImagem(usuarioTexto, true).then(async ({resultado})=>{
+                        const stker = new Sticker(resultado, stickerMetadata)
+                        await socket.sendSticker(c, chatId, await stker.toMessage())
+                    }).catch(async err=>{
+                        if(!err.erro) throw err
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                    })
+                } catch (err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
                     throw err
