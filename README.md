@@ -23,8 +23,9 @@
 
 <br>
 
-## Última Atualização : 26/04/2024 - v2.4.2
-**[CORREÇÃO]** Foi corrigido um problema que o bot não respondia se não tivesse em nenhum grupo<br>
+## Última Atualização : 27/04/2024 - v2.4.3
+**[CORREÇÃO]** Foi corrigido um problema em uma dependencia que obrigava a ter o GIT instalado no sistema<br>
+**[NOVO]** Adicionado novamente os comandos **tps** e **atps** para criar stickers a partir de texto<br>
 <br>
 
 
