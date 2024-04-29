@@ -83,7 +83,7 @@ export const receberMensagem = async (c, mensagem)=>{
 
 export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
     try{
-        const msgs_texto = obterMensagensTexto()
+        const msgs_texto = await obterMensagensTexto()
         await grupos.registrarGrupoAoSerAdicionado(dadosGrupo[0])
         await socket.sendText(c, dadosGrupo[0].id, criarTexto(msgs_texto.geral.entrada_grupo, dadosGrupo[0].subject)).catch(()=>{})
     } catch(err){
