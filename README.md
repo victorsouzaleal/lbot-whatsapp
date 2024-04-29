@@ -23,9 +23,12 @@
 
 <br>
 
-## Última Atualização : 27/04/2024 - v2.4.3
-**[CORREÇÃO]** Foi corrigido um problema em uma dependencia que obrigava a ter o GIT instalado no sistema<br>
-**[NOVO]** Adicionado novamente os comandos **tps** e **atps** para criar stickers a partir de texto<br>
+## Última Atualização : 29/04/2024 - v2.4.4
+**[NOVO]** Novos comandos **filmes** e **series** para exibir as tendências atuais de filmes/series.<br>
+**[ALTERAÇÃO]** Menu **utilidades** foi reoorganizado em categorias.<br>
+**[CORREÇÃO]** Corrigido erro em comandos **fotobot** e **infocompleta** <br>
+**[CORREÇÃO]** Corrigido mensagem de erro no comando **atividade** <br>
+**[CORREÇÃO]** Corrigida a mensagem de entrada ao ser bot adicionado em um grupo.<br>
 <br>
 
 
@@ -120,11 +123,11 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 | Criador de Sticker |                Recursos        |
 | :-----------: | :--------------------------------: |
-|       ✅       | Foto para Sticker     |
-|       ✅       | Sticker para foto              |
+|       ✅       | Foto para Sticker |
 |       ✅       | Video/GIF para Sticker |
-|       ✅       | Sticker circular |
+|       ✅       | Texto para Sticker |
 |       ✅       | Sticker sem fundo |
+|       ✅       | Sticker para foto |
 |       ✅       | Auto Sticker |
 
 ### Downloads 
@@ -142,36 +145,39 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 | Utilitários |                     Recursos            |
 | :------------: | :---------------------------------------------: |
-|       ✅       | Efeitos de Aúdio
-|       ✅        |   Texto para voz                   |
-|       ✅        |   Áudio para texto                   |
-|       ✅        |   Letra de Música              |
-|       ✅        |   Reconhecimento de músicas                 |
-|       ✅        |   Detector de DDD             |
-|       ✅        |   Consulta de Clima/Previsão do Tempo            |
-|       ✅        |   Conversão de Moedas           |
-|       ✅        |   Calculadora básica           |
-|       ✅        |   Pesquisa Web                  |
-|       ✅        |   Detector Anime                  |
-|       ✅        |   Rastreamento Correios                  |
-|       ✅        |   Noticias Atuais                 |
-|       ✅        |   Tradutor                |
+|       ✅        |   Chat-GPT |
+|       ✅        |   Criação de imagens IA |
+|       ✅        |   Têndencias de Filmes/Séries |
+|       ✅        |   Efeitos de Aúdio |
+|       ✅        |   Texto para voz   |
+|       ✅        |   Áudio para texto |
+|       ✅        |   Letra de Música  |
+|       ✅        |   Reconhecimento de músicas |
+|       ✅        |   Detector de DDD |
+|       ✅        |   Consulta de Clima/Previsão do Tempo |
+|       ✅        |   Conversão de Moedas |
+|       ✅        |   Calculadora básica  |
+|       ✅        |   Pesquisa Web        |
+|       ✅        |   Detector Anime      |
+|       ✅        |   Rastreamento Correios |
+|       ✅        |   Noticias Atuais |
+|       ✅        |   Tradutor |
 
 ### Administração de Grupo
 
 | Apenas Grupo  |                     Recursos             |
 | :------------: | :---------------------------------------------: |
-|       ✅        |   Promover usuário                  |
-|       ✅        |   Rebaixar usuário                |
-|       ✅        |   Remover usuário                     |
-|       ✅        |   Adicionar usuário                      |
-|       ✅        |   Marcar todos              |
-|       ✅        |   Obter link do grupo               |
-|       ✅        |   Redefinir link do grupo               |
-|       ✅        |   Obter lista de administradores               |
-|       ✅        |   Obter dono do grupo              |
+|       ✅        |   Promover usuário |
+|       ✅        |   Rebaixar usuário |
+|       ✅        |   Remover usuário  |
+|       ✅        |   Adicionar usuário |
+|       ✅        |   Marcar todos |
+|       ✅        |   Obter link do grupo |
+|       ✅        |   Redefinir link do grupo |
+|       ✅        |   Obter lista de administradores |
+|       ✅        |   Obter dono do grupo |
 |       ✅        |   Lista Negra  |
-|       ✅        |   Mutar Grupo
+|       ✅        |   Mutar Grupo |
 |       ✅        |   Bem Vindo  |
 |       ✅        |   Auto Sticker |
 |       ✅        |   Anti Fake |
@@ -183,23 +189,23 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 |       ✅        |   Bloquear/Desbloquear Comandos |
 |       ✅        |   Enquete |
 |       ✅        |   Banir Todos  |
-|       ✅        |   Apagar mensagens do bot  |
+|       ✅        |   Apagar mensagens do bot |
 
 ### Administração de Dono
 
 | Apenas Dono do Bot  |              Recurso           |
 | :------------: | :---------------------------------------------: |
-|       ✅        |   Entrar em um grupo                 |
-|       ✅        |   Sair de todos os grupos                  |
-|       ✅        |   Broadcast - Grupos                  |
-|       ✅        |   Bloquear/Desbloquear usuário                     |
-|       ✅        |   Sistema de Tipos de Usuários        |
-|       ✅        |   Limitador comandos diários (por usuário)            |
-|       ✅        |   Limitador de comandos por minuto (por usuário)          |
-|       ✅        |   Auto Sticker Privado   |
-|       ✅        |   Sair do grupo                     |
-|       ✅        |   Obter lista de usuários bloqueados                |
-|       ✅        |   Modificar status atual do bot                |
+|       ✅        |   Entrar em um grupo |
+|       ✅        |   Sair de todos os grupos |
+|       ✅        |   Broadcast - Grupos |
+|       ✅        |   Bloquear/Desbloquear usuário |
+|       ✅        |   Sistema de Tipos de Usuários |
+|       ✅        |   Limitador comandos diários (por usuário) |
+|       ✅        |   Limitador de comandos por minuto (por usuário) |
+|       ✅        |   Auto Sticker Privado |
+|       ✅        |   Sair do grupo |
+|       ✅        |   Obter lista de usuários bloqueados |
+|       ✅        |   Modificar status atual do bot  |
 
 <br>
 
@@ -221,10 +227,12 @@ Esse comando atualiza as dependências e pode resolver algum problema que você 
 
 <br>
 
-## 8 - Contato/Doação 
+## 8 - Contato
 Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
 
 * **WhatsApp :** https://wa.me/5521995612287
 
-## 9 - Agradecimentos
-* [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys)
+## 9 - Agradecimentos/Contribuições
+
+* [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
+* [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
