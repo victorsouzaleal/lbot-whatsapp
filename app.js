@@ -12,6 +12,10 @@ async function connectToWhatsApp(){
     var inicializacaoCompleta = false, eventosEsperando = []
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
     const store = makeInMemoryStore({})
+    store.readFromFile('./database/db/baileys_store.json')
+    setInterval(() => {
+        store.writeToFile('./database/db/baileys_store.json')
+    }, 10000)
     const c = makeWASocket(configSocket(state, store))
 
     store.bind(c.ev)
