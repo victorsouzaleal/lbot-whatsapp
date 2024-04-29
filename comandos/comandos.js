@@ -5,6 +5,8 @@ export const listarComandos = async () => {
     let {prefixo} = await bot.obterInformacoesBot()
     return {
         utilidades :[
+            `${prefixo}filmes`,
+            `${prefixo}series`,
             `${prefixo}gpt`,
             `${prefixo}criarimg`,
             `${prefixo}tabela`,

@@ -18,6 +18,36 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
         let cmdSemPrefixo = command.replace(prefixo, "")
         
         switch(cmdSemPrefixo){  
+            case "filmes":
+                try{
+                    await api.top20TendenciasDia("filmes").then(async({resultado})=>{
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.filmes.resposta, resultado), id)
+                    }).catch(async(err)=>{
+                        if(!err.erro) throw err
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                    })
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
+            case "series":
+                try{
+                    await api.top20TendenciasDia("series").then(async({resultado})=>{
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.series.resposta, resultado), id)
+                    }).catch(async(err)=>{
+                        if(!err.erro) throw err
+                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                    })
+                } catch(err){
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+                    err.message = `${command} - ${err.message}`
+                    throw err
+                }
+                break
+
             case "gpt":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
