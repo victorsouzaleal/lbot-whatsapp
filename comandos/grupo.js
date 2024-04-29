@@ -303,7 +303,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                         atividadeUsuario = await grupos.obterAtividadeParticipante(groupId, mentionedJidList[0])
                         if(atividadeUsuario == null) return socket.reply(c, chatId, msgs_texto.grupo.atividade.fora_grupo, id)
                     } else {
-                        return socket.reply(chatId, await erroComandoMsg(command),id)
+                        return socket.reply(c, chatId, await erroComandoMsg(command),id)
                     }
                     let atividadeResposta = criarTexto(msgs_texto.grupo.atividade.resposta, atividadeUsuario.msg, atividadeUsuario.texto, atividadeUsuario.imagem, atividadeUsuario.video, atividadeUsuario.sticker, atividadeUsuario.audio, atividadeUsuario.outro)
                     await socket.reply(c, chatId, atividadeResposta, id)
