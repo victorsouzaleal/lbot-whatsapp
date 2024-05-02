@@ -63,7 +63,8 @@ export const verificarDonoAtual = async(id_usuario)=>{
 
 export const alterarTipoUsuario = async(id_usuario, tipo)=>{
     let {limite_diario} = await bot.obterInformacoesBot()
-    if(limite_diario.limite_tipos[tipo] || limite_diario.limite_tipos[tipo] == null){
+    console.log(limite_diario.limite_tipos[tipo])
+    if(limite_diario.limite_tipos[tipo] !== undefined){
         await db.usuarios.asyncUpdate({id_usuario}, {$set: {tipo, max_comandos_dia: limite_diario.limite_tipos[tipo]}})
         return true
     } else {
