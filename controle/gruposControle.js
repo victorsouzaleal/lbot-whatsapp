@@ -507,15 +507,15 @@ export const filtroAntiFlood = async(c, mensagemInfoCompleta)=>{
         if(!isGroupMsg) return true
         const afl_status = await obterGrupoInfo(groupId)
         if(!afl_status.antiflood) return true
-
-        if (!isBotGroupAdmins || (await obterInfoAntiFlood(groupId) == undefined)) {
+        const antiFloodInfo = await obterInfoAntiFlood(groupId)
+        if (!isBotGroupAdmins || (antiFloodInfo == undefined)) {
             await alterarAntiFlood(groupId,false)
         } else {
             let flood = await tratarMensagemAntiFlood(groupId,sender)
             if(flood) {
                 if(!groupAdmins.includes(sender)) {
                     await socket.removeParticipant(c, groupId, sender)
-                    await socket.sendTextWithMentions(c,chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfoJSON.nome), [sender])
+                    await socket.sendTextWithMentions(c,chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfoJSON.nome_bot), [sender])
                     return false
                 }
             } 
