@@ -1,6 +1,7 @@
 import pino from 'pino'
+import {recuperarMensagem} from './mensagem.js'
 
-export default function configSocket (state, store){
+export default function configSocket (state){
     return {
         printQRInTerminal: true,
         auth: state,
@@ -8,10 +9,8 @@ export default function configSocket (state, store){
         keepAliveIntervalMs: 60000,
         logger: pino({level : "silent"}),
         getMessage: async (key) => {
-            if (store) {
-                const msg = await store.loadMessage(key.remoteJid, key.id)
-                return msg.message || undefined
-            }
+            const {message} = await recuperarMensagem(key.remoteJid, key.id)
+            return message || undefined
         }
     }
 }

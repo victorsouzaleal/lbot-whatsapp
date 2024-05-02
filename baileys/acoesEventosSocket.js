@@ -6,7 +6,7 @@ import { obterMensagensTexto } from '../lib/msgs.js'
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
 import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
-import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
+import {converterMensagem, tiposPermitidosMensagens, armazenarMensagem}  from './mensagem.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
 import {chamadaComando} from '../lib/chamadaComando.js'
 import * as bot from '../controle/botControle.js'
@@ -64,6 +64,7 @@ export const receberMensagem = async (c, mensagem)=>{
     try{
         switch (mensagem.type) {
             case "notify":
+                await armazenarMensagem(mensagem.messages[0])
                 if(mensagem.messages[0].message == undefined) return
                 const mensagemBaileys = await converterMensagem(mensagem)
                 if(!tiposPermitidosMensagens.includes(mensagemBaileys.mensagem.type) || mensagemBaileys.mensagem.broadcast) return

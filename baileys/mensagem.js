@@ -4,6 +4,8 @@ import {listarComandos} from '../comandos/comandos.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
 import * as bot from '../controle/botControle.js'
 import * as grupos from '../controle/gruposControle.js'
+import fs from 'fs-extra'
+import path from 'path'
 
 
 export const converterMensagem = async(m) =>{
@@ -111,6 +113,32 @@ export const tiposPermitidosMensagens = [
     "stickerMessage",
     "audioMessage"
 ]
+
+export const armazenarMensagem = async (mensagem) =>{
+    let mensagens = await obterMensagens()
+    if(mensagens[mensagem.key.remoteJid] == undefined) mensagens[mensagem.key.remoteJid] = [mensagem]
+    else mensagens[mensagem.key.remoteJid].push(mensagem)
+    await atualizarMensagens(mensagens)
+}
+
+export const recuperarMensagem = async (remoteJid, mensagemId) =>{
+    let mensagens = await obterMensagens()
+    if(mensagens[remoteJid] == undefined) return undefined
+    return mensagens[remoteJid].find(mensagem => mensagem.key.id == mensagemId)
+}
+
+const obterMensagens = async()=>{
+    let caminhoJson = path.resolve('database/db/mensagens_salvas.json')
+    if (!fs.existsSync(caminhoJson)) fs.writeFileSync(caminhoJson, JSON.stringify({}))
+    let mensagens = JSON.parse(fs.readFileSync(caminhoJson))
+    return mensagens
+}
+
+const atualizarMensagens = async(mensagens)=>{
+    let caminhoJson = path.resolve('database/db/mensagens_salvas.json')
+    if (!fs.existsSync(caminhoJson)) fs.writeFileSync(caminhoJson, {})
+    fs.writeFileSync(caminhoJson, JSON.stringify(mensagens))
+}
 
 
 
