@@ -83,7 +83,7 @@ export const sendTextWithMentions = async(c, chatId, text, mentionedIdsArray)=>{
 }
 
 export const sendSticker = async(c,id, sticker)=>{ 
-    return await c.sendMessage(id, sticker)
+    return await c.sendMessage(id, {sticker})
 }
 
 export const sendFileFromUrl = async(c, type, chatId, filePath, caption) =>{ 
