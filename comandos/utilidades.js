@@ -1,12 +1,11 @@
 //REQUERINDO MÓDULOS
 import fs from 'fs-extra'
-import {criarTexto, erroComandoMsg, obterNomeAleatorio, consoleErro} from '../lib/util.js'
+import {criarTexto, erroComandoMsg, obterNomeAleatorio, consoleErro, converterMp4ParaMp3} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
-import {converterMp4ParaMp3} from '../lib/conversao.js'
 
 
 export const utilidades = async(c, mensagemInfoCompleta) => {

@@ -1,6 +1,5 @@
 import {MessageTypes} from './mensagem.js'
-import {getVideoThumbnail} from '../lib/conversao.js'
-import {delayAleatorio} from '../lib/util.js'
+import {delayAleatorio, getVideoThumbnail} from '../lib/util.js'
 
 // GENERAL FUNCTIONS
 export const deleteMessage = async(c, message, isQuoted = false)=>{
