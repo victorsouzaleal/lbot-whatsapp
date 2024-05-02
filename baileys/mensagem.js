@@ -12,7 +12,8 @@ export const converterMensagem = async(m) =>{
         let respostaInformacoes = {}
         let type = getContentType(m.message)
         let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
-        let sender =  m.key.participant || m.key.remoteJid
+        let botNumber = await bot.obterNumeroBot()
+        let sender = (m.key.fromMe) ? botNumber : m.key.participant || m.key.remoteJid
         let lista_comandos = await listarComandos(),  msgs_texto = await obterMensagensTexto(), botInfoJSON = await bot.obterInformacoesBot()
         let textoRecebido = m.message[type]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
         let ownerNumber = botInfoJSON.numero_dono
@@ -22,7 +23,6 @@ export const converterMensagem = async(m) =>{
         let grupoInfo = isGroupMsg ? await grupos.obterGrupoInfo(groupId) : null
         let groupAdmins = (isGroupMsg && grupoInfo) ? grupoInfo.admins : null
         let isGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(sender) : null
-        let botNumber = await bot.obterNumeroBot()
         let isBotGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(botNumber) : null
 
         respostaInformacoes = {
