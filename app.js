@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-import {makeWASocket, useMultiFileAuthState, makeInMemoryStore} from '@whiskeysockets/baileys'
+import {makeWASocket, useMultiFileAuthState} from '@whiskeysockets/baileys'
 import {atualizarConexao, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './baileys/acoesEventosSocket.js'
 import configSocket from './baileys/configSocket.js'
 import moment from "moment-timezone"

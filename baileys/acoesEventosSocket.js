@@ -64,10 +64,10 @@ export const receberMensagem = async (c, mensagem)=>{
     try{
         switch (mensagem.type) {
             case "notify":
-                await armazenarMensagem(mensagem.messages[0])
                 if(mensagem.messages[0].message == undefined) return
+                await armazenarMensagem(mensagem.messages[0])
                 const mensagemBaileys = await converterMensagem(mensagem)
-                if(!tiposPermitidosMensagens.includes(mensagemBaileys.mensagem.type) || mensagemBaileys.mensagem.broadcast) return
+                if(!tiposPermitidosMensagens.includes(mensagemBaileys.mensagem.type)) return
                 if(!await grupos.filtroAntiLink(c, mensagemBaileys)) return
                 if(!await grupos.filtroAntiFlood(c, mensagemBaileys)) return
                 if(!await checagemMensagem(c, mensagemBaileys)) return
