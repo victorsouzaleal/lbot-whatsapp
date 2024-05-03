@@ -1,13 +1,13 @@
 import pino from 'pino'
-import {recuperarMensagem} from './mensagem.js'
-import {isJidBroadcast } from '@whiskeysockets/baileys'
+import {recuperarMensagem} from '../controle/mensagensControle.js'
+import {isJidBroadcast} from '@whiskeysockets/baileys'
 
 export default function configSocket (state){
     return {
         printQRInTerminal: true,
         auth: state,
-        emitOwnEvents: false,
         keepAliveIntervalMs: 20000,
+        emitOwnEvents: true,
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid.endsWith('@newsletter'),
         getMessage: async (key) => {

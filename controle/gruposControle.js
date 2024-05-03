@@ -506,7 +506,7 @@ export const filtroAntiFlood = async(c, mensagemInfoCompleta)=>{
         const {chatId, sender, isGroupMsg} = mensagemInfoCompleta.mensagem
         if(!isGroupMsg) return true
         const afl_status = await obterGrupoInfo(groupId)
-        if(!afl_status.antiflood) return true
+        if(!afl_status?.antiflood) return true
         const antiFloodInfo = await obterInfoAntiFlood(groupId)
         if (!isBotGroupAdmins || (antiFloodInfo == undefined)) {
             await alterarAntiFlood(groupId,false)
@@ -535,7 +535,7 @@ export const filtroAntiLink = async(c, mensagemInfoCompleta)=>{
         const {sender, chatId, isGroupMsg, body, caption, id} = mensagemInfoCompleta.mensagem
         if(!isGroupMsg) return true
         const al_status = await obterGrupoInfo(groupId)
-        if(!al_status.antilink) return true
+        if(!al_status?.antilink) return true
 
         if (!isBotGroupAdmins) {
             await alterarAntiLink(groupId,false)

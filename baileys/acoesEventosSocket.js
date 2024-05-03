@@ -6,11 +6,13 @@ import { obterMensagensTexto } from '../lib/msgs.js'
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
 import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
-import {converterMensagem, tiposPermitidosMensagens, armazenarMensagem}  from './mensagem.js'
+import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
 import {chamadaComando} from '../lib/chamadaComando.js'
 import * as bot from '../controle/botControle.js'
 import * as grupos from '../controle/gruposControle.js'
+import {armazenarMensagem} from '../controle/mensagensControle.js'
+
 
 export const atualizarConexao = async (c, conexao)=>{
     const msgs_texto = await obterMensagensTexto()
@@ -62,10 +64,10 @@ export const atualizarConexao = async (c, conexao)=>{
 
 export const receberMensagem = async (c, mensagem)=>{
     try{
+        if(mensagem.messages[0].key.fromMe) await armazenarMensagem(mensagem.messages[0])
         switch (mensagem.type) {
             case "notify":
                 if(mensagem.messages[0].message == undefined) return
-                await armazenarMensagem(mensagem.messages[0])
                 const mensagemBaileys = await converterMensagem(mensagem)
                 if(!tiposPermitidosMensagens.includes(mensagemBaileys.mensagem.type)) return
                 if(!await grupos.filtroAntiLink(c, mensagemBaileys)) return
