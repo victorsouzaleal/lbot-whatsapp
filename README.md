@@ -23,13 +23,10 @@
 
 <br>
 
-## Última Atualização : 02/05/2024 - v2.4.5
-**[NOVO]** Criado um armazenamento de mensagens para tentar reenviar a mensagem em caso de falha.<br>
-**[ALTERAÇÃO]** A criação de stickers foi refeita, eliminando stickers circulares/sem cortar mas em troca mais estabilidade na criação. Todos os stickers agora vão se ajustar no tamanho 512x512 independente do formato da foto/video. <br>
-**[CÓDIGO]** Foram feitas algumas alterações na configuração do socket para ignorar receber mensagens de status e de canais que poderiam causar problemas ao bot.<br>
-**[CORREÇÃO]** Corrigido a mensagem de banimento do **ANTI-FLOOD** <br>
-**[CORREÇÃO]** Corrigido falha no cadastro de usuário que poderia ocorrer em certa situação.<br>
-**[CORREÇÃO]** Corrigido o comando **alterartipo** que estava aceitando qualquer nome.<br>
+## Última Atualização : 03/05/2024 - v2.4.6
+**[CÓDIGO]** O banco de dados NeDB foi atualizado para uma versão mais atual e estável.<br>
+**[CÓDIGO]** O armazenamento de mensagens do bot foi melhorado e migrado para um banco de dados NeDB.<br>
+**[CORREÇÃO]** Corrigido possiveis erros com Anti-Flood/Anti-Link/Contador caso o bot seja banido de um grupo.<br>
 <br>
 
 
