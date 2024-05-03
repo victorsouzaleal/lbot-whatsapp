@@ -7,12 +7,7 @@ export const armazenarMensagem = async (mensagem) =>{
 
 export const recuperarMensagem = async (remoteJid, mensagemId) =>{
     let mensagem = await mensagensdb.obterMensagem(remoteJid, mensagemId)
-    return WAProto.WebMessageInfo.fromObject(mensagem)
-}
-
-export const obterMensagensChat = async(remoteJid) =>{
-    let mensagens = await mensagensdb.obterMensagensChat(remoteJid)
-    return mensagens
+    return  mensagem ? WAProto.Message.fromObject(mensagem) : undefined
 }
 
 export const limparMensagensArmazenadas = async()=>{

@@ -11,8 +11,8 @@ export default function configSocket (state){
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid.endsWith('@newsletter'),
         getMessage: async (key) => {
-            const {message} = await recuperarMensagem(key.remoteJid, key.id)
-            return message || undefined
+            const mensagem = await recuperarMensagem(key.remoteJid, key.id)
+            return mensagem || undefined
         }
     }
 }
