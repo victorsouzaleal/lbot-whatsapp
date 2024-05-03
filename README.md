@@ -23,12 +23,13 @@
 
 <br>
 
-## Última Atualização : 29/04/2024 - v2.4.4
-**[NOVO]** Novos comandos **filmes** e **series** para exibir as tendências atuais de filmes/series.<br>
-**[ALTERAÇÃO]** Menu **utilidades** foi reoorganizado em categorias.<br>
-**[CORREÇÃO]** Corrigido erro em comandos **fotobot** e **infocompleta** <br>
-**[CORREÇÃO]** Corrigido mensagem de erro no comando **atividade** <br>
-**[CORREÇÃO]** Corrigida a mensagem de entrada ao ser bot adicionado em um grupo.<br>
+## Última Atualização : 02/05/2024 - v2.4.5
+**[NOVO]** Criado um armazenamento de mensagens para tentar reenviar a mensagem em caso de falha.<br>
+**[ALTERAÇÃO]** A criação de stickers foi refeita, eliminando stickers circulares/sem cortar mas em troca mais estabilidade na criação. Todos os stickers agora vão se ajustar no tamanho 512x512 independente do formato da foto/video. <br>
+**[CÓDIGO]** Foram feitas algumas alterações na configuração do socket para ignorar receber mensagens de status e de canais que poderiam causar problemas ao bot.<br>
+**[CORREÇÃO]** Corrigido a mensagem de banimento do **ANTI-FLOOD** <br>
+**[CORREÇÃO]** Corrigido falha no cadastro de usuário que poderia ocorrer em certa situação.<br>
+**[CORREÇÃO]** Corrigido o comando **alterartipo** que estava aceitando qualquer nome.<br>
 <br>
 
 
