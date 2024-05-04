@@ -79,7 +79,6 @@ export const listarComandos = async () => {
             `${prefixo}topativos`,
             `${prefixo}contador`, 
             `${prefixo}atividade`,
-            `${prefixo}alterarcont`,
             `${prefixo}imarcar`,
             `${prefixo}ibanir`,
             `${prefixo}bcmd`,

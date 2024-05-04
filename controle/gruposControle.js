@@ -136,18 +136,28 @@ export const obterTodosGruposInfo = async()=>{
 }
 
 export const obterAtividadeParticipante = async(grupoId, usuario)=>{
-    let atividade = gruposdb.obterAtividade(grupoId, usuario)
+    let atividade = await gruposdb.obterAtividade(grupoId, usuario)
     return atividade
 }
 
 export const obterParticipantesInativos = async(grupoId, qtdMensagem)=>{
-    let inativos = gruposdb.obterUsuariosInativos(grupoId, qtdMensagem)
-    return inativos
+    let inativos = await gruposdb.obterUsuariosInativos(grupoId, qtdMensagem)
+    let grupoInfo = await obterGrupoInfo(grupoId)
+    let inativosNoGrupo = []
+    inativos.forEach((inativo)=>{
+        if(grupoInfo.participantes.includes(inativo.id_usuario)) inativosNoGrupo.push(inativo)
+    })
+    return inativosNoGrupo
 }
 
 export const obterParticipantesAtivos = async(grupoId, qtdParticipantes)=>{
-    let ativos = gruposdb.obterUsuariosAtivos(grupoId, qtdParticipantes)
-    return ativos
+    let ativos = await gruposdb.obterUsuariosAtivos(grupoId, qtdParticipantes)
+    let grupoInfo = await obterGrupoInfo(grupoId)
+    let ativosNoGrupo = []
+    ativos.forEach((ativo)=>{
+        if(grupoInfo.participantes.includes(ativo.id_usuario)) ativosNoGrupo.push(ativo)
+    })
+    return ativosNoGrupo.length >= qtdParticipantes ? ativosNoGrupo.slice(0, (qtdParticipantes - 1)) : ativosNoGrupo
 }
 
 export const removerGrupo = async(grupoId)=>{
@@ -207,8 +217,8 @@ export const registrarContagemParticipante = async(grupoId, usuario)=>{
     await gruposdb.registrarContagem(grupoId, usuario)
 }
 
-export const verificarParticipanteContador = async(grupoId, usuario)=>{
-    await gruposdb.existeUsuarioContador(grupoId, usuario)
+export const verificarRegistrarContagemParticipante = async(grupoId, usuario)=>{
+    await gruposdb.verificarRegistrarContagem(grupoId, usuario)
 }
 
 export const obterTodasContagensGrupo = async(grupoId)=>{
@@ -244,10 +254,6 @@ export const atualizarContagemGrupos = async(gruposInfo)=>{
                     //ADICIONANDO NA CONTAGEM QUEM ENTROU NO GRUPO ENQUANTO O BOT ESTAVA OFF
                     for(let membroId of membros_grupo){
                         if(contagens.find(contagem => contagem.id_usuario == membroId) == undefined) await registrarContagemParticipante(grupo.id,membroId)
-                    }
-                    //REMOVENDO DA CONTAGEM QUEM SAIU DO GRUPO ENQUANTO O BOT ESTAVA OFF
-                    for(let contagem of contagens){
-                        if(membros_grupo.find(membro => membro == contagem.id_usuario) == undefined) await removerContagemParticipante(grupo.id,contagem.id_usuario)
                     }
                 }       
             }
@@ -285,10 +291,6 @@ export const alterarContador = async(grupoId, status = true)=>{
 
 export const alterarAntiFlood = async(grupoId, status = true, qtdMensagem = 10, intervalo = 10)=>{
     await gruposdb.alterarAntiFlood(grupoId, status, qtdMensagem, intervalo)
-}
-
-export const alterarContagemParticipante = async(grupoId, usuario, qtd)=>{
-    await gruposdb.alterarContagemUsuario(grupoId, usuario, qtd)
 }
 
 export const tratarMensagemAntiFlood = async(grupoId, usuario)=>{

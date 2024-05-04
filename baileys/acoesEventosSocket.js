@@ -106,15 +106,14 @@ export const atualizacaoParticipantesGrupo = async (c, evento)=>{
             //BEM-VINDO
             await grupos.mensagemBemVindo(c,evento,g_info)
             //CONTADOR
-            if(g_info.contador) await grupos.registrarContagemParticipante(evento.id, evento.participants[0])
+            if(g_info?.contador.status) await grupos.verificarRegistrarContagemParticipante(evento.id, evento.participants[0])
             await grupos.adicionarParticipante(evento.id, evento.participants[0])
         } else if(evento.action == "remove"){
             if(isBotUpdate){
-                if(g_info?.contador) await grupos.removerContagemGrupo(evento.id)
+                if(g_info?.contador.status) await grupos.removerContagemGrupo(evento.id)
                 await grupos.removerGrupo(evento.id)
             } else{
                 await grupos.removerParticipante(evento.id, evento.participants[0])
-                if(g_info?.contador) await grupos.removerContagemParticipante(evento.id, evento.participants[0])
             }
         } else if(evento.action == "promote"){
             await grupos.adicionarAdmin(evento.id, evento.participants[0])

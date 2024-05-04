@@ -256,17 +256,15 @@ export const registrarContagemTodos =async(id_grupo,usuarios)=>{
     }
 }
 
-export const existeUsuarioContador = async(id_grupo,id_usuario)=>{
+export const verificarRegistrarContagem = async(id_grupo,id_usuario)=>{
     let id_unico = `${id_grupo}-${id_usuario}`
     let contador = await db.contador.findOneAsync({id_unico})
-    if(contador == null) {
-        db.contador.insertAsync({id_grupo,id_usuario,id_unico,msg:0,imagem:0,audio:0,sticker:0,video:0,outro:0,texto:0})
-    }
+    if(!contador) await db.contador.insertAsync({id_grupo,id_usuario,id_unico,msg:0,imagem:0,audio:0,sticker:0,video:0,outro:0,texto:0})
 }
 
 export const registrarContagem = async(id_grupo,id_usuario)=>{
     let id_unico = `${id_grupo}-${id_usuario}`
-    db.contador.insertAsync({id_grupo,id_usuario,id_unico,msg:0,imagem:0,audio:0,sticker:0,video:0,outro:0,texto:0}) 
+    await db.contador.insertAsync({id_grupo,id_usuario,id_unico,msg:0,imagem:0,audio:0,sticker:0,video:0,outro:0,texto:0}) 
 }
 
 export const addContagem = async(id_grupo,id_usuario,tipo_msg)=>{
@@ -300,20 +298,14 @@ export const obterAtividade = async(id_grupo,id_usuario)=>{
     return atividade
 }
 
-export const alterarContagemUsuario = async(id_grupo,id_usuario,qtd)=>{
-    let resto = parseInt(qtd % 6)
-    let msgs_cada = parseInt((qtd - resto)/6)
-    await db.contador.updateAsync({id_grupo,id_usuario}, {$set:{msg:parseInt(qtd), texto:msgs_cada, imagem:msgs_cada, video:msgs_cada, sticker:msgs_cada, audio:msgs_cada, outro: resto }})
-}
-
 export const obterUsuariosInativos = async(id_grupo,min)=>{
     min = parseInt(min)
-    let usuarios_inativos = await db.contador.findAsync({id_grupo, msg: {$lt: min}},[ ["sort", {msg:-1}]])
+    let usuarios_inativos = await db.contador.findAsync({id_grupo, msg: {$lt: min}}).sort({msg: -1})
     return usuarios_inativos
 }
 
-export const obterUsuariosAtivos = async(id_grupo, limite) =>{
-    let usuarios_ativos = await db.contador.findAsync({id_grupo}, [ ["sort", {msg:-1}] , ['limit', limite] ] )
+export const obterUsuariosAtivos = async(id_grupo) =>{
+    let usuarios_ativos = await db.contador.findAsync({id_grupo}).sort({msg: -1})
     return usuarios_ativos
 }
 

@@ -294,11 +294,9 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(!grupoInfo.contador.status) return socket.reply(c, chatId, msgs_texto.grupo.atividade.erro_contador, id)
                     let atividadeUsuario
                     if(quotedMsg){
-                        if(quotedMsgObjInfo.sender == botNumber) return socket.reply(c, chatId, msgs_texto.grupo.atividade.bot_erro, id)
                         atividadeUsuario = await grupos.obterAtividadeParticipante(groupId, quotedMsgObjInfo.sender)
                         if(atividadeUsuario == null) return socket.reply(c, chatId, msgs_texto.grupo.atividade.fora_grupo, id)
                     } else if (mentionedJidList.length === 1){
-                        if(mentionedJidList[0] == botNumber) return socket.reply(c, chatId, msgs_texto.grupo.atividade.bot_erro, id)
                         atividadeUsuario = await grupos.obterAtividadeParticipante(groupId, mentionedJidList[0])
                         if(atividadeUsuario == null) return socket.reply(c, chatId, msgs_texto.grupo.atividade.fora_grupo, id)
                     } else {
@@ -312,48 +310,26 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     throw err
                 }
                 break
-            
-            case "alterarcont":
-                try{
-                    if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if(args.length == 1)  return socket.reply(c, chatId, await erroComandoMsg(command), id)
-                    var usuarioNumeroMsg = args[1]
-                    if(isNaN(usuarioNumeroMsg) || usuarioNumeroMsg < 0)  return await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.num_invalido, id)
-                    if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.erro_contador, id)
-                    if(!quotedMsg && mentionedJidList.length != 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
-                    var usuarioSelecionado = quotedMsg ? quotedMsgObjInfo.sender : mentionedJidList[0]
-                    var contagemUsuario = await grupos.obterAtividadeParticipante(groupId, usuarioSelecionado)
-                    if(!contagemUsuario) return await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.fora_grupo, id) 
-                    await grupos.alterarContagemParticipante(groupId, usuarioSelecionado, usuarioNumeroMsg)
-                    await socket.reply(c, chatId, msgs_texto.grupo.alterarcont.sucesso, id)
-                } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
-                    throw err
-                }
-                break
 
             case "imarcar":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
-                    var qtdMensagem = args[1]
+                    let qtdMensagem = args[1]
                     if(isNaN(qtdMensagem)) return await socket.reply(c, chatId, msgs_texto.grupo.minativos.erro_qtd , id)
                     if(qtdMensagem < 1 || qtdMensagem > 50) return await socket.reply(c, chatId, msgs_texto.grupo.minativos.limite_qtd, id)
                     if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.minativos.erro_contador, id)
-                    var usuariosInativos = await grupos.obterParticipantesInativos(groupId, qtdMensagem)
-                    var qtdInativos = usuariosInativos.length - 1
+                    let usuariosInativos = await grupos.obterParticipantesInativos(groupId, qtdMensagem)
+                    let qtdInativos = usuariosInativos.length
                     if(qtdInativos > 0){
-                        var mencionarUsuarios
-                        var inativosResposta = criarTexto(msgs_texto.grupo.minativos.resposta_titulo, qtdMensagem, qtdInativos)
-                        inativosResposta += `═════════════════\n`
+                        let mencionarUsuarios = []
+                        let inativosResposta = criarTexto(msgs_texto.grupo.minativos.resposta_titulo, qtdMensagem, qtdInativos)
+                        inativosResposta += `═════════════════\n╠\n`
                         for(let usuario of usuariosInativos){
-                            if(usuario.id_usuario != botNumber) {
-                                inativosResposta += criarTexto(msgs_texto.grupo.minativos.resposta_itens, usuario.id_usuario.replace(/@s.whatsapp.net/g, ''), usuario.msg)
-                                mencionarUsuarios.push(usuario.id_usuario)
-                            }
+                            inativosResposta += criarTexto(msgs_texto.grupo.minativos.resposta_itens, usuario.id_usuario.replace(/@s.whatsapp.net/g, ''), usuario.msg)
+                            mencionarUsuarios.push(usuario.id_usuario)
                         }
-                        inativosResposta += `╚═〘 ${nome_bot?.trim()}® 〙`
+                        inativosResposta += `╠\n╚═〘 ${nome_bot?.trim()}® 〙`
                         await socket.sendTextWithMentions(c, chatId, inativosResposta, mencionarUsuarios)
                     } else {
                         await socket.reply(c, chatId,msgs_texto.grupo.minativos.sem_inativo, id)
@@ -369,19 +345,21 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
-                    var qtdMensagem = args[1]
+                    let qtdMensagem = args[1]
                     if(isNaN(qtdMensagem)) return await socket.reply(c, chatId, msgs_texto.grupo.binativos.erro_qtd , id)
                     if(qtdMensagem < 1 || qtdMensagem > 50) return await socket.reply(c, chatId, msgs_texto.grupo.binativos.limite_qtd, id)
                     if(!grupoInfo.contador.status) return await socket.reply(c, chatId, msgs_texto.grupo.binativos.erro_contador , id)
-                    var usuariosInativos = await grupos.obterParticipantesInativos(groupId, qtdMensagem)
+                    let usuariosInativos = await grupos.obterParticipantesInativos(groupId, qtdMensagem), usuariosBanidos = 0
                     if(usuariosInativos.length != 0){
                         for(let usuario of usuariosInativos){
-                            if(usuario.id_usuario != botNumber) await socket.removeParticipant(c, chatId, usuario.id_usuario)
+                            if(!groupAdmins.includes(usuario.id_usuario) && usuario.id_usuario != botNumber){
+                                await socket.removeParticipant(c, chatId, usuario.id_usuario)
+                                usuariosBanidos++
+                            }
                         }
-                        await socket.reply(c, chatId, criarTexto(msgs_texto.grupo.binativos.sucesso, usuariosInativos.length - 1, qtdMensagem), id)
-                    } else {
-                        await socket.reply(c, chatId,msgs_texto.grupo.binativos.sem_inativo, id)
-                    }
+                    } 
+                    if(usuariosBanidos) await socket.reply(c, chatId, criarTexto(msgs_texto.grupo.binativos.sucesso, usuariosBanidos, qtdMensagem), id)
+                    else await socket.reply(c, chatId,msgs_texto.grupo.binativos.sem_inativo, id)
                 } catch(err){
                     await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
                     err.message = `${command} - ${err.message}`
