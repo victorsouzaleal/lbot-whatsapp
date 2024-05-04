@@ -5,6 +5,9 @@ import * as bot from './botControle.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import {consoleErro, criarTexto} from '../lib/util.js'
 
+
+// Obter dados do grupo
+
 export const obterGrupoInfo = async(grupoId)=>{
     return await gruposdb.obterGrupo(grupoId)
 }
@@ -14,41 +17,43 @@ export const verificarRegistroGrupo = async(grupoId)=>{
     return resposta
 }
 
-export const atualizarDadosGrupo = async(grupoId, dadosGrupo)=>{
-    await gruposdb.atualizarGrupo(grupoId, dadosGrupo)
+export const obterAdminsGrupo = async(grupoId)=>{
+    return await gruposdb.obterAdminsGrupo(grupoId)
 }
 
-export const atualizarDadosGrupoParcial = async(dadosGrupo)=>{
-    try{
-        if(dadosGrupo.subject != undefined) await atualizarNomeGrupo(dadosGrupo.id, dadosGrupo.subject)
-        if(dadosGrupo.announce != undefined) await atualizarRestritoGrupo(dadosGrupo.id, dadosGrupo.announce)
-    } catch(err){
-        err.message = `atualizarDadosGrupoParcial - ${err.message}`
-        throw err
-    }
+export const obterDonoGrupo = async(grupoId)=>{ 
+    let dono = await gruposdb.obterDonoGrupo(grupoId)
+    return dono
 }
 
-export const atualizarDadosGruposInicio = async(gruposInfo)=>{
-    try{
-        var msgs_texto = await obterMensagensTexto()
-        for(let grupo of gruposInfo){
-            let participantesGrupo = await socket.getGroupMembersIdFromMetadata(grupo)
-            let adminsGrupo = await socket.getGroupAdminsFromMetadata(grupo)
-            let dadosGrupo = {
-                titulo: grupo.subject,
-                descricao: grupo.desc,
-                participantes : participantesGrupo,
-                admins: adminsGrupo,
-                dono: grupo.owner,
-                restrito: grupo.announce
-            }
-            await atualizarDadosGrupo(grupo.id, dadosGrupo)
-        }
-        return msgs_texto.inicio.participantes_atualizados
-    } catch(err) {
-        err.message = `atualizarParticipantes - ${err.message}`
-        throw err
-    }
+export const obterStatusRestritoGrupo = async(grupoId)=>{ 
+    let status = await gruposdb.obterStatusRestritoMsg(grupoId)
+    return status
+}
+
+export const obterParticipantesGrupo = async(grupoId)=>{ 
+    let participantes = await gruposdb.obterParticipantesGrupo(grupoId)
+    return participantes
+}
+
+export const obterTodosGruposInfo = async()=>{
+    let grupos = await gruposdb.obterTodosGrupos()
+    return grupos
+}
+
+
+// Cadastro/Remoção/Atualização de grupos
+
+export const registrarGrupo = async(grupoId, dadosGrupo)=>{
+    await gruposdb.registrarGrupo(grupoId, dadosGrupo)
+}
+
+export const atualizarNomeGrupo = async(grupoId, nome)=>{
+    await gruposdb.atualizarNomeGrupo(grupoId, nome)
+}
+
+export const atualizarRestritoGrupo = async(grupoId, status)=>{
+    await gruposdb.atualizarRestritoGrupo(grupoId, status)
 }
 
 export const registrarGruposAoIniciar = async(gruposInfo)=>{
@@ -99,65 +104,41 @@ export const registrarGrupoAoSerAdicionado = async(grupoInfo)=>{
     }
 }
 
-export const registrarGrupo = async(grupoId, dadosGrupo)=>{
-    await gruposdb.registrarGrupo(grupoId, dadosGrupo)
+export const atualizarDadosGrupo = async(grupoId, dadosGrupo)=>{
+    await gruposdb.atualizarGrupo(grupoId, dadosGrupo)
 }
 
-export const atualizarNomeGrupo = async(grupoId, nome)=>{
-    await gruposdb.atualizarNomeGrupo(grupoId, nome)
+export const atualizarDadosGrupoParcial = async(dadosGrupo)=>{
+    try{
+        if(dadosGrupo.subject != undefined) await atualizarNomeGrupo(dadosGrupo.id, dadosGrupo.subject)
+        if(dadosGrupo.announce != undefined) await atualizarRestritoGrupo(dadosGrupo.id, dadosGrupo.announce)
+    } catch(err){
+        err.message = `atualizarDadosGrupoParcial - ${err.message}`
+        throw err
+    }
 }
 
-export const atualizarRestritoGrupo = async(grupoId, status)=>{
-    await gruposdb.atualizarRestritoGrupo(grupoId, status)
-}
-
-export const obterAdminsGrupo = async(grupoId)=>{
-    return await gruposdb.obterAdminsGrupo(grupoId)
-}
-
-export const obterDonoGrupo = async(grupoId)=>{ 
-    let dono = await gruposdb.obterDonoGrupo(grupoId)
-    return dono
-}
-
-export const obterStatusRestritoGrupo = async(grupoId)=>{ 
-    let status = await gruposdb.obterStatusRestritoMsg(grupoId)
-    return status
-}
-
-export const obterParticipantesGrupo = async(grupoId)=>{ 
-    let participantes = await gruposdb.obterParticipantesGrupo(grupoId)
-    return participantes
-}
-
-export const obterTodosGruposInfo = async()=>{
-    let grupos = await gruposdb.obterTodosGrupos()
-    return grupos
-}
-
-export const obterAtividadeParticipante = async(grupoId, usuario)=>{
-    let atividade = await gruposdb.obterAtividade(grupoId, usuario)
-    return atividade
-}
-
-export const obterParticipantesInativos = async(grupoId, qtdMensagem)=>{
-    let inativos = await gruposdb.obterUsuariosInativos(grupoId, qtdMensagem)
-    let grupoInfo = await obterGrupoInfo(grupoId)
-    let inativosNoGrupo = []
-    inativos.forEach((inativo)=>{
-        if(grupoInfo.participantes.includes(inativo.id_usuario)) inativosNoGrupo.push(inativo)
-    })
-    return inativosNoGrupo
-}
-
-export const obterParticipantesAtivos = async(grupoId, qtdParticipantes)=>{
-    let ativos = await gruposdb.obterUsuariosAtivos(grupoId, qtdParticipantes)
-    let grupoInfo = await obterGrupoInfo(grupoId)
-    let ativosNoGrupo = []
-    ativos.forEach((ativo)=>{
-        if(grupoInfo.participantes.includes(ativo.id_usuario)) ativosNoGrupo.push(ativo)
-    })
-    return ativosNoGrupo.length >= qtdParticipantes ? ativosNoGrupo.slice(0, (qtdParticipantes - 1)) : ativosNoGrupo
+export const atualizarDadosGruposInicio = async(gruposInfo)=>{
+    try{
+        var msgs_texto = await obterMensagensTexto()
+        for(let grupo of gruposInfo){
+            let participantesGrupo = await socket.getGroupMembersIdFromMetadata(grupo)
+            let adminsGrupo = await socket.getGroupAdminsFromMetadata(grupo)
+            let dadosGrupo = {
+                titulo: grupo.subject,
+                descricao: grupo.desc,
+                participantes : participantesGrupo,
+                admins: adminsGrupo,
+                dono: grupo.owner,
+                restrito: grupo.announce
+            }
+            await atualizarDadosGrupo(grupo.id, dadosGrupo)
+        }
+        return msgs_texto.inicio.participantes_atualizados
+    } catch(err) {
+        err.message = `atualizarParticipantes - ${err.message}`
+        throw err
+    }
 }
 
 export const removerGrupo = async(grupoId)=>{
@@ -173,6 +154,8 @@ export const removerGrupo = async(grupoId)=>{
 export const resetarGrupos = async()=>{
     await gruposdb.resetarGrupos()
 }
+
+// Adicionar/Editar/Remover participantes do grupo
 
 export const participanteExiste = async(grupoId, usuario)=>{
     let resposta = await gruposdb.participanteExiste(grupoId, usuario)
@@ -211,6 +194,38 @@ export const verificarAdmin = async(grupoId, usuario)=>{
 
 export const removerAdmin = async(grupoId, usuario)=>{
     await gruposdb.removerAdmin(grupoId, usuario)
+}
+
+
+// Recurso de atividade/contador de mensagens
+
+export const alterarContador = async(grupoId, status = true)=>{
+    await gruposdb.alterarContador(grupoId, status)
+}
+
+export const obterAtividadeParticipante = async(grupoId, usuario)=>{
+    let atividade = await gruposdb.obterAtividade(grupoId, usuario)
+    return atividade
+}
+
+export const obterParticipantesInativos = async(grupoId, qtdMensagem)=>{
+    let inativos = await gruposdb.obterUsuariosInativos(grupoId, qtdMensagem)
+    let grupoInfo = await obterGrupoInfo(grupoId)
+    let inativosNoGrupo = []
+    inativos.forEach((inativo)=>{
+        if(grupoInfo.participantes.includes(inativo.id_usuario)) inativosNoGrupo.push(inativo)
+    })
+    return inativosNoGrupo
+}
+
+export const obterParticipantesAtivos = async(grupoId, qtdParticipantes)=>{
+    let ativos = await gruposdb.obterUsuariosAtivos(grupoId, qtdParticipantes)
+    let grupoInfo = await obterGrupoInfo(grupoId)
+    let ativosNoGrupo = []
+    ativos.forEach((ativo)=>{
+        if(grupoInfo.participantes.includes(ativo.id_usuario)) ativosNoGrupo.push(ativo)
+    })
+    return ativosNoGrupo.length >= qtdParticipantes ? ativosNoGrupo.slice(0, (qtdParticipantes - 1)) : ativosNoGrupo
 }
 
 export const registrarContagemParticipante = async(grupoId, usuario)=>{
@@ -265,29 +280,112 @@ export const atualizarContagemGrupos = async(gruposInfo)=>{
     }
 }
 
+
+// Recurso de boas-vindas
+
 export const alterarBemVindo = async(grupoId, status, mensagem= "")=>{
     await gruposdb.alterarBemVindo(grupoId, status, mensagem)
 }
+
+export const mensagemBemVindo = async(c, evento, grupoInfo)=>{
+    try{
+        var msgs_texto = await obterMensagensTexto()
+        if(grupoInfo.bemvindo.status){
+            let msg_customizada = (grupoInfo.bemvindo.msg != "") ? grupoInfo.bemvindo.msg+"\n\n" : "" 
+            let mensagem_bemvindo = criarTexto(msgs_texto.grupo.bemvindo.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
+            await socket.sendTextWithMentions(c, evento.id, mensagem_bemvindo, [evento.participants[0]])
+        }
+    } catch(err){
+        err.message = `bemVindo - ${err.message}`
+        consoleErro(err, "BEM VINDO")
+    }
+}
+
+
+// Recurso ANTI-LINK
 
 export const alterarAntiLink = async(grupoId, status = true)=>{
     await gruposdb.alterarAntiLink(grupoId, status)
 }
 
+export const filtroAntiLink = async(c, mensagemInfoCompleta)=>{
+    try{
+        const {msgs_texto} = mensagemInfoCompleta
+        const {groupId, groupAdmins, isBotGroupAdmins } = mensagemInfoCompleta.grupo
+        const {sender, chatId, isGroupMsg, body, caption, id} = mensagemInfoCompleta.mensagem
+        if(!isGroupMsg) return true
+        const al_status = await obterGrupoInfo(groupId)
+        if(!al_status?.antilink) return true
+
+        if (!isBotGroupAdmins) {
+            await alterarAntiLink(groupId,false)
+        } else {
+            let mensagem = body || caption
+            if(mensagem != undefined){
+                const isUrl = mensagem.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
+                if(isUrl && !groupAdmins.includes(sender)){
+                    await socket.sendTextWithMentions(c, chatId, criarTexto(msgs_texto.grupo.antilink.detectou, sender.replace("@s.whatsapp.net", "")), [sender])
+                    await socket.deleteMessage(c, id)
+                    return false
+                }
+            }
+        }
+        return true   
+    } catch(err){
+        err.message = `antiLink - ${err.message}`
+        consoleErro(err, "ANTI-LINK")
+        return true
+    }
+}
+
+
+// Recurso AUTO-STICKER
+
 export const alterarAutoSticker = async(grupoId, status= true) =>{
     await gruposdb.alterarAutoSticker(grupoId, status)
 }
+
+
+// Recurso ANTI-FAKE
 
 export const alterarAntiFake = async(grupoId, status = true, ddiAutorizados = [])=>{
     await gruposdb.alterarAntiFake(grupoId, status, ddiAutorizados)
 }
 
+export const filtroAntiFake = async(c, evento, grupoInfo)=>{
+    try{
+        if(grupoInfo.antifake.status){
+            let msgs_texto = await obterMensagensTexto()
+            let botInfo = await bot.obterInformacoesBot()
+            let participante = evento.participants[0], botNumber = botInfo.numero_dono,  groupAdmins = grupoInfo.admins, isBotGroupAdmins = groupAdmins.includes(botNumber)
+            if(!isBotGroupAdmins){
+                await alterarAntiFake(evento.id,false)
+            } else {
+                for(ddi of grupoInfo.antifake.ddi_liberados){
+                    if(participante.startsWith(ddi)) return true
+                }
+                await socket.sendTextWithMentions(c, evento.id, criarTexto(msgs_texto.geral.resposta_ban, participante.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antifake.motivo, botInfo.nome), [participante])
+                await socket.removeParticipant(c, evento.id, participante)
+                return false
+            }
+        }
+        return true 
+    } catch(err){
+        err.message = `antiFake - ${err.message}`
+        consoleErro(err, "ANTI-FAKE")
+        return true
+    }
+}
+
+
+// Recurso MUTAR GRUPO
+
 export const alterarMutar = async(grupoId, status = true)=>{
     await gruposdb.alterarMutar(grupoId, status)
 }
 
-export const alterarContador = async(grupoId, status = true)=>{
-    await gruposdb.alterarContador(grupoId, status)
-}
+
+// Recurso ANTI-FLOOD
 
 export const alterarAntiFlood = async(grupoId, status = true, qtdMensagem = 10, intervalo = 10)=>{
     await gruposdb.alterarAntiFlood(grupoId, status, qtdMensagem, intervalo)
@@ -297,6 +395,38 @@ export const tratarMensagemAntiFlood = async(grupoId, usuario)=>{
     let flood = await gruposdb.addMsgFlood(grupoId, usuario)
     return flood
 }
+
+export const filtroAntiFlood = async(c, mensagemInfoCompleta)=>{
+    try{
+        const {msgs_texto} = mensagemInfoCompleta
+        const {groupId, groupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
+        const {botInfoJSON} = mensagemInfoCompleta.bot
+        const {chatId, sender, isGroupMsg} = mensagemInfoCompleta.mensagem
+        if(!isGroupMsg) return true
+        const afl_status = await obterGrupoInfo(groupId)
+        if(!afl_status?.antiflood.status) return true
+        if (!isBotGroupAdmins) {
+            await alterarAntiFlood(groupId,false)
+        } else {
+            let flood = await tratarMensagemAntiFlood(groupId,sender)
+            if(flood) {
+                if(!groupAdmins.includes(sender)) {
+                    await socket.removeParticipant(c, groupId, sender)
+                    await socket.sendTextWithMentions(c,chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfoJSON.nome_bot), [sender])
+                    return false
+                }
+            } 
+        }
+        return true
+    } catch(err){
+        err.message = `antiFlood - ${err.message}`
+        consoleErro(err, "ANTI-FLOOD")
+        return true
+    }
+}
+
+
+// Recurso LISTA NEGRA
 
 export const obterListaNegra = async(grupoId)=>{
     let listaNegra = await gruposdb.obterListaNegra(grupoId)
@@ -355,6 +485,9 @@ export const verificarListaNegraUsuario = async(c, evento)=>{
         return true
     }
 }
+
+
+// Recurso Bloqueio/Desbloqueio de comandos
 
 export const bloquearComandos = async(grupoId, comandos)=>{
     await gruposdb.addBlockedCmd(grupoId, comandos)
@@ -468,102 +601,4 @@ export const desbloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
 
     if(comandosDesbloqueados.length != 0) await desbloquearComandos(idGrupo, comandosDesbloqueados)
     return respostaDesbloqueio
-}
-
-export const filtroAntiFake = async(c, evento, grupoInfo)=>{
-    try{
-        if(grupoInfo.antifake.status){
-            let msgs_texto = await obterMensagensTexto()
-            let botInfo = await bot.obterInformacoesBot()
-            let participante = evento.participants[0], botNumber = botInfo.numero_dono,  groupAdmins = grupoInfo.admins, isBotGroupAdmins = groupAdmins.includes(botNumber)
-            if(!isBotGroupAdmins){
-                await alterarAntiFake(evento.id,false)
-            } else {
-                for(ddi of grupoInfo.antifake.ddi_liberados){
-                    if(participante.startsWith(ddi)) return true
-                }
-                await socket.sendTextWithMentions(c, evento.id, criarTexto(msgs_texto.geral.resposta_ban, participante.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antifake.motivo, botInfo.nome), [participante])
-                await socket.removeParticipant(c, evento.id, participante)
-                return false
-            }
-        }
-        return true 
-    } catch(err){
-        err.message = `antiFake - ${err.message}`
-        consoleErro(err, "ANTI-FAKE")
-        return true
-    }
-}
-
-export const filtroAntiFlood = async(c, mensagemInfoCompleta)=>{
-    try{
-        const {msgs_texto} = mensagemInfoCompleta
-        const {groupId, groupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
-        const {botInfoJSON} = mensagemInfoCompleta.bot
-        const {chatId, sender, isGroupMsg} = mensagemInfoCompleta.mensagem
-        if(!isGroupMsg) return true
-        const afl_status = await obterGrupoInfo(groupId)
-        if(!afl_status?.antiflood.status) return true
-        if (!isBotGroupAdmins) {
-            await alterarAntiFlood(groupId,false)
-        } else {
-            let flood = await tratarMensagemAntiFlood(groupId,sender)
-            if(flood) {
-                if(!groupAdmins.includes(sender)) {
-                    await socket.removeParticipant(c, groupId, sender)
-                    await socket.sendTextWithMentions(c,chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfoJSON.nome_bot), [sender])
-                    return false
-                }
-            } 
-        }
-        return true
-    } catch(err){
-        err.message = `antiFlood - ${err.message}`
-        consoleErro(err, "ANTI-FLOOD")
-        return true
-    }
-}
-
-export const filtroAntiLink = async(c, mensagemInfoCompleta)=>{
-    try{
-        const {msgs_texto} = mensagemInfoCompleta
-        const {groupId, groupAdmins, isBotGroupAdmins } = mensagemInfoCompleta.grupo
-        const {sender, chatId, isGroupMsg, body, caption, id} = mensagemInfoCompleta.mensagem
-        if(!isGroupMsg) return true
-        const al_status = await obterGrupoInfo(groupId)
-        if(!al_status?.antilink) return true
-
-        if (!isBotGroupAdmins) {
-            await alterarAntiLink(groupId,false)
-        } else {
-            let mensagem = body || caption
-            if(mensagem != undefined){
-                const isUrl = mensagem.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
-                if(isUrl && !groupAdmins.includes(sender)){
-                    await socket.sendTextWithMentions(c, chatId, criarTexto(msgs_texto.grupo.antilink.detectou, sender.replace("@s.whatsapp.net", "")), [sender])
-                    await socket.deleteMessage(c, id)
-                    return false
-                }
-            }
-        }
-        return true   
-    } catch(err){
-        err.message = `antiLink - ${err.message}`
-        consoleErro(err, "ANTI-LINK")
-        return true
-    }
-}
-
-export const mensagemBemVindo = async(c, evento, grupoInfo)=>{
-    try{
-        var msgs_texto = await obterMensagensTexto()
-        if(grupoInfo.bemvindo.status){
-            let msg_customizada = (grupoInfo.bemvindo.msg != "") ? grupoInfo.bemvindo.msg+"\n\n" : "" 
-            let mensagem_bemvindo = criarTexto(msgs_texto.grupo.bemvindo.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
-            await socket.sendTextWithMentions(c, evento.id, mensagem_bemvindo, [evento.participants[0]])
-        }
-    } catch(err){
-        err.message = `bemVindo - ${err.message}`
-        consoleErro(err, "BEM VINDO")
-    }
 }
