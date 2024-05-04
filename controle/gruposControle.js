@@ -1,4 +1,4 @@
-import * as gruposdb from '../database/grupos.js'
+import * as gruposdb from '../db_funcoes/grupos.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
 import { listarComandos } from '../comandos/comandos.js'
 import * as bot from './botControle.js'
@@ -291,11 +291,6 @@ export const alterarContagemParticipante = async(grupoId, usuario, qtd)=>{
     await gruposdb.alterarContagemUsuario(grupoId, usuario, qtd)
 }
 
-export const obterInfoAntiFlood = async(grupoId)=>{
-    let antiFlood = await gruposdb.grupoInfoAntiFlood(grupoId)
-    return antiFlood
-}
-
 export const tratarMensagemAntiFlood = async(grupoId, usuario)=>{
     let flood = await gruposdb.addMsgFlood(grupoId, usuario)
     return flood
@@ -506,9 +501,8 @@ export const filtroAntiFlood = async(c, mensagemInfoCompleta)=>{
         const {chatId, sender, isGroupMsg} = mensagemInfoCompleta.mensagem
         if(!isGroupMsg) return true
         const afl_status = await obterGrupoInfo(groupId)
-        if(!afl_status?.antiflood) return true
-        const antiFloodInfo = await obterInfoAntiFlood(groupId)
-        if (!isBotGroupAdmins || (antiFloodInfo == undefined)) {
+        if(!afl_status?.antiflood.status) return true
+        if (!isBotGroupAdmins) {
             await alterarAntiFlood(groupId,false)
         } else {
             let flood = await tratarMensagemAntiFlood(groupId,sender)

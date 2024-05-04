@@ -1,6 +1,6 @@
 import Datastore from '@seald-io/nedb'
 
-const db = new Datastore({filename : './database/db/mensagens.db', autoload: true})
+const db = new Datastore({filename : './dados/mensagens.db', autoload: true})
 
 export const armazenarMensagem = async(mensagem)=>{
     let dadosMensagem = {

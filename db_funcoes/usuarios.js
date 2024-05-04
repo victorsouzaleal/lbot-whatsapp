@@ -1,7 +1,7 @@
 import Datastore from '@seald-io/nedb'
 import * as bot from '../controle/botControle.js'
 
-var db = new Datastore({filename : './database/db/usuarios.db', autoload: true})
+var db = new Datastore({filename : './dados/usuarios.db', autoload: true})
 
 export const obterUsuario = async (id_usuario) =>{
     let usuario = await db.findOneAsync({id_usuario : id_usuario})

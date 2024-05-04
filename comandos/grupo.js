@@ -75,8 +75,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     //Anti-fake
                     resposta += (grupoInfo.antifake.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.antifake.on, grupoInfo.antifake.ddi_liberados.toString()) : msgs_texto.grupo.status.resposta_variavel.antifake.off
                     //Anti-flood
-                    let infoAntiFlood = await grupos.obterInfoAntiFlood(groupId)
-                    resposta += (grupoInfo.antiflood) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, infoAntiFlood.max, infoAntiFlood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
+                    resposta += (grupoInfo.antiflood.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.antiflood.on, grupoInfo.antiflood.max, grupoInfo.antiflood.intervalo) : msgs_texto.grupo.status.resposta_variavel.antiflood.off 
                     //Contador
                     resposta += (grupoInfo.contador.status) ? criarTexto(msgs_texto.grupo.status.resposta_variavel.contador.on, grupoInfo.contador.inicio) : msgs_texto.grupo.status.resposta_variavel.contador.off
                     //Bloqueio de CMDS
@@ -443,21 +442,21 @@ export const grupo = async(c, mensagemInfoCompleta) => {
           
             case 'aflood':
                 try{
-                    if (!isGroupAdmins) return socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if (!isBotGroupAdmins) return socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
-                    var intervalo = 10, maxMensagem = 10, estadoNovo = !grupoInfo.antiflood
+                    if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
+                    if (!isBotGroupAdmins) return await socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
+                    let intervalo = 10, maxMensagem = 10, estadoNovo = !grupoInfo.antiflood.status
                     //VALIDAÇÃO DO ARGUMENTO - INTERVALO
                     if(args.length === 3){
-                        var intervaloInserido = args[2]
+                        let intervaloInserido = args[2]
                         if(!isNaN(intervalo) && intervalo>=10 && intervalo<=60){
                             intervalo = intervaloInserido
                         } else {
-                            return socket.reply(c, chatId, msgs_texto.grupo.antiflood.intervalo,id)
+                            return await socket.reply(c, chatId, msgs_texto.grupo.antiflood.intervalo,id)
                         }
                     }
                     //VALIDACAO DO ARGUMENTO - MÁX MENSAGEM
                     if(args.length >= 2){
-                        var maxMensagemInserido = args[1]
+                        let maxMensagemInserido = args[1]
                         if(!isNaN(maxMensagemInserido) && maxMensagemInserido>= 5 && maxMensagemInserido <= 20){
                             maxMensagem = maxMensagemInserido
                         } else {

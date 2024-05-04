@@ -1,4 +1,4 @@
-import * as usuariosdb from '../database/usuarios.js'
+import * as usuariosdb from '../db_funcoes/usuarios.js'
 
 export const registrarUsuario = async(usuario, nome)=>{
     await usuariosdb.registrarUsuario(usuario, nome)

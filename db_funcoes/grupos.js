@@ -1,11 +1,10 @@
 import Datastore from '@seald-io/nedb'
 import {MessageTypes} from '../baileys/mensagem.js'
-import path from 'node:path'
-import fs from 'fs-extra'
 import moment from "moment-timezone"
+
 var db = {
-    grupos : new Datastore({filename : './database/db/grupos.db', autoload: true}),
-    contador : new Datastore({filename : './database/db/contador.db', autoload: true})
+    grupos : new Datastore({filename : './dados/grupos.db', autoload: true}),
+    contador : new Datastore({filename : './dados/contador.db', autoload: true})
 }
 
 //##################### FUNCOES GRUPO #########################
@@ -29,7 +28,12 @@ export const registrarGrupo = async(id_grupo, dados)=>{
         bemvindo: {status: false, msg: ""},
         antifake: {status: false, ddi_liberados:[]},
         antilink: false,
-        antiflood: false,
+        antiflood: {
+            status: false,
+            max: 10,
+            intervalo: 10,
+            msgs : []
+        },
         autosticker: false,
         contador: {status:false, inicio: ''},
         block_cmds: [],
@@ -45,7 +49,12 @@ export const resetarGrupos = async()=>{
     bemvindo: {status: false, msg:""},
     antifake: {status: false, ddi_liberados:[]},
     antilink: false,
-    antiflood: false,
+    antiflood: {
+        status: false,
+        max: 10,
+        intervalo: 10,
+        msgs : []
+    },
     autosticker: false,
     contador: {status:false, inicio: ''},
     block_cmds: [],
@@ -167,20 +176,8 @@ export const alterarContador = async(id_grupo, status)=>{
     await db.grupos.updateAsync({id_grupo}, {$set:{"contador.status":status, "contador.inicio":data_atual}})
 }
 
-export const alterarAntiFlood = async(id_grupo, status = true, max = 10, intervalo=10)=>{
-    db.grupos.updateAsync({id_grupo}, {$set:{antiflood:status}})
-    let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/db/antiflood.json')))
-    if(status){
-        antifloodJson.push({
-            id_grupo: id_grupo,
-            max: parseInt(max),
-            intervalo : parseInt(intervalo),
-            msgs : []
-        })
-    } else {
-        antifloodJson.splice(antifloodJson.findIndex(item => item.id_grupo == id_grupo), 1)
-    }
-    fs.writeFileSync(path.resolve('database/db/antiflood.json'), JSON.stringify(antifloodJson))
+export const alterarAntiFlood = async(id_grupo, status = true, max, intervalo)=>{
+    await db.grupos.updateAsync({id_grupo}, {$set:{'antiflood.status':status, 'antiflood.max': max, 'antiflood.intervalo': intervalo}})
 }
 
 //### LISTA NEGRA
@@ -199,46 +196,39 @@ export const removerListaNegra = async(id_grupo, id_usuario)=>{
 //###
 
 //### ANTIFLOOD GRUPO
-export const grupoInfoAntiFlood = (id_grupo)=>{
-    let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/db/antiflood.json'))), grupoIndex = antifloodJson.findIndex(item => item.id_grupo == id_grupo)
-    return antifloodJson[grupoIndex]
-}
-
 export const addMsgFlood = async(id_grupo, usuario_msg)=>{
     try{
-        let antifloodJson = JSON.parse(fs.readFileSync(path.resolve('database/db/antiflood.json'))), grupoIndex = antifloodJson.findIndex(item => item.id_grupo == id_grupo)
-        let grupo_info = antifloodJson[grupoIndex], timestamp_atual = Math.round(new Date().getTime()/1000),  resposta = false
+        let grupo_info = await db.grupos.findOneAsync({id_grupo}), timestamp_atual = Math.round(new Date().getTime()/1000),  resposta = false
         //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
-        for(let i = 0; i < grupo_info.msgs.length; i++){
-            if(timestamp_atual >= grupo_info.msgs[i].expiracao) grupo_info.msgs.splice(i,1)
+        for(let i = 0; i < grupo_info.antiflood.msgs.length; i++){
+            if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)
                 
         }
         //PESQUISA O INDICE DO USUARIO
-        let usuarioIndex = grupo_info.msgs.findIndex(usuario=> usuario.id_usuario == usuario_msg)
+        let usuarioIndex = grupo_info.antiflood.msgs.findIndex(usuario=> usuario.id_usuario == usuario_msg)
         //SE O USUARIO JÁ ESTIVER NA LISTA
         if(usuarioIndex != -1){
             //INCREMENTA A CONTAGEM
-            grupo_info.msgs[usuarioIndex].qtd++
-            let max_msg = grupo_info.max
-            if(grupo_info.msgs[usuarioIndex].qtd >= max_msg){
-                grupo_info.msgs.splice(usuarioIndex,1)
+            grupo_info.antiflood.msgs[usuarioIndex].qtd++
+            let max_msg = grupo_info.antiflood.max
+            if(grupo_info.antiflood.msgs[usuarioIndex].qtd >= max_msg){
+                grupo_info.antiflood.msgs.splice(usuarioIndex,1)
                 resposta = true
             } else{
                 resposta = false
             }
         } else {
             //ADICIONA O USUARIO NA LISTA
-            grupo_info.msgs.push({
+            grupo_info.antiflood.msgs.push({
                 id_usuario: usuario_msg,
-                expiracao: timestamp_atual + grupo_info.intervalo,
+                expiracao: timestamp_atual + grupo_info.antiflood.intervalo,
                 qtd: 1
             })
             resposta = false
         }
 
-        //ATUALIZAÇÃO DO JSON E RETORNO
-        antifloodJson[grupoIndex] = grupo_info
-        await fs.writeFileSync(path.resolve('database/db/antiflood.json'), JSON.stringify(antifloodJson))
+        //ATUALIZAÇÃO E RETORNO
+        await db.grupos.updateAsync({id_grupo}, {$set: {'antiflood.msgs': grupo_info.antiflood.msgs}})
         return resposta
     } catch(err){
         throw new Error(err)
