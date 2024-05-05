@@ -9,7 +9,7 @@ moment.tz.setDefault('America/Sao_Paulo')
 dotenv.config()
 
 async function connectToWhatsApp(){
-    var inicializacaoCompleta = false, eventosEsperando = []
+    let inicializacaoCompleta = false, eventosEsperando = []
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
     const c = makeWASocket(configSocket(state))
 

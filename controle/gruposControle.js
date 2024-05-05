@@ -58,7 +58,7 @@ export const atualizarRestritoGrupo = async(grupoId, status)=>{
 
 export const registrarGruposAoIniciar = async(gruposInfo)=>{
     try{
-        var msgs_texto = await obterMensagensTexto()
+        let msgs_texto = await obterMensagensTexto()
         for(let grupo of gruposInfo){ 
             let g_registrado = await verificarRegistroGrupo(grupo.id)
             if(!g_registrado){
@@ -120,7 +120,7 @@ export const atualizarDadosGrupoParcial = async(dadosGrupo)=>{
 
 export const atualizarDadosGruposInicio = async(gruposInfo)=>{
     try{
-        var msgs_texto = await obterMensagensTexto()
+        let msgs_texto = await obterMensagensTexto()
         for(let grupo of gruposInfo){
             let participantesGrupo = await socket.getGroupMembersIdFromMetadata(grupo)
             let adminsGrupo = await socket.getGroupAdminsFromMetadata(grupo)
@@ -259,7 +259,7 @@ export const removerContagemGrupo = async(grupoId)=>{
 
 export const atualizarContagemGrupos = async(gruposInfo)=>{
     try{
-        var msgs_texto = await obterMensagensTexto()
+        let msgs_texto = await obterMensagensTexto()
         for (let grupo of gruposInfo){
             let g_info = await obterGrupoInfo(grupo.id)
             if(g_info != null){
@@ -289,7 +289,7 @@ export const alterarBemVindo = async(grupoId, status, mensagem= "")=>{
 
 export const mensagemBemVindo = async(c, evento, grupoInfo)=>{
     try{
-        var msgs_texto = await obterMensagensTexto()
+        let msgs_texto = await obterMensagensTexto()
         if(grupoInfo.bemvindo.status){
             let msg_customizada = (grupoInfo.bemvindo.msg != "") ? grupoInfo.bemvindo.msg+"\n\n" : "" 
             let mensagem_bemvindo = criarTexto(msgs_texto.grupo.bemvindo.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
@@ -443,10 +443,10 @@ export const removerUsuarioListaNegra = async(grupoId, usuario)=>{
 
 export const verificarListaNegraGeral = async(c, gruposInfo)=>{
     try {
-        var msgs_texto = await obterMensagensTexto()
+        let msgs_texto = await obterMensagensTexto()
         let botInfo = await bot.obterInformacoesBot()
-        for(var grupo of gruposInfo){
-            var botNumber = await bot.obterNumeroBot(), groupAdmins = await socket.getGroupAdminsFromMetadata(grupo),  isBotGroupAdmins = groupAdmins.includes(botNumber)
+        for(let grupo of gruposInfo){
+            let botNumber = await bot.obterNumeroBot(), groupAdmins = await socket.getGroupAdminsFromMetadata(grupo),  isBotGroupAdmins = groupAdmins.includes(botNumber)
             if(isBotGroupAdmins){
                 let groupId = grupo.id, participantesGrupo = await socket.getGroupMembersIdFromMetadata(grupo), lista_negra = await obterListaNegra(groupId), usuarios_listados = []
                 for(let participante of participantesGrupo){
@@ -467,7 +467,7 @@ export const verificarListaNegraGeral = async(c, gruposInfo)=>{
 
 export const verificarListaNegraUsuario = async(c, evento)=>{
     try{
-        var msgs_texto = await obterMensagensTexto()
+        let msgs_texto = await obterMensagensTexto()
         let botInfo = await bot.obterInformacoesBot()
         const botNumber = await bot.obterNumeroBot(), groupAdmins = await obterAdminsGrupo(evento.id),  isBotGroupAdmins = groupAdmins.includes(botNumber)
         if(isBotGroupAdmins){
@@ -502,13 +502,13 @@ export const verificarComandosBloqueadosGrupo = async(comando, grupoInfo, prefix
 }
 
 export const bloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
-    var listaComandos = await listarComandos()
-    var msgs_texto = await obterMensagensTexto()
+    let listaComandos = await listarComandos()
+    let msgs_texto = await obterMensagensTexto()
     let {prefixo} = await bot.obterInformacoesBot()
-    var comandosBloqueados = [], grupoInfo = await obterGrupoInfo(idGrupo), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
-    var categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
+    let comandosBloqueados = [], grupoInfo = await obterGrupoInfo(idGrupo), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
+    let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
     if(categorias.includes(primeiroComando)){
-        var comandosCategoria = []
+        let comandosCategoria = []
         switch(primeiroComando){
             case "figurinhas":
                 comandosCategoria = listaComandos.figurinhas
@@ -524,7 +524,7 @@ export const bloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
                 break
         }
 
-        for(var comando of comandosCategoria){
+        for(let comando of comandosCategoria){
             if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))){
                 respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, comando)
             } else {
@@ -533,7 +533,7 @@ export const bloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
             }
         }
     } else {
-        for(var comando of usuarioComandos){
+        for(let comando of usuarioComandos){
             if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando) || listaComandos.figurinhas.includes(comando) || listaComandos.downloads.includes(comando)){
                 if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))){
                     respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, comando)
@@ -554,13 +554,13 @@ export const bloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
 }
 
 export const desbloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
-    var listaComandos = await listarComandos()
-    var msgs_texto = await obterMensagensTexto()
+    let listaComandos = await listarComandos()
+    let msgs_texto = await obterMensagensTexto()
     let {prefixo} = await bot.obterInformacoesBot()
-    var comandosDesbloqueados = [], grupoInfo = await obterGrupoInfo(idGrupo), respostaDesbloqueio = msgs_texto.grupo.dcmd.resposta_titulo
-    var categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
+    let comandosDesbloqueados = [], grupoInfo = await obterGrupoInfo(idGrupo), respostaDesbloqueio = msgs_texto.grupo.dcmd.resposta_titulo
+    let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
     if(categorias.includes(primeiroComando)){
-        var comandosCategoria = []
+        let comandosCategoria = []
         switch(primeiroComando){
             case "todos":
                 comandosCategoria = grupoInfo.block_cmds
@@ -579,7 +579,7 @@ export const desbloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
                 break
         }
 
-        for(var comando of comandosCategoria){
+        for(let comando of comandosCategoria){
             if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))) {
                 comandosDesbloqueados.push(comando.replace(prefixo, ''))
                 respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.desbloqueado_sucesso, comando)
@@ -589,7 +589,7 @@ export const desbloquearComandosGrupo = async(usuarioComandos, idGrupo)=>{
         }
 
     } else {
-        for(var comando of usuarioComandos){
+        for(let comando of usuarioComandos){
             if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))) {
                 comandosDesbloqueados.push(comando.replace(prefixo, ''))
                 respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.desbloqueado_sucesso, comando)

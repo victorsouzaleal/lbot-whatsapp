@@ -137,12 +137,12 @@ export const botAlterarLimiteDiario = async (status)=>{
     bot.limite_diario.status = status
     await fs.writeFileSync(path.resolve('dados/bot.json'), JSON.stringify(bot))
     if(status){
-        for(var tipo in bot.limite_diario.limite_tipos){
+        for(let tipo in bot.limite_diario.limite_tipos){
             await usuarios.alterarLimiteComandosTipo(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
         }
     } else {
         await usuarios.resetarComandosDia()
-        for(var tipo in bot.limite_diario.limite_tipos){
+        for(let tipo in bot.limite_diario.limite_tipos){
             await usuarios.alterarLimiteComandosTipo(tipo, null)
         }
     }

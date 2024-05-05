@@ -8,13 +8,13 @@ import {misturarEmojis, removerFundo, textoParaImagem} from '../lib/api.js'
 
 
 export const figurinhas = async(c, mensagemInfoCompleta) => {
+    const {msgs_texto} = mensagemInfoCompleta
+    const {botInfoJSON} = mensagemInfoCompleta.bot
+    const {textoRecebido, command, args, type, id, chatId, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemInfoCompleta.mensagem
+    const {prefixo, nome_pack, nome_bot } = botInfoJSON
+    let cmdSemPrefixo = command.replace(prefixo, "")
+    
     try{
-        const {msgs_texto} = mensagemInfoCompleta
-        const {botInfoJSON} = mensagemInfoCompleta.bot
-        const {textoRecebido, command, args, type, id, chatId, isMedia, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemInfoCompleta.mensagem
-        const {prefixo, nome_pack, nome_bot } = botInfoJSON
-        let cmdSemPrefixo = command.replace(prefixo, "")
-
         switch(cmdSemPrefixo){      
             case 's':
                 try{
@@ -29,8 +29,6 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     await socket.sendSticker(c,chatId, await criarSticker(bufferMidia, dadosMensagem.mimetype, nome_pack?.trim(), nome_bot?.trim()))
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -38,10 +36,10 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
             case 'simg':
                 try{
                     if(quotedMsg && quotedMsgObjInfo.type == MessageTypes.sticker){
-                        var mensagemQuoted = quotedMsgObj, imagemSaida
+                        let mensagemQuoted = quotedMsgObj, imagemSaida
                         mensagemQuoted.message.stickerMessage.url = mensagemQuoted.message.stickerMessage.url == "https://web.whatsapp.net" ? `https://mmg.whatsapp.net${mensagemQuoted.message.stickerMessage.directPath}` : mensagemQuoted.message.stickerMessage.url
-                        var bufferMensagem = await downloadMediaMessage(mensagemQuoted, "buffer")
-                        var conversaoResultado = await stickerToPng(bufferMensagem)
+                        let bufferMensagem = await downloadMediaMessage(mensagemQuoted, "buffer")
+                        let conversaoResultado = await stickerToPng(bufferMensagem)
                         imagemSaida = conversaoResultado.saida
                         if(!conversaoResultado.success){
                             fs.unlinkSync(imagemSaida)
@@ -54,9 +52,6 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     }
                 } catch(err){
-                    if(fs.existsSync(imagemSaida)) fs.unlinkSync(imagemSaida)
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 
@@ -74,8 +69,6 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
 
@@ -99,8 +92,6 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -116,8 +107,6 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -133,14 +122,15 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch (err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
         }
+
     } catch(err){
+        err.message = `${command} - ${err.message}`
         consoleErro(err, "FIGURINHAS")
+        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id) 
     }
 }
 

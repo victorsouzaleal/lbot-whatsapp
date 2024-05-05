@@ -17,7 +17,7 @@ import {armazenarMensagem} from '../controle/mensagensControle.js'
 export const atualizarConexao = async (c, conexao)=>{
     const msgs_texto = await obterMensagensTexto()
     const { connection, lastDisconnect } = conexao
-    var reconectar = false
+    let reconectar = false
     if(connection === 'close') {
         const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
         if(lastDisconnect.error.message == "Comando"){

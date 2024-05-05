@@ -9,18 +9,18 @@ import duration from 'format-duration-time'
 
 
 export const downloads = async(c, mensagemInfoCompleta) => {
-    try{
-        const {msgs_texto} = mensagemInfoCompleta
-        const {botInfoJSON} = mensagemInfoCompleta.bot
-        const {textoRecebido, command, args, type, id, chatId, quotedMsg} = mensagemInfoCompleta.mensagem
-        const {prefixo} = botInfoJSON
-        let cmdSemPrefixo = command.replace(prefixo, "")
+    const {msgs_texto} = mensagemInfoCompleta
+    const {botInfoJSON} = mensagemInfoCompleta.bot
+    const {textoRecebido, command, args, type, id, chatId, quotedMsg} = mensagemInfoCompleta.mensagem
+    const {prefixo} = botInfoJSON
+    let cmdSemPrefixo = command.replace(prefixo, "")
 
+    try{
         switch(cmdSemPrefixo){      
             case "play":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId,await erroComandoMsg(command),id)
-                    var usuarioTexto = textoRecebido.slice(6).trim()
+                    let usuarioTexto = textoRecebido.slice(6).trim()
                     await api.obterInfoVideoYT(usuarioTexto).then(async({resultado})=>{
                         if(resultado.isLiveContent) await socket.reply(c, chatId,msgs_texto.downloads.play.erro_live,id)
                         else if (resultado.lengthSeconds > 300) await socket.reply(c, chatId, msgs_texto.downloads.play.limite, id)
@@ -40,8 +40,6 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -49,7 +47,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
             case "yt":
                 try{
                     if(args.length === 1) return await socket.reply(c,chatId,await erroComandoMsg(command),id)
-                    var usuarioTexto = textoRecebido.slice(4).trim()
+                    let usuarioTexto = textoRecebido.slice(4).trim()
                     await api.obterInfoVideoYT(usuarioTexto).then(async({resultado})=>{
                         if(resultado.isLiveContent) await socket.reply(c, chatId,msgs_texto.downloads.yt.erro_live,id)
                         else if(resultado.lengthSeconds > 300) await socket.reply(c, chatId,msgs_texto.downloads.yt.limite,id)
@@ -69,8 +67,6 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -78,7 +74,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
             case "fb":
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
-                    var usuarioURL = textoRecebido.slice(4).trim()
+                    let usuarioURL = textoRecebido.slice(4).trim()
                     await api.obterMidiaFacebook(usuarioURL).then(async ({resultado})=>{
                         if(resultado.duration_ms > 180000) await socket.reply(c, chatId, msgs_texto.downloads.fb.limite, id)
                         else {
@@ -91,8 +87,6 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 } 
                 break
@@ -120,8 +114,6 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -140,8 +132,6 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -149,7 +139,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
             case "tk":
                 try{
                     if(args.length === 1) return await socket.reply(chatId,await erroComandoMsg(command),id)
-                    var usuarioTexto = textoRecebido.slice(4).trim()
+                    let usuarioTexto = textoRecebido.slice(4).trim()
                     await api.obterMidiaTiktok(usuarioTexto).then(async ({resultado}) =>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultado.autor_perfil, resultado.autor_nome, resultado.titulo, resultado.duracao),id)
                         await socket.replyFileFromUrl(c, MessageTypes.video, chatId, resultado.url, '', id, "video/mp4")
@@ -158,8 +148,6 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -193,13 +181,13 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
         }
     } catch(err){
+        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+        err.message = `${command} - ${err.message}`
         consoleErro(err, "DOWNLOADS")
     }
 }

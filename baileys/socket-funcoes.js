@@ -3,7 +3,7 @@ import {delayAleatorio, getVideoThumbnail} from '../lib/util.js'
 
 // GENERAL FUNCTIONS
 export const deleteMessage = async(c, message, isQuoted = false)=>{
-    var deleteMessage
+    let deleteMessage
     if(isQuoted){
         deleteMessage = {
             remoteJid: message.key.remoteJid,
@@ -50,7 +50,7 @@ export const contactUnblock = async(c, userId)=>{
 }
 
 export const getHostNumber = async(c)=>{ 
-    var id = c.user.id.replace(/:[0-9]+/ism, '')
+    let id = c.user.id.replace(/:[0-9]+/ism, '')
     return id
 }
 
@@ -102,7 +102,7 @@ export const replyFile = async(c, type, chatId, filePath, caption, quotedMessage
     if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: {url: filePath}, caption}, {quoted: quotedMessage})
     } else if (type == MessageTypes.video){
-        var base64Thumb = await getVideoThumbnail(filePath)
+        let base64Thumb = await getVideoThumbnail(filePath)
         return await c.sendMessage(chatId,{video: {url: filePath}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
     } else if (type == MessageTypes.audio){
         return await c.sendMessage(chatId, {audio: {url: filePath}, mimetype}, {quoted: quotedMessage})
@@ -113,7 +113,7 @@ export const replyFileFromUrl = async(c, type, chatId, url, caption, quotedMessa
     if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: {url}, caption}, {quoted: quotedMessage})
     } else if (type == MessageTypes.video){
-        var base64Thumb = await getVideoThumbnail(url, "url")
+        let base64Thumb = await getVideoThumbnail(url, "url")
         return await c.sendMessage(chatId,{video: {url}, mimetype, caption, jpegThumbnail : base64Thumb}, {quoted: quotedMessage})
     } else if (type == MessageTypes.audio){
         return await c.sendMessage(chatId, {audio: {url}, mimetype}, {quoted: quotedMessage})
@@ -122,7 +122,7 @@ export const replyFileFromUrl = async(c, type, chatId, url, caption, quotedMessa
 
 export const replyFileFromBuffer = async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ 
     if(type == MessageTypes.video){
-        var base64Thumb = await getVideoThumbnail(buffer, "buffer")
+        let base64Thumb = await getVideoThumbnail(buffer, "buffer")
         return await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
     } else if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: buffer, caption}, {quoted: quotedMessage})
@@ -230,7 +230,7 @@ export const demoteParticipant = async(c, groupId, participantId)=>{
 }
 
 export const getGroupInviteLink = async(c, groupId)=>{
-    var inviteCode = await c.groupInviteCode(groupId)
+    let inviteCode = await c.groupInviteCode(groupId)
     return `https://chat.whatsapp.com/${inviteCode}`
 }
 

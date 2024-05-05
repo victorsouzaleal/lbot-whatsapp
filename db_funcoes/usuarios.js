@@ -1,7 +1,7 @@
 import Datastore from '@seald-io/nedb'
 import * as bot from '../controle/botControle.js'
 
-var db = new Datastore({filename : './dados/usuarios.db', autoload: true})
+const db = new Datastore({filename : './dados/usuarios.db', autoload: true})
 
 export const obterUsuario = async (id_usuario) =>{
     let usuario = await db.findOneAsync({id_usuario : id_usuario})
@@ -29,7 +29,7 @@ export const atualizarNome = async(id_usuario,nome) =>{
 
 export const registrarUsuario = async(id_usuario, nome) =>{
     let {limite_diario} = await bot.obterInformacoesBot()
-    var cadastro_usuario = {
+    let cadastro_usuario = {
         id_usuario,
         nome,
         comandos_total: 0,
@@ -41,7 +41,7 @@ export const registrarUsuario = async(id_usuario, nome) =>{
 }
 
 export const registrarDono = async(id_usuario, nome)=>{
-    var cadastro_usuario_dono = {
+    let cadastro_usuario_dono = {
         id_usuario,
         nome,
         comandos_total: 0,
@@ -54,7 +54,7 @@ export const registrarDono = async(id_usuario, nome)=>{
 
 export const verificarDonoAtual = async(id_usuario)=>{
     let {limite_diario} = await bot.obterInformacoesBot()
-    var usuario = await db.findOneAsync({id_usuario, tipo: "dono"})
+    let usuario = await db.findOneAsync({id_usuario, tipo: "dono"})
     if(!usuario){
         await db.updateAsync({tipo: "dono"}, {$set:{tipo: "comum",  max_comandos_dia : limite_diario.limite_tipos.comum}}, {multi: true})
         await db.updateAsync({id_usuario}, {$set: {tipo : "dono", max_comandos_dia: null}})

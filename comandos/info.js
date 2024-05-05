@@ -10,30 +10,28 @@ import {MessageTypes} from '../baileys/mensagem.js'
 
 
 export const info = async(c, mensagemInfoCompleta) => {
-    try{
-        const {msgs_texto, ownerNumber} = mensagemInfoCompleta
-        const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
-        const {groupId, isGroupAdmins} = mensagemInfoCompleta.grupo
-        const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username} = mensagemInfoCompleta.mensagem
-        const {prefixo, nome_bot, nome_adm} = botInfoJSON
-        let cmdSemPrefixo = command.replace(prefixo, "")
+    const {msgs_texto, ownerNumber} = mensagemInfoCompleta
+    const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
+    const {groupId, isGroupAdmins} = mensagemInfoCompleta.grupo
+    const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username} = mensagemInfoCompleta.mensagem
+    const {prefixo, nome_bot, nome_adm} = botInfoJSON
+    let cmdSemPrefixo = command.replace(prefixo, "")
 
+    try{
         switch(cmdSemPrefixo){
             case `info`:
                 try{
-                    var version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
                     const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
-                    var infoBot = botInfoJSON
-                    var botInicializacaoData = timestampParaData(infoBot.iniciado)
-                    var resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
+                    let version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
+                    let infoBot = botInfoJSON
+                    let botInicializacaoData = timestampParaData(infoBot.iniciado)
+                    let resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
                     if(botFotoURL != undefined){
                         await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                     } else {
                         await socket.reply(c, chatId, resposta, id)
                     }
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 
@@ -43,15 +41,12 @@ export const info = async(c, mensagemInfoCompleta) => {
                 try{
                     if(args.length == 1) return socket.reply(c, chatId, await erroComandoMsg(command) ,id)
                     if(ownerNumber == '') return socket.reply(c, chatId, msgs_texto.info.reportar.erro, id)
-                    var usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
+                    let usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
                     await socket.sendText(c,ownerNumber, resposta)
                     await socket.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
-                
                 break
             
             case `meusdados`:
@@ -62,16 +57,14 @@ export const info = async(c, mensagemInfoCompleta) => {
                     let resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfoJSON.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
                     if(isGroupMsg){
-                        var dadosGrupo = await grupos.obterGrupoInfo(groupId)
+                        let dadosGrupo = await grupos.obterGrupoInfo(groupId)
                         if(dadosGrupo.contador.status){
-                            var usuarioAtividade = await grupos.obterAtividadeParticipante(groupId,sender)
+                            let usuarioAtividade = await grupos.obterAtividadeParticipante(groupId,sender)
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                         }   
                     }
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
@@ -122,13 +115,13 @@ export const info = async(c, mensagemInfoCompleta) => {
                         await socket.sendText(c, chatId, dadosResposta+menuResposta)
                     }
                 } catch(err){
-                    await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
-                    err.message = `${command} - ${err.message}`
                     throw err
                 }
                 break
         }
     } catch(err){
+        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+        err.message = `${command} - ${err.message}`
         consoleErro(err, "INFO")
     }
     
