@@ -158,7 +158,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     for(let usuario_lista of lista_negra_grupo){
                         resposta_listanegra += criarTexto(msgs_texto.grupo.listanegra.resposta_itens, usuario_lista.replace(/@s.whatsapp.net/g, ''))
                     }
-                    resposta_listanegra += `╚═〘 ${nome_bot?.trim()}®〙`
+                    resposta_listanegra += `╠\n╚═〘 ${nome_bot?.trim()}®〙`
                     await socket.sendText(c, chatId, resposta_listanegra)
                 } catch(err){
                     throw err

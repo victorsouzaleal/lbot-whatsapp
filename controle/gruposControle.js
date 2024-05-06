@@ -454,7 +454,7 @@ export const verificarListaNegraGeral = async(c, gruposInfo)=>{
                 }
                 for(let usuario of usuarios_listados){
                     await socket.removeParticipant(c, groupId, usuario)
-                    await socket.sendTextWithMentions(c, groupId, criarTexto(msgs_texto.geral.resposta_ban, usuario.replace("@s.whatsapp.net", ""), msgs_texto.grupo.listanegra.motivo, botInfo.nome), [usuario])
+                    await socket.sendTextWithMentions(c, groupId, criarTexto(msgs_texto.geral.resposta_ban, usuario.replace("@s.whatsapp.net", ""), msgs_texto.grupo.listanegra.motivo, botInfo.nome_bot), [usuario])
                 }
             }
         }
@@ -474,7 +474,7 @@ export const verificarListaNegraUsuario = async(c, evento)=>{
             let lista_negra = await obterListaNegra(evento.id)
             if(lista_negra.includes(evento.participants[0])){
                 await socket.removeParticipant(c, evento.id, evento.participants[0])
-                await socket.sendTextWithMentions(c, evento.id, criarTexto(msgs_texto.geral.resposta_ban, evento.participants[0].replace("@s.whatsapp.net", ""), msgs_texto.grupo.listanegra.motivo, botInfo.nome), [evento.participants[0]])
+                await socket.sendTextWithMentions(c, evento.id, criarTexto(msgs_texto.geral.resposta_ban, evento.participants[0].replace("@s.whatsapp.net", ""), msgs_texto.grupo.listanegra.motivo, botInfo.nome_bot), [evento.participants[0]])
                 return false
             }
         }
