@@ -19,7 +19,7 @@
     "@tobyg74/tiktok-api-dl": "^1.1.2",
     "@victorsouzaleal/googlethis": "^1.8.1",
     "@vitalets/google-translate-api": "^7.0.0",
-    "@whiskeysockets/baileys": "^6.6.0",
+    "@whiskeysockets/baileys": "^6.7.2",
     "@yohancolla/ytdl": "^1.2.0",
     "acrcloud": "^1.4.0",
     "axios": "^0.24.0",
