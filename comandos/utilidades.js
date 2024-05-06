@@ -1,5 +1,4 @@
 //REQUERINDO MÓDULOS
-import fs from 'fs-extra'
 import {criarTexto, erroComandoMsg, obterNomeAleatorio, consoleErro, converterMp4ParaMp3} from '../lib/util.js'
 import path from 'node:path'
 import * as api from '../lib/api.js'
@@ -128,9 +127,8 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                 try{
                     if(!quotedMsg || quotedMsgObjInfo?.type != MessageTypes.audio) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if(quotedMsgObjInfo.seconds > 90) return await socket.reply(c, chatId, msgs_texto.utilidades.ouvir.erro_limite, id)
-                    let bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer"), caminhoAudio = path.resolve(`temp/${obterNomeAleatorio(".mp3")}`)
-                    fs.writeFileSync(caminhoAudio, bufferAudio)
-                    await api.obterTranscricaoAudio(caminhoAudio).then(async({resultado})=>{
+                    let bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer")
+                    await api.obterTranscricaoAudio(bufferAudio).then(async({resultado})=>{
                         let textoTranscricao = resultado.results.channels[0].alternatives[0].transcript
                         await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.ouvir.sucesso, textoTranscricao), quotedMsgObj)
                     }).catch(async(err)=>{
@@ -171,16 +169,10 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                     let efeitosSuportados = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], tipoEfeito = textoRecebido.slice(7).trim()
                     if(!efeitosSuportados.includes(tipoEfeito)) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.audio) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
-                    let bufferQuotedMessage = await downloadMediaMessage(quotedMsgObj, "buffer")
-                    let audioOriginal = path.resolve(`./temp/${obterNomeAleatorio(".mp3")}`)
-                    fs.writeFileSync(audioOriginal, bufferQuotedMessage)
-                    await api.obterAudioModificado(audioOriginal, tipoEfeito).then(async ({resultado : audioEditado})=>{
-                        await socket.replyFile(c, MessageTypes.audio, chatId, audioEditado, '', id, "audio/mpeg").then(()=>{
-                            fs.unlinkSync(audioEditado)
-                            fs.unlinkSync(audioOriginal)
-                        })
+                    let bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer")
+                    await api.obterAudioModificado(bufferAudio, tipoEfeito).then(async ({resultado : bufferAudioEditado})=>{
+                        await socket.replyFileFromBuffer(c, MessageTypes.audio, chatId, bufferAudioEditado, '', id, "audio/mpeg")
                     }).catch(async (err)=>{
-                        fs.unlinkSync(audioOriginal)
                         if(!err.erro) throw err
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
@@ -194,24 +186,11 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                     let tipoMensagem = quotedMsg ? quotedMsgObjInfo.type : type
                     if(tipoMensagem != MessageTypes.video && tipoMensagem != MessageTypes.audio) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let dadosMensagem = quotedMsg ? quotedMsgObj : id             
-                    let caminhoAudio, caminhoVideo
                     let bufferMensagemMidia = await downloadMediaMessage(dadosMensagem, "buffer")
                     await socket.reply(c, chatId, msgs_texto.utilidades.qualmusica.espera, id)
-                    if(tipoMensagem == MessageTypes.video){
-                        caminhoVideo = path.resolve(`temp/${obterNomeAleatorio(".mp4")}`)
-                        fs.writeFileSync(caminhoVideo, bufferMensagemMidia)
-                        caminhoAudio = await converterMp4ParaMp3(caminhoVideo)
-                        fs.unlinkSync(caminhoVideo)
-                    }
-                    if(tipoMensagem == MessageTypes.audio){
-                        caminhoAudio = path.resolve(`temp/${obterNomeAleatorio(".mp3")}`)
-                        fs.writeFileSync(caminhoAudio, bufferMensagemMidia)
-                    }
-                    await api.obterReconhecimentoMusica(caminhoAudio).then(async({resultado})=>{
-                        fs.unlinkSync(caminhoAudio)
+                    await api.obterReconhecimentoMusica(bufferMensagemMidia, tipoMensagem).then(async({resultado})=>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.utilidades.qualmusica.resposta, resultado.titulo, resultado.produtora, resultado.duracao, resultado.lancamento, resultado.album, resultado.artistas), id)
                     }).catch(async (err)=>{
-                        if(fs.existsSync(caminhoAudio)) fs.unlinkSync(caminhoAudio)
                         if(!err.erro) throw err
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
@@ -306,10 +285,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                     if(dadosMensagem.tipo != MessageTypes.image) return await socket.reply(c, chatId,await erroComandoMsg(command), id)
                     await socket.reply(c, chatId,msgs_texto.utilidades.anime.espera, id)
                     let bufferImagem = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
-                    let caminhoImagem = path.resolve(`temp/${obterNomeAleatorio(".jpg")}`)
-                    fs.writeFileSync(caminhoImagem, bufferImagem)
-                    await api.obterAnimeInfo(caminhoImagem).then(async ({resultado})=>{
-                        fs.unlinkSync(caminhoImagem)
+                    await api.obterAnimeInfo(bufferImagem).then(async ({resultado})=>{
                         if(resultado.similaridade < 87){
                             await socket.reply(c, chatId,msgs_texto.utilidades.anime.similaridade,id)
                         } else {
@@ -370,9 +346,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                     let idioma = textoRecebido.slice(5, 7).toLowerCase(), idiomasSuportados = ["pt", 'en', 'ja', 'es', 'it', 'ru', 'ko', 'sv']
                     if(!idiomasSuportados.includes(idioma)) return await socket.reply(c, chatId, msgs_texto.utilidades.voz.nao_suportado, id)
                     await api.textoParaVoz(idioma, usuarioTexto).then(async({resultado})=>{
-                        await socket.replyFile(c, MessageTypes.audio, chatId, resultado, '', id, 'audio/mpeg').then(()=>{
-                            fs.unlinkSync(resultado)
-                        })
+                        await socket.replyFileFromBuffer(c, MessageTypes.audio, chatId, resultado, '', id, 'audio/mpeg')
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
                         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)

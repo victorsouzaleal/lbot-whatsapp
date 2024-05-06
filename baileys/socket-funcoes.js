@@ -126,6 +126,8 @@ export const replyFileFromBuffer = async(c, type, chatId, buffer, caption, quote
         return await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
     } else if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: buffer, caption}, {quoted: quotedMessage})
+    } else if (type == MessageTypes.audio){
+        return await c.sendMessage(chatId, {audio: buffer, mimetype}, {quoted: quotedMessage})
     }
 }
 

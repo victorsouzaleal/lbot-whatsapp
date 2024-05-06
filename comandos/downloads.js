@@ -28,8 +28,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                             let mensagemEspera = criarTexto(msgs_texto.downloads.play.espera, resultado.title, resultado.durationFormatted)
                             await socket.reply(c, chatId, mensagemEspera, id)
                             await api.obterYTMP3(resultado.videoId).then(async ({resultado})=>{
-                                await socket.replyFile(c, MessageTypes.audio, chatId, resultado, '', id, 'audio/mpeg')
-                                fs.unlinkSync(resultado)
+                                await socket.replyFileFromBuffer(c, MessageTypes.audio, chatId, resultado, '', id, 'audio/mpeg')
                             }).catch(async err=>{
                                 if(!err.erro) throw err
                                 await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
@@ -55,8 +54,7 @@ export const downloads = async(c, mensagemInfoCompleta) => {
                             let mensagemEspera = criarTexto(msgs_texto.downloads.yt.espera, resultado.title, resultado.durationFormatted)
                             await socket.reply(c, chatId, mensagemEspera, id)
                             await api.obterYTMP4(resultado.videoId).then(async({resultado})=>{
-                                await socket.replyFile(c, MessageTypes.video, chatId, resultado, '', id, 'video/mp4')
-                                fs.unlinkSync(resultado)
+                                await socket.replyFileFromBuffer(c, MessageTypes.video, chatId, resultado, '', id, 'video/mp4')
                             }).catch(async err=>{
                                 if(!err.erro) throw err
                                 await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
