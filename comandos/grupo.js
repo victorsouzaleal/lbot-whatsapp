@@ -106,13 +106,15 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                 
                 break
 
-            case "blista": //FAZER MELHORIA EM FUTURAS VERSÕES PARA BANIR SE O USUARIO ADICIONADO A LISTA NEGRA ESTIVER NO GRUPO
+            case "blista":
                 try{
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
                     let blista_numero
                     if(quotedMsg) {
                         blista_numero = quotedMsgObjInfo.sender
+                    } else if(mentionedJidList.length > 0){
+                        blista_numero = mentionedJidList[0]
                     } else{
                         if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                         blista_numero = textoRecebido.slice(8).trim().replace(/\W+/g,"")
@@ -125,6 +127,7 @@ export const grupo = async(c, mensagemInfoCompleta) => {
                     if(blista_grupo_lista.includes(blista_numero)) return await socket.reply(c, chatId, msgs_texto.grupo.blista.ja_listado, id)
                     await grupos.adicionarUsuarioListaNegra(groupId, blista_numero)
                     await socket.reply(c, chatId, msgs_texto.grupo.blista.sucesso, id)
+                    if(groupMembers.includes(blista_numero)) await socket.removeParticipant(c, chatId, blista_numero)
                 } catch(err){
                     throw err
                 }
