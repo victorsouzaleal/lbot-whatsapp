@@ -117,7 +117,56 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 ## 6 - Recursos/Comandos :
 
-**Veja aqui os principais recursos/comandos do bot** :  [Clique AQUI](docs/COMANDOS.md)
+### Figurinhas
+
+| Criador de Sticker |                Recursos        |
+| :-----------: | :--------------------------------: |
+|       ✅       | Foto para Sticker |
+|       ✅       | Video/GIF para Sticker |
+|       ✅       | Sticker Circular |
+|       ✅       | Sticker Arrendondado |
+|       ✅       | Texto para Sticker |
+|       ✅       | Sticker sem fundo |
+|       ✅       | Sticker para foto |
+|       ✅       | Auto Sticker |
+
+### Downloads 
+
+| Downloads      |                Recursos            |
+| :------------: | :---------------------------------------------: |
+|       ✅        |   Download de aúdio/videos (Youtube)    |
+|       ✅        |   Download de videos (Facebook)            |
+|       ✅        |   Download de imagens/videos (Instagram)  |
+|       ✅        |   Download de imagens/videos (Twitter)            |
+|       ✅        |   Download de videos (Tiktok)            |
+|       ✅        |   Pesquisa/Download de Imagens                  |
+
+### Utilidades Gerais
+
+| Utilitários |                     Recursos            |
+| :------------: | :---------------------------------------------: |
+|       ✅        |   Chat-GPT |
+|       ✅        |   Criação de imagens IA |
+|       ✅        |   Têndencias de Filmes/Séries |
+|       ✅        |   Efeitos de Aúdio |
+|       ✅        |   Texto para voz   |
+|       ✅        |   Áudio para texto |
+|       ✅        |   Letra de Música  |
+|       ✅        |   Reconhecimento de músicas |
+|       ✅        |   Detector de DDD |
+|       ✅        |   Consulta de Clima/Previsão do Tempo |
+|       ✅        |   Conversão de Moedas |
+|       ✅        |   Calculadora básica  |
+|       ✅        |   Pesquisa Web        |
+|       ✅        |   Detector Anime      |
+|       ✅        |   Rastreamento Correios |
+|       ✅        |   Noticias Atuais |
+|       ✅        |   Tradutor |
+
+
+<br>
+
+**Veja todos os recursos/comandos do bot** :  [Clique AQUI](docs/COMANDOS.md)
 
 <br>
 
