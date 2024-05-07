@@ -13,12 +13,8 @@ export const verificarRegistro = async(usuario)=>{
     return registrado
 }
 
-export const verificarDonoAtual = async(usuario)=>{
-    await usuariosdb.verificarDonoAtual(usuario)
-}
-
-export const registrarDono = async(usuario, nome)=>{
-    await usuariosdb.registrarDono(usuario, nome)
+export const verificarDono = async(usuario)=>{
+    await usuariosdb.verificarDono(usuario)
 }
 
 export const obterDadosTodosUsuarios = async()=>{
@@ -43,6 +39,10 @@ export const limparTipo = async(tipo)=>{
 
 export const alterarLimiteComandosTipo = async(tipo, qtdLimite)=>{
     await usuariosdb.definirLimite(tipo, qtdLimite)
+}
+
+export const recebeuBoasVindas = async(usuario)=>{
+    await usuariosdb.alterarRecebeuBoasVindas(usuario)
 }
 
 export const verificarUltrapassouLimiteComandos = async(usuario)=>{

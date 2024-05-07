@@ -3,8 +3,25 @@ import * as bot from '../controle/botControle.js'
 
 const db = new Datastore({filename : './dados/usuarios.db', autoload: true})
 
+async function Usuario(id_usuario, nome) {
+    let {limite_diario} = await bot.obterInformacoesBot()
+    return {
+        id_usuario,
+        nome,
+        comandos_total: 0,
+        comandos_dia: 0,
+        max_comandos_dia : limite_diario.limite_tipos.comum,
+        recebeuBoasVindas: false,
+        tipo: "comum"
+    }
+}
+
+export const registrarUsuario = async(id_usuario, nome) =>{
+    await db.insertAsync(await Usuario(id_usuario, nome))
+}
+
 export const obterUsuario = async (id_usuario) =>{
-    let usuario = await db.findOneAsync({id_usuario : id_usuario})
+    let usuario = await db.findOneAsync({id_usuario})
     return usuario
 }
 
@@ -27,36 +44,11 @@ export const atualizarNome = async(id_usuario,nome) =>{
     await db.updateAsync({id_usuario}, {$set:{nome}})
 }
 
-export const registrarUsuario = async(id_usuario, nome) =>{
-    let {limite_diario} = await bot.obterInformacoesBot()
-    let cadastro_usuario = {
-        id_usuario,
-        nome,
-        comandos_total: 0,
-        comandos_dia: 0,
-        max_comandos_dia : limite_diario.limite_tipos.comum,
-        tipo: "comum"
-    }
-    await db.insertAsync(cadastro_usuario)
-}
-
-export const registrarDono = async(id_usuario, nome)=>{
-    let cadastro_usuario_dono = {
-        id_usuario,
-        nome,
-        comandos_total: 0,
-        comandos_dia: 0,
-        max_comandos_dia : null,
-        tipo: "dono"
-    }
-    await db.insertAsync(cadastro_usuario_dono)
-}
-
-export const verificarDonoAtual = async(id_usuario)=>{
-    let {limite_diario} = await bot.obterInformacoesBot()
-    let usuario = await db.findOneAsync({id_usuario, tipo: "dono"})
-    if(!usuario){
-        await db.updateAsync({tipo: "dono"}, {$set:{tipo: "comum",  max_comandos_dia : limite_diario.limite_tipos.comum}}, {multi: true})
+export const verificarDono = async(id_usuario)=>{
+    let donoAtual = await db.findOneAsync({id_usuario, tipo: "dono"})
+    if(!donoAtual){
+        let {limite_diario} = await bot.obterInformacoesBot()
+        await db.updateAsync({tipo: "dono"}, {$set: {tipo: "comum",  max_comandos_dia : limite_diario.limite_tipos.comum}}, {multi: true})
         await db.updateAsync({id_usuario}, {$set: {tipo : "dono", max_comandos_dia: null}})
     }
 }
@@ -70,6 +62,10 @@ export const alterarTipoUsuario = async(id_usuario, tipo)=>{
     } else {
         return false
     }
+}
+
+export const alterarRecebeuBoasVindas = async(id_usuario, status = true)=>{
+    await db.updateAsync({id_usuario}, {$set : {recebeuBoasVindas : status}})
 }
 
 export const limparTipo = async(tipo)=>{
