@@ -7,7 +7,44 @@ const db = {
     contador : new Datastore({filename : './dados/contador.db', autoload: true})
 }
 
-//##################### FUNCOES GRUPO #########################
+async function Grupo(id_grupo, dados){
+    const 
+    ID_GRUPO = id_grupo,
+    NOME = dados.nome,
+    DESCRICAO = dados.descricao,
+    PARTICIPANTES = dados.participantes,
+    ADMINS = dados.admins,
+    DONO = dados.dono,
+    RESTRITO_MSG = dados.restrito,
+    MUTAR = false,
+    BEMVINDO = {status: false, msg : ''},
+    ANTIFAKE = {status: false, ddi_liberados: []},
+    ANTILINK = false,
+    ANTIFLOOD = {status: false, max: 10, intervalo: 10, msgs: []},
+    AUTOSTICKER = false,
+    CONTADOR = {status: false, inicio : ''},
+    BLOCK_CMDS = [],
+    LISTA_NEGRA = []
+
+    return {
+        id_grupo : ID_GRUPO,
+        nome : NOME,
+        descricao : DESCRICAO,
+        participantes: PARTICIPANTES,
+        admins: ADMINS,
+        dono: DONO,
+        restrito_msg: RESTRITO_MSG,
+        mutar: MUTAR,
+        bemvindo: BEMVINDO,
+        antifake: ANTIFAKE,
+        antilink: ANTILINK,
+        antiflood: ANTIFLOOD,
+        autosticker: AUTOSTICKER,
+        contador: CONTADOR,
+        block_cmds: BLOCK_CMDS,
+        lista_negra: LISTA_NEGRA
+    }
+}
 
 //### GERAL
 export const verificarGrupo = async(id_grupo) =>{
@@ -16,50 +53,7 @@ export const verificarGrupo = async(id_grupo) =>{
 }
 
 export const registrarGrupo = async(id_grupo, dados)=>{
-    let cadastro_grupo = {
-        id_grupo,
-        nome : dados.titulo,
-        descricao : dados.descricao,
-        participantes: dados.participantes,
-        admins: dados.admins,
-        dono: dados.dono,
-        restrito_msg: dados.restrito,
-        mutar: false,
-        bemvindo: {status: false, msg: ""},
-        antifake: {status: false, ddi_liberados:[]},
-        antilink: false,
-        antiflood: {
-            status: false,
-            max: 10,
-            intervalo: 10,
-            msgs : []
-        },
-        autosticker: false,
-        contador: {status:false, inicio: ''},
-        block_cmds: [],
-        lista_negra: []
-    }
-    await db.grupos.insertAsync(cadastro_grupo)
-}
-
-export const resetarGrupos = async()=>{
-    db.grupos.updateAsync({}, 
-    {$set: {
-    mutar: false,
-    bemvindo: {status: false, msg:""},
-    antifake: {status: false, ddi_liberados:[]},
-    antilink: false,
-    antiflood: {
-        status: false,
-        max: 10,
-        intervalo: 10,
-        msgs : []
-    },
-    autosticker: false,
-    contador: {status:false, inicio: ''},
-    block_cmds: [],
-    lista_negra: []
-    }}, {multi: true})
+    await db.grupos.insertAsync(await Grupo(id_grupo, dados))
 }
 
 export const obterGrupo = async(id_grupo)=>{

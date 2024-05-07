@@ -151,10 +151,6 @@ export const removerGrupo = async(grupoId)=>{
     }
 }
 
-export const resetarGrupos = async()=>{
-    await gruposdb.resetarGrupos()
-}
-
 // Adicionar/Editar/Remover participantes do grupo
 
 export const participanteExiste = async(grupoId, usuario)=>{

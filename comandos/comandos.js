@@ -127,7 +127,6 @@ export const listarComandos = async () => {
             `${prefixo}desbloquear`,
             `${prefixo}estado`,
             `${prefixo}admin`,
-            `${prefixo}rconfig`,
             `${prefixo}mudarlimite`,
             `${prefixo}alterartipo`,
             `${prefixo}grupos`,

@@ -124,15 +124,6 @@ export const admin = async(c, mensagemInfoCompleta) => {
                 }
                 break
             
-            case 'rconfig':
-                try{
-                    await grupos.resetarGrupos()
-                    await socket.reply(c, chatId,msgs_texto.admin.rconfig.reset_sucesso,id)
-                } catch(err){
-                    throw err
-                }
-                break
-
             case 'sairgrupos':
                 try{
                     let gruposAtuais = await grupos.obterTodosGruposInfo()
