@@ -1,4 +1,4 @@
-import * as gruposdb from '../db_funcoes/grupos.js'
+import * as gruposdb from '../database/grupos.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
 import { listarComandos } from '../comandos/comandos.js'
 import * as bot from './botControle.js'

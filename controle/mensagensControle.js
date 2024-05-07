@@ -1,4 +1,4 @@
-import * as mensagensdb from '../db_funcoes/mensagens.js'
+import * as mensagensdb from '../database/mensagens.js'
 import {WAProto} from '@whiskeysockets/baileys'
 
 export const armazenarMensagem = async (mensagem) =>{

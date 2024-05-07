@@ -111,99 +111,13 @@ Pronto, gora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!no
 
 #### Como obter as chaves API para usar em comandos específicos :
 Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API no .env, abaixo tem um guia completo com imagens para obter as chaves.<br><br>
-**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](docs/CHAVESAPI.md)
 
 <br>
 
-## 6 - Recursos Principais :
+## 6 - Recursos/Comandos :
 
-### Figurinhas
-
-| Criador de Sticker |                Recursos        |
-| :-----------: | :--------------------------------: |
-|       ✅       | Foto para Sticker |
-|       ✅       | Video/GIF para Sticker |
-|       ✅       | Texto para Sticker |
-|       ✅       | Sticker sem fundo |
-|       ✅       | Sticker para foto |
-|       ✅       | Auto Sticker |
-
-### Downloads 
-
-| Downloads      |                Recursos            |
-| :------------: | :---------------------------------------------: |
-|       ✅        |   Download de aúdio/videos (Youtube)    |
-|       ✅        |   Download de videos (Facebook)            |
-|       ✅        |   Download de imagens/videos (Instagram)  |
-|       ✅        |   Download de imagens/videos (Twitter)            |
-|       ✅        |   Download de videos (Tiktok)            |
-|       ✅        |   Pesquisa/Download de Imagens                  |
-
-### Utilidades Gerais
-
-| Utilitários |                     Recursos            |
-| :------------: | :---------------------------------------------: |
-|       ✅        |   Chat-GPT |
-|       ✅        |   Criação de imagens IA |
-|       ✅        |   Têndencias de Filmes/Séries |
-|       ✅        |   Efeitos de Aúdio |
-|       ✅        |   Texto para voz   |
-|       ✅        |   Áudio para texto |
-|       ✅        |   Letra de Música  |
-|       ✅        |   Reconhecimento de músicas |
-|       ✅        |   Detector de DDD |
-|       ✅        |   Consulta de Clima/Previsão do Tempo |
-|       ✅        |   Conversão de Moedas |
-|       ✅        |   Calculadora básica  |
-|       ✅        |   Pesquisa Web        |
-|       ✅        |   Detector Anime      |
-|       ✅        |   Rastreamento Correios |
-|       ✅        |   Noticias Atuais |
-|       ✅        |   Tradutor |
-
-### Administração de Grupo
-
-| Apenas Grupo  |                     Recursos             |
-| :------------: | :---------------------------------------------: |
-|       ✅        |   Promover usuário |
-|       ✅        |   Rebaixar usuário |
-|       ✅        |   Remover usuário  |
-|       ✅        |   Adicionar usuário |
-|       ✅        |   Marcar todos |
-|       ✅        |   Obter link do grupo |
-|       ✅        |   Redefinir link do grupo |
-|       ✅        |   Obter lista de administradores |
-|       ✅        |   Obter dono do grupo |
-|       ✅        |   Lista Negra  |
-|       ✅        |   Mutar Grupo |
-|       ✅        |   Bem Vindo  |
-|       ✅        |   Auto Sticker |
-|       ✅        |   Anti Fake |
-|       ✅        |   Anti Link  |
-|       ✅        |   Anti Flood  |
-|       ✅        |   Contagem de mensagens |
-|       ✅        |   Marcar inativos |
-|       ✅        |   Banir inativos |
-|       ✅        |   Bloquear/Desbloquear Comandos |
-|       ✅        |   Enquete |
-|       ✅        |   Banir Todos  |
-|       ✅        |   Apagar mensagens do bot |
-
-### Administração de Dono
-
-| Apenas Dono do Bot  |              Recurso           |
-| :------------: | :---------------------------------------------: |
-|       ✅        |   Entrar em um grupo |
-|       ✅        |   Sair de todos os grupos |
-|       ✅        |   Broadcast - Grupos |
-|       ✅        |   Bloquear/Desbloquear usuário |
-|       ✅        |   Sistema de Tipos de Usuários |
-|       ✅        |   Limitador comandos diários (por usuário) |
-|       ✅        |   Limitador de comandos por minuto (por usuário) |
-|       ✅        |   Auto Sticker Privado |
-|       ✅        |   Sair do grupo |
-|       ✅        |   Obter lista de usuários bloqueados |
-|       ✅        |   Modificar status atual do bot  |
+**Veja aqui os principais recursos/comandos do bot** :  [Clique AQUI](docs/COMANDOS.md)
 
 <br>
 
@@ -217,11 +131,11 @@ Provavelmente o seu Node não está com o PATH configurado nas variáveis de amb
 #### 2 - COMANDO NÃO FUNCIONANDO :
 Se algum comando por acaso não estiver funcionando antes de tentar baixar uma nova versão ou relatar o erro tente usar dentro da pasta do projeto o comando :
 ```bash
-yarn install 
+yarn upgrade 
 ```
 Esse comando atualiza as dependências e pode resolver algum problema que você tenha sem precisar baixar ou esperar uma nova versão do bot.<br><br>
 
-**Obs**: Não conseguiu resolver? Entre em contato no [Passo 8](https://github.com/victorsouzaleal) 
+**Obs**: Não conseguiu resolver? Entre em contato abaixo.
 
 <br>
 
@@ -232,5 +146,6 @@ Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualqu
 
 ## 9 - Agradecimentos/Contribuições
 
-* [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
+* [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
+

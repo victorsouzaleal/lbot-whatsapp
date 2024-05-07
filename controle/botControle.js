@@ -1,4 +1,4 @@
-import * as bot from '../db_funcoes/bot.js'
+import * as bot from '../database/bot.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
 import { listarComandos } from '../comandos/comandos.js'
 import {consoleErro, criarTexto, corTexto} from '../lib/util.js'

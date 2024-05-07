@@ -1,7 +1,7 @@
 import Datastore from '@seald-io/nedb'
 import * as bot from '../controle/botControle.js'
 
-const db = new Datastore({filename : './dados/usuarios.db', autoload: true})
+const db = new Datastore({filename : './database/dados_salvos/usuarios.db', autoload: true})
 
 async function Usuario(id_usuario, nome) {
     const 

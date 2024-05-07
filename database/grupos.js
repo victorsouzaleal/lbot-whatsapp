@@ -3,8 +3,8 @@ import {MessageTypes} from '../baileys/mensagem.js'
 import moment from "moment-timezone"
 
 const db = {
-    grupos : new Datastore({filename : './dados/grupos.db', autoload: true}),
-    contador : new Datastore({filename : './dados/contador.db', autoload: true})
+    grupos : new Datastore({filename : './database/dados_salvos/grupos.db', autoload: true}),
+    contador : new Datastore({filename : './database/dados_salvos/contador.db', autoload: true})
 }
 
 async function Grupo(id_grupo, dados){
