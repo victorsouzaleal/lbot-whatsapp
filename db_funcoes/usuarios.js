@@ -4,15 +4,23 @@ import * as bot from '../controle/botControle.js'
 const db = new Datastore({filename : './dados/usuarios.db', autoload: true})
 
 async function Usuario(id_usuario, nome) {
-    let {limite_diario} = await bot.obterInformacoesBot()
+    const 
+    ID_USUARIO = id_usuario,
+    NOME = nome,
+    COMANDOS_TOTAL = 0,
+    COMANDOS_DIA = 0,
+    MAX_COMANDOS_DIA = (await bot.obterInformacoesBot()).limite_diario.limite_tipos.comum,
+    RECEBEUBOASVINDAS = false,
+    TIPO = 'comum'
+
     return {
-        id_usuario,
-        nome,
-        comandos_total: 0,
-        comandos_dia: 0,
-        max_comandos_dia : limite_diario.limite_tipos.comum,
-        recebeuBoasVindas: false,
-        tipo: "comum"
+        id_usuario : ID_USUARIO,
+        nome : NOME,
+        comandos_total: COMANDOS_TOTAL,
+        comandos_dia: COMANDOS_DIA,
+        max_comandos_dia : MAX_COMANDOS_DIA,
+        recebeuBoasVindas: RECEBEUBOASVINDAS,
+        tipo: TIPO
     }
 }
 
