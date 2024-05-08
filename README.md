@@ -23,10 +23,13 @@
 
 <br>
 
-## Última Atualização : 03/05/2024 - v2.4.6
-**[CÓDIGO]** O banco de dados NeDB foi atualizado para uma versão mais atual e estável.<br>
-**[CÓDIGO]** O armazenamento de mensagens do bot foi melhorado e migrado para um banco de dados NeDB.<br>
-**[CORREÇÃO]** Corrigido possiveis erros com Anti-Flood/Anti-Link/Contador caso o bot seja banido de um grupo.<br>
+## Última Atualização : 08/05/2024 - v2.5.0
+**[ALTERADO]** Contador de mensagens foi reformulado e agora não deleta as contagens de quem foi removido/saiu do grupo.<br>
+**[ALTERADO]** Melhoria nas mensagens de boas vindas a um novo usuário mostrando como usar o **menu**.<br>
+**[COMANDO]** Criação de Stickers foi refeita e os stickers circulares estão de volta.<br>
+**[COMANDO]** O comando **blista** de adicionar a lista negra do grupo agora também bane o usuário se ele estiver no grupo.<br>
+**[CORREÇÃO]** Corrigida a mensagen de ban da **LISTA NEGRA**.<br>
+**[CÓDIGO]** Reorganização e correções gerais no código.<br>
 <br>
 
 
