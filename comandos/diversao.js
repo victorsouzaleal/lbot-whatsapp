@@ -4,6 +4,7 @@ import path from 'node:path'
 import * as api from '../lib/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
+import moment from "moment-timezone"
 
 
 export const diversao = async(c, mensagemInfoCompleta) => {
@@ -16,6 +17,14 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
     try {
         switch(cmdSemPrefixo){
+            case 'tiodaingrid':
+                if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
+                    let idParticipantesAtuais = await socket.getGroupMembersId(c, groupId)
+                    let indexAleatorio = Math.floor(Math.random() * idParticipantesAtuais.length)
+                    let pessoaEscolhida1 = idParticipantesAtuais[indexAleatorio]
+                    let respostaTexto = criarTexto("O tio da Ingrid roubou o(a) @{p1} 😭😭", pessoaEscolhida1.replace("@s.whatsapp.net", ''),)
+                    await socket.sendTextWithMentions(c, chatId, respostaTexto, [pessoaEscolhida1])
+                break
             case 'detector' :
                 try{
                     if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
@@ -281,6 +290,15 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                     throw err
                 }
                 break    
+
+            case "horario":
+                try{
+                    if(moment().tz("America/Sao_Paulo").format("HH") == "22" && moment().tz("America/Sao_Paulo").format("mm") == "22"){
+                        await socket.sendText(c, chatId, "Horário da Karen 🇧🇷🇧🇷")
+                    } else await socket.sendText(c, chatId, moment.tz("America/Sao_Paulo").format("HH:mm"))    
+                } catch(err) {
+                    throw err
+                }
         }
     } catch(err){
         await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
