@@ -25,7 +25,6 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                     if(!argSuportado) tipoFigurinha = StickerTypes.DEFAULT
                     if(argSuportado){
                         if(stickerArg == 1) tipoFigurinha = StickerTypes.CIRCLE
-                        if(stickerArg == 2) tipoFigurinha = StickerTypes.ROUNDED
                     }
                     let dadosMensagem = {
                         tipo : (quotedMsg) ? quotedMsgObjInfo.type : type,
