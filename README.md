@@ -23,18 +23,16 @@
 
 <br>
 
-## Última Atualização : 08/05/2024 - v2.5.0
-**[ALTERADO]** Contador de mensagens foi reformulado e agora não deleta as contagens de quem foi removido/saiu do grupo.<br>
-**[ALTERADO]** Melhoria nas mensagens de boas vindas a um novo usuário mostrando como usar o **menu**.<br>
-**[COMANDO]** Criação de Stickers foi refeita e os stickers circulares estão de volta.<br>
-**[COMANDO]** O comando **blista** de adicionar a lista negra do grupo agora também bane o usuário se ele estiver no grupo.<br>
-**[CORREÇÃO]** Corrigida a mensagen de ban da **LISTA NEGRA**.<br>
+## Última Atualização : 11/05/2024 - v2.6.0
+**[ALTERAÇÃO]** A inicialização do bot teve as mensagens alteradas e agora exibe a versão atual.<br>
+**[ALTERAÇÃO]** Sticker circular agora funciona somente com **IMAGENS** para simplificar a criação de stickers em geral e usar menos recursos de VPS.<br>
+**[CORREÇÃO]** Corrigido o QR Code não sendo gerado após o bot ter a conta deslogada.<br>
 **[CÓDIGO]** Reorganização e correções gerais no código.<br>
 <br>
 
 
 ## REQUERIMENTOS :
-- Um número de celular **SECUNDÁRIO** conectado ao WhatsApp para ler o QR Code e conectar o bot.
+- Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
 - [NODE VERSÃO LTS](https://nodejs.org/en/) 
 
 <br>
@@ -126,8 +124,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 | :-----------: | :--------------------------------: |
 |       ✅       | Foto para Sticker |
 |       ✅       | Video/GIF para Sticker |
-|       ✅       | Sticker Circular |
-|       ✅       | Sticker Arrendondado |
+|       ✅       | Sticker Circular (IMAGENS) |
 |       ✅       | Texto para Sticker |
 |       ✅       | Sticker sem fundo |
 |       ✅       | Sticker para foto |

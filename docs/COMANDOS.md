@@ -6,8 +6,7 @@
 | :-----------: | :--------------------------------: |
 |       ✅       | Foto para Sticker |
 |       ✅       | Video/GIF para Sticker |
-|       ✅       | Sticker Circular |
-|       ✅       | Sticker Arrendondado |
+|       ✅       | Sticker Circular (IMAGENS) |
 |       ✅       | Texto para Sticker |
 |       ✅       | Sticker sem fundo |
 |       ✅       | Sticker para foto |
