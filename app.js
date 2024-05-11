@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import {makeWASocket, useMultiFileAuthState} from '@whiskeysockets/baileys'
-import {atualizarConexao, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './baileys/acoesEventosSocket.js'
+import {conexaoAberta, conexaoEncerrada, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './baileys/acoesEventosSocket.js'
 import configSocket from './baileys/configSocket.js'
 import moment from "moment-timezone"
 import dotenv from 'dotenv'
@@ -15,7 +15,13 @@ async function connectToWhatsApp(){
 
     //Status da conexão
     c.ev.on('connection.update', async (update) => {
-        let necessarioReconectar = await atualizarConexao(c, update)
+        const { connection } = update
+        let necessarioReconectar = false
+        if(connection == 'open'){
+            await conexaoAberta(c)
+        } else if (connection == 'close'){
+            necessarioReconectar = await conexaoEncerrada(update)
+        }
         if(necessarioReconectar) connectToWhatsApp()
     })
 

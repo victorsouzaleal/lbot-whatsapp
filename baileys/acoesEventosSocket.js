@@ -1,11 +1,9 @@
 import {DisconnectReason} from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
-import {criarTexto, consoleErro, corTexto} from'../lib/util.js'
-import {criarArquivosNecessarios, verificarNumeroDono}  from '../lib/verificacaoInicialArquivos.js'
+import {criarTexto, consoleErro, corTexto, verificarEnv, criarArquivosNecessarios, verificarNumeroDono} from'../lib/util.js'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
-import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
 import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
 import {chamadaComando} from '../lib/chamadaComando.js'
@@ -14,52 +12,52 @@ import {GrupoControle} from '../controles/GrupoControle.js'
 import {MensagemControle} from '../controles/MensagemControle.js'
 
 
-export const atualizarConexao = async (c, conexao)=>{
+export const conexaoEncerrada = async(conexao)=>{
     const msgs_texto = await obterMensagensTexto()
-    const { connection, lastDisconnect } = conexao
+    const { lastDisconnect } = conexao
     let reconectar = false
-    if(connection === 'close') {
-        const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
-        if(lastDisconnect.error.message == "Comando"){
-            consoleErro(msgs_texto.geral.desconectado.comando, "DESCONECTADO")
-        } else if(lastDisconnect.error.message == "arquivos"){
-            consoleErro(msgs_texto.geral.desconectado.arquivos, "DESCONECTADO")
-        } else if( lastDisconnect.error.message == "erro_geral"){
-            consoleErro(msgs_texto.geral.desconectado.falha_grave, "DESCONECTADO")
+    const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
+    if(lastDisconnect.error.message == "Comando"){
+        consoleErro(msgs_texto.geral.desconectado.comando, "DESCONECTADO")
+    } else if(lastDisconnect.error.message == "arquivos"){
+        consoleErro(msgs_texto.geral.desconectado.arquivos, "DESCONECTADO")
+    } else if( lastDisconnect.error.message == "erro_geral"){
+        consoleErro(msgs_texto.geral.desconectado.falha_grave, "DESCONECTADO")
+    } else {
+        if(erroCodigo == DisconnectReason?.loggedOut){
+            fs.rmSync("./auth_info_baileys", {recursive: true, force: true})
+            consoleErro(msgs_texto.geral.desconectado.deslogado, "DESCONECTADO")
+        } else if(erroCodigo == DisconnectReason?.restartRequired){
+            consoleErro(msgs_texto.geral.desconectado.reiniciar, "DESCONECTADO")
         } else {
-            if(erroCodigo == DisconnectReason?.loggedOut){
-                fs.rmSync("./auth_info_baileys", {recursive: true, force: true})
-                consoleErro(msgs_texto.geral.desconectado.deslogado, "DESCONECTADO")
-            } else if(erroCodigo == DisconnectReason?.restartRequired){
-                consoleErro(msgs_texto.geral.desconectado.reiniciar, "DESCONECTADO")
-            } else {
-                consoleErro(criarTexto(msgs_texto.geral.desconectado.conexao, erroCodigo, lastDisconnect.error.message), "DESCONECTADO")
-            }
-            reconectar = true
+            consoleErro(criarTexto(msgs_texto.geral.desconectado.conexao, erroCodigo, lastDisconnect.error.message), "DESCONECTADO")
         }
-    } else if(connection === 'open') {
-        try{
-            let necessitaCriar = await criarArquivosNecessarios()
-            if(necessitaCriar){
-                console.log(corTexto(msgs_texto.inicio.arquivos_criados))
-                setTimeout(()=>{
-                    c.ev.removeAllListeners()
-                    return c.end(new Error("arquivos"))
-                },3000)
-            } else{
-                await socket.getAllGroups(c)
-                await new BotControle().inicializarBot(c)
-                await verificarEnv()
-                await verificarNumeroDono()
-                console.log(msgs_texto.inicio.servidor_iniciado)
-            }
-        } catch(err){
-            consoleErro(err, "Inicialização")
-            c.end(new Error("erro_geral"))
-        }
-        
+        reconectar = true
     }
     return reconectar
+}
+
+export const conexaoAberta = async(c)=>{
+    try{
+        const msgs_texto = await obterMensagensTexto()
+        let necessitaCriar = await criarArquivosNecessarios()
+        if(necessitaCriar){
+            console.log(corTexto(msgs_texto.inicio.arquivos_criados))
+            setTimeout(()=>{
+                c.ev.removeAllListeners()
+                return c.end(new Error("arquivos"))
+            },3000)
+        } else{
+            await socket.getAllGroups(c)
+            await new BotControle().inicializarBot(c)
+            await verificarEnv()
+            await verificarNumeroDono()
+            console.log(msgs_texto.inicio.servidor_iniciado)
+        }
+    } catch(err){
+        consoleErro(err, "Inicialização")
+        c.end(new Error("erro_geral"))
+    }
 }
 
 export const receberMensagem = async (c, mensagem)=>{
