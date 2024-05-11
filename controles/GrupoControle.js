@@ -418,9 +418,7 @@ export class GrupoControle {
             let timestamp_atual = parseInt(Math.round(new Date().getTime()/1000)),  resposta = false
             //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
             for(let i = 0; i < grupo_info.antiflood.msgs.length; i++){
-                console.log(timestamp_atual, grupo_info.antiflood.msgs[i].expiracao, (timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao))
-                if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)
-                    
+                if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)       
             }
             //PESQUISA O INDICE DO USUARIO
             let usuarioIndex = grupo_info.antiflood.msgs.findIndex(usuario=> usuario.id_usuario == id_usuario)
