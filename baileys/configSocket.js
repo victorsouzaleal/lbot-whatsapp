@@ -1,12 +1,15 @@
 import pino from 'pino'
 import { MensagemControle } from '../controles/MensagemControle.js'
-import {isJidBroadcast} from '@whiskeysockets/baileys'
+import {isJidBroadcast, makeCacheableSignalKeyStore} from '@whiskeysockets/baileys'
 
 export default function configSocket (state){
     return {
         printQRInTerminal: true,
-        auth: state,
-        keepAliveIntervalMs: 20000,
+        auth: {
+            creds: state.creds,
+            keys: makeCacheableSignalKeyStore(state.keys, pino({level : "silent"}))
+        },
+        keepAliveIntervalMs: 30000,
         emitOwnEvents: true,
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid.endsWith('@newsletter'),
