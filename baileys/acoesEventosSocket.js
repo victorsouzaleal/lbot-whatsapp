@@ -1,6 +1,6 @@
 import {DisconnectReason} from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
-import {criarTexto, consoleErro, corTexto, verificarEnv, criarArquivosNecessarios, verificarNumeroDono} from'../lib/util.js'
+import {criarTexto, consoleErro, corTexto, verificarEnv, criarArquivosNecessarios, verificarNumeroDono, versaoAtual} from'../lib/util.js'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import fs from "fs-extra"
 import * as socket from './socket-funcoes.js'
@@ -48,11 +48,11 @@ export const conexaoAberta = async(c)=>{
                 return c.end(new Error("arquivos"))
             },3000)
         } else{
+            console.log(criarTexto(msgs_texto.inicio.inicializando, versaoAtual()))
             await socket.getAllGroups(c)
             await new BotControle().inicializarBot(c)
             await verificarEnv()
             await verificarNumeroDono()
-            console.log(msgs_texto.inicio.servidor_iniciado)
         }
     } catch(err){
         consoleErro(err, "Inicialização")
@@ -130,13 +130,18 @@ export const atualizacaoDadosGrupos = async (c, novosDadosGrupo)=>{
     try{
         const grupos = new GrupoControle()
         //Cadastro de grupos
-        console.log(corTexto(await grupos.registrarGruposAoIniciar(novosDadosGrupo)))
+        await grupos.registrarGruposAoIniciar(novosDadosGrupo)
         //Atualização dos participantes dos grupos
-        console.log(corTexto(await grupos.atualizarDadosGruposInicio(novosDadosGrupo)))
+        await grupos.atualizarDadosGruposInicio(novosDadosGrupo)
         //Verificar lista negra dos grupos
-        console.log(corTexto(await grupos.verificarListaNegraGeral(c, novosDadosGrupo)))
+        await grupos.verificarListaNegraGeral(c, novosDadosGrupo)
         //Atualização da contagem de mensagens
-        console.log(corTexto(await grupos.atualizarContagemGrupos(novosDadosGrupo)))
+        await grupos.atualizarContagemGrupos(novosDadosGrupo)
+
+        // Log : Grupos carregados e atualizados
+        console.log('[GRUPOS]', corTexto((await obterMensagensTexto()).inicio.grupos_carregados))
+        // Log : Servidor iniciado
+        console.log('[SERVIDOR]', corTexto((await obterMensagensTexto()).inicio.servidor_iniciado))
         return true
     } catch(err){
         consoleErro(err, "GROUPS.UPDATE")

@@ -73,7 +73,6 @@ export class GrupoControle {
 
     async registrarGruposAoIniciar(gruposInfo){
         try{
-            let msgs_texto = await obterMensagensTexto()
             for(let grupo of gruposInfo){ 
                 let g_registrado = await this.verificarRegistroGrupo(grupo.id)
                 if(!g_registrado){
@@ -91,7 +90,6 @@ export class GrupoControle {
                     await this.registrarGrupo(dadosGrupo)  
                 } 
             }
-            return msgs_texto.inicio.cadastro_grupos
         } catch(err){
             err.message = `registrarGruposAoIniciar - ${err.message}`
             throw err
@@ -137,7 +135,6 @@ export class GrupoControle {
 
     async atualizarDadosGruposInicio(gruposInfo){
         try{
-            let msgs_texto = await obterMensagensTexto()
             for(let grupo of gruposInfo){
                 let participantesGrupo = await socket.getGroupMembersIdFromMetadata(grupo)
                 let adminsGrupo = await socket.getGroupAdminsFromMetadata(grupo)
@@ -152,7 +149,6 @@ export class GrupoControle {
                 }
                 await this.atualizarDadosGrupo(dadosGrupo)
             }
-            return msgs_texto.inicio.participantes_atualizados
         } catch(err) {
             err.message = `atualizarParticipantes - ${err.message}`
             throw err
@@ -294,7 +290,6 @@ export class GrupoControle {
 
     async atualizarContagemGrupos(gruposInfo){
         try{
-            let msgs_texto = await obterMensagensTexto()
             for (let grupo of gruposInfo){
                 let g_info = await this.obterGrupoInfo(grupo.id)
                 if(g_info != null){
@@ -308,7 +303,6 @@ export class GrupoControle {
                     }       
                 }
             }
-            return msgs_texto.inicio.contagem_recarregada
         } catch(err) {
             err.message = `atualizarContagemGrupos - ${err.message}`
             throw err
@@ -509,7 +503,6 @@ export class GrupoControle {
                     }
                 }
             }
-            return msgs_texto.inicio.lista_negra
         } catch (err) {
             err.message = `verificarListaNegraGeral - ${err.message}`
             throw err
