@@ -174,8 +174,11 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                     if (!isGroupAdmins) return await socket.reply(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return await socket.reply(c, chatId,msgs_texto.permissao.bot_admin, id)
                     let idParticipantesAtuais = await socket.getGroupMembersId(c, groupId)
-                    idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(groupOwner),1)
-                    idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(botNumber),1)
+                    if(groupOwner == botNumber)  idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(botNumber),1)
+                    else {
+                        idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(groupOwner),1)
+                        idParticipantesAtuais.splice(idParticipantesAtuais.indexOf(botNumber),1)
+                    }
                     if(idParticipantesAtuais.length == 0) return await socket.reply(c, chatId, msgs_texto.diversao.roletarussa.sem_membros, id)
                     let indexAleatorio = Math.floor(Math.random() * idParticipantesAtuais.length)
                     let participanteEscolhido = idParticipantesAtuais[indexAleatorio]
