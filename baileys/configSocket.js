@@ -1,5 +1,5 @@
 import pino from 'pino'
-import {recuperarMensagem} from '../controle/mensagensControle.js'
+import { MensagemControle } from '../controles/MensagemControle.js'
 import {isJidBroadcast} from '@whiskeysockets/baileys'
 
 export default function configSocket (state){
@@ -11,7 +11,7 @@ export default function configSocket (state){
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid.endsWith('@newsletter'),
         getMessage: async (key) => {
-            const mensagem = await recuperarMensagem(key.remoteJid, key.id)
+            const mensagem = await new MensagemControle().recuperarMensagem(key.remoteJid, key.id)
             return mensagem || undefined
         }
     }

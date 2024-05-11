@@ -1,8 +1,8 @@
 
-import * as bot from '../controle/botControle.js'
+import {BotControle} from '../controles/BotControle.js'
 
 export const listarComandos = async () => {
-    let {prefixo} = await bot.obterInformacoesBot()
+    let {prefixo} = await new BotControle().obterInformacoesBot()
     return {
         utilidades :[
             `${prefixo}filmes`,

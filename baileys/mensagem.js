@@ -2,14 +2,14 @@ import {generateWAMessageFromContent, getContentType} from '@whiskeysockets/bail
 import pino from 'pino'
 import {listarComandos} from '../comandos/comandos.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
-import * as bot from '../controle/botControle.js'
-import * as grupos from '../controle/gruposControle.js'
-import fs from 'fs-extra'
-import path from 'path'
+import {BotControle} from '../controles/BotControle.js'
+import {GrupoControle} from '../controles/GrupoControle.js'
 
 
 export const converterMensagem = async(m) =>{
     try {
+        const bot = new BotControle()
+        const grupos = new GrupoControle()
         m = m.messages[0]
         let respostaInformacoes = {}
         let type = getContentType(m.message)

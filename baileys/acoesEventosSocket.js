@@ -9,9 +9,9 @@ import {verificarEnv} from '../lib/verificacaoInicialArquivos.js'
 import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
 import {chamadaComando} from '../lib/chamadaComando.js'
-import * as bot from '../controle/botControle.js'
-import * as grupos from '../controle/gruposControle.js'
-import {armazenarMensagem} from '../controle/mensagensControle.js'
+import {BotControle} from '../controles/BotControle.js'
+import {GrupoControle} from '../controles/GrupoControle.js'
+import {MensagemControle} from '../controles/MensagemControle.js'
 
 
 export const atualizarConexao = async (c, conexao)=>{
@@ -48,7 +48,7 @@ export const atualizarConexao = async (c, conexao)=>{
                 },3000)
             } else{
                 await socket.getAllGroups(c)
-                await bot.inicializarBot(c)
+                await new BotControle().inicializarBot(c)
                 await verificarEnv()
                 await verificarNumeroDono()
                 console.log(msgs_texto.inicio.servidor_iniciado)
@@ -64,7 +64,8 @@ export const atualizarConexao = async (c, conexao)=>{
 
 export const receberMensagem = async (c, mensagem)=>{
     try{
-        if(mensagem.messages[0].key.fromMe) await armazenarMensagem(mensagem.messages[0])
+        const grupos = new GrupoControle()
+        if(mensagem.messages[0].key.fromMe) await new MensagemControle().armazenarMensagem(mensagem.messages[0])
         switch (mensagem.type) {
             case "notify":
                 if(mensagem.messages[0].message == undefined) return
@@ -87,7 +88,7 @@ export const receberMensagem = async (c, mensagem)=>{
 export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
     try{
         const msgs_texto = await obterMensagensTexto()
-        await grupos.registrarGrupoAoSerAdicionado(dadosGrupo[0])
+        await new GrupoControle().registrarGrupoAoSerAdicionado(dadosGrupo[0])
         await socket.sendText(c, dadosGrupo[0].id, criarTexto(msgs_texto.geral.entrada_grupo, dadosGrupo[0].subject)).catch(()=>{})
     } catch(err){
         consoleErro(err, "GROUPS.UPSERT")
@@ -96,7 +97,8 @@ export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
 
 export const atualizacaoParticipantesGrupo = async (c, evento)=>{
     try{
-        const isBotUpdate = evento.participants[0] == await bot.obterNumeroBot()
+        const grupos = new GrupoControle()
+        const isBotUpdate = evento.participants[0] == await new BotControle().obterNumeroBot()
         const g_info = await grupos.obterGrupoInfo(evento.id)
         if (evento.action == 'add') {
             //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
@@ -128,6 +130,7 @@ export const atualizacaoParticipantesGrupo = async (c, evento)=>{
 
 export const atualizacaoDadosGrupos = async (c, novosDadosGrupo)=>{
     try{
+        const grupos = new GrupoControle()
         //Cadastro de grupos
         console.log(corTexto(await grupos.registrarGruposAoIniciar(novosDadosGrupo)))
         //Atualização dos participantes dos grupos
@@ -148,7 +151,7 @@ export const realizarEventosEspera = async(c, eventosEsperando)=>{
 
 export const atualizacaoDadosGrupo = async (dadosGrupo)=>{
     try{
-        await grupos.atualizarDadosGrupoParcial(dadosGrupo)
+        await new GrupoControle().atualizarDadosGrupoParcial(dadosGrupo)
     } catch(err){
         consoleErro(err, "GROUPS.UPDATE")
     }

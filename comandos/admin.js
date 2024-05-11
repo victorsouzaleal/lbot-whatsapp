@@ -5,15 +5,18 @@ import {criarTexto,erroComandoMsg, timestampParaData, consoleErro} from '../lib/
 import fs from 'fs-extra'
 import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
-import * as bot from '../controle/botControle.js'
-import * as grupos from '../controle/gruposControle.js'
-import * as usuarios from '../controle/usuariosControle.js'
+import {BotControle} from '../controles/BotControle.js'
+import {GrupoControle} from '../controles/GrupoControle.js'
+import {UsuarioControle} from '../controles/UsuarioControle.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import os from 'node:os'
 
 
 export const admin = async(c, mensagemInfoCompleta) => {
+    const bot = new BotControle()
+    const usuarios = new UsuarioControle()
+    const grupos = new GrupoControle()
     const {msgs_texto, ownerNumber} = mensagemInfoCompleta
     const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
     const {groupId} = mensagemInfoCompleta.grupo

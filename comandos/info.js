@@ -4,12 +4,14 @@ import * as menu from '../lib/menu.js'
 import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
 import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
-import * as grupos from '../controle/gruposControle.js'
-import * as usuarios from '../controle/usuariosControle.js'
+import {GrupoControle} from '../controles/GrupoControle.js'
+import {UsuarioControle} from '../controles/UsuarioControle.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 
 
 export const info = async(c, mensagemInfoCompleta) => {
+    const usuarios = new UsuarioControle()
+    const grupos = new GrupoControle()
     const {msgs_texto, ownerNumber} = mensagemInfoCompleta
     const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
     const {groupId, isGroupAdmins} = mensagemInfoCompleta.grupo

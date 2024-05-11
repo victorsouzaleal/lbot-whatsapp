@@ -1,12 +1,13 @@
 //REQUERINDO MODULOS
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
-import * as grupos from '../controle/gruposControle.js'
+import {GrupoControle} from '../controles/GrupoControle.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 
 
 export const grupo = async(c, mensagemInfoCompleta) => {
+    const grupos = new GrupoControle()
     const {msgs_texto} = mensagemInfoCompleta
     const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
     const {groupId, grupoInfo, groupOwner, groupMembers, groupAdmins, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
