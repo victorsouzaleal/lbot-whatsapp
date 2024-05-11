@@ -415,9 +415,10 @@ export class GrupoControle {
 
     async tratarMensagemAntiFlood(grupo_info, id_usuario){
         try{
-            let timestamp_atual = Math.round(new Date().getTime()/1000),  resposta = false
+            let timestamp_atual = parseInt(Math.round(new Date().getTime()/1000)),  resposta = false
             //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
             for(let i = 0; i < grupo_info.antiflood.msgs.length; i++){
+                console.log(timestamp_atual, grupo_info.antiflood.msgs[i].expiracao, (timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao))
                 if(timestamp_atual >= grupo_info.antiflood.msgs[i].expiracao) grupo_info.antiflood.msgs.splice(i,1)
                     
             }
@@ -438,7 +439,7 @@ export class GrupoControle {
                 //ADICIONA O USUARIO NA LISTA
                 grupo_info.antiflood.msgs.push({
                     id_usuario,
-                    expiracao: timestamp_atual + grupo_info.antiflood.intervalo,
+                    expiracao: timestamp_atual + parseInt(grupo_info.antiflood.intervalo),
                     qtd: 1
                 })
                 resposta = false
