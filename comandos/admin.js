@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import * as menu from '../lib/menu.js'
 import moment from "moment-timezone"
-import {criarTexto,erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
+import {criarTexto,erroComandoMsg, timestampParaData, consoleErro, versaoAtual} from '../lib/util.js'
 import fs from 'fs-extra'
 import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
@@ -39,7 +39,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
             case "infocompleta":
                 try{
                     let fotoBot = await socket.getProfilePicFromServer(c, botNumber)
-                    let version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
+                    let version = versaoAtual()
                     let infoBot = botInfoJSON
                     let expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                     let botInicializacaoData = timestampParaData(infoBot.iniciado)
