@@ -67,7 +67,12 @@ export class BotControle{
     }
 
     async obterInformacoesBot(){
-        return await this.bot.obterDados()
+        try{
+            return await this.bot.obterDados()
+        }catch{
+            await this.criarArquivo()
+            return await this.bot.obterDados()
+        }
     }
 
     async verificarLimiteComando(usuario_id, tipo_usuario, isAdmin){
