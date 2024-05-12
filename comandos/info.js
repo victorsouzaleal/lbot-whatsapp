@@ -23,16 +23,15 @@ export const info = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){
             case `info`:
                 try{
-                    const botFotoURL = await socket.getProfilePicFromServer(c,botNumber)
                     let version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
                     let infoBot = botInfoJSON
                     let botInicializacaoData = timestampParaData(infoBot.iniciado)
                     let resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
-                    if(botFotoURL != undefined){
+                    await socket.getProfilePicFromServer(c, botNumber).then( async (botFotoURL)=>{
                         await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
-                    } else {
+                    }).catch(async()=>{
                         await socket.reply(c, chatId, resposta, id)
-                    }
+                    })
                 } catch(err){
                     throw err
                 }
