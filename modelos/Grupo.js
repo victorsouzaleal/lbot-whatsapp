@@ -1,7 +1,4 @@
 import Datastore from '@seald-io/nedb'
-import {MessageTypes} from '../baileys/mensagem.js'
-import moment from "moment-timezone"
-
 const db = {
     grupos : new Datastore({filename : './dados/grupos.db', autoload: true}),
     contador : new Datastore({filename : './dados/contador.db', autoload: true})
