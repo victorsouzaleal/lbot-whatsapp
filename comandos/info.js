@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 import fs from 'fs-extra'
 import * as menu from '../lib/menu.js'
-import {criarTexto, erroComandoMsg, timestampParaData, consoleErro} from '../lib/util.js'
+import {criarTexto, erroComandoMsg, timestampParaData, consoleErro, versaoAtual} from '../lib/util.js'
 import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
@@ -23,7 +23,7 @@ export const info = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){
             case `info`:
                 try{
-                    let version = JSON.parse(fs.readFileSync(path.resolve('package.json'))).version
+                    let version = versaoAtual()
                     let infoBot = botInfoJSON
                     let botInicializacaoData = timestampParaData(infoBot.iniciado)
                     let resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
