@@ -473,7 +473,8 @@ export const admin = async(c, mensagemInfoCompleta) => {
                         if (!grupo.restrito_msg) {
                             await new Promise((resolve)=>{
                                 setTimeout(async ()=>{
-                                    resolve(await socket.sendText(c, grupo.id_grupo, criarTexto(msgs_texto.admin.bcgrupos.anuncio, mensagem)))
+                                    await socket.sendText(c, grupo.id_grupo, criarTexto(msgs_texto.admin.bcgrupos.anuncio, mensagem)).catch(()=>{})
+                                    resolve()
                                 }, 1000)
                             })
                         }
