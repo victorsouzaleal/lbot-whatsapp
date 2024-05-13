@@ -56,6 +56,8 @@ Após terminar de instalar o yarn digite o comando abaixo para instalar as depen
 yarn install
 ```
 
+<br><br>
+
 ### Termux :
 **Para aprender a instalar no TERMUX** :  [Clique AQUI](docs/TERMUX.md)
 <br><br>
