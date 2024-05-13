@@ -33,17 +33,17 @@
 
 ## REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
-- [NODE VERSÃO LTS](https://nodejs.org/en/) 
-
+- Em sistemas Windows/Linux : ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
+- No Termux : Ter o [TERMUX](https://play.google.com/store/apps/details?id=com.termux&hl=pt_BR&gl=US) instalado no celular
 <br>
 
-## 1 - Faça download da ultima versão :
+## 1 - Instalação :
+
+### Windows/Linux :
+
 Faça o download da última versão lançada no link abaixo (extraia o zip e entre na pasta para os passos seguintes):
 https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest
 
-<br>
-
-## 2 - Instale as dependências :
 Abra o prompt de comando (CMD/Terminal) na **PASTA DO PROJETO QUE VOCÊ EXTRAIU** e execute os comandos abaixo :
 
 ```bash
@@ -56,11 +56,15 @@ Após terminar de instalar o yarn digite o comando abaixo para instalar as depen
 yarn install
 ```
 
-#### Obs: Se houver algum erro vá para o [Passo 7](https://github.com/victorsouzaleal/lbot-whatsapp#7---solu%C3%A7%C3%A3o-de-problemas-)
+### Termux :
+**Para aprender a instalar no TERMUX** :  [Clique AQUI](docs/TERMUX.md)
+<br><br>
+
+#### Obs: Se houver algum erro vá para o [Passo 6](https://github.com/victorsouzaleal/lbot-whatsapp#6---solu%C3%A7%C3%A3o-de-problemas-)
 
 <br>
 
-## 3 - Uso :
+## 2 - Uso :
 
 **Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. 
 
@@ -74,7 +78,7 @@ Se for a sua primeira vez executando escaneie o QR Code com o seu celular, bot s
 
 <br>
 
-## 4 - Funcionamento :
+## 3 - Funcionamento :
 Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
 <br><br>
 **!menu** - Dá acesso ao MENU PRINCIPAL.
@@ -90,7 +94,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 <br>
 
-## 5 - Configuração do bot e arquivo .env :
+## 4 - Configuração do bot e arquivo .env :
 
 ### Ao abrir o arquivo .env na raiz do projeto após iniciar o bot pela primeira vez ele vai se parecer com isso : </br>
         # CONFIGURAÇÃO DE API KEYS PARA COMANDOS
@@ -116,7 +120,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-## 6 - Recursos/Comandos :
+## 5 - Recursos/Comandos :
 
 ### Figurinhas
 
@@ -170,7 +174,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-## 7 - Solução de Problemas :
+## 6 - Solução de Problemas :
 
 #### 1 - YARN NÃO É IDENTIFICADO COMO COMANDO:
 Provavelmente o seu Node não está com o PATH configurado nas variáveis de ambiente, recomendo deletar o Node e instalar novamente para ele configurar corretamente o PATH. Ou procure um tutorial de como adicionar o PATH para o npm/yarn.
@@ -188,12 +192,12 @@ Esse comando atualiza as dependências e pode resolver algum problema que você 
 
 <br>
 
-## 8 - Contato
+## 7 - Contato
 Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
 
 * **WhatsApp :** https://wa.me/5521995612287
 
-## 9 - Agradecimentos/Contribuições
+## 8 - Agradecimentos/Contribuições
 
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
 * [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
