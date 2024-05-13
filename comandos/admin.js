@@ -38,7 +38,6 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case "infocompleta":
                 try{
-                    let fotoBot = await socket.getProfilePicFromServer(c, botNumber)
                     let version = versaoAtual()
                     let infoBot = botInfoJSON
                     let expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
@@ -59,8 +58,11 @@ export const admin = async(c, mensagemInfoCompleta) => {
                     }
                     resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, comandosBloqueados.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
                     resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, blockNumber.length, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""))
-                    if(fotoBot) await socket.replyFileFromUrl(c, MessageTypes.image, chatId, fotoBot, resposta, id)
-                    else await socket.reply(c, chatId, resposta, id)
+                    await socket.getProfilePicFromServer(c, botNumber).then(async (fotoBot)=>{
+                        await socket.replyFileFromUrl(c, MessageTypes.image, chatId, fotoBot, resposta, id)
+                    }).catch(async ()=>{
+                        await socket.reply(c, chatId, resposta, id)
+                    })
                 } catch(err){
                     throw err
                 }
