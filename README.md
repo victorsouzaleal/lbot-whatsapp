@@ -23,11 +23,11 @@
 
 <br>
 
-## Última Atualização : 11/05/2024 - v2.6.0
-**[ALTERAÇÃO]** A inicialização do bot teve as mensagens alteradas e agora exibe a versão atual.<br>
-**[ALTERAÇÃO]** Sticker circular agora funciona somente com **IMAGENS** para simplificar a criação de stickers em geral e usar menos recursos de VPS.<br>
-**[CORREÇÃO]** Corrigido o QR Code não sendo gerado após o bot ter a conta deslogada.<br>
-**[CÓDIGO]** Reorganização e correções gerais no código.<br>
+## Última Atualização : 13/05/2024 - v2.6.1
+**[NOVO]** TERMUX agora é suportado pelo bot.<br>
+**[CORREÇÃO]** Correção nos comandos **info** e **infocompleta** no caso do bot não ter uma foto.<br>
+**[CORREÇÃO]** Correção no comando **roletarussa** no caso do bot e o dono do grupo serem o mesmo número.<br>
+**[CORREÇÃO]** Correção no comando **bcgrupos** no caso de algum grupo estar indisponivel ou impossibilitado de receber mensagens.<br>
 <br>
 
 
