@@ -12,7 +12,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@deepgram/sdk": "^3.2.0",
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@hapi/boom": "^10.0.1",
     "@sasmeee/igdl": "^1.0.0",
     "@seald-io/nedb": "^4.0.4",
@@ -20,7 +19,6 @@
     "@victorsouzaleal/googlethis": "^1.8.1",
     "@vitalets/google-translate-api": "^7.0.0",
     "@whiskeysockets/baileys": "^6.7.2",
-    "@yohancolla/ytdl": "^1.2.0",
     "acrcloud": "^1.4.0",
     "axios": "^0.24.0",
     "chalk": "^4.1.0",
@@ -60,5 +58,8 @@
     "bot",
     "sticker"
   ],
-  "private": false
+  "private": false,
+  "optionalDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0"
+  }
 }
