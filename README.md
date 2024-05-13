@@ -46,10 +46,10 @@
 
 Faça o download da última versão lançada no seguinte link: https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest , extraia o zip e entre na pasta do bot para os passos seguintes.
 
-Abra o prompt de comando (CMD/Terminal) na **PASTA DO PROJETO QUE VOCÊ EXTRAIU** e execute os comandos abaixo :
+Abra o prompt de comando (terminal) **DENTRO DA PASTA DO PROJETO** e execute os comandos abaixo :
 
 ```bash
-npm i --global yarn
+npm i -g yarn
 ```
 
 Após terminar de instalar o yarn digite o comando abaixo para instalar as dependências do projeto :
@@ -107,7 +107,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 #### Como configurar o ADMINISTRADOR :
 Para usar as funções de **ADMINISTRADOR** digite **!admin** pela primeira vez ao iniciar ao BOT e ai seu número será cadastrado como dono.<br><br>
-Pronto, gora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
+Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
 
 <br>
 
