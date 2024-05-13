@@ -4,7 +4,7 @@ import * as socket from '../baileys/socket-funcoes.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
-import {misturarEmojis, removerFundo, textoParaImagem} from '../lib/api.js'
+import {misturarEmojis, removerFundo, textoParaImagem} from '../../api/api.js'
 import {toSticker, StickerTypes} from 'wa-leal-stickers'
 
 

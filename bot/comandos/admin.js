@@ -2,8 +2,6 @@
 import * as menu from '../lib/menu.js'
 import moment from "moment-timezone"
 import {criarTexto,erroComandoMsg, timestampParaData, consoleErro, versaoAtual} from '../lib/util.js'
-import fs from 'fs-extra'
-import path from 'node:path'
 import * as socket from '../baileys/socket-funcoes.js'
 import {BotControle} from '../controles/BotControle.js'
 import {GrupoControle} from '../controles/GrupoControle.js'

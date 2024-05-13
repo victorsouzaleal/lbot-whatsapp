@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {makeWASocket, useMultiFileAuthState} from '@whiskeysockets/baileys'
-import {conexaoAberta, conexaoEncerrada, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './baileys/acoesEventosSocket.js'
-import configSocket from './baileys/configSocket.js'
+import {conexaoAberta, conexaoEncerrada, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './bot/baileys/acoesEventosSocket.js'
+import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
 import dotenv from 'dotenv'
 

@@ -1,31 +1,14 @@
 //REQUERINDO MODULOS
-import axios from 'axios'
-import path from 'node:path'
-import { obterMensagensTexto } from './msgs.js'
-import {prettyNum} from 'pretty-num'
-import ffmpeg from 'fluent-ffmpeg'
-import fs from 'fs-extra'
-import { consoleErro, converterMp4ParaMp3, criarTexto, obterNomeAleatorio} from './util.js'
-import duration from 'format-duration-time'
-import acrcloud from 'acrcloud'
-import { rastrearEncomendas } from 'correios-brasil'
-import translate from '@vitalets/google-translate-api'
-import Youtube from 'youtube-sr'
-import ytdl from 'ytdl-core'
-import instagramGetUrl from 'instagram-url-direct'
-import Genius from 'genius-lyrics'
-import getFbVideoInfo from 'fb-downloader-scrapper'
-import Tiktok from '@tobyg74/tiktok-api-dl'
-import getTwitterMedia from 'get-twitter-media'
-import {createClient} from '@deepgram/sdk'
-import tts from 'node-gtts'
-import qs from 'node:querystring'
-import google from '@victorsouzaleal/googlethis'
-import FormData from 'form-data'
-import { ImageUploadService } from 'node-upload-images'
-import { Hercai } from "hercai"
-import getEmojiMixUrl, {checkSupported} from 'emoji-mixer'
-import { MessageTypes } from '../baileys/mensagem.js'
+import axios from 'axios'; import path from 'node:path'; import ffmpeg from 'fluent-ffmpeg'; import fs from 'fs-extra'
+import { obterMensagensTexto } from '../bot/lib/msgs.js' ; import { consoleErro, converterMp4ParaMp3, criarTexto, obterNomeAleatorio} from '../bot/lib/util.js'
+import {prettyNum} from 'pretty-num'; import duration from 'format-duration-time'; import acrcloud from 'acrcloud'
+import { rastrearEncomendas } from 'correios-brasil'; import translate from '@vitalets/google-translate-api' ; 
+import Youtube from 'youtube-sr'; import ytdl from 'ytdl-core'; import google from '@victorsouzaleal/googlethis'
+import instagramGetUrl from 'instagram-url-direct'; import getFbVideoInfo from 'fb-downloader-scrapper'; import Tiktok from '@tobyg74/tiktok-api-dl'; import getTwitterMedia from 'get-twitter-media'
+import Genius from 'genius-lyrics'; import {createClient} from '@deepgram/sdk'; import { Hercai } from "hercai"
+import tts from 'node-gtts'; import FormData from 'form-data'; import getEmojiMixUrl, {checkSupported} from 'emoji-mixer'
+import { MessageTypes } from '../bot/baileys/mensagem.js'; import qs from 'node:querystring'; import { ImageUploadService } from 'node-upload-images'
+
 
 export const imagemUpload = async (bufferImagem) =>{
     return new Promise(async (resolve, reject)=>{

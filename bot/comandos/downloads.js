@@ -1,7 +1,6 @@
 //REQUERINDO MÓDULOS
-import fs from 'fs-extra'
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
-import * as api from '../lib/api.js'
+import * as api from '../../api/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import axios from 'axios'

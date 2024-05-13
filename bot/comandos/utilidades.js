@@ -1,7 +1,6 @@
 //REQUERINDO MÓDULOS
-import {criarTexto, erroComandoMsg, obterNomeAleatorio, consoleErro, converterMp4ParaMp3} from '../lib/util.js'
-import path from 'node:path'
-import * as api from '../lib/api.js'
+import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
+import * as api from '../../api/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'

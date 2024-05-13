@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
-import * as api from '../lib/api.js'
+import * as api from '../../api/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 
@@ -22,8 +22,8 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                     if(!quotedMsg) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
                     let imgsDetector = ['verdade','vaipra','mentiroso','meengana','kao','incerteza','estresse','conversapraboi']
                     let indexAleatorio = Math.floor(Math.random() * imgsDetector.length)
-                    await socket.replyFile(c,MessageTypes.image, chatId, './midia/detector/calibrando.png', msgs_texto.diversao.detector.espera, id)
-                    await socket.replyFile(c,MessageTypes.image, chatId, `./midia/detector/${imgsDetector[indexAleatorio]}.png`, '', quotedMsgObj)
+                    await socket.replyFile(c,MessageTypes.image, chatId, './bot/midia/detector/calibrando.png', msgs_texto.diversao.detector.espera, id)
+                    await socket.replyFile(c,MessageTypes.image, chatId, `./bot/midia/detector/${imgsDetector[indexAleatorio]}.png`, '', quotedMsgObj)
                 } catch(err){
                     throw err
                 }
@@ -107,7 +107,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                     } else {
                         textoResultado = criarTexto(msgs_texto.diversao.caracoroa.resposta.derrota, primeiraLetraMaiuscula(ladosMoeda[indexAleatorio]))
                     }
-                    await socket.replyFileFromUrl(c, MessageTypes.image, chatId, path.resolve(`midia/caracoroa/${ladosMoeda[indexAleatorio]}.png`), textoResultado, id)
+                    await socket.replyFileFromUrl(c, MessageTypes.image, chatId, path.resolve(`bot/midia/caracoroa/${ladosMoeda[indexAleatorio]}.png`), textoResultado, id)
                 } catch(err){
                     throw err
                 }
