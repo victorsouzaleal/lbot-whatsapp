@@ -1,6 +1,5 @@
 #!/bin/sh
-pkg update -y && pkg upgrade -y
-pkg install git -y && pkg install nodejs-lts -y && pkg install python -y && pkg install ffmpeg -y
+pkg install nodejs-lts -y && pkg install python -y && pkg install ffmpeg -y && npm i -g yarn
 cd ~ && mkdir .gyp && cd .gyp
 echo "{
 	'variables': {
