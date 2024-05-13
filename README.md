@@ -33,16 +33,18 @@
 
 ## REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
-- Em sistemas Windows/Linux : ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
-- No Termux : Ter o [TERMUX](https://play.google.com/store/apps/details?id=com.termux&hl=pt_BR&gl=US) instalado no celular
+- Em sistemas **Windows/Linux** :<br>
+        - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
+- No **Termux** :<br>
+        - Ter o [TERMUX](https://play.google.com/store/apps/details?id=com.termux&hl=pt_BR&gl=US) instalado no celular
+
 <br>
 
 ## 1 - Instalação :
 
 ### Windows/Linux :
 
-Faça o download da última versão lançada no link abaixo (extraia o zip e entre na pasta para os passos seguintes):
-https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest
+Faça o download da última versão lançada no seguinte link: https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest , extraia o zip e entre na pasta do bot para os passos seguintes.
 
 Abra o prompt de comando (CMD/Terminal) na **PASTA DO PROJETO QUE VOCÊ EXTRAIU** e execute os comandos abaixo :
 
@@ -56,13 +58,10 @@ Após terminar de instalar o yarn digite o comando abaixo para instalar as depen
 yarn install
 ```
 
-<br><br>
+<br>
 
 ### Termux :
-**Para aprender a instalar no TERMUX** :  [Clique AQUI](docs/TERMUX.md)
-<br><br>
-
-#### Obs: Se houver algum erro vá para o [Passo 6](https://github.com/victorsouzaleal/lbot-whatsapp#6---solu%C3%A7%C3%A3o-de-problemas-)
+Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 
 <br>
 
@@ -75,8 +74,6 @@ yarn start
 ```
 
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular, bot será reiniciado para criar os arquivos necessários e você deverá inicia-lo novamente.
-<br><br>
-
 
 <br>
 
@@ -91,8 +88,6 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 <br><br>
 
 ### Pronto! Seu bot já está ONLINE, mas ainda não acabou continue lendo o próximo passo para configuração!!
-<br>
-
 
 <br>
 
@@ -114,7 +109,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 Para usar as funções de **ADMINISTRADOR** digite **!admin** pela primeira vez ao iniciar ao BOT e ai seu número será cadastrado como dono.<br><br>
 Pronto, gora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
 
-<br><br>
+<br>
 
 #### Como obter as chaves API para usar em comandos específicos :
 Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API no .env, abaixo tem um guia completo com imagens para obter as chaves.<br><br>
@@ -176,30 +171,14 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-## 6 - Solução de Problemas :
-
-#### 1 - YARN NÃO É IDENTIFICADO COMO COMANDO:
-Provavelmente o seu Node não está com o PATH configurado nas variáveis de ambiente, recomendo deletar o Node e instalar novamente para ele configurar corretamente o PATH. Ou procure um tutorial de como adicionar o PATH para o npm/yarn.
-
-<br>
-
-#### 2 - COMANDO NÃO FUNCIONANDO :
-Se algum comando por acaso não estiver funcionando antes de tentar baixar uma nova versão ou relatar o erro tente usar dentro da pasta do projeto o comando :
-```bash
-yarn upgrade 
-```
-Esse comando atualiza as dependências e pode resolver algum problema que você tenha sem precisar baixar ou esperar uma nova versão do bot.<br><br>
-
-**Obs**: Não conseguiu resolver? Entre em contato abaixo.
-
-<br>
-
-## 7 - Contato
+## 6 - Contato
 Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
 
 * **WhatsApp :** https://wa.me/5521995612287
 
-## 8 - Agradecimentos/Contribuições
+<br>
+
+## 7 - Agradecimentos/Contribuições
 
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
 * [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
