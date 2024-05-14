@@ -23,11 +23,10 @@
 
 <br>
 
-## Última Atualização : 13/05/2024 - v2.6.1
+## Última Atualização : 14/05/2024 - v2.6.2
 **[NOVO]** TERMUX agora é suportado pelo bot.<br>
-**[CORREÇÃO]** Correção nos comandos **info** e **infocompleta** no caso do bot não ter uma foto.<br>
-**[CORREÇÃO]** Correção no comando **roletarussa** no caso do bot e o dono do grupo serem o mesmo número.<br>
-**[CORREÇÃO]** Correção no comando **bcgrupos** no caso de algum grupo estar indisponivel ou impossibilitado de receber mensagens.<br>
+**[CÓDIGO]** Alterações na estrutura do projeto<br>
+**[ALTERADO]** Agora o bot não precisa mais ser reiniciado após a leitura do QR Code<br>
 <br>
 
 
@@ -73,7 +72,7 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 yarn start
 ```
 
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular, bot será reiniciado para criar os arquivos necessários e você deverá inicia-lo novamente.
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular.
 
 <br>
 
