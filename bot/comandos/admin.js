@@ -488,19 +488,36 @@ export const admin = async(c, mensagemInfoCompleta) => {
             case "grupos":
                 try{
                     let gruposAtuais = await grupos.obterTodosGruposInfo(), resposta = criarTexto(msgs_texto.admin.grupos.resposta_titulo, gruposAtuais.length)
+                    let numGrupo = 0
                     for (let grupo of gruposAtuais){
+                        numGrupo++
                         let adminsGrupo = grupo.admins
                         let botAdmin = adminsGrupo.includes(botNumber)
-                        let linkGrupo = "Não Disponível"
-                        if(botAdmin) linkGrupo = await socket.getGroupInviteLink(c, grupo.id_grupo)
-                        resposta += criarTexto(msgs_texto.admin.grupos.resposta_itens, grupo.nome, grupo.participantes.length, botAdmin ? "Sim" : "Não", linkGrupo)
+                        let comandoLink = botAdmin ? `${prefixo}linkgrupo ${numGrupo}` : '----'
+                        resposta += criarTexto(msgs_texto.admin.grupos.resposta_itens, numGrupo, grupo.nome, grupo.participantes.length, adminsGrupo.length,  botAdmin ? "Sim" : "Não",  comandoLink)
                     }
                     await socket.reply(c, chatId, resposta, id)
                 } catch(err){
                     throw err
                 }
                 break
-            
+
+            case 'linkgrupo':
+                try{
+                    let gruposAtuais = await grupos.obterTodosGruposInfo()
+                    let indexGrupo = textoRecebido.slice(11).trim()
+                    if(isNaN(indexGrupo)) return await socket.reply(c, chatId, msgs_texto.admin.linkgrupo.nao_encontrado, id)
+                    indexGrupo = parseInt(indexGrupo) - 1
+                    if(!gruposAtuais[indexGrupo]) return await socket.reply(c, chatId, msgs_texto.admin.linkgrupo.nao_encontrado, id)
+                    let botAdmin = gruposAtuais[indexGrupo].admins.includes(botNumber)
+                    if(!botAdmin) return await socket.reply(c, chatId, msgs_texto.admin.linkgrupo.nao_admin, id)
+                    let link = await socket.getGroupInviteLink(c, gruposAtuais[indexGrupo].id_grupo)
+                    await socket.reply(c, chatId, criarTexto(msgs_texto.admin.linkgrupo.resposta, link), id)               
+                } catch(err){
+                    throw err
+                }
+                break
+
             case 'estado':
                 try{
                     if(args.length != 2) return await socket.reply(c, chatId,await erroComandoMsg(command),id)

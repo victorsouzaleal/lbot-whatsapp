@@ -264,6 +264,9 @@ export const obterGuias = async () => {
             `Ex: *${prefixo}admin* - Exibe o menu de administração do Bot.\n`,
             grupos: cabecalho+
             `Ex: *${prefixo}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
+            linkgrupo: cabecalho+
+            `Ex: *${prefixo}linkgrupo* 1 - Exibe o link do grupo selecionado.\n\n`+
+            `*Obs*: Para ver o número dos grupos é necessário checar no comando *${prefixo}grupos*\n`,
             fotobot: cabecalho+
             `Ex: Envie/responda uma *imagem* com *${prefixo}fotobot* - Altera a foto do BOT.\n`,
             infocompleta: cabecalho+

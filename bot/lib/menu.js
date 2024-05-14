@@ -325,6 +325,7 @@ export const menuAdmin = async ()=>{
 |--〖 GRUPOS 〗
 |
 |- *${prefixo}grupos* - Mostra os grupos atuais.
+|- *${prefixo}linkgrupo* numero - Mostra o link do grupo selecionado.
 |- *${prefixo}sair* - Sai do grupo.
 |- *${prefixo}sairgrupos* - Sai de todos os grupos.
 |- *${prefixo}entrargrupo* [link-grupo] - BOT entra no grupo.

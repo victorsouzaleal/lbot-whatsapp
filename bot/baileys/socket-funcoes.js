@@ -233,7 +233,7 @@ export const demoteParticipant = async(c, groupId, participantId)=>{
 
 export const getGroupInviteLink = async(c, groupId)=>{
     let inviteCode = await c.groupInviteCode(groupId)
-    return `https://chat.whatsapp.com/${inviteCode}`
+    return inviteCode ? `https://chat.whatsapp.com/${inviteCode}` : undefined
 }
 
 

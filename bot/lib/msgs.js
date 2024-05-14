@@ -848,10 +848,17 @@ export const  obterMensagensTexto = async ()=>{
             grupos: {
                 resposta_titulo: "🤖 GRUPOS ATUAIS ({p1})\n",
                 resposta_itens: "----------------------------\n"+
-                "*Nome* : {p1}\n"+
-                "*Membros* : {p2}\n"+
-                "*Bot é admin?* {p3}\n"+
-                "*Link* : {p4}\n\n"
+                "*N° Grupo* : {p1}\n"+
+                "*Nome* : {p2}\n"+
+                "*Participantes* : {p3}\n"+
+                "*Admins* : {p4}\n"+
+                "*Bot é admin?* {p5}\n"+
+                `*Link*: {p6}\n`
+            },
+            linkgrupo: {
+                resposta: `🤖✅ O link para este grupo atualmente é : {p1}`,
+                nao_admin: '[❗] Não foi possível obter o link desse grupo, o bot não é administrador deste grupo.',
+                nao_encontrado: `[❗] Não foi possível obter o link desse grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${prefixo}grupos*`,
             },
             sair:{
                 sair_sucesso: "🤖✅ FLW VLW.",

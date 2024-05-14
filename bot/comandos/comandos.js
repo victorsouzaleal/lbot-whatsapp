@@ -130,6 +130,7 @@ export const listarComandos = async () => {
             `${prefixo}mudarlimite`,
             `${prefixo}alterartipo`,
             `${prefixo}grupos`,
+            `${prefixo}linkgrupo`,
             `${prefixo}tipos`,
             `${prefixo}rtodos`,
             `${prefixo}r`,
