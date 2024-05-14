@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
-import * as api from '../../api/api.js'
+import {simiResponde, obterCartasContraHu} from '../../api/api.js'
 import * as socket from '../baileys/socket-funcoes.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 
@@ -33,7 +33,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
                 try{
                     if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
                     let perguntaSimi = textoRecebido.slice(6).trim()
-                    await api.simiResponde(perguntaSimi).then(async ({resultado})=>{
+                    await simiResponde(perguntaSimi).then(async ({resultado})=>{
                         await socket.reply(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultado), id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -274,7 +274,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
 
             case "fch":
                 try{
-                    await api.obterCartasContraHu().then(async({resultado})=>{
+                    await obterCartasContraHu().then(async({resultado})=>{
                         await socket.reply(c, chatId, resultado, id)
                     }).catch(async err=>{
                         if(!err.erro) throw err
