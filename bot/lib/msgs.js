@@ -30,7 +30,6 @@ export const  obterMensagensTexto = async ()=>{
             "Atualmente existem *{p1}* comandos na fila de espera.",
             desconectado:{
                 comando: "A conexão com o WhatsApp foi encerrada pelo comando do Administrador.",
-                arquivos: "O bot foi encerrado para criação de arquivos necessários, inicie novamente.",
                 falha_grave: "A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.",
                 deslogado: "A sua sessão com o WhatsApp foi deslogada, leia o código QR novamente.",
                 reiniciar: "A sua conexão com o WhatsApp precisa ser reiniciada, tentando reconectar...",

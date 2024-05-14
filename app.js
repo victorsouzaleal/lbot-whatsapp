@@ -3,10 +3,8 @@ import {makeWASocket, useMultiFileAuthState} from '@whiskeysockets/baileys'
 import {conexaoAberta, conexaoEncerrada, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './bot/baileys/acoesEventosSocket.js'
 import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
-import dotenv from 'dotenv'
-
 moment.tz.setDefault('America/Sao_Paulo')
-dotenv.config()
+
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []

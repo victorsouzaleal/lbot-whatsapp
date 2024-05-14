@@ -10,6 +10,7 @@ import {chamadaComando} from '../lib/chamadaComando.js'
 import {BotControle} from '../controles/BotControle.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import {MensagemControle} from '../controles/MensagemControle.js'
+import dotenv from 'dotenv'
 
 
 export const conexaoEncerrada = async(conexao)=>{
@@ -19,8 +20,6 @@ export const conexaoEncerrada = async(conexao)=>{
     const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
     if(lastDisconnect.error.message == "Comando"){
         consoleErro(msgs_texto.geral.desconectado.comando, "DESCONECTADO")
-    } else if(lastDisconnect.error.message == "arquivos"){
-        consoleErro(msgs_texto.geral.desconectado.arquivos, "DESCONECTADO")
     } else if( lastDisconnect.error.message == "erro_geral"){
         consoleErro(msgs_texto.geral.desconectado.falha_grave, "DESCONECTADO")
     } else {
@@ -40,20 +39,13 @@ export const conexaoEncerrada = async(conexao)=>{
 export const conexaoAberta = async(c)=>{
     try{
         const msgs_texto = await obterMensagensTexto()
-        let necessitaCriar = await criarArquivosNecessarios()
-        if(necessitaCriar){
-            console.log(corTexto(msgs_texto.inicio.arquivos_criados))
-            setTimeout(()=>{
-                c.ev.removeAllListeners()
-                return c.end(new Error("arquivos"))
-            },3000)
-        } else{
-            console.log(criarTexto(msgs_texto.inicio.inicializando, versaoAtual()))
-            await socket.getAllGroups(c)
-            await new BotControle().inicializarBot(c)
-            await verificarEnv()
-            await verificarNumeroDono()
-        }
+        console.log(criarTexto(msgs_texto.inicio.inicializando, versaoAtual()))
+        await criarArquivosNecessarios()
+        dotenv.config()
+        await socket.getAllGroups(c)
+        await new BotControle().inicializarBot(c)
+        await verificarEnv()
+        await verificarNumeroDono()
     } catch(err){
         consoleErro(err, "Inicialização")
         c.end(new Error("erro_geral"))

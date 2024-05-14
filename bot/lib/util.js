@@ -212,24 +212,11 @@ export async function criarArquivosNecessarios(){
         const existePastaDados = fs.pathExistsSync(path.resolve("dados"))
         const existePastaTemp = fs.pathExistsSync(path.resolve("temp"))
         const existeBotJson = fs.existsSync(bot.obterCaminhoJSON()), existeEnv = fs.existsSync(path.resolve('.env'))
-        
-        //VERIFICA SE AS PASTAS DATABASE E TEMP EXISTEM
         if(!existePastaDados) fs.mkdirSync(path.resolve("dados"), {recursive: true})
         if(!existePastaTemp) fs.mkdirSync(path.resolve("temp"), {recursive: true})
-    
-        //SE NÃO PRECISAR CRIAR NENHUM ARQUIVO NECESSÁRIO, RETORNE
-        if(existeBotJson && existeEnv) return false
-    
-        if(!existeBotJson){
-          //CRIA O ARQUIVO COM AS INFORMAÇÕES INICIAIS DO BOT
-          await bot.criarArquivo()
-        }
-        if(!existeEnv) {
-          //CRIA O ARQUIVO .ENV
-          await criacaoEnv()
-        }
-    
-        return true
+        if(existeBotJson && existeEnv) return 
+        if(!existeBotJson) await bot.criarArquivo()
+        if(!existeEnv) await criacaoEnv()
       } catch(err){
           throw new Error(err)
       }
