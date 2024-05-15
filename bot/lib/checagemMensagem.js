@@ -14,7 +14,7 @@ export const checagemMensagem = async (c, mensagemInfoCompleta) => {
         const grupos = new GrupoControle()
         const {msgs_texto, lista_comandos, ownerNumber} = mensagemInfoCompleta
         const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
-        const {groupId, grupoInfo, isGroupAdmins} = mensagemInfoCompleta.grupo
+        const {groupId, grupoInfo, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
         const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId} = mensagemInfoCompleta.mensagem
         const {prefixo, nome_bot} = botInfoJSON
         const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfoJSON.autosticker)
@@ -58,6 +58,8 @@ export const checagemMensagem = async (c, mensagemInfoCompleta) => {
         if(!isGroupMsg && !isOwner && !botInfoJSON.pvliberado) return false
         //SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
         if(isGroupMsg && !isGroupAdmins && grupoInfo.mutar) return false
+        //SE FOR MENSAGEM DE GRUPO, O BOT NÃO FOR ADMIN E ESTIVER COM RESTRIÇÃO DE MENSAGENS PARA ADMINS
+        if(isGroupMsg && !isBotGroupAdmins && grupoInfo.restrito_msg) return false
 
         //SE O USUÁRIO MANDAR MENSAGEM NO PV E AINDA NÃO TIVER RECEBIDO A MENSAGEM DE BOAS VINDAS, ENVIE.
         if(!isGroupMsg && !dadosUsuario.recebeuBoasVindas && botInfoJSON.pvliberado){
