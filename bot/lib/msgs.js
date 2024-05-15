@@ -861,7 +861,9 @@ export const  obterMensagensTexto = async ()=>{
                 nao_encontrado: `[❗] Não foi possível obter o link desse grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${prefixo}grupos*`,
             },
             sair:{
-                sair_sucesso: "🤖✅ FLW VLW.",
+                resposta_grupo: "🤖✅ FLW VLW.",
+                resposta_admin: "🤖✅ O bot saiu com sucesso do grupo escolhido.",
+                nao_encontrado: `[❗] Não foi possível sair deste grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${prefixo}grupos*`,
             },
             sairtodos:{
                 resposta: "🤖✅ Saí de todos os grupos com sucesso, total de grupos : {p1}"

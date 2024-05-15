@@ -276,7 +276,9 @@ export const obterGuias = async () => {
             entrargrupo:cabecalho+
             `Ex: *${prefixo}entrargrupo* link - Entra em um grupo por link de convite.\n`,
             sair:cabecalho+
-            `Ex: *${prefixo}sair* - Faz o bot sair do grupo.\n`,
+            `Ex: Digite *${prefixo}sair* em um grupo - Faz o bot sair do grupo atual.\n`+
+            `Ex: *${prefixo}sair* 1 - Faz o bot sair do grupo selecionado.\n\n`+
+            `*Obs*: Para ver o número dos grupos é necessário checar no comando *${prefixo}grupos*\n`,
             listablock:cabecalho+
             `Ex: *${prefixo}listablock* - Exibe a lista de usuários bloqueados pelo bot.\n`,
             bcmdglobal:cabecalho+

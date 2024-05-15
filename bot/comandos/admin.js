@@ -88,9 +88,20 @@ export const admin = async(c, mensagemInfoCompleta) => {
 
             case 'sair':
                 try{
-                    if (!isGroupMsg) return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
-                    await socket.sendText(c, chatId, msgs_texto.admin.sair.sair_sucesso)
-                    await socket.leaveGroup(c, groupId)
+                    if(args.length > 1){
+                        let gruposAtuais = await grupos.obterTodosGruposInfo()
+                        let indexGrupo = textoRecebido.slice(6).trim()
+                        if(isNaN(indexGrupo)) return await socket.reply(c, chatId, msgs_texto.admin.sair.nao_encontrado, id)
+                        indexGrupo = parseInt(indexGrupo) - 1
+                        if(!gruposAtuais[indexGrupo]) return await socket.reply(c, chatId, msgs_texto.admin.sair.nao_encontrado, id)
+                        await socket.leaveGroup(c, gruposAtuais[indexGrupo].id_grupo)
+                        await socket.sendText(c, ownerNumber, msgs_texto.admin.sair.resposta_admin)
+                    } else if(args.length == 1 && isGroupMsg){
+                        await socket.leaveGroup(c, groupId)
+                        await socket.sendText(c, ownerNumber, msgs_texto.admin.sair.resposta_admin)
+                    } else{
+                        await socket.reply(c, chatId, await erroComandoMsg(command) ,id)
+                    }
                 } catch(err){
                     throw err
                 }
