@@ -30,6 +30,7 @@ export const menuFigurinhas = async ()=>{
 |
 |- *${prefixo}s* - Transfome uma IMAGEM/VIDEO em *sticker*.
 |- *${prefixo}s* 1 - Transfome uma IMAGEM em *sticker circular*.
+|- *${prefixo}snome* pack, autor - Renomeia o sticker.
 |- *${prefixo}simg* - Transforme um STICKER NÃO ANIMADO em *foto*.
 |- *${prefixo}ssf* - Transforme uma IMAGEM em *sticker sem fundo*.
 |- *${prefixo}emojimix* 💩+😀 - Tranforme 2 emojis em *sticker*

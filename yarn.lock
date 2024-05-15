@@ -3082,10 +3082,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-wa-leal-stickers@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/wa-leal-stickers/-/wa-leal-stickers-1.0.7.tgz#d1be08432abbc4bf12a33fdb640d08c3bf569bd5"
-  integrity sha512-BpRtlKSc4PqSpdS+TE+EsZVnxkmWtWHDFfeJ278lTZu3VAfmoYbx4PclmuvSVBcu4YE6bKimm0skX3MXMxbbMg==
+wa-leal-stickers@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/wa-leal-stickers/-/wa-leal-stickers-1.0.8.tgz#2997177867a5ee432cd20fb6d6c042fed4a43773"
+  integrity sha512-nHIaaJXqJJpjVj6QLTp65oTKSTsCduxzIo4OcV0dbwXq2Occ/vqiOzzkfqiUg8pOQQvmf9bkplEmiiFTEtjxqg==
   dependencies:
     file-type "^19.0.0"
     fluent-ffmpeg "^2.1.2"

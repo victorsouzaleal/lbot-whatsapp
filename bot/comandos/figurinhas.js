@@ -5,7 +5,7 @@ import {MessageTypes} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {misturarEmojis, removerFundo, textoParaImagem} from '../../api/api.js'
-import {toSticker, StickerTypes} from 'wa-leal-stickers'
+import {toSticker, StickerTypes, updateExif} from 'wa-leal-stickers'
 
 
 export const figurinhas = async(c, mensagemInfoCompleta) => {
@@ -16,7 +16,21 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
     let cmdSemPrefixo = command.replace(prefixo, "")
     
     try{
-        switch(cmdSemPrefixo){      
+        switch(cmdSemPrefixo){
+            case 'snome':
+                try{
+                    if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.sticker) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    let [pack, autor] = textoRecebido.slice(7).trim().split(',')
+                    if(!pack || !autor) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    let mensagemSticker = quotedMsgObj
+                    mensagemSticker.message.stickerMessage.url = mensagemSticker.message.stickerMessage.url == "https://web.whatsapp.net" ? `https://mmg.whatsapp.net${mensagemSticker.message.stickerMessage.directPath}` : mensagemSticker.message.stickerMessage.url
+                    let bufferSticker = await downloadMediaMessage(quotedMsgObj, 'buffer')
+                    await socket.sendSticker(c, chatId, await updateExif(bufferSticker, pack, autor))
+                } catch(err){
+                    throw err
+                }
+                break 
+
             case 's':
                 try{
                     let stickerArg, tipoFigurinha

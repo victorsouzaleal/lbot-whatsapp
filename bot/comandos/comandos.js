@@ -38,7 +38,8 @@ export const listarComandos = async () => {
             `${prefixo}ssf`,
             `${prefixo}emojimix`,
             `${prefixo}tps`,
-            `${prefixo}atps`
+            `${prefixo}atps`,
+            `${prefixo}snome`
         ],
         downloads: [
             `${prefixo}play`,

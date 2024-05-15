@@ -18,6 +18,8 @@ export const obterGuias = async () => {
             s: cabecalho+
             `Ex: Envie/responda uma *IMAGEM/VIDEO* com *${prefixo}s* - Transforma em sticker.\n`+
             `Ex: Envie/responda uma *IMAGEM* com *${prefixo}s 1* - Transforma em sticker circular.\n`,
+            snome: cabecalho+
+            `Ex: Responda um *STICKER* com *${prefixo}snome* pack, autor - Renomeia o nome do pack e do autor do sticker.`,
             ssf: cabecalho+
             `Ex: Envie/responda uma *imagem* com *${prefixo}ssf* - Retira o fundo da imagem e transforma em sticker.\n\n`+
             `*Obs*: Este comando funciona apenas com *IMAGENS*.\n`,
