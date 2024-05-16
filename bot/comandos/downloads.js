@@ -138,7 +138,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     if(args.length === 1) return await socket.responderTexto(chatId,erroComandoMsg(command, botInfo),id)
                     let usuarioTexto = textoRecebido.slice(4).trim()
                     await obterMidiaTiktok(usuarioTexto).then(async ({resultado}) =>{
-                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultado.autor_perfil, resultado.autor_nome, resultado.titulo, resultado.duracao),id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultado.autor_perfil, resultado.descricao),id)
                         await socket.responderArquivoUrl(c, MessageTypes.video, chatId, resultado.url, '', id, "video/mp4")
                     }).catch(async(err)=>{
                         if(!err.erro) throw err

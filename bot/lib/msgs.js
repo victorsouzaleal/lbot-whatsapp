@@ -136,9 +136,7 @@ export const obterMensagensTexto = (botInfo)=>{
             tk: {
                 espera: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "Perfil: *@{p1}*\n"+
-                "Autor : *{p2}*\n"+
-                "Titulo: *{p3}*\n"+
-                "Duração: *{p4}s*\n",
+                "Descrição: *{p2}*\n",
                 nao_encontrado: "[❗] Mídia não encontrada, verifique se o link está correto e que o video seja público.",
                 erro_download: "[❗] Houve um erro no download de mídias do Tiktok, tente novamente mais tarde.\n\n"+
                 "*Obs*: Verifique se o seu link está correto e que ele seja de um video do Tiktok."

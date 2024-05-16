@@ -824,21 +824,20 @@ export const obterMidiaTiktok = async(url)=>{
     return new Promise(async (resolve, reject)=>{
         try{
             let resposta = {sucesso: false}
-            await Tiktok.Downloader(url, {version: "v1"}).then((resultado)=>{
+            await Tiktok.Downloader(url, {version: "v2"}).then((resultado)=>{
                 if(resultado.status == "success"){
                     resposta = {
                         sucesso: true,
                         resultado: {
-                            autor_perfil: resultado.result.author?.username,
-                            autor_nome: resultado.result.author?.nickname,
-                            autor_descricao: resultado.result.author?.signature,
-                            titulo : resultado.result.description,
-                            duracao: ((resultado.result.video.duration)/1000).toFixed(0),
-                            url: resultado.result.video.downloadAddr[0]
+                            autor_perfil: resultado.result?.author.nickname,
+                            descricao : resultado.result?.desc,
+                            //duracao: ((resultado.result.video.duration)/1000).toFixed(0),
+                            url: resultado.result?.video || resultado.result?.images[0]
                         }
                     }
                     resolve(resposta)
                 } else {
+                    console.log(resultado)
                     resposta = {sucesso: false, erro: 'Não foi encontrado resultado para este link, verifique o link.'}
                     reject(resposta)
                 }
