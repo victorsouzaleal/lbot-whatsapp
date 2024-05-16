@@ -7,10 +7,10 @@ import {downloadMediaMessage} from '@whiskeysockets/baileys'
 import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
+export const grupo = async(c, mensagemBaileys, botInfo) => {
     const grupos = new GrupoControle()
-    const msgs_texto = obterMensagensTexto(botInfoJSON)
-    const botNumber = botInfoJSON.hostNumber, {prefixo, nome_bot} = botInfoJSON
+    const msgs_texto = obterMensagensTexto(botInfo)
+    const botNumber = botInfo.hostNumber, {prefixo, nome_bot} = botInfo
     const {groupId, grupoInfo, groupOwner, groupMembers, groupAdmins, isGroupAdmins, isBotGroupAdmins} = mensagemBaileys.grupo
     const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemBaileys
 
@@ -47,10 +47,10 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                             await socket.alterarFotoPerfil(c, chatId, fotoBuffer)
                             await socket.responderTexto(c, chatId, msgs_texto.grupo.fotogrupo.sucesso, id)
                         } else {
-                            return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) , id)
+                            return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
                         }
                     } else {
-                        return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) , id)
+                        return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
                     }
                 } catch(err){
                     throw err
@@ -118,7 +118,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                     } else if(mentionedJidList.length > 0){
                         blista_numero = mentionedJidList[0]
                     } else{
-                        if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                        if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                         blista_numero = textoRecebido.slice(8).trim().replace(/\W+/g,"")
                         if(blista_numero.length == 0) return await socket.responderTexto(c, chatId, msgs_texto.grupo.blista.numero_vazio , id)
                         blista_numero = blista_numero+"@s.whatsapp.net"
@@ -139,7 +139,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return await socket.responderTexto(c, chatId,msgs_texto.permissao.bot_admin, id)
-                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let dlista_numero = textoRecebido.slice(8).trim().replace(/\W+/g,"")
                     if(dlista_numero.length == 0) return await socket.responderTexto(c, chatId, msgs_texto.grupo.dlista.numero_vazio, id)
                     let dlista_grupo_lista = await grupos.obterListaNegra(groupId), dlista_id_usuario = dlista_numero+"@s.whatsapp.net"
@@ -279,7 +279,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                         atividadeUsuario = await grupos.obterAtividadeParticipante(groupId, mentionedJidList[0])
                         if(!atividadeUsuario) return await socket.responderTexto(c, chatId, msgs_texto.grupo.atividade.fora_grupo, id)
                     } else {
-                        return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON),id)
+                        return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo),id)
                     }
                     let atividadeResposta = criarTexto(msgs_texto.grupo.atividade.resposta, atividadeUsuario.msg, atividadeUsuario.texto, atividadeUsuario.imagem, atividadeUsuario.video, atividadeUsuario.sticker, atividadeUsuario.audio, atividadeUsuario.outro)
                     await socket.responderTexto(c, chatId, atividadeResposta, id)
@@ -291,7 +291,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             case "imarcar":
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) , id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
                     let qtdMensagem = args[1]
                     if(isNaN(qtdMensagem)) return await socket.responderTexto(c, chatId, msgs_texto.grupo.minativos.erro_qtd , id)
                     if(qtdMensagem < 1 || qtdMensagem > 50) return await socket.responderTexto(c, chatId, msgs_texto.grupo.minativos.limite_qtd, id)
@@ -319,7 +319,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             case "ibanir":
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let qtdMensagem = args[1]
                     if(isNaN(qtdMensagem)) return await socket.responderTexto(c, chatId, msgs_texto.grupo.binativos.erro_qtd , id)
                     if(qtdMensagem < 1 || qtdMensagem > 50) return await socket.responderTexto(c, chatId, msgs_texto.grupo.binativos.limite_qtd, id)
@@ -343,7 +343,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             case "topativos":
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) , id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
                     let qtdUsuarios = args[1]
                     if(isNaN(qtdUsuarios)) return await socket.responderTexto(c, chatId, msgs_texto.grupo.topativos.erro_qtd , id)
                     if(qtdUsuarios < 1 || qtdUsuarios > 50) return await socket.responderTexto(c, chatId, msgs_texto.grupo.topativos.limite_qtd , id)
@@ -378,7 +378,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             
             case "enquete":
                 try{
-                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) , id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
                     let enquetePergunta = textoRecebido.slice(9).split(",")[0], enqueteOpcoes = textoRecebido.slice(9).split(",").slice(1)
                     if(enqueteOpcoes.length < 2) return await socket.responderTexto(c, chatId, msgs_texto.grupo.enquete.min_opcao , id)
                     await socket.enviarEnquete(c, chatId, enquetePergunta, enqueteOpcoes)
@@ -425,8 +425,8 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             case "bcmd":
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) ,id)
-                    let usuarioComandos = textoRecebido.slice(6).split(" "), respostaBloqueio = await grupos.bloquearComandosGrupo(usuarioComandos, groupId, botInfoJSON)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) ,id)
+                    let usuarioComandos = textoRecebido.slice(6).split(" "), respostaBloqueio = await grupos.bloquearComandosGrupo(usuarioComandos, groupId, botInfo)
                     await socket.responderTexto(c, chatId, respostaBloqueio, id)
                 } catch(err){
                     throw err
@@ -436,8 +436,8 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             case "dcmd":
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
-                    if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON),id)
-                    let usuarioComandos = textoRecebido.slice(6).split(" "), respostaDesbloqueio = await grupos.desbloquearComandosGrupo(usuarioComandos, groupId, botInfoJSON)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo),id)
+                    let usuarioComandos = textoRecebido.slice(6).split(" "), respostaDesbloqueio = await grupos.desbloquearComandosGrupo(usuarioComandos, groupId, botInfo)
                     await socket.responderTexto(c, chatId, respostaDesbloqueio, id)
                 } catch(err){
                     throw err
@@ -527,7 +527,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin, id)
                     if (!isBotGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.bot_admin, id)
-                    if (args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    if (args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioNumeros = textoRecebido.slice(5).split(",")
                     for(let numero of usuarioNumeros){
                         let numeroCompleto = numero.trim().replace(/\W+/g,"")+"@s.whatsapp.net"
@@ -550,7 +550,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                     let usuariosSelecionados = []
                     if(mentionedJidList.length === 0 && quotedMsg) usuariosSelecionados.push(quotedMsgObjInfo.sender)
                     else if(mentionedJidList.length > 0) usuariosSelecionados = mentionedJidList
-                    else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let idParticipantesAtuais = groupMembers
                     for(let usuario of usuariosSelecionados){
                         if(idParticipantesAtuais.includes(usuario)){
@@ -579,7 +579,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                     let usuariosSelecionados = [], respostaUsuarios = ''
                     if(mentionedJidList.length > 0) usuariosSelecionados = mentionedJidList
                     else if(quotedMsg) usuariosSelecionados.push(quotedMsgObjInfo.sender)
-                    else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     if(usuariosSelecionados.includes(botNumber)) usuariosSelecionados.splice(usuariosSelecionados.indexOf(botNumber),1)
                     for(let usuario of usuariosSelecionados){
                         if(!groupAdmins.includes(usuario)) {
@@ -603,7 +603,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
                     let usuariosSelecionados = [], respostaUsuarios = ''
                     if(mentionedJidList.length > 0) usuariosSelecionados = mentionedJidList
                     else if(quotedMsg) usuariosSelecionados.push(quotedMsgObjInfo.sender)
-                    else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     if(usuariosSelecionados.includes(botNumber)) usuariosSelecionados.splice(usuariosSelecionados.indexOf(botNumber),1)
                     for(let usuario of usuariosSelecionados){
                         if(groupAdmins.includes(usuario)) {
@@ -623,7 +623,7 @@ export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
             case 'apg':
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin, id)
-                    if (!quotedMsg) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    if (!quotedMsg) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     await socket.deletarMensagem(c, id, quotedMsg)
                 } catch (err){
                     throw err

@@ -152,10 +152,9 @@ export class BotControle{
     }
 
     async bloquearComandosGlobal(usuarioComandos, botInfo){
-        let botInfoJSON = botInfo
-        let {prefixo} = botInfoJSON
+        let {prefixo} = botInfo
         let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfoJSON)
+        let msgs_texto = obterMensagensTexto(botInfo)
         let comandosBloqueados = [], respostaBloqueio = msgs_texto.admin.bcmdglobal.resposta_titulo
         let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
 
@@ -177,7 +176,7 @@ export class BotControle{
             }
 
             for(let comando of comandosCategoria){
-                if(botInfoJSON.bloqueio_cmds.includes(comando.replace(prefixo, ''))){
+                if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))){
                     respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, comando)
                 } else {
                     comandosBloqueados.push(comando.replace(prefixo, ''))
@@ -188,7 +187,7 @@ export class BotControle{
         } else { 
             for(let comando of usuarioComandos){
                 if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando) || listaComandos.figurinhas.includes(comando) || listaComandos.downloads.includes(comando)){
-                    if(botInfoJSON.bloqueio_cmds.includes(comando.replace(prefixo, ''))){
+                    if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))){
                         respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, comando)
                     } else {
                         comandosBloqueados.push(comando.replace(prefixo, ''))
@@ -207,17 +206,16 @@ export class BotControle{
     }
 
     async desbloquearComandosGlobal(usuarioComandos, botInfo){
-        let botInfoJSON = botInfo
-        let {prefixo} = botInfoJSON
+        let {prefixo} = botInfo
         let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfoJSON)
+        let msgs_texto = obterMensagensTexto(botInfo)
         let comandosDesbloqueados = [], respostaDesbloqueio = msgs_texto.admin.dcmdglobal.resposta_titulo
         let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
         if(categorias.includes(primeiroComando)){
             let comandosCategoria = []
             switch(primeiroComando){
                 case "todos":
-                    comandosCategoria = botInfoJSON.bloqueio_cmds
+                    comandosCategoria = botInfo.bloqueio_cmds
                     break
                 case "figurinhas":
                     comandosCategoria = listaComandos.figurinhas
@@ -234,7 +232,7 @@ export class BotControle{
             }
 
             for(let comando of comandosCategoria){
-                if(botInfoJSON.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
+                if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
                     comandosDesbloqueados.push(comando.replace(prefixo, ''))
                     respostaDesbloqueio += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, comando)
                 } else {
@@ -243,7 +241,7 @@ export class BotControle{
             }
         } else {
             for(let comando of usuarioComandos){
-                if(botInfoJSON.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
+                if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
                     comandosDesbloqueados.push(comando.replace(prefixo, ''))
                     respostaDesbloqueio += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, comando)
                 } else {
@@ -256,9 +254,9 @@ export class BotControle{
         return respostaDesbloqueio
     }
 
-    async verificarComandosBloqueadosGlobal(comando, botInfoJSON){
-        let {prefixo} = botInfoJSON
-        return botInfoJSON.bloqueio_cmds.includes(comando.replace(prefixo, ''))
+    async verificarComandosBloqueadosGlobal(comando, botInfo){
+        let {prefixo} = botInfo
+        return botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))
     }
 
     async obterNumeroBot(){

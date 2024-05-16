@@ -9,16 +9,16 @@ import {obterMensagensTexto} from './msgs.js'
 import {listarComandos} from '../comandos/comandos.js'
 
 
-export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
+export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
     try {
         const bot = new BotControle()
         const usuarios = new UsuarioControle()
         const grupos = new GrupoControle()
-        const msgs_texto = obterMensagensTexto(botInfoJSON), lista_comandos = listarComandos(botInfoJSON.prefixo)
+        const msgs_texto = obterMensagensTexto(botInfo), lista_comandos = listarComandos(botInfo.prefixo)
         const {groupId, grupoInfo, isGroupAdmins, isBotGroupAdmins} = mensagemBaileys.grupo
         const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId} = mensagemBaileys
-        const {prefixo, nome_bot} = botInfoJSON, ownerNumber = botInfoJSON.numero_dono, botNumber = botInfoJSON.hostNumber
-        const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfoJSON.autosticker)
+        const {prefixo, nome_bot} = botInfo, ownerNumber = botInfo.numero_dono, botNumber = botInfo.hostNumber
+        const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfo.autosticker)
         const autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
         const blockedNumbers = await socket.obterContatosBloqueados(c)
@@ -34,16 +34,16 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
         )
 
         //Se o numero do dono estiver vazio e o comando for !admin, cadastre quem fez o comando como dono.
-        if(botInfoJSON.numero_dono == '' && command == `${prefixo}admin`) {
-            await bot.alterarNumeroDono(sender, botInfoJSON)
+        if(botInfo.numero_dono == '' && command == `${prefixo}admin`) {
+            await bot.alterarNumeroDono(sender, botInfo)
             await socket.responderTexto(c, chatId, msgs_texto.geral.dono_cadastrado, id)
             return false
         }
 
         // DADOS DO USUÁRIO E REGISTRO
         let usuarioRegistrado = await usuarios.verificarRegistro(sender)
-        if(!usuarioRegistrado) await usuarios.registrarUsuario(sender, username, botInfoJSON)
-        if(isOwner) await usuarios.verificarDono(sender, botInfoJSON)
+        if(!usuarioRegistrado) await usuarios.registrarUsuario(sender, username, botInfo)
+        if(isOwner) await usuarios.verificarDono(sender, botInfo)
         // OBTENDO DADOS ATUALIZADOS DO USUÁRIO
         const dadosUsuario = await usuarios.obterDadosUsuario(sender)
 
@@ -56,14 +56,14 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
         //SE FOR BLOQUEADO RETORNE
         if (isBlocked) return false
         //SE O PV DO BOT NÃO ESTIVER LIBERADO
-        if(!isGroupMsg && !isOwner && !botInfoJSON.pvliberado) return false
+        if(!isGroupMsg && !isOwner && !botInfo.pvliberado) return false
         //SE O GRUPO ESTIVER COM O RECURSO 'MUTADO' LIGADO E USUARIO NÃO FOR ADMINISTRADOR
         if(isGroupMsg && !isGroupAdmins && grupoInfo.mutar) return false
         //SE FOR MENSAGEM DE GRUPO, O BOT NÃO FOR ADMIN E ESTIVER COM RESTRIÇÃO DE MENSAGENS PARA ADMINS
         if(isGroupMsg && !isBotGroupAdmins && grupoInfo.restrito_msg) return false
 
         //SE O USUÁRIO MANDAR MENSAGEM NO PV E AINDA NÃO TIVER RECEBIDO A MENSAGEM DE BOAS VINDAS, ENVIE.
-        if(!isGroupMsg && !dadosUsuario.recebeuBoasVindas && botInfoJSON.pvliberado){
+        if(!isGroupMsg && !dadosUsuario.recebeuBoasVindas && botInfo.pvliberado){
             await socket.enviarTexto(c, chatId, criarTexto(msgs_texto.geral.usuario_novo, nome_bot?.trim(), username), id)
             await usuarios.recebeuBoasVindas(sender)
         }
@@ -75,15 +75,15 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
             //ATUALIZE NOME DO USUÁRIO 
             await usuarios.atualizarNome(sender, username)
             //LIMITACAO DE COMANDO POR MINUTO
-            if(botInfoJSON.limitecomandos.status){
-                let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo, isGroupAdmins, botInfoJSON)
+            if(botInfo.limitecomandos.status){
+                let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo, isGroupAdmins, botInfo)
                 if(limiteComando.comando_bloqueado) {
                     if(limiteComando.msg != undefined) await socket.responderTexto(c,chatId, limiteComando.msg, id)
                     return false
                 }
             }
             //BLOQUEIO GLOBAL DE COMANDOS
-            if(await bot.verificarComandosBloqueadosGlobal(command, botInfoJSON, prefixo) && !isOwner){
+            if(await bot.verificarComandosBloqueadosGlobal(command, botInfo, prefixo) && !isOwner){
                 await socket.responderTexto(c, chatId, criarTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, command), id)
                 return false
             }
@@ -93,9 +93,9 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
                 return false
             }
             //SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
-            if(botInfoJSON.limite_diario.status){
+            if(botInfo.limite_diario.status){
                 if(!lista_comandos.excecoes_contagem.includes(command) && !lista_comandos.admin.includes(command) && !lista_comandos.grupo.includes(command) && !lista_comandos.info.includes(command) && !msgGuia){
-                    await bot.verificarExpiracaoLimite(botInfoJSON)
+                    await bot.verificarExpiracaoLimite(botInfo)
                     let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(sender)
                     if(!ultrapassou) {
                         await usuarios.adicionarContagemDiariaComandos(sender) 
@@ -105,7 +105,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
                     }   
                 } else {
                     await usuarios.adicionarContagemTotalComandos(sender)
-                    await bot.verificarExpiracaoLimite(botInfoJSON)
+                    await bot.verificarExpiracaoLimite(botInfo)
                 }
             } else {
                 await usuarios.adicionarContagemTotalComandos(sender)
@@ -119,13 +119,13 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
                 //ATUALIZE NOME DO USUÁRIO 
                 await usuarios.atualizarNome(sender, username)
                 //LIMITACAO DE COMANDO POR MINUTO
-                if(botInfoJSON.limitecomandos.status){
-                    let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo,isGroupAdmins, botInfoJSON)
+                if(botInfo.limitecomandos.status){
+                    let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo,isGroupAdmins, botInfo)
                     if(limiteComando.comando_bloqueado) if(limiteComando.msg != undefined) return await socket.responderTexto(c,chatId, limiteComando.msg, id)
                 }
                 //SE O LIMITE DIARIO DE COMANDOS ESTIVER ATIVADO
-                if(botInfoJSON.limite_diario.status){
-                    await bot.verificarExpiracaoLimite(botInfoJSON)
+                if(botInfo.limite_diario.status){
+                    await bot.verificarExpiracaoLimite(botInfo)
                     let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(sender)
                     if(!ultrapassou) await usuarios.adicionarContagemDiariaComandos(sender) 
                     else return await socket.responderTexto(c, chatId, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber.replace("@s.whatsapp.net", "")), id)

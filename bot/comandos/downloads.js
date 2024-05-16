@@ -8,9 +8,9 @@ import duration from 'format-duration-time'
 import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
-    const msgs_texto = obterMensagensTexto(botInfoJSON)
-    const {prefixo} = botInfoJSON
+export const downloads = async(c, mensagemBaileys, botInfo) => {
+    const msgs_texto = obterMensagensTexto(botInfo)
+    const {prefixo} = botInfo
     const {textoRecebido, command, args, type, id, chatId, quotedMsg} = mensagemBaileys
     let cmdSemPrefixo = command.replace(prefixo, "")
 
@@ -18,7 +18,7 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
         switch(cmdSemPrefixo){      
             case "play":
                 try{
-                    if(args.length === 1) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfoJSON),id)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfo),id)
                     let usuarioTexto = textoRecebido.slice(6).trim()
                     await obterInfoVideoYT(usuarioTexto).then(async({resultado})=>{
                         if(resultado.isLiveContent) await socket.responderTexto(c, chatId,msgs_texto.downloads.play.erro_live,id)
@@ -44,7 +44,7 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
             
             case "yt":
                 try{
-                    if(args.length === 1) return await socket.responderTexto(c,chatId,erroComandoMsg(command, botInfoJSON),id)
+                    if(args.length === 1) return await socket.responderTexto(c,chatId,erroComandoMsg(command, botInfo),id)
                     let usuarioTexto = textoRecebido.slice(4).trim()
                     await obterInfoVideoYT(usuarioTexto).then(async({resultado})=>{
                         if(resultado.isLiveContent) await socket.responderTexto(c, chatId,msgs_texto.downloads.yt.erro_live,id)
@@ -70,7 +70,7 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
 
             case "fb":
                 try{
-                    if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioURL = textoRecebido.slice(4).trim()
                     await obterMidiaFacebook(usuarioURL).then(async ({resultado})=>{
                         if(resultado.duration_ms > 180000) await socket.responderTexto(c, chatId, msgs_texto.downloads.fb.limite, id)
@@ -90,8 +90,8 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
 
             case "ig":
                 try{
-                    if(args.length === 1) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfoJSON),id)
-                    if(args.length > 2 && isNaN(args[2])) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfoJSON),id)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfo),id)
+                    if(args.length > 2 && isNaN(args[2])) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfo),id)
                     await socket.responderTexto(c, chatId, msgs_texto.downloads.ig.espera, id)
                     let usuarioTexto = textoRecebido.slice(4).trim(), indexEscolhido = 0
                     await obterMidiaInstagram(usuarioTexto).then(async({resultado})=>{
@@ -117,7 +117,7 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
 
             case "tw":
                 try{
-                    if(args.length === 1) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfoJSON),id)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfo),id)
                     await socket.responderTexto(c, chatId, msgs_texto.downloads.tw.espera, id)
                     let usuarioTexto = textoRecebido.slice(4).trim()
                     await obterMidiaTwitter(usuarioTexto).then(async ({resultado})=>{
@@ -135,7 +135,7 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
 
             case "tk":
                 try{
-                    if(args.length === 1) return await socket.responderTexto(chatId,erroComandoMsg(command, botInfoJSON),id)
+                    if(args.length === 1) return await socket.responderTexto(chatId,erroComandoMsg(command, botInfo),id)
                     let usuarioTexto = textoRecebido.slice(4).trim()
                     await obterMidiaTiktok(usuarioTexto).then(async ({resultado}) =>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.downloads.tk.espera, resultado.autor_perfil, resultado.autor_nome, resultado.titulo, resultado.duracao),id)
@@ -152,7 +152,7 @@ export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
             case 'img':
                 try{
                     if(quotedMsg || (type != MessageTypes.text && type != MessageTypes.extendedText) || args.length === 1) {
-                        return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON), id)
+                        return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     }
                     let usuarioTexto = textoRecebido.slice(5).trim()
                     await obterImagens(usuarioTexto).then(async ({resultado})=>{

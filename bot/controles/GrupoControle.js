@@ -332,9 +332,9 @@ export class GrupoControle {
         await this.grupo.alterarAntiLink(id_grupo, status)
     }
 
-    async filtroAntiLink(c, mensagemBaileys, botInfoJSON){
+    async filtroAntiLink(c, mensagemBaileys, botInfo){
         try{
-            const msgs_texto = obterMensagensTexto(botInfoJSON)
+            const msgs_texto = obterMensagensTexto(botInfo)
             const {sender, chatId, isGroupMsg, body, caption, id} = mensagemBaileys
             const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
             if(!isGroupMsg) return true
@@ -443,9 +443,9 @@ export class GrupoControle {
         }
     }
 
-    async filtroAntiFlood(c, mensagemBaileys, botInfoJSON){
+    async filtroAntiFlood(c, mensagemBaileys, botInfo){
         try{
-            const msgs_texto = obterMensagensTexto(botInfoJSON)
+            const msgs_texto = obterMensagensTexto(botInfo)
             const {chatId, sender, isGroupMsg} = mensagemBaileys
             const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
  
@@ -458,7 +458,7 @@ export class GrupoControle {
                 if(flood) {
                     if(!groupAdmins.includes(sender)) {
                         await socket.removerParticipante(c, groupId, sender)
-                        await socket.enviarTextoComMencoes(c, chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfoJSON.nome_bot), [sender])
+                        await socket.enviarTextoComMencoes(c, chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfo.nome_bot), [sender])
                         return false
                     }
                 } 
@@ -540,10 +540,9 @@ export class GrupoControle {
     }
 
     async bloquearComandosGrupo(comandos, id_grupo, botInfo){
-        let botInfoJSON = botInfo
-        let {prefixo} = botInfoJSON
+        let {prefixo} = botInfo
         let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfoJSON)
+        let msgs_texto = obterMensagensTexto(botInfo)
         let comandosBloqueados = [], grupoInfo = await this.obterGrupoInfo(id_grupo), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
         let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = comandos[0]
         if(categorias.includes(primeiroComando)){
@@ -593,10 +592,9 @@ export class GrupoControle {
     }
 
     async desbloquearComandosGrupo(comandos, id_grupo, botInfo){
-        let botInfoJSON = botInfo
-        let {prefixo} = botInfoJSON
+        let {prefixo} = botInfo
         let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfoJSON)
+        let msgs_texto = obterMensagensTexto(botInfo)
         let comandosDesbloqueados = [], grupoInfo = await this.obterGrupoInfo(id_grupo), respostaDesbloqueio = msgs_texto.grupo.dcmd.resposta_titulo
         let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = comandos[0]
         if(categorias.includes(primeiroComando)){

@@ -3,15 +3,15 @@ import pino from 'pino'
 import {GrupoControle} from '../controles/GrupoControle.js'
 
 
-export const converterMensagem = async(m, botInfoJSON) =>{
+export const converterMensagem = async(m, botInfo) =>{
     try {
         m = m.messages[0]
         let type = getContentType(m.message)
         let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
-        let botNumber = botInfoJSON.hostNumber
+        let botNumber = botInfo.hostNumber
         let sender = (m.key.fromMe) ? botNumber : m.key.participant || m.key.remoteJid
         let textoRecebido = m.message[type]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
-        let ownerNumber = botInfoJSON.numero_dono
+        let ownerNumber = botInfo.numero_dono
         let isOwner = ownerNumber == sender
         let isGroupMsg = m.key.remoteJid.includes("@g.us")
         

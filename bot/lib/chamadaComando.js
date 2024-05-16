@@ -10,17 +10,17 @@ import {listarComandos} from '../comandos/comandos.js'
 import PQueue from 'p-queue';
 const queueMensagem = new PQueue({concurrency: 6, timeout: 60000})
 
-export const chamadaComando = async (c, mensagemBaileys, botInfoJSON) => {
+export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
     try {
-        const {prefixo} = botInfoJSON
-        const msgs_texto = obterMensagensTexto(botInfoJSON), lista_comandos = listarComandos(prefixo)
-        const ownerNumber = botInfoJSON.numero_dono
+        const {prefixo} = botInfo
+        const msgs_texto = obterMensagensTexto(botInfo), lista_comandos = listarComandos(prefixo)
+        const ownerNumber = botInfo.numero_dono
         const {grupoInfo, isGroupAdmins, formattedTitle} = mensagemBaileys.grupo
         const {command, args, sender, isGroupMsg, type, id, chatId, username} = mensagemBaileys
         const t = moment.now()
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
         const queueMensagemEspera = queueMensagem.size > 10
-        let autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfoJSON.autosticker)
+        let autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfo.autosticker)
         let autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
 
         if(queueMensagemEspera) await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size), id)
@@ -28,55 +28,55 @@ export const chamadaComando = async (c, mensagemBaileys, botInfoJSON) => {
             //UTILIDADES
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c,chatId, guiaComandoMsg("utilidade", command, prefixo), id)
-                await utilidades(c, mensagemBaileys, botInfoJSON)
+                await utilidades(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "UTILIDADES", command, "#de9a07", t, username, formattedTitle)
             }, {priority: 1})
         }  else if(lista_comandos.figurinhas.includes(command)){
             //FIGURINHAS
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c,chatId, guiaComandoMsg("figurinhas", command, prefixo), id)
-                await figurinhas(c, mensagemBaileys, botInfoJSON)
+                await figurinhas(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "FIGURINHAS", command, "#ae45d1", t, username, formattedTitle)
             }, {priority: 2})
         } else if(lista_comandos.downloads.includes(command)){
             //DOWNLOADS
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, chatId, guiaComandoMsg("downloads", command, prefixo), id)
-                await downloads(c, mensagemBaileys, botInfoJSON)
+                await downloads(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "DOWNLOADS", command, "#2195cf", t, username, formattedTitle)
             }, {priority: 1})
         } else if (lista_comandos.grupo.includes(command)){
             //GRUPO
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, chatId, guiaComandoMsg("grupo", command, prefixo), id)
-                await grupo(c, mensagemBaileys, botInfoJSON)
+                await grupo(c, mensagemBaileys, botInfo)
                 if(isGroupMsg) consoleComando(isGroupMsg, "ADMINISTRAÇÃO", command, "#e0e031", t, username, formattedTitle)
             }, {priority: 3})
         } else if(lista_comandos.diversao.includes(command)){
             //DIVERSÃO
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, chatId, guiaComandoMsg("diversao", command, prefixo), id)
-                await diversao(c, mensagemBaileys, botInfoJSON)
+                await diversao(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "DIVERSÃO", command, "#22e3dd", t, username, formattedTitle)
             }, {priority: 2})
         } else if(lista_comandos.admin.includes(command)){
             //ADMIN
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, chatId, guiaComandoMsg("admin", command, prefixo), id)
-                await admin(c, mensagemBaileys, botInfoJSON)
+                await admin(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
             }, {priority: 4})
         } else if(lista_comandos.info.includes(command)){
             //INFO
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, chatId, guiaComandoMsg("info", command, prefixo), id)
-                await info(c, mensagemBaileys, botInfoJSON)
+                await info(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
             }, {priority: 3})
         } else if(autoStickerPv || autoStickerGrupo){
             //AUTO-STICKER PV OU GRUPO
             queueMensagem.add(async()=>{
-                await autoSticker(c, mensagemBaileys, botInfoJSON)
+                await autoSticker(c, mensagemBaileys, botInfo)
                 consoleComando(isGroupMsg, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, username, formattedTitle)
             }, {priority: 2})
         }

@@ -15,8 +15,8 @@ import dotenv from 'dotenv'
 
 export const conexaoEncerrada = async(conexao)=>{
     const bot = new BotControle()
-    const botInfoJSON = await bot.obterInformacoesBot()
-    const msgs_texto = obterMensagensTexto(botInfoJSON)
+    const botInfo = await bot.obterInformacoesBot()
+    const msgs_texto = obterMensagensTexto(botInfo)
     const { lastDisconnect } = conexao
     let reconectar = false
     const erroCodigo = (new Boom(lastDisconnect.error))?.output?.statusCode
@@ -41,15 +41,15 @@ export const conexaoEncerrada = async(conexao)=>{
 export const conexaoAberta = async(c)=>{
     try{
         const bot = new BotControle()
-        const botInfoJSON = await bot.obterInformacoesBot()
-        const msgs_texto = obterMensagensTexto(botInfoJSON)
+        const botInfo = await bot.obterInformacoesBot()
+        const msgs_texto = obterMensagensTexto(botInfo)
         console.log(criarTexto(msgs_texto.inicio.inicializando, versaoAtual()))
         await criarArquivosNecessarios()
         dotenv.config()
         await socket.obterTodosGrupos(c)
-        await bot.inicializarBot(c, botInfoJSON)
+        await bot.inicializarBot(c, botInfo)
         await verificarEnv()
-        await verificarNumeroDono(botInfoJSON)
+        await verificarNumeroDono(botInfo)
     } catch(err){
         consoleErro(err, "Inicialização")
         c.end(new Error("erro_geral"))
@@ -64,13 +64,13 @@ export const receberMensagem = async (c, mensagem)=>{
                 if(mensagem.messages[0].message == undefined) return
                 const grupos = new GrupoControle()
                 const bot = new BotControle()
-                const botInfoJSON = await bot.obterInformacoesBot()
-                const mensagemBaileys = await converterMensagem(mensagem, botInfoJSON)
+                const botInfo = await bot.obterInformacoesBot()
+                const mensagemBaileys = await converterMensagem(mensagem, botInfo)
                 if(!tiposPermitidosMensagens.includes(mensagemBaileys.type)) return
-                if(!await grupos.filtroAntiLink(c, mensagemBaileys, botInfoJSON)) return
-                if(!await grupos.filtroAntiFlood(c, mensagemBaileys, botInfoJSON)) return
-                if(!await checagemMensagem(c, mensagemBaileys, botInfoJSON)) return
-                await chamadaComando(c, mensagemBaileys, botInfoJSON)
+                if(!await grupos.filtroAntiLink(c, mensagemBaileys, botInfo)) return
+                if(!await grupos.filtroAntiFlood(c, mensagemBaileys, botInfo)) return
+                if(!await checagemMensagem(c, mensagemBaileys, botInfo)) return
+                await chamadaComando(c, mensagemBaileys, botInfo)
                 break
             case "append":
                 break
@@ -84,8 +84,8 @@ export const receberMensagem = async (c, mensagem)=>{
 export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
     try{
         const bot = new BotControle()
-        const botInfoJSON = await bot.obterInformacoesBot()
-        const msgs_texto = obterMensagensTexto(botInfoJSON)
+        const botInfo = await bot.obterInformacoesBot()
+        const msgs_texto = obterMensagensTexto(botInfo)
         await new GrupoControle().registrarGrupoAoSerAdicionado(dadosGrupo[0])
         await socket.enviarTexto(c, dadosGrupo[0].id, criarTexto(msgs_texto.geral.entrada_grupo, dadosGrupo[0].subject)).catch(()=>{})
     } catch(err){
@@ -96,17 +96,17 @@ export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
 export const atualizacaoParticipantesGrupo = async (c, evento)=>{
     try{
         const bot = new BotControle()
-        const botInfoJSON = await bot.obterInformacoesBot()
+        const botInfo = await bot.obterInformacoesBot()
         const grupos = new GrupoControle()
-        const isBotUpdate = evento.participants[0] == botInfoJSON.hostNumber
+        const isBotUpdate = evento.participants[0] == botInfo.hostNumber
         const g_info = await grupos.obterGrupoInfo(evento.id)
         if (evento.action == 'add') {
             //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE
-            if(!await grupos.verificarListaNegraUsuario(c, evento, botInfoJSON)) return
+            if(!await grupos.verificarListaNegraUsuario(c, evento, botInfo)) return
             //ANTIFAKE
-            if(!await grupos.filtroAntiFake(c, evento, g_info, botInfoJSON)) return
+            if(!await grupos.filtroAntiFake(c, evento, g_info, botInfo)) return
             //BEM-VINDO
-            await grupos.mensagemBemVindo(c, evento, g_info, botInfoJSON)
+            await grupos.mensagemBemVindo(c, evento, g_info, botInfo)
             //CONTADOR
             if(g_info?.contador.status) await grupos.verificarRegistrarContagemParticipante(evento.id, evento.participants[0])
             await grupos.adicionarParticipante(evento.id, evento.participants[0])
@@ -132,21 +132,21 @@ export const atualizacaoDadosGrupos = async (c, novosDadosGrupo)=>{
     try{
         const grupos = new GrupoControle()
         const bot = new BotControle()
-        const botInfoJSON = await bot.obterInformacoesBot()
+        const botInfo = await bot.obterInformacoesBot()
 
         //Cadastro de grupos
         await grupos.registrarGruposAoIniciar(novosDadosGrupo)
         //Atualização dos participantes dos grupos
         await grupos.atualizarDadosGruposInicio(novosDadosGrupo)
         //Verificar lista negra dos grupos
-        await grupos.verificarListaNegraGeral(c, novosDadosGrupo, botInfoJSON)
+        await grupos.verificarListaNegraGeral(c, novosDadosGrupo, botInfo)
         //Atualização da contagem de mensagens
         await grupos.atualizarContagemGrupos(novosDadosGrupo)
 
         // Log : Grupos carregados e atualizados
-        console.log('[GRUPOS]', corTexto(obterMensagensTexto(botInfoJSON).inicio.grupos_carregados))
+        console.log('[GRUPOS]', corTexto(obterMensagensTexto(botInfo).inicio.grupos_carregados))
         // Log : Servidor iniciado
-        console.log('[SERVIDOR]', corTexto(obterMensagensTexto(botInfoJSON).inicio.servidor_iniciado))
+        console.log('[SERVIDOR]', corTexto(obterMensagensTexto(botInfo).inicio.servidor_iniciado))
         return true
     } catch(err){
         consoleErro(err, "GROUPS.UPDATE")
@@ -160,7 +160,7 @@ export const realizarEventosEspera = async(c, eventosEsperando)=>{
 export const atualizacaoDadosGrupo = async (dadosGrupo)=>{
     try{
         const bot = new BotControle()
-        const botInfoJSON = await bot.obterInformacoesBot()
+        const botInfo = await bot.obterInformacoesBot()
         await new GrupoControle().atualizarDadosGrupoParcial(dadosGrupo)
     } catch(err){
         consoleErro(err, "GROUPS.UPDATE")
