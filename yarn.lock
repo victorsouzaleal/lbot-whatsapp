@@ -449,15 +449,6 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@sasmeee/igdl@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@sasmeee/igdl/-/igdl-1.0.0.tgz#f477731d1feaee4817d02d716e8febcf0ec4b9f5"
-  integrity sha512-siPfzE0DnoKl2BFvqeupLtkLyA/0f2qaj4rsJuGD2a7HzgxSPAtGvZDqrpOhvlOoBB1xhMNohd5Ebmk78Su1HA==
-  dependencies:
-    axios "^1.4.0"
-    cheerio "^1.0.0-rc.12"
-    qs "^6.11.2"
-
 "@seald-io/binary-search-tree@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@seald-io/binary-search-tree/-/binary-search-tree-1.0.3.tgz#165a9a456eaa30d15885b25db83861bcce2c6a74"
@@ -796,13 +787,6 @@ axios@^0.21.1:
   dependencies:
     follow-redirects "^1.14.0"
 
-axios@^0.24.0:
-  version "0.24.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
-  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
-  dependencies:
-    follow-redirects "^1.14.4"
-
 axios@^0.27.2:
   version "0.27.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
@@ -811,7 +795,7 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
-axios@^1.1.2, axios@^1.3.3, axios@^1.3.4, axios@^1.4.0, axios@^1.6.2:
+axios@^1.1.2, axios@^1.3.3, axios@^1.3.4, axios@^1.4.0, axios@^1.6.2, axios@^1.6.8:
   version "1.6.8"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.8.tgz#66d294951f5d988a00e87a0ffb955316a619ea66"
   integrity sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==
@@ -1482,7 +1466,7 @@ fluent-ffmpeg@^2.1.2:
     async ">=0.2.9"
     which "^1.1.1"
 
-follow-redirects@^1.14.0, follow-redirects@^1.14.4, follow-redirects@^1.14.9, follow-redirects@^1.15.6:
+follow-redirects@^1.14.0, follow-redirects@^1.14.9, follow-redirects@^1.15.6:
   version "1.15.6"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
   integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
@@ -1792,12 +1776,13 @@ inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.3:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-instagram-url-direct@^1.0.15:
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/instagram-url-direct/-/instagram-url-direct-1.0.15.tgz#528959c55932170ab87edd296eeeb29609438843"
-  integrity sha512-PBSFnLHhVIOu6QqmsCy2M8lvgKzPmbuhQTJTXZvlBynzbA+TS3glQgfOsSWR2T9wjj5yQplKC3uQtCOPvqe3ig==
+instagram-url-direct@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/instagram-url-direct/-/instagram-url-direct-1.0.16.tgz#0a895c4eaf854ed0ea13601ffd65f1002e67afd8"
+  integrity sha512-BTOpSJujEmA+oeoUsld4EcotJUNqnM4svCJ9pn57R6qxjZ10KQjtWTeGOoOaZ6JmaXKI5Ixfe4Kj7rQMtG2l6Q==
   dependencies:
-    axios "^0.21.1"
+    axios "^1.6.8"
+    cheerio "^1.0.0-rc.12"
     qs "^6.12.1"
 
 is-arguments@^1.0.4:
@@ -2563,7 +2548,7 @@ qrcode-terminal@^0.12.0:
   resolved "https://registry.yarnpkg.com/qrcode-terminal/-/qrcode-terminal-0.12.0.tgz#bb5b699ef7f9f0505092a3748be4464fe71b5819"
   integrity sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==
 
-qs@^6.11.2, qs@^6.12.0, qs@^6.12.1:
+qs@^6.12.0, qs@^6.12.1:
   version "6.12.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.12.1.tgz#39422111ca7cbdb70425541cba20c7d7b216599a"
   integrity sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==
