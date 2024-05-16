@@ -13,7 +13,7 @@ export class Usuario {
         return await db.findOneAsync({id_usuario})
     }
 
-    async obterUsuariosTipo(){
+    async obterUsuariosTipo(tipo){
         return await db.findAsync({tipo})
     }
 
