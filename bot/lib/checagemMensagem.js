@@ -35,15 +35,15 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
 
         //Se o numero do dono estiver vazio e o comando for !admin, cadastre quem fez o comando como dono.
         if(botInfoJSON.numero_dono == '' && command == `${prefixo}admin`) {
-            await bot.alterarNumeroDono(sender)
+            await bot.alterarNumeroDono(sender, botInfoJSON)
             await socket.responderTexto(c, chatId, msgs_texto.geral.dono_cadastrado, id)
             return false
         }
 
         // DADOS DO USUÁRIO E REGISTRO
         let usuarioRegistrado = await usuarios.verificarRegistro(sender)
-        if(!usuarioRegistrado) await usuarios.registrarUsuario(sender, username)
-        if(isOwner) await usuarios.verificarDono(sender)
+        if(!usuarioRegistrado) await usuarios.registrarUsuario(sender, username, botInfoJSON)
+        if(isOwner) await usuarios.verificarDono(sender, botInfoJSON)
         // OBTENDO DADOS ATUALIZADOS DO USUÁRIO
         const dadosUsuario = await usuarios.obterDadosUsuario(sender)
 
@@ -76,7 +76,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
             await usuarios.atualizarNome(sender, username)
             //LIMITACAO DE COMANDO POR MINUTO
             if(botInfoJSON.limitecomandos.status){
-                let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo, isGroupAdmins)
+                let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo, isGroupAdmins, botInfoJSON)
                 if(limiteComando.comando_bloqueado) {
                     if(limiteComando.msg != undefined) await socket.responderTexto(c,chatId, limiteComando.msg, id)
                     return false
@@ -95,7 +95,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
             //SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
             if(botInfoJSON.limite_diario.status){
                 if(!lista_comandos.excecoes_contagem.includes(command) && !lista_comandos.admin.includes(command) && !lista_comandos.grupo.includes(command) && !lista_comandos.info.includes(command) && !msgGuia){
-                    await bot.verificarExpiracaoLimite()
+                    await bot.verificarExpiracaoLimite(botInfoJSON)
                     let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(sender)
                     if(!ultrapassou) {
                         await usuarios.adicionarContagemDiariaComandos(sender) 
@@ -105,7 +105,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
                     }   
                 } else {
                     await usuarios.adicionarContagemTotalComandos(sender)
-                    await bot.verificarExpiracaoLimite()
+                    await bot.verificarExpiracaoLimite(botInfoJSON)
                 }
             } else {
                 await usuarios.adicionarContagemTotalComandos(sender)
@@ -120,12 +120,12 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
                 await usuarios.atualizarNome(sender, username)
                 //LIMITACAO DE COMANDO POR MINUTO
                 if(botInfoJSON.limitecomandos.status){
-                    let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo,isGroupAdmins)
+                    let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo,isGroupAdmins, botInfoJSON)
                     if(limiteComando.comando_bloqueado) if(limiteComando.msg != undefined) return await socket.responderTexto(c,chatId, limiteComando.msg, id)
                 }
                 //SE O LIMITE DIARIO DE COMANDOS ESTIVER ATIVADO
                 if(botInfoJSON.limite_diario.status){
-                    await bot.verificarExpiracaoLimite()
+                    await bot.verificarExpiracaoLimite(botInfoJSON)
                     let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(sender)
                     if(!ultrapassou) await usuarios.adicionarContagemDiariaComandos(sender) 
                     else return await socket.responderTexto(c, chatId, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber.replace("@s.whatsapp.net", "")), id)

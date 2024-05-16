@@ -1,19 +1,15 @@
 import {generateWAMessageFromContent, getContentType} from '@whiskeysockets/baileys'
 import pino from 'pino'
-import {BotControle} from '../controles/BotControle.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 
 
-export const converterMensagem = async(m) =>{
+export const converterMensagem = async(m, botInfoJSON) =>{
     try {
-        const bot = new BotControle()
-        const grupos = new GrupoControle()
         m = m.messages[0]
         let type = getContentType(m.message)
         let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
-        let botNumber = await bot.obterNumeroBot()
+        let botNumber = botInfoJSON.hostNumber
         let sender = (m.key.fromMe) ? botNumber : m.key.participant || m.key.remoteJid
-        let botInfoJSON = await bot.obterInformacoesBot()
         let textoRecebido = m.message[type]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
         let ownerNumber = botInfoJSON.numero_dono
         let isOwner = ownerNumber == sender
@@ -52,7 +48,7 @@ export const converterMensagem = async(m) =>{
 
         if(isGroupMsg){
             let groupId = isGroupMsg ? m.key.remoteJid : null
-            let grupoInfo = isGroupMsg ? await grupos.obterGrupoInfo(groupId) : null
+            let grupoInfo = isGroupMsg ? await new GrupoControle().obterGrupoInfo(groupId) : null
             let groupAdmins = (isGroupMsg && grupoInfo) ? grupoInfo.admins : null
             let isGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(sender) : null
             let isBotGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(botNumber) : null

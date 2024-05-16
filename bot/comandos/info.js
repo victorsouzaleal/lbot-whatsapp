@@ -39,7 +39,7 @@ export const info = async(c, mensagemBaileys, botInfoJSON) => {
             
             case `reportar`:
                 try{
-                    if(args.length == 1) return socket.responderTexto(c, chatId, await erroComandoMsg(command) ,id)
+                    if(args.length == 1) return socket.responderTexto(c, chatId, erroComandoMsg(command, botInfoJSON) ,id)
                     if(ownerNumber == '') return socket.responderTexto(c, chatId, msgs_texto.info.reportar.erro, id)
                     let usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
                     await socket.enviarTexto(c,ownerNumber, resposta)

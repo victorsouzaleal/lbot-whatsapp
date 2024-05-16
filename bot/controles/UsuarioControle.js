@@ -1,6 +1,5 @@
 
 import {Usuario} from '../modelos/Usuario.js'
-import {BotControle} from './BotControle.js'
 
 
 export class UsuarioControle{
@@ -9,13 +8,13 @@ export class UsuarioControle{
         this.usuario = new Usuario()
     }
 
-    async registrarUsuario(id_usuario, nome){
+    async registrarUsuario(id_usuario, nome, botInfo){
         const dadosUsuario = {
             id_usuario,
             nome,
             comandos_total: 0,
             comandos_dia: 0,
-            max_comandos_dia : (await new BotControle().obterInformacoesBot()).limite_diario.limite_tipos.comum,
+            max_comandos_dia : botInfo.limite_diario.limite_tipos.comum,
             recebeuBoasVindas: false,
             tipo: 'comum'
         }
@@ -32,10 +31,10 @@ export class UsuarioControle{
         return (registro != null)
     }
 
-    async verificarDono(id_usuario){
+    async verificarDono(id_usuario, botInfo){
         let donoAtual = await this.usuario.verificarDono(id_usuario)
         if(!donoAtual){
-            let {limite_diario} = await new BotControle().obterInformacoesBot()
+            let {limite_diario} = botInfo
             await this.usuario.resetarDonos(limite_diario.limite_tipos.comum)
             await this.usuario.atualizarDono(id_usuario)
         }
@@ -53,8 +52,8 @@ export class UsuarioControle{
         return await this.usuario.obterUsuariosTipo(tipo)
     }
 
-    async limparTipo(tipo){
-        let {limite_diario} = await new BotControle().obterInformacoesBot()
+    async limparTipo(tipo, botInfo){
+        let {limite_diario} = botInfo
         if(limite_diario.limite_tipos[tipo] === undefined || tipo === "comum") return false
         await this.usuario.limparTipo(tipo, limite_diario.limite_tipos.comum)
         return true
@@ -82,8 +81,8 @@ export class UsuarioControle{
         await this.usuario.addContagemTotal(id_usuario)
     }
 
-    async alterarTipoUsuario(id_usuario, tipo){
-        let {limite_diario} = await new BotControle().obterInformacoesBot()
+    async alterarTipoUsuario(id_usuario, tipo, botInfo){
+        let {limite_diario} = botInfo
         if(limite_diario.limite_tipos[tipo] !== undefined){
             await this.usuario.alterarTipoUsuario(id_usuario, tipo, limite_diario.limite_tipos[tipo])
             return true

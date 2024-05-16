@@ -12,7 +12,7 @@ export default function configSocket (state){
         keepAliveIntervalMs: 30000,
         emitOwnEvents: true,
         logger: pino({level : "silent"}),
-        shouldIgnoreJid: jid => isJidBroadcast(jid) || jid.endsWith('@newsletter'),
+        shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
         syncFullHistory: false,
         getMessage: async (key) => {
             const mensagem = await new MensagemControle().recuperarMensagem(key.remoteJid, key.id)

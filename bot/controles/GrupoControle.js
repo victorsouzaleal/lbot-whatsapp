@@ -1,5 +1,4 @@
 import {Grupo} from '../modelos/Grupo.js'
-import {BotControle} from './BotControle.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
 import {listarComandos} from '../comandos/comandos.js'
 import * as socket from '../baileys/socket.js'
@@ -314,10 +313,9 @@ export class GrupoControle {
         await this.grupo.alterarBemVindo(id_grupo, status, mensagem)
     }
 
-    async mensagemBemVindo(c, evento, grupoInfo){
+    async mensagemBemVindo(c, evento, grupoInfo, botInfo){
         try{
-            let botInfoJSON = await new BotControle().obterInformacoesBot()
-            let msgs_texto = obterMensagensTexto(botInfoJSON)
+            let msgs_texto = obterMensagensTexto(botInfo)
             if(grupoInfo.bemvindo.status){
                 let msg_customizada = (grupoInfo.bemvindo.msg != "") ? grupoInfo.bemvindo.msg+"\n\n" : "" 
                 let mensagem_bemvindo = criarTexto(msgs_texto.grupo.bemvindo.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
@@ -373,10 +371,9 @@ export class GrupoControle {
         await this.grupo.alterarAntiFake(id_grupo, status, ddiAutorizados)
     }
 
-    async filtroAntiFake(c, evento, grupoInfo){
+    async filtroAntiFake(c, evento, grupoInfo, botInfo){
         try{
             if(grupoInfo.antifake.status){
-                let botInfo = await new BotControle().obterInformacoesBot()
                 let msgs_texto = obterMensagensTexto(botInfo)
                 let participante = evento.participants[0], botNumber = botInfo.numero_dono,  groupAdmins = grupoInfo.admins, isBotGroupAdmins = groupAdmins.includes(botNumber)
                 if(!isBotGroupAdmins){
@@ -487,9 +484,8 @@ export class GrupoControle {
         await this.grupo.removerListaNegra(id_grupo, id_usuario)
     }
 
-    async verificarListaNegraGeral(c, gruposInfo){
+    async verificarListaNegraGeral(c, gruposInfo, botInfo){
         try {
-            let botInfo = await new BotControle().obterInformacoesBot()
             let msgs_texto = obterMensagensTexto(botInfo)
             for(let grupo of gruposInfo){
                 let botNumber = botInfo.hostNumber, groupAdmins = await socket.obterAdminsGrupoPorMetadata(grupo),  isBotGroupAdmins = groupAdmins.includes(botNumber)
@@ -510,9 +506,8 @@ export class GrupoControle {
         }
     }
 
-    async verificarListaNegraUsuario(c, evento){
+    async verificarListaNegraUsuario(c, evento, botInfo){
         try{
-            let botInfo = await new BotControle().obterInformacoesBot()
             let msgs_texto = obterMensagensTexto(botInfo)
             const botNumber = botInfo.hostNumber, groupAdmins = await this.obterAdminsGrupo(evento.id),  isBotGroupAdmins = groupAdmins.includes(botNumber)
             if(isBotGroupAdmins){
@@ -544,8 +539,8 @@ export class GrupoControle {
         return grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))
     }
 
-    async bloquearComandosGrupo(comandos, id_grupo){
-        let botInfoJSON = await new BotControle().obterInformacoesBot()
+    async bloquearComandosGrupo(comandos, id_grupo, botInfo){
+        let botInfoJSON = botInfo
         let {prefixo} = botInfoJSON
         let listaComandos = listarComandos(prefixo)
         let msgs_texto = obterMensagensTexto(botInfoJSON)
@@ -597,8 +592,8 @@ export class GrupoControle {
         return respostaBloqueio
     }
 
-    async desbloquearComandosGrupo(comandos, id_grupo){
-        let botInfoJSON = await new BotControle().obterInformacoesBot()
+    async desbloquearComandosGrupo(comandos, id_grupo, botInfo){
+        let botInfoJSON = botInfo
         let {prefixo} = botInfoJSON
         let listaComandos = listarComandos(prefixo)
         let msgs_texto = obterMensagensTexto(botInfoJSON)

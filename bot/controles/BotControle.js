@@ -16,9 +16,9 @@ export class BotControle{
         return this.bot.caminhoJSON
     }
 
-    async inicializarBot(c){
+    async inicializarBot(c, botInfo){
         try{
-            let bot = await this.obterInformacoesBot()
+            let bot = botInfo
             bot.iniciado = moment.now()
             bot.hostNumber = await obterNumeroHost(c)
             await this.bot.atualizarDados(bot)
@@ -75,8 +75,8 @@ export class BotControle{
         }
     }
 
-    async verificarLimiteComando(usuario_id, tipo_usuario, isAdmin){
-        let bot = await this.obterInformacoesBot(), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
+    async verificarLimiteComando(usuario_id, tipo_usuario, isAdmin, botInfo){
+        let bot = botInfo, timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
         let msgs_texto = obterMensagensTexto(bot)
         //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
         for (let i = 0; i < bot.limitecomandos.usuarios_limitados.length; i++){
@@ -122,8 +122,8 @@ export class BotControle{
         return resposta
     }
 
-    async verificarExpiracaoLimite(){
-        let bot = await this.obterInformacoesBot()
+    async verificarExpiracaoLimite(botInfo){
+        let bot = botInfo
         let timestamp_atual = Math.round(new Date().getTime()/1000)
         if(timestamp_atual >= bot.limite_diario.expiracao){
             await new UsuarioControle().resetarComandosDia()
@@ -132,16 +132,16 @@ export class BotControle{
         } 
     }
 
-    async bloquearComandos(comandos){
-        let bot = await this.obterInformacoesBot()
+    async bloquearComandos(comandos, botInfo){
+        let bot = botInfo
         for(let cmd of comandos){
             bot.bloqueio_cmds.push(cmd)
         }
         await this.bot.atualizarDados(bot)
     }
 
-    async desbloquearComandos(comandos){
-        let bot = await this.obterInformacoesBot()
+    async desbloquearComandos(comandos, botInfo){
+        let bot = botInfo
         for(let cmd of comandos){
             let index = bot.bloqueio_cmds.findIndex(cmd_block=> cmd_block == cmd)
             if(index != -1){
@@ -151,8 +151,8 @@ export class BotControle{
         await this.bot.atualizarDados(bot)
     }
 
-    async bloquearComandosGlobal(usuarioComandos){
-        let botInfoJSON = await this.obterInformacoesBot()
+    async bloquearComandosGlobal(usuarioComandos, botInfo){
+        let botInfoJSON = botInfo
         let {prefixo} = botInfoJSON
         let listaComandos = listarComandos(prefixo)
         let msgs_texto = obterMensagensTexto(botInfoJSON)
@@ -202,12 +202,12 @@ export class BotControle{
             }
         }
 
-        if(comandosBloqueados.length != 0) await this.bloquearComandos(comandosBloqueados)
+        if(comandosBloqueados.length != 0) await this.bloquearComandos(comandosBloqueados, botInfo)
         return respostaBloqueio
     }
 
-    async desbloquearComandosGlobal(usuarioComandos){
-        let botInfoJSON = await this.obterInformacoesBot()
+    async desbloquearComandosGlobal(usuarioComandos, botInfo){
+        let botInfoJSON = botInfo
         let {prefixo} = botInfoJSON
         let listaComandos = listarComandos(prefixo)
         let msgs_texto = obterMensagensTexto(botInfoJSON)
@@ -252,7 +252,7 @@ export class BotControle{
             }
         }
 
-        if(comandosDesbloqueados.length != 0)  await this.desbloquearComandos(comandosDesbloqueados)
+        if(comandosDesbloqueados.length != 0)  await this.desbloquearComandos(comandosDesbloqueados, botInfo)
         return respostaDesbloqueio
     }
 
@@ -271,20 +271,20 @@ export class BotControle{
         return numero_dono
     }
 
-    async alterarNumeroDono(numero){
-        let bot = await this.obterInformacoesBot()
+    async alterarNumeroDono(numero, botInfo){
+        let bot = botInfo
         bot.numero_dono = numero
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarPrefixo(prefixo){
-        let bot = await this.obterInformacoesBot()
+    async alterarPrefixo(prefixo, botInfo){
+        let bot = botInfo
         bot.prefixo = prefixo
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarQtdLimiteDiarioTipo(tipo, limite){
-        let bot = await this.obterInformacoesBot()
+    async alterarQtdLimiteDiarioTipo(tipo, limite, botInfo){
+        let bot = botInfo
         if(limite == -1) limite = null
         if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
         bot.limite_diario.limite_tipos[tipo] = parseInt(limite)
@@ -293,20 +293,20 @@ export class BotControle{
         return true
     }
 
-    async alterarAutoSticker(status){
-        let bot = await this.obterInformacoesBot()
+    async alterarAutoSticker(status, botInfo){
+        let bot = botInfo
         bot.autosticker = status
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarPvLiberado(status){
-        let bot = await this.obterInformacoesBot()
+    async alterarPvLiberado(status, botInfo){
+        let bot = botInfo
         bot.pvliberado = status
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarLimiteDiario(status){
-        let bot = await this.obterInformacoesBot()
+    async alterarLimiteDiario(status, botInfo){
+        let bot = botInfo
         let timestamp_atual = Math.round(new Date().getTime()/1000)
         bot.limite_diario.expiracao = (status) ? timestamp_atual+86400 : 0
         bot.limite_diario.status = status
@@ -323,8 +323,8 @@ export class BotControle{
         }
     }
 
-    async alterarLimitador(status= true, cmds_minuto = 5, tempo_bloqueio= 60){
-        let bot = await this.obterInformacoesBot()
+    async alterarLimitador(botInfo, status= true, cmds_minuto = 5, tempo_bloqueio= 60){
+        let bot = botInfo
         bot.limitecomandos.status = status
         bot.limitecomandos.cmds_minuto_max = cmds_minuto
         bot.limitecomandos.tempo_bloqueio = tempo_bloqueio
@@ -333,20 +333,20 @@ export class BotControle{
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarNomeBot(nome){
-        let bot = await this.obterInformacoesBot()
+    async alterarNomeBot(nome, botInfo){
+        let bot = botInfo
         bot.nome_bot = nome
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarNomeAdm(nome){
-        let bot = await this.obterInformacoesBot()
+    async alterarNomeAdm(nome, botInfo){
+        let bot = botInfo
         bot.nome_adm = nome
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarNomeFigurinhas(nome){
-        let bot = await this.obterInformacoesBot()
+    async alterarNomeFigurinhas(nome, botInfo){
+        let bot = botInfo
         bot.nome_pack = nome
         await this.bot.atualizarDados(bot)
     }

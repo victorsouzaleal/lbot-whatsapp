@@ -12,9 +12,8 @@ import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
 }).catch(()=>{})
 
 
-export const erroComandoMsg = async (comando) =>{
-  const botInfoJSON = await new BotControle().obterInformacoesBot()
-  const msgs_texto = obterMensagensTexto(botInfoJSON)
+export const erroComandoMsg = (comando, botInfo) =>{
+  const msgs_texto = obterMensagensTexto(botInfo)
   return criarTexto(msgs_texto.geral.cmd_erro, comando, comando)
 }
 
@@ -26,8 +25,7 @@ export const corTexto = (texto, cor)=>{
     return !cor ? chalk.green(texto) : chalk.hex(cor)(texto)
 }
 
-export const guiaComandoMsg = async (tipo,comando)=>{
-  let {prefixo} = await new BotControle().obterInformacoesBot()
+export const guiaComandoMsg = (tipo,comando, prefixo)=>{
   let guias = obterGuias(prefixo)
   comando = comando.replace(prefixo, "")
   return guias[tipo][comando]
@@ -201,8 +199,8 @@ export const verificarEnv = async ()=>{
     }
   }
 
-export const verificarNumeroDono = async()=>{
-    let {numero_dono} = await new BotControle().obterInformacoesBot()
+export const verificarNumeroDono = async(botInfo)=>{
+    let {numero_dono} = botInfo
     let resposta = (numero_dono == '') ? "O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono." : "✓ Número do DONO configurado."
     let cor_resposta = (numero_dono == '') ? "#d63e3e" : false
     console.log("[DONO]", corTexto(resposta, cor_resposta))
