@@ -1,7 +1,6 @@
-import {BotControle} from '../controles/BotControle.js'
 
-export const menuPrincipal  = async ()=> { 
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
+export const menuPrincipal  = (botInfo)=> { 
+    let {nome_bot, nome_adm, prefixo} = botInfo
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -19,8 +18,8 @@ export const menuPrincipal  = async ()=> {
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
 
-export const menuFigurinhas = async ()=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
+export const menuFigurinhas = (botInfo)=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -40,8 +39,8 @@ export const menuFigurinhas = async ()=>{
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
 
-export const menuInfoSuporte = async ()=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
+export const menuInfoSuporte = (botInfo)=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -56,8 +55,8 @@ export const menuInfoSuporte = async ()=>{
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
 
-export const menuDownload = async ()=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
+export const menuDownload = (botInfo)=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -76,8 +75,8 @@ export const menuDownload = async ()=>{
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
 
-export const menuUtilidades = async ()=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
+export const menuUtilidades = (botInfo)=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -120,9 +119,9 @@ export const menuUtilidades = async ()=>{
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
 
-export const menuGrupo = async (isGroupAdmin)=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
-    if(isGroupAdmin){
+export const menuGrupo = (admin, botInfo)=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
+    if(admin){
         return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -209,9 +208,9 @@ export const menuGrupo = async (isGroupAdmin)=>{
     }
 }
 
-export const menuDiversao = async (isGroup)=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
-    if(isGroup){
+export const menuDiversao = (grupo, botInfo )=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
+    if(grupo){
         return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
@@ -261,19 +260,8 @@ export const menuDiversao = async (isGroup)=>{
     }
 }
 
-//NÃO REMOVA ESSA PARTE DE CRÉDITOS, PENSE NO TRABALHO E ESFORÇO QUE TENHO PARA MANTER O BOT ATUALIZADO E FUNCIONANDO.
-export const menuCreditos = async ()=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
-    return `
-〖 *🤖 ${nome_bot?.trim()}®* 〗
-  
-Criador do Bot : Leal
-Github : https://github.com/victorsouzaleal
-`
-}
-
-export const menuAdmin = async ()=>{
-    let {nome_bot, nome_adm, prefixo} = await new BotControle().obterInformacoesBot()
+export const menuAdmin = (botInfo)=>{
+    let {nome_bot, nome_adm, prefixo} = botInfo
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |

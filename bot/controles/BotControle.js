@@ -1,5 +1,5 @@
 import {obterMensagensTexto} from '../lib/msgs.js'
-import { listarComandos } from '../comandos/comandos.js'
+import {listarComandos} from '../comandos/comandos.js'
 import {consoleErro, criarTexto, corTexto} from '../lib/util.js'
 import {Bot} from '../modelos/Bot.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
@@ -22,7 +22,7 @@ export class BotControle{
             bot.iniciado = moment.now()
             bot.hostNumber = await obterNumeroHost(c)
             await this.bot.atualizarDados(bot)
-            console.log("[BOT]", corTexto((await obterMensagensTexto()).inicio.dados_bot))
+            console.log("[BOT]", corTexto(obterMensagensTexto(bot).inicio.dados_bot))
         }catch(err){
             err.message = `botStart - ${err.message}`
             throw err
@@ -76,8 +76,8 @@ export class BotControle{
     }
 
     async verificarLimiteComando(usuario_id, tipo_usuario, isAdmin){
-        let msgs_texto = await obterMensagensTexto()
         let bot = await this.obterInformacoesBot(), timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
+        let msgs_texto = obterMensagensTexto(bot)
         //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
         for (let i = 0; i < bot.limitecomandos.usuarios_limitados.length; i++){
             if(bot.limitecomandos.usuarios_limitados[i].horario_liberacao <= timestamp_atual) bot.limitecomandos.usuarios_limitados.splice(i,1)
@@ -152,10 +152,10 @@ export class BotControle{
     }
 
     async bloquearComandosGlobal(usuarioComandos){
-        let listaComandos = await listarComandos()
-        let msgs_texto = await obterMensagensTexto()
         let botInfoJSON = await this.obterInformacoesBot()
         let {prefixo} = botInfoJSON
+        let listaComandos = listarComandos(prefixo)
+        let msgs_texto = obterMensagensTexto(botInfoJSON)
         let comandosBloqueados = [], respostaBloqueio = msgs_texto.admin.bcmdglobal.resposta_titulo
         let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
 
@@ -207,10 +207,10 @@ export class BotControle{
     }
 
     async desbloquearComandosGlobal(usuarioComandos){
-        let listaComandos = await listarComandos()
-        let msgs_texto = await obterMensagensTexto()
         let botInfoJSON = await this.obterInformacoesBot()
         let {prefixo} = botInfoJSON
+        let listaComandos = listarComandos(prefixo)
+        let msgs_texto = obterMensagensTexto(botInfoJSON)
         let comandosDesbloqueados = [], respostaDesbloqueio = msgs_texto.admin.dcmdglobal.resposta_titulo
         let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
         if(categorias.includes(primeiroComando)){

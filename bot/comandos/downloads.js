@@ -5,13 +5,13 @@ import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import axios from 'axios'
 import duration from 'format-duration-time'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const downloads = async(c, mensagemInfoCompleta) => {
-    const {msgs_texto} = mensagemInfoCompleta
-    const {botInfoJSON} = mensagemInfoCompleta.bot
-    const {textoRecebido, command, args, type, id, chatId, quotedMsg} = mensagemInfoCompleta.mensagem
+export const downloads = async(c, mensagemBaileys, botInfoJSON) => {
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
     const {prefixo} = botInfoJSON
+    const {textoRecebido, command, args, type, id, chatId, quotedMsg} = mensagemBaileys
     let cmdSemPrefixo = command.replace(prefixo, "")
 
     try{

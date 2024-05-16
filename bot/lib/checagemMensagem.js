@@ -5,18 +5,19 @@ import {BotControle} from '../controles/BotControle.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
 import {MessageTypes} from '../baileys/mensagem.js'
+import {obterMensagensTexto} from './msgs.js'
+import {listarComandos} from '../comandos/comandos.js'
 
 
-export const checagemMensagem = async (c, mensagemInfoCompleta) => {
+export const checagemMensagem = async (c, mensagemBaileys, botInfoJSON) => {
     try {
         const bot = new BotControle()
         const usuarios = new UsuarioControle()
         const grupos = new GrupoControle()
-        const {msgs_texto, lista_comandos, ownerNumber} = mensagemInfoCompleta
-        const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
-        const {groupId, grupoInfo, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
-        const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId} = mensagemInfoCompleta.mensagem
-        const {prefixo, nome_bot} = botInfoJSON
+        const msgs_texto = obterMensagensTexto(botInfoJSON), lista_comandos = listarComandos(botInfoJSON.prefixo)
+        const {groupId, grupoInfo, isGroupAdmins, isBotGroupAdmins} = mensagemBaileys.grupo
+        const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId} = mensagemBaileys
+        const {prefixo, nome_bot} = botInfoJSON, ownerNumber = botInfoJSON.numero_dono, botNumber = botInfoJSON.hostNumber
         const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfoJSON.autosticker)
         const autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"

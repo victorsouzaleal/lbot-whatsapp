@@ -1,8 +1,5 @@
-import {BotControle} from '../controles/BotControle.js'
-
-export const obterGuias = async () => {
+export const obterGuias = (prefixo) => {
     const cabecalho = `❔ USO DO COMANDO ❔\n\n`
-    let {prefixo, nome_adm, nome_bot} = await new BotControle().obterInformacoesBot()
     return {
         info:{
             menu: cabecalho+

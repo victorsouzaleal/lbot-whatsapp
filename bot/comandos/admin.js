@@ -9,17 +9,18 @@ import {UsuarioControle} from '../controles/UsuarioControle.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import os from 'node:os'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const admin = async(c, mensagemInfoCompleta) => {
+export const admin = async(c, mensagemBaileys, botInfoJSON) => {
     const bot = new BotControle()
     const usuarios = new UsuarioControle()
     const grupos = new GrupoControle()
-    const {msgs_texto, ownerNumber} = mensagemInfoCompleta
-    const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
-    const {groupId} = mensagemInfoCompleta.grupo
-    const {isOwner, textoRecebido, command, args, id, chatId, isGroupMsg, t, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = mensagemInfoCompleta.mensagem
-    const {prefixo, nome_bot, nome_adm} = botInfoJSON
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
+    const ownerNumber = botInfoJSON.numero_dono, botNumber = botInfoJSON.hostNumber, {prefixo, nome_bot, nome_adm} = botInfoJSON
+    const {groupId} = mensagemBaileys.grupo
+    const {isOwner, textoRecebido, command, args, id, chatId, isGroupMsg, t, type, mimetype, isMedia, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList } = mensagemBaileys
+
     if (!isOwner) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_dono_bot, id)
     const blockNumber = await socket.obterContatosBloqueados(c)
     let cmdSemPrefixo = command.replace(prefixo, "")
@@ -28,7 +29,7 @@ export const admin = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){
             case "admin":
                 try{
-                    await socket.enviarTexto(c, chatId, await menu.menuAdmin())
+                    await socket.enviarTexto(c, chatId, menu.menuAdmin(botInfoJSON))
                 } catch(err){
                     throw err
                 }

@@ -2,15 +2,15 @@
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import * as api from '../../api/api.js'
 import * as socket from '../baileys/socket.js'
-import { MessageTypes } from '../baileys/mensagem.js'
-import { downloadMediaMessage } from '@whiskeysockets/baileys'
+import {MessageTypes} from '../baileys/mensagem.js'
+import {downloadMediaMessage } from '@whiskeysockets/baileys'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const utilidades = async(c, mensagemInfoCompleta) => {
-    const {msgs_texto} = mensagemInfoCompleta
-    const {botInfoJSON} = mensagemInfoCompleta.bot
-    const {textoRecebido, sender, command, isMedia, args, type, id, chatId, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo} = mensagemInfoCompleta.mensagem
+export const utilidades = async(c, mensagemBaileys, botInfoJSON) => {
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
     const {prefixo} = botInfoJSON
+    const {textoRecebido, sender, command, isMedia, args, type, id, chatId, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo} = mensagemBaileys
     let cmdSemPrefixo = command.replace(prefixo, "")
 
     try{
@@ -152,7 +152,7 @@ export const utilidades = async(c, mensagemInfoCompleta) => {
                     } else return await socket.responderTexto(c, chatId, await erroComandoMsg(command), id)
 
                     await api.obterInfoDDD(DDD).then(async({resultado})=>{
-                        await socket.responderTexto(c, chatId, resultado, id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.ddd.resposta, resultado.estado, resultado.regiao), id)
                     }).catch(async err=>{
                         if(!err.erro) throw err
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)

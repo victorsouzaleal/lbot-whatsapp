@@ -6,13 +6,13 @@ import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
 import {misturarEmojis, removerFundo, textoParaImagem} from '../../api/api.js'
 import {toSticker, StickerTypes, updateExif} from 'wa-leal-stickers'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const figurinhas = async(c, mensagemInfoCompleta) => {
-    const {msgs_texto} = mensagemInfoCompleta
-    const {botInfoJSON} = mensagemInfoCompleta.bot
-    const {textoRecebido, command, args, type, id, chatId, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemInfoCompleta.mensagem
+export const figurinhas = async(c, mensagemBaileys, botInfoJSON) => {
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
     const {prefixo, nome_pack, nome_bot } = botInfoJSON
+    const {textoRecebido, command, args, type, id, chatId, mimetype, quotedMsg, seconds, quotedMsgObjInfo, quotedMsgObj} = mensagemBaileys
     let cmdSemPrefixo = command.replace(prefixo, "")
     
     try{
@@ -156,11 +156,11 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
     }
 }
 
-export const autoSticker = async(c, mensagemInfoCompleta)=>{
+export const autoSticker = async(c, mensagemBaileys, botInfoJSON)=>{
     try{
-        const {chatId, type, id, seconds} = mensagemInfoCompleta.mensagem
-        const {botInfoJSON} = mensagemInfoCompleta.bot
         const {nome_bot, nome_pack} = botInfoJSON
+        const {chatId, type, id, seconds} = mensagemBaileys
+
         if(type == MessageTypes.image || type == MessageTypes.video){
             if(type == MessageTypes.video && seconds > 9) return
             let bufferMidia = await downloadMediaMessage(id, "buffer")

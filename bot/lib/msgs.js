@@ -1,7 +1,5 @@
-import {BotControle} from '../controles/BotControle.js'
-
-export const  obterMensagensTexto = async ()=>{
-    let {prefixo, nome_adm, nome_bot} = await new BotControle().obterInformacoesBot()
+export const obterMensagensTexto = (botInfo)=>{
+    let {prefixo, nome_adm, nome_bot} = botInfo
     return {
         inicio:{
             inicializando: 'Inicializando o BOT na versão v{p1}...',

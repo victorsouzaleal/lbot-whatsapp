@@ -1,7 +1,7 @@
 import {Grupo} from '../modelos/Grupo.js'
 import {BotControle} from './BotControle.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
-import { listarComandos } from '../comandos/comandos.js'
+import {listarComandos} from '../comandos/comandos.js'
 import * as socket from '../baileys/socket.js'
 import {consoleErro, criarTexto} from '../lib/util.js'
 import moment from "moment-timezone"
@@ -316,7 +316,8 @@ export class GrupoControle {
 
     async mensagemBemVindo(c, evento, grupoInfo){
         try{
-            let msgs_texto = await obterMensagensTexto()
+            let botInfoJSON = await new BotControle().obterInformacoesBot()
+            let msgs_texto = obterMensagensTexto(botInfoJSON)
             if(grupoInfo.bemvindo.status){
                 let msg_customizada = (grupoInfo.bemvindo.msg != "") ? grupoInfo.bemvindo.msg+"\n\n" : "" 
                 let mensagem_bemvindo = criarTexto(msgs_texto.grupo.bemvindo.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
@@ -333,11 +334,11 @@ export class GrupoControle {
         await this.grupo.alterarAntiLink(id_grupo, status)
     }
 
-    async filtroAntiLink(c, mensagemInfoCompleta){
+    async filtroAntiLink(c, mensagemBaileys, botInfoJSON){
         try{
-            const {msgs_texto} = mensagemInfoCompleta
-            const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemInfoCompleta.grupo
-            const {sender, chatId, isGroupMsg, body, caption, id} = mensagemInfoCompleta.mensagem
+            const msgs_texto = obterMensagensTexto(botInfoJSON)
+            const {sender, chatId, isGroupMsg, body, caption, id} = mensagemBaileys
+            const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
             if(!isGroupMsg) return true
             if(!grupoInfo?.antilink) return true
     
@@ -375,8 +376,8 @@ export class GrupoControle {
     async filtroAntiFake(c, evento, grupoInfo){
         try{
             if(grupoInfo.antifake.status){
-                let msgs_texto = await obterMensagensTexto()
                 let botInfo = await new BotControle().obterInformacoesBot()
+                let msgs_texto = obterMensagensTexto(botInfo)
                 let participante = evento.participants[0], botNumber = botInfo.numero_dono,  groupAdmins = grupoInfo.admins, isBotGroupAdmins = groupAdmins.includes(botNumber)
                 if(!isBotGroupAdmins){
                     await this.alterarAntiFake(evento.id,false)
@@ -445,12 +446,12 @@ export class GrupoControle {
         }
     }
 
-    async filtroAntiFlood(c, mensagemInfoCompleta){
+    async filtroAntiFlood(c, mensagemBaileys, botInfoJSON){
         try{
-            const {msgs_texto} = mensagemInfoCompleta
-            const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemInfoCompleta.grupo
-            const {botInfoJSON} = mensagemInfoCompleta.bot
-            const {chatId, sender, isGroupMsg} = mensagemInfoCompleta.mensagem
+            const msgs_texto = obterMensagensTexto(botInfoJSON)
+            const {chatId, sender, isGroupMsg} = mensagemBaileys
+            const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
+ 
             if(!isGroupMsg) return true
             if(!grupoInfo?.antiflood.status) return true
             if (!isBotGroupAdmins) {
@@ -488,8 +489,8 @@ export class GrupoControle {
 
     async verificarListaNegraGeral(c, gruposInfo){
         try {
-            let msgs_texto = await obterMensagensTexto()
             let botInfo = await new BotControle().obterInformacoesBot()
+            let msgs_texto = obterMensagensTexto(botInfo)
             for(let grupo of gruposInfo){
                 let botNumber = botInfo.hostNumber, groupAdmins = await socket.obterAdminsGrupoPorMetadata(grupo),  isBotGroupAdmins = groupAdmins.includes(botNumber)
                 if(isBotGroupAdmins){
@@ -511,8 +512,8 @@ export class GrupoControle {
 
     async verificarListaNegraUsuario(c, evento){
         try{
-            let msgs_texto = await obterMensagensTexto()
             let botInfo = await new BotControle().obterInformacoesBot()
+            let msgs_texto = obterMensagensTexto(botInfo)
             const botNumber = botInfo.hostNumber, groupAdmins = await this.obterAdminsGrupo(evento.id),  isBotGroupAdmins = groupAdmins.includes(botNumber)
             if(isBotGroupAdmins){
                 let lista_negra = await this.obterListaNegra(evento.id)
@@ -544,9 +545,10 @@ export class GrupoControle {
     }
 
     async bloquearComandosGrupo(comandos, id_grupo){
-        let listaComandos = await listarComandos()
-        let msgs_texto = await obterMensagensTexto()
-        let {prefixo} = await new BotControle().obterInformacoesBot()
+        let botInfoJSON = await new BotControle().obterInformacoesBot()
+        let {prefixo} = botInfoJSON
+        let listaComandos = listarComandos(prefixo)
+        let msgs_texto = obterMensagensTexto(botInfoJSON)
         let comandosBloqueados = [], grupoInfo = await this.obterGrupoInfo(id_grupo), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
         let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = comandos[0]
         if(categorias.includes(primeiroComando)){
@@ -596,9 +598,10 @@ export class GrupoControle {
     }
 
     async desbloquearComandosGrupo(comandos, id_grupo){
-        let listaComandos = await listarComandos()
-        let msgs_texto = await obterMensagensTexto()
-        let {prefixo} = await new BotControle().obterInformacoesBot()
+        let botInfoJSON = await new BotControle().obterInformacoesBot()
+        let {prefixo} = botInfoJSON
+        let listaComandos = listarComandos(prefixo)
+        let msgs_texto = obterMensagensTexto(botInfoJSON)
         let comandosDesbloqueados = [], grupoInfo = await this.obterGrupoInfo(id_grupo), respostaDesbloqueio = msgs_texto.grupo.dcmd.resposta_titulo
         let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = comandos[0]
         if(categorias.includes(primeiroComando)){

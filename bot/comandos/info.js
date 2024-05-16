@@ -5,16 +5,17 @@ import * as socket from '../baileys/socket.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
 import {MessageTypes} from '../baileys/mensagem.js'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const info = async(c, mensagemInfoCompleta) => {
+
+export const info = async(c, mensagemBaileys, botInfoJSON) => {
     const usuarios = new UsuarioControle()
     const grupos = new GrupoControle()
-    const {msgs_texto, ownerNumber} = mensagemInfoCompleta
-    const {botInfoJSON, botNumber} = mensagemInfoCompleta.bot
-    const {groupId, isGroupAdmins} = mensagemInfoCompleta.grupo
-    const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username} = mensagemInfoCompleta.mensagem
-    const {prefixo, nome_bot, nome_adm} = botInfoJSON
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
+    const ownerNumber = botInfoJSON.numero_dono, botNumber = botInfoJSON.hostNumber, {prefixo, nome_bot, nome_adm} = botInfoJSON
+    const {groupId, isGroupAdmins} = mensagemBaileys.grupo
+    const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username} = mensagemBaileys
     let cmdSemPrefixo = command.replace(prefixo, "")
 
     try{
@@ -82,33 +83,30 @@ export const info = async(c, mensagemInfoCompleta) => {
                     dadosResposta += `═════════════════\n`
 
                     if(args.length == 1){
-                        let menuResposta = await menu.menuPrincipal()
+                        let menuResposta = menu.menuPrincipal(botInfoJSON)
                         await socket.enviarTexto(c, chatId, dadosResposta+menuResposta)
                     } else {
                         let usuarioOpcao = args[1]
-                        let menuResposta = await menu.menuPrincipal()
+                        let menuResposta = menu.menuPrincipal(botInfoJSON)
                         switch(usuarioOpcao){
                             case "0":
-                                menuResposta = await menu.menuInfoSuporte()
+                                menuResposta = menu.menuInfoSuporte(botInfoJSON)
                                 break
                             case "1":
-                                menuResposta = await menu.menuFigurinhas()
+                                menuResposta = menu.menuFigurinhas(botInfoJSON)
                                 break
                             case "2":
-                                menuResposta = await menu.menuUtilidades()
+                                menuResposta = menu.menuUtilidades(botInfoJSON)
                                 break
                             case "3":
-                                menuResposta = await menu.menuDownload()
+                                menuResposta = menu.menuDownload(botInfoJSON)
                                 break
                             case "4":
-                                if(isGroupMsg) menuResposta = await menu.menuGrupo(isGroupAdmins)
+                                if(isGroupMsg) menuResposta = menu.menuGrupo(isGroupAdmins, botInfoJSON)
                                 else return await socket.responderTexto(c, chatId, msgs_texto.permissao.grupo, id)
                                 break
                             case "5":
-                                menuResposta = await menu.menuDiversao(isGroupMsg)
-                                break
-                            case "6":
-                                menuResposta = await menu.menuCreditos()
+                                menuResposta = menu.menuDiversao(isGroupMsg, botInfoJSON)
                                 break
                         }
                         await socket.enviarTexto(c, chatId, dadosResposta+menuResposta)

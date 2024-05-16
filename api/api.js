@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import axios from 'axios'; import path from 'node:path'; import ffmpeg from 'fluent-ffmpeg'; import fs from 'fs-extra'
-import { obterMensagensTexto } from '../bot/lib/msgs.js' ; import { consoleErro, converterMp4ParaMp3, criarTexto, obterNomeAleatorio} from '../bot/lib/util.js'
+import { consoleErro, converterMp4ParaMp3, criarTexto, obterNomeAleatorio} from '../bot/lib/util.js'
 import {prettyNum} from 'pretty-num'; import duration from 'format-duration-time'; import acrcloud from 'acrcloud'
 import { rastrearEncomendas } from 'correios-brasil'; import translate from '@vitalets/google-translate-api' ; 
 import Youtube from 'youtube-sr'; import ytdl from 'ytdl-core'; import google from '@victorsouzaleal/googlethis'
@@ -969,8 +969,7 @@ export const obterCartasContraHu = async()=>{
                     cartaPretaEscolhida = cartaPretaEscolhida.replace(`{p${i}}`, `*${cartaBrancaEscolhida}*`)
                     cartas.cartas_brancas.splice(cartas.cartas_brancas.indexOf(cartaBrancaEscolhida, 1))
                 }
-                let frasePronta = criarTexto((await obterMensagensTexto()).diversao.fch.resposta, cartaPretaEscolhida)
-                resposta = {sucesso: true, resultado: frasePronta}
+                resposta = {sucesso: true, resultado: cartaPretaEscolhida}
                 resolve(resposta)
             }).catch(()=>{
                 resposta = {sucesso: false, erro: "Houve um erro no servidor para obter as cartas."}
@@ -992,7 +991,7 @@ export const obterInfoDDD = async(DDD)=>{
                 let estados = githubGistDDD.data.estados
                 let indexDDD = estados.findIndex(estado => estado.ddd.includes(DDD))
                 if(indexDDD != -1){
-                    resposta = {sucesso:true, resultado: criarTexto((await obterMensagensTexto()).utilidades.ddd.resposta, estados[indexDDD].nome, estados[indexDDD].regiao)}
+                    resposta = {sucesso:true, resultado: {estado: estados[indexDDD].nome, regiao: estados[indexDDD].regiao}}
                     resolve(resposta)
                 } else {
                     resposta = {sucesso: false, erro: 'Este DDD não foi encontrado, certifique-se que ele é válido.'}

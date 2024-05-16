@@ -4,14 +4,14 @@ import path from 'node:path'
 import {simiResponde, obterCartasContraHu} from '../../api/api.js'
 import * as socket from '../baileys/socket.js'
 import { MessageTypes } from '../baileys/mensagem.js'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const diversao = async(c, mensagemInfoCompleta) => {
-    const {msgs_texto, ownerNumber} = mensagemInfoCompleta
-    const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
-    const {groupId, groupOwner, isGroupAdmins, isBotGroupAdmins, grupoInfo} = mensagemInfoCompleta.grupo
-    const {command, sender, textoRecebido, args, id, chatId, isGroupMsg, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemInfoCompleta.mensagem
-    const {prefixo} = botInfoJSON
+export const diversao = async(c, mensagemBaileys, botInfoJSON) => {
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
+    const ownerNumber = botInfoJSON.numero_dono, botNumber = botInfoJSON.hostNumber, {prefixo} = botInfoJSON
+    const {groupId, groupOwner, isGroupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
+    const {command, sender, textoRecebido, args, id, chatId, isGroupMsg, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemBaileys
     let cmdSemPrefixo = command.replace(prefixo, "")
 
     try {
@@ -275,7 +275,7 @@ export const diversao = async(c, mensagemInfoCompleta) => {
             case "fch":
                 try{
                     await obterCartasContraHu().then(async({resultado})=>{
-                        await socket.responderTexto(c, chatId, resultado, id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.diversao.fch.resposta, resultado), id)
                     }).catch(async err=>{
                         if(!err.erro) throw err
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)

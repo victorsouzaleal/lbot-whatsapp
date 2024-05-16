@@ -2,17 +2,18 @@
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import * as socket from '../baileys/socket.js'
-import { MessageTypes } from '../baileys/mensagem.js'
-import { downloadMediaMessage } from '@whiskeysockets/baileys'
+import {MessageTypes} from '../baileys/mensagem.js'
+import {downloadMediaMessage} from '@whiskeysockets/baileys'
+import {obterMensagensTexto} from '../lib/msgs.js'
 
 
-export const grupo = async(c, mensagemInfoCompleta) => {
+export const grupo = async(c, mensagemBaileys, botInfoJSON) => {
     const grupos = new GrupoControle()
-    const {msgs_texto} = mensagemInfoCompleta
-    const {botNumber, botInfoJSON} = mensagemInfoCompleta.bot
-    const {groupId, grupoInfo, groupOwner, groupMembers, groupAdmins, isGroupAdmins, isBotGroupAdmins} = mensagemInfoCompleta.grupo
-    const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemInfoCompleta.mensagem
-    const {prefixo, nome_bot} = botInfoJSON
+    const msgs_texto = obterMensagensTexto(botInfoJSON)
+    const botNumber = botInfoJSON.hostNumber, {prefixo, nome_bot} = botInfoJSON
+    const {groupId, grupoInfo, groupOwner, groupMembers, groupAdmins, isGroupAdmins, isBotGroupAdmins} = mensagemBaileys.grupo
+    const {command, args, textoRecebido, id, chatId, sender, isGroupMsg, username, type, isMedia, mimetype, quotedMsg, quotedMsgObj, quotedMsgObjInfo, mentionedJidList} = mensagemBaileys
+
     if (!isGroupMsg) return await socket.responderTexto(c, chatId, msgs_texto.permissao.grupo, id)
     let cmdSemPrefixo = command.replace(prefixo, "")
 

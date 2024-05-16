@@ -13,7 +13,8 @@ import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
 
 
 export const erroComandoMsg = async (comando) =>{
-  let msgs_texto = await obterMensagensTexto()
+  const botInfoJSON = await new BotControle().obterInformacoesBot()
+  const msgs_texto = obterMensagensTexto(botInfoJSON)
   return criarTexto(msgs_texto.geral.cmd_erro, comando, comando)
 }
 
@@ -26,7 +27,8 @@ export const corTexto = (texto, cor)=>{
 }
 
 export const guiaComandoMsg = async (tipo,comando)=>{
-  let guias = await obterGuias(), {prefixo, nome_bot, nome_adm} = await new BotControle().obterInformacoesBot()
+  let {prefixo} = await new BotControle().obterInformacoesBot()
+  let guias = obterGuias(prefixo)
   comando = comando.replace(prefixo, "")
   return guias[tipo][comando]
 }
