@@ -37,7 +37,7 @@ export class Usuario {
         await db.updateAsync({id_usuario}, {$set: {tipo : "dono", max_comandos_dia: null}})
     }
 
-    async alterarTipoUsuario(id_usuario, max_comandos){
+    async alterarTipoUsuario(id_usuario, tipo, max_comandos){
         await db.updateAsync({id_usuario}, {$set: {tipo, max_comandos_dia: max_comandos}})
     }
 

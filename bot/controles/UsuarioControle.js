@@ -85,7 +85,7 @@ export class UsuarioControle{
     async alterarTipoUsuario(id_usuario, tipo){
         let {limite_diario} = await new BotControle().obterInformacoesBot()
         if(limite_diario.limite_tipos[tipo] !== undefined){
-            await this.usuario.alterarTipoUsuario(id_usuario, limite_diario.limite_tipos[tipo])
+            await this.usuario.alterarTipoUsuario(id_usuario, tipo, limite_diario.limite_tipos[tipo])
             return true
         } else {
             return false
