@@ -1,8 +1,8 @@
 import {MessageTypes} from './mensagem.js'
 import {delayAleatorio, getVideoThumbnail} from '../lib/util.js'
 
-// GENERAL FUNCTIONS
-export const deleteMessage = async(c, message, isQuoted = false)=>{
+// Gerais
+export const deletarMensagem = async(c, message, isQuoted = false)=>{
     let deleteMessage
     if(isQuoted){
         deleteMessage = {
@@ -17,88 +17,89 @@ export const deleteMessage = async(c, message, isQuoted = false)=>{
     return await c.sendMessage(message.key.remoteJid, {delete: deleteMessage})
 }
 
-export const readMessage = async(c, chatId, participant, messageId) =>{
+export const lerMensagem = async(c, chatId, participant, messageId) =>{
     return await c.sendReceipt(chatId, participant, [messageId], 'read')
 }
 
-export const updatePresence = async(c, chatId, type)=>{
+export const atualizarPresenca = async(c, chatId, type)=>{
     return await c.sendPresenceUpdate(type, chatId)
 }
 
-export const setProfilePic = async(c, id, buffer)=>{
+export const alterarFotoPerfil = async(c, id, buffer)=>{
     return await c.updateProfilePicture(id, buffer)
 }
 
-export const setMyStatus = async(c, status)=>{
+export const alterarStatusPerfil = async(c, status)=>{
     return await c.updateProfileStatus(status)
 }
 
-export const botLogout = async(c)=>{
+export const encerrarBot = async(c)=>{
     return await c.end(new Error("Comando"))
 }
 
-export const getProfilePicFromServer = async(c, userId)=>{
+export const obterFotoPerfil = async(c, userId)=>{
     return await c.profilePictureUrl(userId, "image")
 }
 
-export const contactBlock = async(c, userId)=>{
+export const bloquearContato = async(c, userId)=>{
     return await c.updateBlockStatus(userId, "block")
 }
 
-export const contactUnblock = async(c, userId)=>{
+export const desbloquearContato = async(c, userId)=>{
     return await c.updateBlockStatus(userId, "unblock")
 }
 
-export const getHostNumber = async(c)=>{ 
+export const obterNumeroHost = async(c)=>{ 
     let id = c.user.id.replace(/:[0-9]+/ism, '')
     return id
 }
 
-export const getBlockedIds = async(c)=>{ 
+export const obterContatosBloqueados = async(c)=>{ 
     return await c.fetchBlocklist()
 }
 
 
-// SEND MESSAGES/MEDIAS FUNCTIONS
-export const sendText = async(c, chatId, text)=>{
-    await updatePresence(c, chatId, "composing")
+
+// Envio de mensagens
+export const enviarTexto = async(c, chatId, text)=>{
+    await atualizarPresenca(c, chatId, "composing")
     await delayAleatorio(400, 1000)
     await c.sendMessage(chatId, {text, linkPreview: null})
 }
 
-export const sendPoll = async(c, chatId, pollName, pollValues)=>{
+export const enviarEnquete = async(c, chatId, pollName, pollValues)=>{
     return await c.sendMessage(chatId, {poll : {name: pollName, values: pollValues, selectableCount: 1}})
 }
 
-export const sendLinkWithAutoPreview = async(c, chatId, textWithLink) =>{
-    await updatePresence(c, chatId, "composing")
+export const enviarLinkComPrevia = async(c, chatId, textWithLink) =>{
+    await atualizarPresenca(c, chatId, "composing")
     await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text: textWithLink})
 }
 
-export const sendTextWithMentions = async(c, chatId, text, mentionedIdsArray)=>{ 
-    await updatePresence(c, chatId, "composing")
+export const enviarTextoComMencoes = async(c, chatId, text, mentionedIdsArray)=>{ 
+    await atualizarPresenca(c, chatId, "composing")
     await delayAleatorio(400, 1000) 
     return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray})
 }
 
-export const sendSticker = async(c,id, sticker)=>{ 
+export const enviarFigurinha = async(c,id, sticker)=>{ 
     return await c.sendMessage(id, {sticker})
 }
 
-export const sendFileFromUrl = async(c, type, chatId, filePath, caption) =>{ 
+export const enviarArquivoUrl = async(c, type, chatId, url, caption) =>{ 
     if(type == MessageTypes.image){
-        return await c.sendMessage(chatId,{image: {url: filePath}, caption})
+        return await c.sendMessage(chatId,{image: {url}, caption})
     }
 }
 
-export const reply = async(c, chatId, text, quotedMessage)=>{ 
-    await updatePresence(c, chatId, "composing")
+export const responderTexto = async(c, chatId, text, quotedMessage)=>{ 
+    await atualizarPresenca(c, chatId, "composing")
     await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text, linkPreview: null}, {quoted: quotedMessage})
 }
 
-export const replyFile = async(c, type, chatId, filePath, caption, quotedMessage, mimetype = '') =>{ 
+export const responderArquivoLocal = async(c, type, chatId, filePath, caption, quotedMessage, mimetype = '') =>{ 
     if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: {url: filePath}, caption}, {quoted: quotedMessage})
     } else if (type == MessageTypes.video){
@@ -109,7 +110,7 @@ export const replyFile = async(c, type, chatId, filePath, caption, quotedMessage
     }
 }
 
-export const replyFileFromUrl = async(c, type, chatId, url, caption, quotedMessage, mimetype = '') =>{ 
+export const responderArquivoUrl = async(c, type, chatId, url, caption, quotedMessage, mimetype = '') =>{ 
     if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: {url}, caption}, {quoted: quotedMessage})
     } else if (type == MessageTypes.video){
@@ -120,7 +121,7 @@ export const replyFileFromUrl = async(c, type, chatId, url, caption, quotedMessa
     }
 }
 
-export const replyFileFromBuffer = async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ 
+export const responderArquivoBuffer = async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ 
     if(type == MessageTypes.video){
         let base64Thumb = await getVideoThumbnail(buffer, "buffer")
         return await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
@@ -131,59 +132,42 @@ export const replyFileFromBuffer = async(c, type, chatId, buffer, caption, quote
     }
 }
 
-export const replyWithMentions = async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ 
-    await updatePresence(c, chatId, "composing")
+export const responderComMencoes = async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ 
+    await atualizarPresenca(c, chatId, "composing")
     await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray}, {quoted: quotedMessage})
 }
 
 
-// GROUP FUNCTIONS
-export const joinGroupViaLink = async(c, idLink)=>{
+// Grupos
+export const entrarLinkGrupo = async(c, idLink)=>{
     return await c.groupAcceptInvite(idLink)
 }
 
-export const revokeGroupInviteLink = async(c, groupId)=>{
+export const revogarLinkGrupo = async(c, groupId)=>{
     return await c.groupRevokeInvite(groupId)
 }
 
-export const leaveGroup = async(c, groupId)=>{
+export const obterLinkGrupo = async(c, groupId)=>{
+    let inviteCode = await c.groupInviteCode(groupId)
+    return inviteCode ? `https://chat.whatsapp.com/${inviteCode}` : undefined
+}
+
+
+export const sairGrupo = async(c, groupId)=>{
     return await c.groupLeave(groupId)
 }
 
-export const inviteInfo = async(c, link)=>{
+export const obterInfoConviteGrupo = async(c, link)=>{
     return await c.groupGetInviteInfo(link)
 }
 
-export const setGroupToAdminsOnly = async(c, groupId, state)=>{
+export const alterarRestricaoGrupo = async(c, groupId, state)=>{
     let setting = state ? "announcement" : "not_announcement"
     return await c.groupSettingUpdate(groupId, setting)
 }
 
-export const getGroupAdmins = async(c, groupId)=>{ 
-    let {participants} = await c.groupMetadata(groupId)
-    let groupAdmins = participants.filter(member => (member.admin != null))
-    let admins = []
-    groupAdmins.forEach((admin)=>{
-        admins.push(admin.id)
-    })
-    return admins
-}
-
-export const getGroupInfo = async(c, groupId)=>{ 
-    return await c.groupMetadata(groupId)
-}
-
-export const getGroupMembersId = async(c, groupId)=>{ 
-    let {participants} = await c.groupMetadata(groupId)
-    let participantsId = []
-    participants.forEach((participant)=>{
-        participantsId.push(participant.id)
-    })
-    return participantsId
-}
-
-export const getGroupMembersIdFromMetadata = async(groupMetadata)=>{ 
+export const obterMembrosGrupoPorMetadata = async(groupMetadata)=>{ 
     let {participants} = groupMetadata
     let participantsId = []
     participants.forEach((participant)=>{
@@ -192,7 +176,7 @@ export const getGroupMembersIdFromMetadata = async(groupMetadata)=>{
     return participantsId
 }
 
-export const getGroupAdminsFromMetadata = async(groupMetadata)=>{ 
+export const obterAdminsGrupoPorMetadata = async(groupMetadata)=>{ 
     let {participants} = groupMetadata
     let groupAdmins = participants.filter(member => (member.admin != null))
     let admins = []
@@ -202,7 +186,7 @@ export const getGroupAdminsFromMetadata = async(groupMetadata)=>{
     return admins
 }
 
-export const getAllGroups = async(c)=>{ 
+export const obterTodosGrupos = async(c)=>{ 
     let groups = await c.groupFetchAllParticipating()
     let groupsData = []
     for (let [key, value] of Object.entries(groups)) {
@@ -211,29 +195,26 @@ export const getAllGroups = async(c)=>{
     return groupsData
 }
 
-export const removeParticipant = async(c, groupId, participantId)=>{
+export const removerParticipante = async(c, groupId, participantId)=>{
     let response = await c.groupParticipantsUpdate(groupId, [participantId], "remove")
     return response[0]
 }
 
-export const addParticipant = async(c, groupId, participantId)=>{
+export const adicionarParticipante = async(c, groupId, participantId)=>{
     let response = await c.groupParticipantsUpdate(groupId, [participantId], "add")
     return response[0]
 }
 
-export const promoteParticipant = async(c, groupId, participantId)=>{
+export const promoverParticipante = async(c, groupId, participantId)=>{
     let response = await c.groupParticipantsUpdate(groupId, [participantId], "promote")
     return response[0]
 }
 
-export const demoteParticipant = async(c, groupId, participantId)=>{
+export const rebaixarParticipante = async(c, groupId, participantId)=>{
     let response = await c.groupParticipantsUpdate(groupId, [participantId], "demote")
     return response[0]
 }
 
-export const getGroupInviteLink = async(c, groupId)=>{
-    let inviteCode = await c.groupInviteCode(groupId)
-    return inviteCode ? `https://chat.whatsapp.com/${inviteCode}` : undefined
-}
+
 
 

@@ -4,7 +4,7 @@ import {consoleErro, criarTexto, corTexto} from '../lib/util.js'
 import {Bot} from '../modelos/Bot.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
 import moment from "moment-timezone"
-import {getHostNumber} from '../baileys/socket-funcoes.js'
+import {obterNumeroHost} from '../baileys/socket.js'
 
 
 export class BotControle{
@@ -20,7 +20,7 @@ export class BotControle{
         try{
             let bot = await this.obterInformacoesBot()
             bot.iniciado = moment.now()
-            bot.hostNumber = await getHostNumber(c)
+            bot.hostNumber = await obterNumeroHost(c)
             await this.bot.atualizarDados(bot)
             console.log("[BOT]", corTexto((await obterMensagensTexto()).inicio.dados_bot))
         }catch(err){

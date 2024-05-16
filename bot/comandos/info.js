@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 import * as menu from '../lib/menu.js'
 import {criarTexto, erroComandoMsg, timestampParaData, consoleErro, versaoAtual} from '../lib/util.js'
-import * as socket from '../baileys/socket-funcoes.js'
+import * as socket from '../baileys/socket.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
 import {MessageTypes} from '../baileys/mensagem.js'
@@ -25,10 +25,10 @@ export const info = async(c, mensagemInfoCompleta) => {
                     let infoBot = botInfoJSON
                     let botInicializacaoData = timestampParaData(infoBot.iniciado)
                     let resposta = criarTexto(msgs_texto.info.info.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, ownerNumber.replace("@s.whatsapp.net", ""), version)
-                    await socket.getProfilePicFromServer(c, botNumber).then( async (botFotoURL)=>{
-                        await socket.replyFileFromUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
+                    await socket.obterFotoPerfil(c, botNumber).then( async (botFotoURL)=>{
+                        await socket.responderArquivoUrl(c, MessageTypes.image, chatId, botFotoURL, resposta, id)
                     }).catch(async()=>{
-                        await socket.reply(c, chatId, resposta, id)
+                        await socket.responderTexto(c, chatId, resposta, id)
                     })
                 } catch(err){
                     throw err
@@ -38,11 +38,11 @@ export const info = async(c, mensagemInfoCompleta) => {
             
             case `reportar`:
                 try{
-                    if(args.length == 1) return socket.reply(c, chatId, await erroComandoMsg(command) ,id)
-                    if(ownerNumber == '') return socket.reply(c, chatId, msgs_texto.info.reportar.erro, id)
+                    if(args.length == 1) return socket.responderTexto(c, chatId, await erroComandoMsg(command) ,id)
+                    if(ownerNumber == '') return socket.responderTexto(c, chatId, msgs_texto.info.reportar.erro, id)
                     let usuarioMensagem = textoRecebido.slice(10).trim(), resposta = criarTexto(msgs_texto.info.reportar.resposta, username, sender.replace("@s.whatsapp.net",""), usuarioMensagem)
-                    await socket.sendText(c,ownerNumber, resposta)
-                    await socket.reply(c,chatId,msgs_texto.info.reportar.sucesso,id)
+                    await socket.enviarTexto(c,ownerNumber, resposta)
+                    await socket.responderTexto(c,chatId,msgs_texto.info.reportar.sucesso,id)
                 } catch(err){
                     throw err
                 }
@@ -62,7 +62,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                             resposta += criarTexto(msgs_texto.info.meusdados.resposta_grupo, usuarioAtividade.msg)
                         }   
                     }
-                    await socket.reply(c, chatId, resposta, id)
+                    await socket.responderTexto(c, chatId, resposta, id)
                 } catch(err){
                     throw err
                 }
@@ -83,7 +83,7 @@ export const info = async(c, mensagemInfoCompleta) => {
 
                     if(args.length == 1){
                         let menuResposta = await menu.menuPrincipal()
-                        await socket.sendText(c, chatId, dadosResposta+menuResposta)
+                        await socket.enviarTexto(c, chatId, dadosResposta+menuResposta)
                     } else {
                         let usuarioOpcao = args[1]
                         let menuResposta = await menu.menuPrincipal()
@@ -102,7 +102,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                                 break
                             case "4":
                                 if(isGroupMsg) menuResposta = await menu.menuGrupo(isGroupAdmins)
-                                else return await socket.reply(c, chatId, msgs_texto.permissao.grupo, id)
+                                else return await socket.responderTexto(c, chatId, msgs_texto.permissao.grupo, id)
                                 break
                             case "5":
                                 menuResposta = await menu.menuDiversao(isGroupMsg)
@@ -111,7 +111,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                                 menuResposta = await menu.menuCreditos()
                                 break
                         }
-                        await socket.sendText(c, chatId, dadosResposta+menuResposta)
+                        await socket.enviarTexto(c, chatId, dadosResposta+menuResposta)
                     }
                 } catch(err){
                     throw err
@@ -119,7 +119,7 @@ export const info = async(c, mensagemInfoCompleta) => {
                 break
         }
     } catch(err){
-        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
+        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id)
         err.message = `${command} - ${err.message}`
         consoleErro(err, "INFO")
     }

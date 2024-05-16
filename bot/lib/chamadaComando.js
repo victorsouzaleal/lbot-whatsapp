@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import { criarTexto, guiaComandoMsg, consoleComando } from './util.js'
-import * as socket from '../baileys/socket-funcoes.js'
+import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import moment from "moment-timezone"
 import {grupo} from '../comandos/grupo.js'; import {utilidades} from '../comandos/utilidades.js'; import {diversao} from '../comandos/diversao.js'; import {admin} from '../comandos/admin.js';
@@ -21,53 +21,53 @@ export const chamadaComando = async (c, mensagemInfoCompleta) => {
         let autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfoJSON.autosticker)
         let autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
 
-        if(queueMensagemEspera) await socket.reply(c, chatId, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size), id)
+        if(queueMensagemEspera) await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size), id)
         if(lista_comandos.utilidades.includes(command)){
             //UTILIDADES
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c,chatId, await guiaComandoMsg("utilidade", command), id)
+                if(msgGuia) return await socket.responderTexto(c,chatId, await guiaComandoMsg("utilidade", command), id)
                 await utilidades(c, mensagemInfoCompleta)
                 consoleComando(isGroupMsg, "UTILIDADES", command, "#de9a07", t, username, formattedTitle)
             }, {priority: 1})
         }  else if(lista_comandos.figurinhas.includes(command)){
             //FIGURINHAS
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c,chatId, await guiaComandoMsg("figurinhas", command), id)
+                if(msgGuia) return await socket.responderTexto(c,chatId, await guiaComandoMsg("figurinhas", command), id)
                 await figurinhas(c, mensagemInfoCompleta)
                 consoleComando(isGroupMsg, "FIGURINHAS", command, "#ae45d1", t, username, formattedTitle)
             }, {priority: 2})
         } else if(lista_comandos.downloads.includes(command)){
             //DOWNLOADS
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c, chatId, await guiaComandoMsg("downloads", command), id)
+                if(msgGuia) return await socket.responderTexto(c, chatId, await guiaComandoMsg("downloads", command), id)
                 await downloads(c, mensagemInfoCompleta)
                 consoleComando(isGroupMsg, "DOWNLOADS", command, "#2195cf", t, username, formattedTitle)
             }, {priority: 1})
         } else if (lista_comandos.grupo.includes(command)){
             //GRUPO
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c, chatId, await guiaComandoMsg("grupo", command), id)
+                if(msgGuia) return await socket.responderTexto(c, chatId, await guiaComandoMsg("grupo", command), id)
                 await grupo(c, mensagemInfoCompleta)
                 if(isGroupMsg) consoleComando(isGroupMsg, "ADMINISTRAÇÃO", command, "#e0e031", t, username, formattedTitle)
             }, {priority: 3})
         } else if(lista_comandos.diversao.includes(command)){
             //DIVERSÃO
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c, chatId, await guiaComandoMsg("diversao", command), id)
+                if(msgGuia) return await socket.responderTexto(c, chatId, await guiaComandoMsg("diversao", command), id)
                 await diversao(c, mensagemInfoCompleta)
                 consoleComando(isGroupMsg, "DIVERSÃO", command, "#22e3dd", t, username, formattedTitle)
             }, {priority: 2})
         } else if(lista_comandos.admin.includes(command)){
             //ADMIN
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c, chatId, await guiaComandoMsg("admin", command), id)
+                if(msgGuia) return await socket.responderTexto(c, chatId, await guiaComandoMsg("admin", command), id)
                 await admin(c, mensagemInfoCompleta)
                 consoleComando(isGroupMsg, "DONO", command, "#d1d1d1", t, username, formattedTitle)
             }, {priority: 4})
         } else if(lista_comandos.info.includes(command)){
             //INFO
             queueMensagem.add(async()=>{
-                if(msgGuia) return await socket.reply(c, chatId, await guiaComandoMsg("info", command), id)
+                if(msgGuia) return await socket.responderTexto(c, chatId, await guiaComandoMsg("info", command), id)
                 await info(c, mensagemInfoCompleta)
                 consoleComando(isGroupMsg, "INFO", command, "#8ac46e", t, username, formattedTitle)
             }, {priority: 3})

@@ -1,6 +1,6 @@
 //REQUERINDO MÓDULOS
 import {erroComandoMsg, consoleErro, criarTexto, stickerToPng} from '../lib/util.js'
-import * as socket from '../baileys/socket-funcoes.js'
+import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import fs from 'fs-extra'
@@ -19,13 +19,13 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
         switch(cmdSemPrefixo){
             case 'snome':
                 try{
-                    if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.sticker) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.sticker) return await socket.responderTexto(c, chatId, await erroComandoMsg(command), id)
                     let [pack, autor] = textoRecebido.slice(7).trim().split(',')
-                    if(!pack || !autor) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    if(!pack || !autor) return await socket.responderTexto(c, chatId, await erroComandoMsg(command), id)
                     let mensagemSticker = quotedMsgObj
                     mensagemSticker.message.stickerMessage.url = mensagemSticker.message.stickerMessage.url == "https://web.whatsapp.net" ? `https://mmg.whatsapp.net${mensagemSticker.message.stickerMessage.directPath}` : mensagemSticker.message.stickerMessage.url
                     let bufferSticker = await downloadMediaMessage(quotedMsgObj, 'buffer')
-                    await socket.sendSticker(c, chatId, await updateExif(bufferSticker, pack, autor))
+                    await socket.enviarFigurinha(c, chatId, await updateExif(bufferSticker, pack, autor))
                 } catch(err){
                     throw err
                 }
@@ -46,10 +46,10 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         message: (quotedMsg) ? quotedMsgObj  : id,
                         seconds: (quotedMsg) ? quotedMsgObjInfo.seconds : seconds
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image && dadosMensagem.tipo != MessageTypes.video) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
-                    if(dadosMensagem.tipo == MessageTypes.video && dadosMensagem.seconds > 9) return socket.reply(c, chatId, msgs_texto.figurinhas.sticker.video_invalido, id)
+                    if(dadosMensagem.tipo != MessageTypes.image && dadosMensagem.tipo != MessageTypes.video) return await socket.responderTexto(c, chatId, await erroComandoMsg(command) , id)
+                    if(dadosMensagem.tipo == MessageTypes.video && dadosMensagem.seconds > 9) return socket.responderTexto(c, chatId, msgs_texto.figurinhas.sticker.video_invalido, id)
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
-                    await socket.sendSticker(c,chatId, await toSticker(bufferMidia, {pack: nome_pack?.trim(), author: nome_bot?.trim(), fps: 9, type: tipoFigurinha}))
+                    await socket.enviarFigurinha(c,chatId, await toSticker(bufferMidia, {pack: nome_pack?.trim(), author: nome_bot?.trim(), fps: 9, type: tipoFigurinha}))
                 } catch(err){
                     throw err
                 }
@@ -65,13 +65,13 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         imagemSaida = conversaoResultado.saida
                         if(!conversaoResultado.success){
                             fs.unlinkSync(imagemSaida)
-                            await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.erro_conversao, id)
+                            await socket.responderTexto(c, chatId, msgs_texto.figurinhas.sticker.erro_conversao, id)
                         } else{
-                            await socket.replyFile(c, MessageTypes.image, chatId, imagemSaida, '', id)
+                            await socket.responderArquivoLocal(c, MessageTypes.image, chatId, imagemSaida, '', id)
                             fs.unlinkSync(imagemSaida)
                         }
                     } else {
-                        await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                        await socket.responderTexto(c, chatId, await erroComandoMsg(command), id)
                     }
                 } catch(err){
                     throw err
@@ -81,14 +81,14 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                 
             case 'emojimix':
                 try{
-                    if(args.length === 1) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    if(args.length === 1) return await socket.responderTexto(c, chatId, await erroComandoMsg(command), id)
                     let usuarioTexto = textoRecebido.slice(10).trim(), emojis = usuarioTexto.split("+")
-                    if(emojis.length == 0 || !emojis[0] || !emojis[1]) return await socket.reply(c, chatId, await erroComandoMsg(command), id)
+                    if(emojis.length == 0 || !emojis[0] || !emojis[1]) return await socket.responderTexto(c, chatId, await erroComandoMsg(command), id)
                     await misturarEmojis(emojis[0], emojis[1]).then(async ({resultado})=>{
-                        await socket.sendSticker(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
+                        await socket.enviarFigurinha(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
                     }).catch( async err =>{
                         if(!err.erro) throw err
-                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
                     throw err
@@ -104,14 +104,14 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
                         message: (quotedMsg) ? quotedMsgObj  : id,
                         seconds: (quotedMsg) ? quotedMsgObjInfo.seconds : seconds
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_imagem , id)
-                    await socket.reply(c, chatId, msgs_texto.figurinhas.sticker.ssf_espera , id)
+                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, chatId, msgs_texto.figurinhas.sticker.ssf_imagem , id)
+                    await socket.responderTexto(c, chatId, msgs_texto.figurinhas.sticker.ssf_espera , id)
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     await removerFundo(bufferMidia).then(async ({resultado})=>{
-                        await socket.sendSticker(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
+                        await socket.enviarFigurinha(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
-                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
                     throw err
@@ -120,13 +120,13 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
 
             case 'tps':
                 try{
-                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, await erroComandoMsg(command) , id)
                     let usuarioTexto = textoRecebido.slice(5).trim()
                     await textoParaImagem(usuarioTexto).then(async ({resultado})=>{
-                        await socket.sendSticker(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
+                        await socket.enviarFigurinha(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
                     }).catch(async err=>{
                         if(!err.erro) throw err
-                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch(err){
                     throw err
@@ -135,13 +135,13 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
 
             case 'atps':
                 try{
-                    if(args.length == 1) return await socket.reply(c, chatId, await erroComandoMsg(command) , id)
+                    if(args.length == 1) return await socket.responderTexto(c, chatId, await erroComandoMsg(command) , id)
                     let usuarioTexto = textoRecebido.slice(5).trim()
                     await textoParaImagem(usuarioTexto, true).then(async ({resultado})=>{
-                        await socket.sendSticker(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
+                        await socket.enviarFigurinha(c,chatId, await toSticker(resultado, {pack: nome_pack?.trim(), author: nome_bot?.trim()}))
                     }).catch(async err=>{
                         if(!err.erro) throw err
-                        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
                     })
                 } catch (err){
                     throw err
@@ -152,7 +152,7 @@ export const figurinhas = async(c, mensagemInfoCompleta) => {
     } catch(err){
         err.message = `${command} - ${err.message}`
         consoleErro(err, "FIGURINHAS")
-        await socket.reply(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id) 
+        await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_comando_codigo, command), id) 
     }
 }
 
@@ -164,7 +164,7 @@ export const autoSticker = async(c, mensagemInfoCompleta)=>{
         if(type == MessageTypes.image || type == MessageTypes.video){
             if(type == MessageTypes.video && seconds > 9) return
             let bufferMidia = await downloadMediaMessage(id, "buffer")
-            await socket.sendSticker(c,chatId, await toSticker(bufferMidia, {pack: nome_pack?.trim(), author: nome_bot?.trim(), fps: 9}))
+            await socket.enviarFigurinha(c,chatId, await toSticker(bufferMidia, {pack: nome_pack?.trim(), author: nome_bot?.trim(), fps: 9}))
         }
     } catch(err){
         throw err

@@ -3,7 +3,7 @@ import { Boom } from '@hapi/boom'
 import {criarTexto, consoleErro, corTexto, verificarEnv, criarArquivosNecessarios, verificarNumeroDono, versaoAtual} from'../lib/util.js'
 import { obterMensagensTexto } from '../lib/msgs.js' 
 import fs from "fs-extra"
-import * as socket from './socket-funcoes.js'
+import * as socket from './socket.js'
 import {converterMensagem, tiposPermitidosMensagens}  from './mensagem.js'
 import {checagemMensagem} from '../lib/checagemMensagem.js'
 import {chamadaComando} from '../lib/chamadaComando.js'
@@ -42,7 +42,7 @@ export const conexaoAberta = async(c)=>{
         console.log(criarTexto(msgs_texto.inicio.inicializando, versaoAtual()))
         await criarArquivosNecessarios()
         dotenv.config()
-        await socket.getAllGroups(c)
+        await socket.obterTodosGrupos(c)
         await new BotControle().inicializarBot(c)
         await verificarEnv()
         await verificarNumeroDono()
@@ -79,7 +79,7 @@ export const adicionadoEmGrupo = async (c, dadosGrupo)=>{
     try{
         const msgs_texto = await obterMensagensTexto()
         await new GrupoControle().registrarGrupoAoSerAdicionado(dadosGrupo[0])
-        await socket.sendText(c, dadosGrupo[0].id, criarTexto(msgs_texto.geral.entrada_grupo, dadosGrupo[0].subject)).catch(()=>{})
+        await socket.enviarTexto(c, dadosGrupo[0].id, criarTexto(msgs_texto.geral.entrada_grupo, dadosGrupo[0].subject)).catch(()=>{})
     } catch(err){
         consoleErro(err, "GROUPS.UPSERT")
     }
