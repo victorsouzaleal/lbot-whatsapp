@@ -23,10 +23,16 @@
 
 <br>
 
-## Última Atualização : 14/05/2024 - v2.6.2
-**[NOVO]** TERMUX agora é suportado pelo bot.<br>
-**[CÓDIGO]** Alterações na estrutura do projeto<br>
-**[ALTERADO]** Agora o bot não precisa mais ser reiniciado após a leitura do QR Code<br>
+## Última Atualização : 16/05/2024 - v2.6.3
+**[NOVO]** Comando de figurinha **snome** para renomear o pack/autor da figurinha.<br>
+**[NOVO]** Comando de admin **linkgrupo** para obter o link de um grupo especifico que o bot está.<br>
+**[ALTERAÇÃO]** Comando de admin **grupos** foi alterado para evitar erros se o bot estiver em muitos grupos.<br>
+**[ALTERAÇÃO]** Comando de admin **sair** foi melhorado e agora você pode escolher um grupo especifico para sair.<br>
+**[CORREÇÃO]** Correção no comando **alterartipo** para alterar tipo de usuario<br>
+**[CORREÇÃO]** Correção no comando **usuarios** para listar os usuários<br>
+**[CORREÇÃO]** Correção no comando **ig** para baixar videos do Instagram<br>
+**[CORREÇÃO]** Correção no comando **tk** para baixar videos do Tiktok<br>
+**[CODIGO]** Refatoração e correção geral no código<br>
 <br>
 
 
