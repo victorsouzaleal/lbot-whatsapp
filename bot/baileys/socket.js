@@ -1,5 +1,6 @@
 import {MessageTypes} from './mensagem.js'
-import {delayAleatorio, getVideoThumbnail} from '../lib/util.js'
+import {delayAleatorio} from '../lib/util.js'
+import api from '../../api/api.js'
 
 // Gerais
 export const deletarMensagem = async(c, message, isQuoted = false)=>{
@@ -103,7 +104,7 @@ export const responderArquivoLocal = async(c, type, chatId, filePath, caption, q
     if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: {url: filePath}, caption}, {quoted: quotedMessage})
     } else if (type == MessageTypes.video){
-        let base64Thumb = await getVideoThumbnail(filePath)
+        let base64Thumb = (await api.Videos.obterThumbnailVideo(filePath)).resultado
         return await c.sendMessage(chatId,{video: {url: filePath}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
     } else if (type == MessageTypes.audio){
         return await c.sendMessage(chatId, {audio: {url: filePath}, mimetype}, {quoted: quotedMessage})
@@ -114,7 +115,7 @@ export const responderArquivoUrl = async(c, type, chatId, url, caption, quotedMe
     if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: {url}, caption}, {quoted: quotedMessage})
     } else if (type == MessageTypes.video){
-        let base64Thumb = await getVideoThumbnail(url, "url")
+        let base64Thumb = (await api.Videos.obterThumbnailVideo(url, "url")).resultado
         return await c.sendMessage(chatId,{video: {url}, mimetype, caption, jpegThumbnail : base64Thumb}, {quoted: quotedMessage})
     } else if (type == MessageTypes.audio){
         return await c.sendMessage(chatId, {audio: {url}, mimetype}, {quoted: quotedMessage})
@@ -123,7 +124,7 @@ export const responderArquivoUrl = async(c, type, chatId, url, caption, quotedMe
 
 export const responderArquivoBuffer = async(c, type, chatId, buffer, caption, quotedMessage, mimetype = '')=>{ 
     if(type == MessageTypes.video){
-        let base64Thumb = await getVideoThumbnail(buffer, "buffer")
+        let base64Thumb = (await api.Videos.obterThumbnailVideo(buffer, "buffer")).resultado
         return await c.sendMessage(chatId,{video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted: quotedMessage})
     } else if(type == MessageTypes.image){
         return await c.sendMessage(chatId,{image: buffer, caption}, {quoted: quotedMessage})

@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
-import {simiResponde, obterCartasContraHu} from '../../api/api.js'
+import api from '../../api/api.js'
 import * as socket from '../baileys/socket.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
@@ -33,7 +33,7 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let perguntaSimi = textoRecebido.slice(6).trim()
-                    await simiResponde(perguntaSimi).then(async ({resultado})=>{
+                    await api.IA.simiResponde(perguntaSimi).then(async ({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultado), id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -274,7 +274,7 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
 
             case "fch":
                 try{
-                    await obterCartasContraHu().then(async({resultado})=>{
+                    await api.Gerais.obterCartasContraHu().then(async({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.diversao.fch.resposta, resultado), id)
                     }).catch(async err=>{
                         if(!err.erro) throw err

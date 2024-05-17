@@ -1,6 +1,6 @@
 //REQUERINDO MÓDULOS
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
-import * as api from '../../api/api.js'
+import api from '../../api/api.js'
 import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import {downloadMediaMessage } from '@whiskeysockets/baileys'
@@ -18,7 +18,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
             case 'upimg':
                 if (quotedMsgObjInfo?.type != MessageTypes.image && type != MessageTypes.image) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                 let bufferImagem = await downloadMediaMessage(quotedMsg ? quotedMsgObj : id, 'buffer')
-                await api.imagemUpload(bufferImagem).then(async ({resultado})=>{
+                await api.Imagens.imagemUpload(bufferImagem).then(async ({resultado})=>{
                     await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.upimg.resposta, resultado), id)
                 }).catch(async(err)=>{
                     if(!err.erro) throw err
@@ -29,7 +29,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
             case 'encurtar':
                 if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                 let usuarioTexto = textoRecebido.slice(10).trim()
-                await api.encurtarLink(usuarioTexto).then(async({resultado})=>{
+                await api.Gerais.encurtarLink(usuarioTexto).then(async({resultado})=>{
                     await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.encurtar.resposta, resultado), id)
                 }).catch(async(err)=>{
                     if(!err.erro) throw err
@@ -39,7 +39,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
 
             case "filmes":
                 try{
-                    await api.top20TendenciasDia("filmes").then(async({resultado})=>{
+                    await api.Gerais.top20TendenciasDia("filmes").then(async({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.filmes.resposta, resultado), id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -52,7 +52,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
 
             case "series":
                 try{
-                    await api.top20TendenciasDia("series").then(async({resultado})=>{
+                    await api.Gerais.top20TendenciasDia("series").then(async({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.series.resposta, resultado), id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -67,7 +67,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioTexto = textoRecebido.slice(5).trim()
-                    await api.respostaHercaiTexto(usuarioTexto, sender).then(async ({resultado})=>{
+                    await api.IA.respostaHercaiTexto(usuarioTexto, sender).then(async ({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.gpt.resposta, resultado), id)
                     }).catch(async (err)=>{
                         if(!err.erro) throw err
@@ -83,7 +83,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioTexto = textoRecebido.slice(10).trim()
                     await socket.responderTexto(c, chatId, msgs_texto.utilidades.criarimg.espera, id)
-                    await api.respostaHercaiImagem(usuarioTexto).then(async ({resultado})=>{
+                    await api.IA.respostaHercaiImagem(usuarioTexto).then(async ({resultado})=>{
                         await socket.responderArquivoUrl(c, MessageTypes.image, chatId, resultado, '', id)     
                     }).catch(async (err)=>{
                         if(!err.erro) throw err
@@ -105,7 +105,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, chatId, msgs_texto.utilidades.rbg.invalido , id)
                     await socket.responderTexto(c, chatId, msgs_texto.utilidades.rbg.espera, id)
                     let bufferImagem = await downloadMediaMessage(dadosMensagem.message, "buffer")
-                    await api.removerFundo(bufferImagem).then(async({resultado})=>{
+                    await api.Imagens.removerFundo(bufferImagem).then(async({resultado})=>{
                         await socket.responderArquivoBuffer(c, MessageTypes.image, chatId, resultado, '', id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -118,7 +118,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
             
             case "tabela":
                 try{
-                    await api.obterTabelaNick().then(async({resultado})=>{
+                    await api.Gerais.obterTabelaNick().then(async({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.tabela.resposta, resultado), id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -133,7 +133,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioTexto = textoRecebido.slice(7).trim()
-                    await api.obterLetraMusica(usuarioTexto).then(async({resultado})=>{
+                    await api.Gerais.obterLetraMusica(usuarioTexto).then(async({resultado})=>{
                         await socket.responderArquivoLocal(c, MessageTypes.image, chatId, resultado.imagem, criarTexto(msgs_texto.utilidades.letra.resposta, resultado.titulo, resultado.artista, resultado.letra), id)
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -149,7 +149,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!quotedMsg || quotedMsgObjInfo?.type != MessageTypes.audio) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     if(quotedMsgObjInfo.seconds > 90) return await socket.responderTexto(c, chatId, msgs_texto.utilidades.ouvir.erro_limite, id)
                     let bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer")
-                    await api.obterTranscricaoAudio(bufferAudio).then(async({resultado})=>{
+                    await api.Audios.obterTranscricaoAudio(bufferAudio).then(async({resultado})=>{
                         let textoTranscricao = resultado.results.channels[0].alternatives[0].transcript
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.ouvir.sucesso, textoTranscricao), quotedMsgObj)
                     }).catch(async(err)=>{
@@ -173,7 +173,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                         DDD = args[1]
                     } else return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
 
-                    await api.obterInfoDDD(DDD).then(async({resultado})=>{
+                    await api.Gerais.obterInfoDDD(DDD).then(async({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.ddd.resposta, resultado.estado, resultado.regiao), id)
                     }).catch(async err=>{
                         if(!err.erro) throw err
@@ -191,7 +191,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!efeitosSuportados.includes(tipoEfeito)) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     if(!quotedMsg || quotedMsgObjInfo.type != MessageTypes.audio) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let bufferAudio = await downloadMediaMessage(quotedMsgObj, "buffer")
-                    await api.obterAudioModificado(bufferAudio, tipoEfeito).then(async ({resultado : bufferAudioEditado})=>{
+                    await api.Audios.obterAudioModificado(bufferAudio, tipoEfeito).then(async ({resultado : bufferAudioEditado})=>{
                         await socket.responderArquivoBuffer(c, MessageTypes.audio, chatId, bufferAudioEditado, '', id, "audio/mpeg")
                     }).catch(async (err)=>{
                         if(!err.erro) throw err
@@ -209,7 +209,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     let dadosMensagem = quotedMsg ? quotedMsgObj : id             
                     let bufferMensagemMidia = await downloadMediaMessage(dadosMensagem, "buffer")
                     await socket.responderTexto(c, chatId, msgs_texto.utilidades.qualmusica.espera, id)
-                    await api.obterReconhecimentoMusica(bufferMensagemMidia, tipoMensagem).then(async({resultado})=>{
+                    await api.Audios.obterReconhecimentoMusica(bufferMensagemMidia, tipoMensagem).then(async({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.qualmusica.resposta, resultado.titulo, resultado.produtora, resultado.duracao, resultado.lancamento, resultado.album, resultado.artistas), id)
                     }).catch(async (err)=>{
                         if(!err.erro) throw err
@@ -224,7 +224,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo),id)
                     let usuarioTexto = textoRecebido.slice(7).trim()
-                    await api.obterClima(usuarioTexto).then(async({resultado})=>{
+                    await api.Gerais.obterClima(usuarioTexto).then(async({resultado})=>{
                         let respostaClimaTexto = criarTexto(msgs_texto.utilidades.clima.resposta, resultado.texto), respostaClimaFoto = resultado.foto_clima
                         await socket.responderTexto(c, chatId, respostaClimaTexto, id)
                     }).catch(async(err)=>{
@@ -240,7 +240,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(args.length !== 3) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioMoedaInserida = args[1], usuarioValorInserido = args[2]
-                    await api.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido).then(async({resultado})=>{
+                    await api.Gerais.obterConversaoMoeda(usuarioMoedaInserida, usuarioValorInserido).then(async({resultado})=>{
                         let itens = ''
                         for(let dado of  resultado.conversao) itens += criarTexto(msgs_texto.utilidades.moeda.resposta_item, dado.conversao, dado.valor_convertido_formatado, dado.tipo, dado.atualizacao)
                         let respostaFinal = criarTexto(msgs_texto.utilidades.moeda.resposta_completa, resultado.valor_inserido, resultado.moeda_inserida, itens)
@@ -258,7 +258,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if (args.length === 1) return socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
                     let usuarioTexto = textoRecebido.slice(10).trim() 
-                    await api.obterPesquisaWeb(usuarioTexto).then(async({resultados})=>{
+                    await api.Gerais.obterPesquisaWeb(usuarioTexto).then(async({resultados})=>{
                         let pesquisaResposta = criarTexto(msgs_texto.utilidades.pesquisa.resposta_titulo, usuarioTexto)
                         for(let resultado of resultados){
                             pesquisaResposta += "═════════════════\n"
@@ -279,7 +279,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if (args.length === 1) return socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
                     let usuarioCodigoRastreio = textoRecebido.slice(10).trim()
                     if(usuarioCodigoRastreio.length != 13) return await socket.responderTexto(c, chatId, msgs_texto.utilidades.rastreio.codigo_invalido, id)
-                    await api.obterRastreioCorreios(usuarioCodigoRastreio).then(async({resultado})=>{   
+                    await api.Gerais.obterRastreioCorreios(usuarioCodigoRastreio).then(async({resultado})=>{   
                         let rastreioResposta = msgs_texto.utilidades.rastreio.resposta_titulo
                         for(let dado of resultado){
                             let local = (dado.local != undefined) ?  `Local : ${dado.local}` : `Origem : ${dado.origem}\nDestino : ${dado.destino}`
@@ -306,7 +306,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, chatId,erroComandoMsg(command, botInfo), id)
                     await socket.responderTexto(c, chatId,msgs_texto.utilidades.anime.espera, id)
                     let bufferImagem = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
-                    await api.obterAnimeInfo(bufferImagem).then(async ({resultado})=>{
+                    await api.Imagens.obterAnimeInfo(bufferImagem).then(async ({resultado})=>{
                         if(resultado.similaridade < 87){
                             await socket.responderTexto(c, chatId,msgs_texto.utilidades.anime.similaridade,id)
                         } else {
@@ -339,7 +339,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     }
                     let idiomasSuportados = ["pt", "es", "en", "ja", "it", "ru", "ko"]
                     if(!idiomasSuportados.includes(idiomaTraducao)) return await socket.responderTexto(c, chatId, msgs_texto.utilidades.traduz.nao_suportado, id)
-                    await api.obterTraducao(usuarioTexto, idiomaTraducao).then(async ({resultado})=>{
+                    await api.Gerais.obterTraducao(usuarioTexto, idiomaTraducao).then(async ({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.traduz.resposta, usuarioTexto, resultado), id)
                     }).catch(async (err)=>{
                         if(!err.erro) throw err
@@ -366,7 +366,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if (usuarioTexto.length > 200) return await socket.responderTexto(c, chatId, msgs_texto.utilidades.voz.texto_longo, id)
                     let idioma = textoRecebido.slice(5, 7).toLowerCase(), idiomasSuportados = ["pt", 'en', 'ja', 'es', 'it', 'ru', 'ko', 'sv']
                     if(!idiomasSuportados.includes(idioma)) return await socket.responderTexto(c, chatId, msgs_texto.utilidades.voz.nao_suportado, id)
-                    await api.textoParaVoz(idioma, usuarioTexto).then(async({resultado})=>{
+                    await api.Audios.textoParaVoz(idioma, usuarioTexto).then(async({resultado})=>{
                         await socket.responderArquivoBuffer(c, MessageTypes.audio, chatId, resultado, '', id, 'audio/mpeg')
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
@@ -379,7 +379,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
 
             case 'noticias':
                 try{
-                    await api.obterNoticias().then(async({resultado})=>{
+                    await api.Gerais.obterNoticias().then(async({resultado})=>{
                         let respostaNoticias = msgs_texto.utilidades.noticia.resposta_titulo
                         for(let noticia of resultado){
                             respostaNoticias += criarTexto(msgs_texto.utilidades.noticia.resposta_itens, noticia.titulo, noticia.autor, noticia.publicadoHa, noticia.url)
@@ -398,7 +398,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) ,id)
                     let usuarioExpressaoMatematica = textoRecebido.slice(6).trim()
-                    await api.obterCalculo(usuarioExpressaoMatematica).then(async ({resultado})=>{
+                    await api.Gerais.obterCalculo(usuarioExpressaoMatematica).then(async ({resultado})=>{
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.calc.resposta, resultado), id)
                     }).catch(async (err)=>{
                         if(!err.erro) throw err

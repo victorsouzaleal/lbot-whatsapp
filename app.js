@@ -4,7 +4,10 @@ import {conexaoAberta, conexaoEncerrada, receberMensagem, adicionadoEmGrupo, atu
 import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
 moment.tz.setDefault('America/Sao_Paulo')
-
+import ffmpeg from 'fluent-ffmpeg'
+import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
+    ffmpeg.setFfmpegPath(ffmpegInstaller.path)
+}).catch(()=>{})
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []
@@ -54,7 +57,9 @@ async function connectToWhatsApp(){
     })
 
     // Credenciais
-    c.ev.on ('creds.update', saveCreds)
+    c.ev.on ('creds.update', async ()=>{
+        await saveCreds()
+    })
 }
 
 

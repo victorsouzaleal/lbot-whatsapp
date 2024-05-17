@@ -3,13 +3,8 @@ import {obterMensagensTexto} from './msgs.js'
 import {obterGuias} from './guias.js'
 import chalk from 'chalk'
 import {BotControle} from '../controles/BotControle.js'
-import ffmpeg from 'fluent-ffmpeg'
 import path from 'node:path'
 import fs from 'fs-extra'
-import axios from 'axios'
-import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
-  ffmpeg.setFfmpegPath(ffmpegInstaller.path)
-}).catch(()=>{})
 
 
 export const erroComandoMsg = (comando, botInfo) =>{
@@ -84,85 +79,6 @@ export const delayAleatorio = (minDelayMs, maxDelayMs)=>{
 
 export const consoleErro = (msg, tipo_erro = "API")=>{
   console.error(corTexto(`[${tipo_erro}]`,"#d63e3e"), msg)
-}
-
-export const converterMp4ParaMp3 = (bufferVideo) => {
-  return new Promise((resolve,reject)=>{
-      let caminhoVideo = path.resolve(`temp/${obterNomeAleatorio(".mp4")}`)
-      fs.writeFileSync(caminhoVideo, bufferVideo)
-      let saidaAudio = path.resolve(`temp/${obterNomeAleatorio(".mp3")}`)
-      ffmpeg(caminhoVideo)
-      .outputOptions(['-vn', '-codec:a libmp3lame', '-q:a 3'])
-      .save(saidaAudio)
-      .on('end', () => {
-          let bufferAudio = fs.readFileSync(saidaAudio)
-          fs.unlinkSync(caminhoVideo)
-          fs.unlinkSync(saidaAudio)
-          resolve(bufferAudio)
-      })
-      .on("error", (err)=>{
-          fs.unlinkSync(caminhoVideo)
-          reject(err.message)
-      })
-  })
-}
-
-export const getVideoThumbnail = async(arquivo, tipoArquivo="file") =>{
-  return new Promise(async (resolve,reject)=>{
-      let saidaThumbImagem = path.resolve(`temp/${obterNomeAleatorio(".jpg")}`), inputCaminho = null
-      if(tipoArquivo == "file"){
-          inputCaminho = arquivo
-      } else if(tipoArquivo == "buffer"){
-          inputCaminho = path.resolve(`temp/${obterNomeAleatorio(".mp4")}`)
-          fs.writeFileSync(inputCaminho, arquivo)
-      } else if(tipoArquivo == "url"){
-          let urlResponse = await axios.get(arquivo,  { responseType: 'arraybuffer' })
-          let bufferUrl = Buffer.from(urlResponse.data, "utf-8")
-          inputCaminho = path.resolve(`temp/${obterNomeAleatorio(".mp4")}`)
-          fs.writeFileSync(inputCaminho, bufferUrl)
-      }
-      ffmpeg(inputCaminho)
-      .addOption("-y")
-      .inputOptions(["-ss 00:00:00"])
-      .outputOptions(["-vf scale=32:-1", "-vframes 1", "-f image2"])
-      .save(saidaThumbImagem)
-      .on('end', ()=>{
-          let thumbBase64 = fs.readFileSync(saidaThumbImagem).toString('base64')
-          if(tipoArquivo != "file") fs.unlinkSync(inputCaminho)
-          fs.unlinkSync(saidaThumbImagem)
-          resolve(thumbBase64)
-      })
-      .on('error', (err)=>{
-          reject(err.message)
-      })
-  })
-}
-
-export const stickerToPng = (stickerBuffer)=>{
-  return new Promise(async (resolve, reject)=>{
-      try{
-          let entradaWebp = path.resolve(`temp/${obterNomeAleatorio(".webp")}`)
-          let saidaPng = path.resolve(`temp/${obterNomeAleatorio(".png")}`)
-          fs.writeFileSync(entradaWebp, stickerBuffer)
-          ffmpeg(entradaWebp)
-          .on('end', ()=>{
-              fs.unlinkSync(entradaWebp)
-              resolve({
-                  success: true,
-                  saida: saidaPng
-              })
-          })
-          .on('error', ()=>{
-              resolve({
-                  success: false,
-                  saida: entradaWebp
-              })
-          })
-          .save(saidaPng)
-      } catch(err){
-          reject(err)
-      }
-  })
 }
 
 export const criacaoEnv = async ()=>{
