@@ -22,7 +22,11 @@ export const lerMensagem = async(c, chatId, participant, messageId) =>{
 }
 
 export const atualizarPresenca = async(c, chatId, type)=>{
-    return await c.sendPresenceUpdate(type, chatId)
+    await c.presenceSubscribe(chatId)
+    await delayAleatorio(200, 400)
+    await c.sendPresenceUpdate(type, chatId)
+    await delayAleatorio(300, 1000)
+    await c.sendPresenceUpdate('paused', chatId)
 }
 
 export const alterarFotoPerfil = async(c, id, buffer)=>{
@@ -63,7 +67,6 @@ export const obterContatosBloqueados = async(c)=>{
 // Envio de mensagens
 export const enviarTexto = async(c, chatId, text)=>{
     await atualizarPresenca(c, chatId, "composing")
-    await delayAleatorio(400, 1000)
     await c.sendMessage(chatId, {text, linkPreview: null})
 }
 
@@ -73,13 +76,11 @@ export const enviarEnquete = async(c, chatId, pollName, pollValues)=>{
 
 export const enviarLinkComPrevia = async(c, chatId, textWithLink) =>{
     await atualizarPresenca(c, chatId, "composing")
-    await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text: textWithLink})
 }
 
 export const enviarTextoComMencoes = async(c, chatId, text, mentionedIdsArray)=>{ 
     await atualizarPresenca(c, chatId, "composing")
-    await delayAleatorio(400, 1000) 
     return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray})
 }
 
@@ -95,7 +96,6 @@ export const enviarArquivoUrl = async(c, type, chatId, url, caption) =>{
 
 export const responderTexto = async(c, chatId, text, quotedMessage)=>{ 
     await atualizarPresenca(c, chatId, "composing")
-    await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text, linkPreview: null}, {quoted: quotedMessage})
 }
 
@@ -134,7 +134,6 @@ export const responderArquivoBuffer = async(c, type, chatId, buffer, caption, qu
 
 export const responderComMencoes = async(c, chatId, text, mentionedIdsArray, quotedMessage)=>{ 
     await atualizarPresenca(c, chatId, "composing")
-    await delayAleatorio(400, 1000)
     return await c.sendMessage(chatId, {text , mentions: mentionedIdsArray}, {quoted: quotedMessage})
 }
 
