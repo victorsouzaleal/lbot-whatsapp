@@ -30,6 +30,29 @@ export const imagemUpload = async (bufferImagem) =>{
     })
 }
 
+export const encurtarLink = async(link)=>{
+    return new Promise(async (resolve, reject)=>{
+        try{
+            let resposta = {sucesso: false}
+            await axios.post("https://shorter.me/page/shorten", qs.stringify({url : link, alias: '', password: ''})).then(({data})=>{
+                if(!data.data){
+                    resposta = {sucesso: false, erro: `O link que você inseriu é inválido.`}
+                    reject(resposta)
+                } else {
+                    resposta = {sucesso: true, resultado: data.data}
+                    resolve(resposta)
+                }
+            }).catch(err =>{
+                resposta = {sucesso: false, erro: `Houve um erro no servidor do encurtador de link.`}
+                reject(resposta)
+            })
+        } catch(err){
+            console.log(`API encurtarLink - ${err.message}`)
+            reject({sucesso: false, erro: `Houve um erro no servidor do encurtador de link`})
+        }
+    })
+}
+
 export const top20TendenciasDia = async(tipoDeDados)=>{
     return new Promise(async(resolve,reject)=>{
         try{
