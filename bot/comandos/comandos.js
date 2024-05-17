@@ -1,6 +1,7 @@
 export const listarComandos = (prefixo) => {
     return {
         utilidades :[
+            `${prefixo}encurtar`,
             `${prefixo}filmes`,
             `${prefixo}series`,
             `${prefixo}gpt`,

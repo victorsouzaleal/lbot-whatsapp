@@ -89,6 +89,7 @@ export const menuUtilidades = (botInfo)=>{
 |- *${prefixo}gpt* frase - Recebe uma resposta da IA CHATGPT.
 |- *${prefixo}filmes* - Exibe as tendências atuais de filmes.
 |- *${prefixo}series* - Exibe as tendências atuais de séries.
+|- *${prefixo}encurtar* link - Encurta o link digitado.
 |- *${prefixo}letra* musica - Envia a letra da música digitada.
 |- *${prefixo}traduz* idioma texto - Traduz um texto para o idioma escolhido.
 |- *${prefixo}pesquisa* texto - Faz uma rápida pesquisa na internet.

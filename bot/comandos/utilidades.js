@@ -15,6 +15,17 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
 
     try{
         switch(cmdSemPrefixo){  
+            case 'encurtar':
+                if(args.length === 1) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo), id)
+                let usuarioTexto = textoRecebido.slice(10).trim()
+                await api.encurtarLink(usuarioTexto).then(async({resultado})=>{
+                    await socket.responderTexto(c, chatId, criarTexto(msgs_texto.utilidades.encurtar.resposta, resultado), id)
+                }).catch(async(err)=>{
+                    if(!err.erro) throw err
+                    await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
+                })
+                break    
+
             case "filmes":
                 try{
                     await api.top20TendenciasDia("filmes").then(async({resultado})=>{

@@ -49,6 +49,8 @@ export const obterGuias = (prefixo) => {
             `Ex: *${prefixo}img* tema - Envia uma imagem com o tema que você digitar.\n`
         },
         utilidade : {
+            encurtar: cabecalho+
+            `Ex: *${prefixo}encurtar* link - Encurta o link digitado.\n`,
             gpt: cabecalho+
             `Ex: *${prefixo}gpt* texto - Recebe uma resposta do CHAT GPT de acordo com o texto.\n`,
             criarimg: cabecalho+

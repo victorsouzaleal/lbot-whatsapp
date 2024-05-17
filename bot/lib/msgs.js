@@ -276,6 +276,10 @@ export const obterMensagensTexto = (botInfo)=>{
                 resposta: "☀️ CONSULTA DE CLIMA ☀️\n\n"+
                 "{p1}"
             },
+            encurtar:{
+                resposta : "✂️ ENCURTADOR DE LINKS ✂️\n\n"+
+                "*Link :* {p1}\n"
+            },
             filmes:{
                 resposta : "🎬 TÊNDENCIAS DE FILMES 🎬\n\n"+
                 "{p1}\n"
