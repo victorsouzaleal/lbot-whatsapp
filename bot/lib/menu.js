@@ -109,6 +109,7 @@ export const menuUtilidades = (botInfo)=>{
 |
 |--〖 🖼️ IMAGENS 〗
 |
+|- *${prefixo}upimg* - Faz upload de uma imagem e retorna o link.
 |- *${prefixo}criarimg* frase - Cria uma imagem de acordo com a frase usando IA.
 |- *${prefixo}rbg* - Retira o fundo de uma IMAGEM.
 |

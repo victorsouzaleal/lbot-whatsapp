@@ -280,6 +280,10 @@ export const obterMensagensTexto = (botInfo)=>{
                 resposta : "✂️ ENCURTADOR DE LINKS ✂️\n\n"+
                 "*Link :* {p1}\n"
             },
+            upimg:{
+                resposta : "🖼️ UPLOAD DE IMAGEM 🖼️\n\n"+
+                "*Link :* {p1}\n"
+            },
             filmes:{
                 resposta : "🎬 TÊNDENCIAS DE FILMES 🎬\n\n"+
                 "{p1}\n"
