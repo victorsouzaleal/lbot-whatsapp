@@ -23,15 +23,10 @@
 
 <br>
 
-## Última Atualização : 16/05/2024 - v2.6.3
-**[NOVO]** Comando de figurinha **snome** para renomear o pack/autor da figurinha.<br>
-**[NOVO]** Comando de admin **linkgrupo** para obter o link de um grupo especifico que o bot está.<br>
-**[ALTERAÇÃO]** Comando de admin **grupos** foi alterado para evitar erros se o bot estiver em muitos grupos.<br>
-**[ALTERAÇÃO]** Comando de admin **sair** foi melhorado e agora você pode escolher um grupo especifico para sair.<br>
-**[CORREÇÃO]** Correção no comando **alterartipo** para alterar tipo de usuario<br>
-**[CORREÇÃO]** Correção no comando **usuarios** para listar os usuários<br>
-**[CORREÇÃO]** Correção no comando **ig** para baixar videos do Instagram<br>
-**[CORREÇÃO]** Correção no comando **tk** para baixar videos do Tiktok<br>
+## Última Atualização : 17/05/2024 - v2.6.4
+**[NOVO]** Comando de utilidade **encurtar** para encurtar links.<br>
+**[NOVO]** Comando de utilidade **upimg** para fazer upload de imagem.<br>
+**[CORREÇÃO]** Correção no comando **tw** para baixar videos do Twitter<br>
 **[CODIGO]** Refatoração e correção geral no código<br>
 <br>
 
@@ -134,6 +129,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 |       ✅       | Texto para Sticker |
 |       ✅       | Sticker sem fundo |
 |       ✅       | Sticker para foto |
+|       ✅       | Renomear Stickers |
 |       ✅       | Auto Sticker |
 
 ### Downloads 
@@ -154,6 +150,8 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 |       ✅        |   Chat-GPT |
 |       ✅        |   Criação de imagens IA |
 |       ✅        |   Têndencias de Filmes/Séries |
+|       ✅        |   Encurtar Links |
+|       ✅        |   Upload de imagens |
 |       ✅        |   Efeitos de Aúdio |
 |       ✅        |   Texto para voz   |
 |       ✅        |   Áudio para texto |
@@ -168,7 +166,6 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 |       ✅        |   Rastreamento Correios |
 |       ✅        |   Noticias Atuais |
 |       ✅        |   Tradutor |
-
 
 <br>
 
