@@ -6,15 +6,39 @@ import Youtube from 'youtube-sr'; import ytdl from 'ytdl-core'
 import instagramGetUrl from 'instagram-url-direct'
 import getFbVideoInfo from 'fb-downloader-scrapper'
 import Tiktok from '@tobyg74/tiktok-api-dl'
-import getTwitterMedia from 'get-twitter-media'
+import {TwitterDL} from 'twitter-downloader';
 
 
 export const obterMidiaTwitter = async(url)=>{
     return new Promise(async (resolve, reject)=>{
         try{
             let resposta = {sucesso: false} 
-            await getTwitterMedia(url, {text: true}).then(res=>{
-                resposta = {sucesso: true, resultado: res}
+            await TwitterDL(url).then(res=>{
+                if(res.status != 'success') {
+                    resposta = {sucesso: false, resultado: `Houve um erro ao baixar essa mídia, provavelmente é um conteúdo sensivel.`}
+                    reject(resposta)
+                }
+
+                let resultado = {
+                    texto: res.result.description,
+                    midias:[]
+                }
+
+                res.result.media.forEach((midia)=>{
+                    if(midia.type == 'video'){
+                        resultado.midias.push({
+                            tipo : 'video',
+                            url : midia.videos.length > 1 ? midia.videos[1].url : midia.videos[0].url
+                        })
+                    } else if(midia.type == 'photo'){
+                        resultado.midias.push({
+                            tipo : 'imagem',
+                            url : midia.image
+                        })
+                    }
+                })
+                
+                resposta = {sucesso: true, resultado}
                 resolve(resposta)
             }).catch(()=>{
                 resposta = {sucesso: false, resultado: `Houve um erro no servidor de obter mídias do Twitter/X`}

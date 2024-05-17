@@ -121,9 +121,10 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     await socket.responderTexto(c, chatId, msgs_texto.downloads.tw.espera, id)
                     let usuarioTexto = textoRecebido.slice(4).trim()
                     await api.Downloads.obterMidiaTwitter(usuarioTexto).then(async ({resultado})=>{
-                        if(!resultado.found) return await socket.responderTexto(c, chatId, msgs_texto.downloads.tw.nao_encontrado, id)
-                        if(resultado.type == "image") await socket.responderArquivoUrl(c, MessageTypes.image, chatId, resultado.media[0].url, resultado.text, id)
-                        else if(resultado.type == "video") await socket.responderArquivoUrl(c, MessageTypes.video, chatId, resultado.media[0].url, resultado.text, id, "video/mp4")
+                        resultado.midias.forEach(async (midia)=>{
+                            if(midia.tipo == "imagem") await socket.responderArquivoUrl(c, MessageTypes.image, chatId, midia.url, resultado.texto, id)
+                            else if(midia.tipo == "video") await socket.responderArquivoUrl(c, MessageTypes.video, chatId, midia.url, resultado.texto, id, "video/mp4")
+                        })
                     }).catch(async(err)=>{
                         if(!err.erro) throw err
                         await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.erro_api, command, err.erro) , id)
