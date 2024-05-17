@@ -10,6 +10,7 @@
 |       ✅       | Texto para Sticker |
 |       ✅       | Sticker sem fundo |
 |       ✅       | Sticker para foto |
+|       ✅       | Renomear Stickers |
 |       ✅       | Auto Sticker |
 
 ### Downloads 
@@ -30,6 +31,8 @@
 |       ✅        |   Chat-GPT |
 |       ✅        |   Criação de imagens IA |
 |       ✅        |   Têndencias de Filmes/Séries |
+|       ✅        |   Encurtar Links |
+|       ✅        |   Upload de imagens |
 |       ✅        |   Efeitos de Aúdio |
 |       ✅        |   Texto para voz   |
 |       ✅        |   Áudio para texto |
