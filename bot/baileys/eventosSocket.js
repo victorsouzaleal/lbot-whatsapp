@@ -38,13 +38,11 @@ export const conexaoEncerrada = async(conexao, botInfo)=>{
 
 export const conexaoAberta = async(c, botInfo)=>{
     try{
-        const bot = new BotControle()
-        const msgs_texto = obterMensagensTexto(botInfo)
-        console.log(criarTexto(msgs_texto.inicio.inicializando, versaoAtual()))
+        console.log(criarTexto(obterMensagensTexto(botInfo).inicio.inicializando, versaoAtual()))
         await criarArquivosNecessarios()
         dotenv.config()
         await socket.obterTodosGrupos(c)
-        await bot.inicializarBot(c, botInfo)
+        await new BotControle().inicializarBot(c, botInfo)
         await verificarEnv()
         await verificarNumeroDono(botInfo)
     } catch(err){

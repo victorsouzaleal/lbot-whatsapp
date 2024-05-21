@@ -1,6 +1,6 @@
 //REQUERINDO MODULOS
 import {makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion} from '@whiskeysockets/baileys'
-import {conexaoAberta, conexaoEncerrada, receberMensagem, adicionadoEmGrupo, atualizacaoParticipantesGrupo, atualizacaoDadosGrupo, atualizacaoDadosGrupos, realizarEventosEspera} from './bot/baileys/acoesEventosSocket.js'
+import * as eventosSocket from './bot/baileys/eventosSocket.js'
 import {BotControle} from './bot/controles/BotControle.js'
 import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
@@ -9,6 +9,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
     ffmpeg.setFfmpegPath(ffmpegInstaller.path)
 }).catch(()=>{})
+
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []
@@ -27,9 +28,9 @@ async function connectToWhatsApp(){
             const { connection } = update
             let necessarioReconectar = false
             if(connection == 'open'){
-                await conexaoAberta(c, botInfo)
+                await eventosSocket.conexaoAberta(c, botInfo)
             } else if (connection == 'close'){
-                necessarioReconectar = await conexaoEncerrada(update, botInfo)
+                necessarioReconectar = await eventosSocket.conexaoEncerrada(update, botInfo)
             }
             if(necessarioReconectar) connectToWhatsApp()
         }
@@ -42,21 +43,21 @@ async function connectToWhatsApp(){
         // Ao receber novas mensagens
         if(events['messages.upsert']){
             const m = events['messages.upsert']
-            if(inicializacaoCompleta) await receberMensagem(c, m, botInfo)
+            if(inicializacaoCompleta) await eventosSocket.receberMensagem(c, m, botInfo)
             else eventosEsperando.push({evento: 'messages.upsert', dados: m})
         }
 
         //Ao haver mudanças nos participantes de um grupo
         if(events['group-participants.update']){
             const atualizacao = events['group-participants.update']
-            if(inicializacaoCompleta) await atualizacaoParticipantesGrupo(c, atualizacao, botInfo)
+            if(inicializacaoCompleta) await eventosSocket.atualizacaoParticipantesGrupo(c, atualizacao, botInfo)
             else eventosEsperando.push({evento: 'group-participants.update', dados: atualizacao})
         }
 
         //Ao ser adicionado em novos grupos
         if(events['groups.upsert']){
             const grupo = events['groups.upsert']
-            if(inicializacaoCompleta) await adicionadoEmGrupo(c, grupo, botInfo)
+            if(inicializacaoCompleta) await eventosSocket.adicionadoEmGrupo(c, grupo, botInfo)
             else eventosEsperando.push({evento: 'groups.upsert', dados: grupo})
         }
 
@@ -65,10 +66,10 @@ async function connectToWhatsApp(){
             const grupos = events['groups.update']
             if(!grupos.length) inicializacaoCompleta = true
             if(grupos.length != 0 && grupos[0].participants != undefined ){
-                inicializacaoCompleta = await atualizacaoDadosGrupos(c, grupos, botInfo)
-                await realizarEventosEspera(c, eventosEsperando)
+                inicializacaoCompleta = await eventosSocket.atualizacaoDadosGrupos(c, grupos, botInfo)
+                await eventosSocket.realizarEventosEspera(c, eventosEsperando)
             } else if (grupos.length == 1 && grupos[0].participants == undefined){
-                if(inicializacaoCompleta) await atualizacaoDadosGrupo(grupos[0])
+                if(inicializacaoCompleta) await eventosSocket.atualizacaoDadosGrupo(grupos[0])
                 else eventosEsperando.push({evento: 'groups.update', dados: grupos})
             }
         }
