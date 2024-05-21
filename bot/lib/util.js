@@ -92,6 +92,19 @@ export const criacaoEnv = async ()=>{
     await fs.writeFile(path.resolve('.env'), env , 'utf8')
 }
 
+export const verificarComandoExiste = (lista_comandos, comando) => {
+  const comandoExiste = (
+    lista_comandos.utilidades.includes(comando) ||
+    lista_comandos.grupo.includes(comando) || 
+    lista_comandos.diversao.includes(comando) ||
+    lista_comandos.admin.includes(comando) ||
+    lista_comandos.info.includes(comando) ||
+    lista_comandos.figurinhas.includes(comando) ||
+    lista_comandos.downloads.includes(comando)
+  )
+  return comandoExiste
+}
+
 export const verificarEnv = async ()=>{
     try{
       let resposta = {
@@ -121,6 +134,8 @@ export const verificarNumeroDono = async(botInfo)=>{
     let cor_resposta = (numero_dono == '') ? "#d63e3e" : false
     console.log("[DONO]", corTexto(resposta, cor_resposta))
 }
+
+
 
 export async function criarArquivosNecessarios(){
     try {

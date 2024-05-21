@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-import { criarTexto} from './util.js'
+import { criarTexto, verificarComandoExiste} from './util.js'
 import * as socket from '../baileys/socket.js'
 import {BotControle} from '../controles/BotControle.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
@@ -23,16 +23,8 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
         const blockedNumbers = await socket.obterContatosBloqueados(c)
         const isBlocked = blockedNumbers.includes(sender)
-        const comandoExiste = (
-            lista_comandos.utilidades.includes(command) ||
-            lista_comandos.grupo.includes(command) || 
-            lista_comandos.diversao.includes(command) ||
-            lista_comandos.admin.includes(command) ||
-            lista_comandos.info.includes(command) ||
-            lista_comandos.figurinhas.includes(command) ||
-            lista_comandos.downloads.includes(command)
-        )
-
+        const comandoExiste = verificarComandoExiste(lista_comandos, command)
+        
         //Se o numero do dono estiver vazio e o comando for !admin, cadastre quem fez o comando como dono.
         if(botInfo.numero_dono == '' && command == `${prefixo}admin`) {
             await bot.alterarNumeroDono(sender, botInfo)
