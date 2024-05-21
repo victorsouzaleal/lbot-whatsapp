@@ -2,13 +2,14 @@ import pino from 'pino'
 import { MensagemControle } from '../controles/MensagemControle.js'
 import {isJidBroadcast, makeCacheableSignalKeyStore} from '@whiskeysockets/baileys'
 
-export default function configSocket (state){
+export default function configSocket (state, version){
     return {
         printQRInTerminal: true,
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, pino({level : "silent"}))
         },
+        version,
         keepAliveIntervalMs: 30000,
         emitOwnEvents: true,
         logger: pino({level : "silent"}),
