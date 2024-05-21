@@ -26,6 +26,7 @@ export const obterMensagensTexto = (botInfo)=>{
             "Quem baniu : {p3}",
             fila_comando: "⏳ O bot está atendendo muitas pessoas ao mesmo tempo, tenha paciência!\n\n"+
             "Atualmente existem *{p1}* comandos na fila de espera.",
+            visualizacao_unica: "[❗] Por privacidade do grupo não foi possivel usar o seu comando em uma mensagem de visualização única. Este recurso só está disponível em mensagens privadas.",
             desconectado:{
                 comando: "A conexão com o WhatsApp foi encerrada pelo comando do Administrador.",
                 falha_grave: "A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.",

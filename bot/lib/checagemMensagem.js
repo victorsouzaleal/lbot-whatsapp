@@ -16,7 +16,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         const grupos = new GrupoControle()
         const msgs_texto = obterMensagensTexto(botInfo), lista_comandos = listarComandos(botInfo.prefixo)
         const {groupId, grupoInfo, isGroupAdmins, isBotGroupAdmins} = mensagemBaileys.grupo
-        const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId} = mensagemBaileys
+        const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId, viewOnce, quotedMsgObjInfo} = mensagemBaileys
         const {prefixo, nome_bot} = botInfo, ownerNumber = botInfo.numero_dono, botNumber = botInfo.hostNumber
         const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfo.autosticker)
         const autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
@@ -74,6 +74,11 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             await socket.lerMensagem(c, chatId, participant, messageId)
             //ATUALIZE NOME DO USUÁRIO 
             await usuarios.atualizarNome(sender, username)
+            //VERIFICAR SE ESTÁ USANDO O COMANDO NO GRUPO E EM UMA MENSAGEM COM VISUALIZACAO UNICA
+            if(isGroupMsg && (viewOnce || quotedMsgObjInfo?.viewOnce)){
+                await socket.responderTexto(c, chatId, msgs_texto.geral.visualizacao_unica, id)
+                return false
+            }
             //LIMITACAO DE COMANDO POR MINUTO
             if(botInfo.limitecomandos.status){
                 let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo, isGroupAdmins, botInfo)
