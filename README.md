@@ -23,11 +23,8 @@
 
 <br>
 
-## Última Atualização : 17/05/2024 - v2.6.4
-**[NOVO]** Comando de utilidade **encurtar** para encurtar links.<br>
-**[NOVO]** Comando de utilidade **upimg** para fazer upload de imagem.<br>
-**[CORREÇÃO]** Correção no comando **tw** para baixar videos do Twitter<br>
-**[CODIGO]** Refatoração e correção geral no código<br>
+## Última Atualização : 20/05/2024 - v2.6.5
+**[CORREÇÃO]** Corrigido o erro de conexão do WhatsApp<br>
 <br>
 
 
