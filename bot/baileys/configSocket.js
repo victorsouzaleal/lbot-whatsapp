@@ -14,7 +14,6 @@ export default function configSocket (state, version){
         emitOwnEvents: true,
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
-        syncFullHistory: false,
         getMessage: async (key) => {
             const mensagem = await new MensagemControle().recuperarMensagem(key.remoteJid, key.id)
             return mensagem || undefined
