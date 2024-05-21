@@ -7,6 +7,11 @@ export const converterMensagem = async(m, botInfo) =>{
     try {
         m = m.messages[0]
         let type = getContentType(m.message)
+        let viewOnce = type.includes('viewOnce')
+        if(viewOnce){
+            m.message = m.message[type].message
+            type = getContentType(m.message)
+        }
         let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
         let botNumber = botInfo.hostNumber
         let sender = (m.key.fromMe) ? botNumber : m.key.participant || m.key.remoteJid
@@ -33,6 +38,7 @@ export const converterMensagem = async(m, botInfo) =>{
             mimetype: m.message[type]?.mimetype,
             mediaUrl: m.message[type]?.url,
             fromMe : m.key.fromMe,
+            viewOnce,
             chatId: m.key.remoteJid,
             isMedia : type == MessageTypes.image || type == MessageTypes.video,
             seconds : m.message[type]?.seconds,
@@ -66,6 +72,11 @@ export const converterMensagem = async(m, botInfo) =>{
 
         if(quotedMsg) {
             let quotedType = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
+            let viewOnce = quotedType.includes('viewOnce')
+            if(viewOnce) {
+                m.message.extendedTextMessage.contextInfo.quotedMessage = m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType].message
+                quotedType = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
+            }
             respostaInformacoes.quotedMsgObj = generateWAMessageFromContent(m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid, m.message.extendedTextMessage.contextInfo.quotedMessage , { logger : pino() })
             respostaInformacoes.quotedMsgObjInfo = {
                 type : getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage),
@@ -75,7 +86,8 @@ export const converterMensagem = async(m, botInfo) =>{
                 url : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.url,
                 mimetype : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.mimetype,
                 fileLength: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.fileLength,
-                seconds: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.seconds
+                seconds: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.seconds,
+                viewOnce
             }
         }
         
