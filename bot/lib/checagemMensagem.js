@@ -18,8 +18,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         const {groupId, grupoInfo, isGroupAdmins, isBotGroupAdmins} = mensagemBaileys.grupo
         const {command, args, sender, isOwner, isGroupMsg, type, id, chatId, username, participant, messageId, viewOnce, quotedMsgObjInfo} = mensagemBaileys
         const {prefixo, nome_bot} = botInfo, ownerNumber = botInfo.numero_dono, botNumber = botInfo.hostNumber
-        const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfo.autosticker)
-        const autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
+        
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
         const blockedNumbers = await socket.obterContatosBloqueados(c)
         const isBlocked = blockedNumbers.includes(sender)
@@ -60,12 +59,13 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             await usuarios.recebeuBoasVindas(sender)
         }
 
+        //ENVIE QUE LEU A MENSAGEM
+        await socket.lerMensagem(c, chatId, participant, messageId)
+        //ATUALIZE NOME DO USUÁRIO 
+        await usuarios.atualizarNome(sender, username)
+
         //SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
-            //ENVIE QUE LEU A MENSAGEM
-            await socket.lerMensagem(c, chatId, participant, messageId)
-            //ATUALIZE NOME DO USUÁRIO 
-            await usuarios.atualizarNome(sender, username)
             //VERIFICAR SE ESTÁ USANDO O COMANDO NO GRUPO E EM UMA MENSAGEM COM VISUALIZACAO UNICA
             if(isGroupMsg && (viewOnce || quotedMsgObjInfo?.viewOnce)){
                 await socket.responderTexto(c, chatId, msgs_texto.geral.visualizacao_unica, id)
@@ -109,32 +109,8 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             }
             //ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
             await bot.atualizarComandosFeitos()
-        } else { //SE NÃO FOR UM COMANDO EXISTENTE
-            if(autoStickerPv || autoStickerGrupo){
-                //ENVIE QUE LEU A MENSAGEM
-                await socket.lerMensagem(c, chatId, participant, messageId)
-                //ATUALIZE NOME DO USUÁRIO 
-                await usuarios.atualizarNome(sender, username)
-                //LIMITACAO DE COMANDO POR MINUTO
-                if(botInfo.limitecomandos.status){
-                    let limiteComando = await bot.verificarLimiteComando(sender, dadosUsuario.tipo,isGroupAdmins, botInfo)
-                    if(limiteComando.comando_bloqueado) if(limiteComando.msg != undefined) return await socket.responderTexto(c,chatId, limiteComando.msg, id)
-                }
-                //SE O LIMITE DIARIO DE COMANDOS ESTIVER ATIVADO
-                if(botInfo.limite_diario.status){
-                    await bot.verificarExpiracaoLimite(botInfo)
-                    let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(sender)
-                    if(!ultrapassou) await usuarios.adicionarContagemDiariaComandos(sender) 
-                    else return await socket.responderTexto(c, chatId, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, username, ownerNumber.replace("@s.whatsapp.net", "")), id)
-                } else {
-                    await usuarios.adicionarContagemTotalComandos(sender)
-                }
-                //ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
-                await bot.atualizarComandosFeitos()
-            } else {
-                return false
-            } 
         }
+        
         return true
     } catch (err) {
         err.message = `checagemMensagem - ${err.message}`

@@ -20,8 +20,10 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
         const t = moment.now()
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
         const queueMensagemEspera = queueMensagem.size > 10
-        let autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfo.autosticker)
-        let autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
+
+        //Auto-Sticker
+        const autoStickerPv = (!isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && botInfo.autosticker)
+        const autoStickerGrupo = (isGroupMsg && (type == MessageTypes.image || type == MessageTypes.video) && grupoInfo.autosticker)
 
         if(queueMensagemEspera) await socket.responderTexto(c, chatId, criarTexto(msgs_texto.geral.fila_comando, queueMensagem.size), id)
         if(lista_comandos.utilidades.includes(command)){
