@@ -18,8 +18,8 @@ export const deletarMensagem = async(c, message, isQuoted = false)=>{
     return await c.sendMessage(message.key.remoteJid, {delete: deleteMessage})
 }
 
-export const lerMensagem = async(c, chatId, participant, messageId) =>{
-    return await c.sendReceipt(chatId, participant, [messageId], 'read')
+export const lerMensagem = async(c, chatId, sender, messageId) =>{
+    return await c.sendReceipt(chatId, sender, [messageId], 'read')
 }
 
 export const atualizarPresenca = async(c, chatId, type)=>{
@@ -69,6 +69,10 @@ export const obterContatosBloqueados = async(c)=>{
 export const enviarTexto = async(c, chatId, text)=>{
     await atualizarPresenca(c, chatId, "composing")
     await c.sendMessage(chatId, {text, linkPreview: null})
+}
+
+export const retransmitirMensagem = async(c, chatId, mensagem)=>{
+    await c.relayMessage(chatId, mensagem)
 }
 
 export const enviarEnquete = async(c, chatId, pollName, pollValues)=>{

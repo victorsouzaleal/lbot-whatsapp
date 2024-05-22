@@ -60,7 +60,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         }
 
         //ENVIE QUE LEU A MENSAGEM
-        await socket.lerMensagem(c, chatId, participant, messageId)
+        await socket.lerMensagem(c, chatId, sender, messageId)
         //ATUALIZE NOME DO USUÁRIO 
         await usuarios.atualizarNome(sender, username)
 
@@ -110,7 +110,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             //ADICIONA A CONTAGEM DE COMANDOS EXECUTADOS PELO BOT
             await bot.atualizarComandosFeitos()
         }
-        
+
         return true
     } catch (err) {
         err.message = `checagemMensagem - ${err.message}`
