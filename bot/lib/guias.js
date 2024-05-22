@@ -158,6 +158,10 @@ export const obterGuias = (prefixo) => {
             `Ex: *${prefixo}mutar* - Liga/desliga a execução de comandos dos membros.\n`,
             autosticker: cabecalho+
             `Ex: *${prefixo}autosticker* - Liga/desliga a criação automatica de stickers sem precisar de comandos.\n`,
+            autorevelar: cabecalho+
+            `Ex: *${prefixo}autorevelar* - Liga/desliga o envio automático a revelação de mensagens de visualização única para o PV.\n`,
+            revelar: cabecalho+
+            `Ex: Responder mensagem única com *${prefixo}revelar* - Revela e reenvia o conteúdo da mensagem única como uma mensagem normal.\n`,
             add: cabecalho+
             `Ex: *${prefixo}add* 5521xxxxxxxxx - Digite o numero com o código do país para adicionar a pessoa.\n\n`+
             `Ex: *${prefixo}add* 5521xxxxxxxxx, 5521xxxxxxxxx - Digite os numeros com o código do país (adiciona mais de uma pessoa no grupo).\n`,

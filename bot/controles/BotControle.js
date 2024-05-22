@@ -4,7 +4,8 @@ import {consoleErro, criarTexto, corTexto} from '../lib/util.js'
 import {Bot} from '../modelos/Bot.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
 import moment from "moment-timezone"
-import {obterNumeroHost} from '../baileys/socket.js'
+import * as socket from '../baileys/socket.js'
+import {obterTipoDeMensagem} from '../baileys/mensagem.js'
 
 
 export class BotControle{
@@ -20,7 +21,7 @@ export class BotControle{
         try{
             let bot = botInfo
             bot.iniciado = moment.now()
-            bot.hostNumber = await obterNumeroHost(c)
+            bot.hostNumber = await socket.obterNumeroHost(c)
             await this.bot.atualizarDados(bot)
             console.log("[BOT]", corTexto(obterMensagensTexto(bot).inicio.dados_bot))
         }catch(err){
@@ -39,6 +40,7 @@ export class BotControle{
             numero_dono:"",
             cmds_executados:0,
             autosticker: false,
+            autorevelar: false,
             bloqueio_cmds:[],
             limite_diario:{
                 status: false,
@@ -259,6 +261,25 @@ export class BotControle{
         return botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))
     }
 
+    async redirecionarMensagemRevelada(c, mensagemBaileys, botInfo){
+        try{
+            const msgs_texto = obterMensagensTexto(botInfo)
+            const {id : mensagemCompleta, username : nomeUsuario, sender, isGroupMsg, type} = mensagemBaileys
+            const {grupoInfo} = mensagemBaileys.grupo
+            const {numero_dono : numeroDono} = botInfo
+            const numeroUsuario = sender.replace("@s.whatsapp.net", '')
+            const nomeGrupo = isGroupMsg ? grupoInfo.nome : '----'
+            const tipoMensagem = obterTipoDeMensagem(type)
+            let mensagemVisivel = mensagemCompleta.message
+            mensagemVisivel[type].viewOnce = false
+            await socket.enviarTexto(c, numeroDono, criarTexto(msgs_texto.admin.autorevelar.restransmissao, nomeUsuario, numeroUsuario, nomeGrupo, tipoMensagem))
+            await socket.retransmitirMensagem(c, numeroDono, mensagemVisivel)
+        } catch(err){
+            err.message = `redirecionarMensagemRevelada - ${err.message}`
+            consoleErro(err, "AUTO-REVELAR")
+        }
+    }
+
     async obterNumeroBot(){
         let {hostNumber} = await this.obterInformacoesBot()
         return hostNumber
@@ -294,6 +315,12 @@ export class BotControle{
     async alterarAutoSticker(status, botInfo){
         let bot = botInfo
         bot.autosticker = status
+        await this.bot.atualizarDados(bot)
+    }
+
+    async alterarAutoRevelar(status, botInfo){
+        let bot = botInfo
+        bot.autorevelar = status
         await this.bot.atualizarDados(bot)
     }
 

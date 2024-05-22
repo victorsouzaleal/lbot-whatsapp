@@ -64,10 +64,15 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         //ATUALIZE NOME DO USUÁRIO 
         await usuarios.atualizarNome(sender, username)
 
+        //SE FOR VISUALIZACAO UNICA E O AUTO REVELAR ESTIVER ATIVO E TIVER UM NUMERO DE DONO JÁ CADASTRADO
+        if(viewOnce && botInfo.autorevelar && botInfo.numero_dono){
+            await bot.redirecionarMensagemRevelada(c, mensagemBaileys, botInfo)
+        }
+
         //SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
             //VERIFICAR SE ESTÁ USANDO O COMANDO NO GRUPO E EM UMA MENSAGEM COM VISUALIZACAO UNICA
-            if(isGroupMsg && (viewOnce || quotedMsgObjInfo?.viewOnce)){
+            if(!isOwner && isGroupMsg && (viewOnce || quotedMsgObjInfo?.viewOnce)){
                 await socket.responderTexto(c, chatId, msgs_texto.geral.visualizacao_unica, id)
                 return false
             }

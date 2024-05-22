@@ -680,6 +680,12 @@ export const obterMensagensTexto = (botInfo)=>{
                         off: "*Auto-Sticker privado* : ❌\n"+
                         "-------------------\n",
                     },
+                    autorevelar: {
+                        on: "*Auto-Revelar* : ✅\n"+
+                        "-------------------\n",
+                        off: "*Auto-Revelar* : ❌\n"+
+                        "-------------------\n",
+                    },
                     pvliberado: {
                         on: "*PV Liberado* : ✅\n"+
                         "-------------------\n",
@@ -775,6 +781,16 @@ export const obterMensagensTexto = (botInfo)=>{
             autostickerpv:{
                 desativado: "✅ O AUTO-STICKER em mensagens privadas foi desativado com sucesso",
                 ativado: "✅ O AUTO-STICKER em mensagens privadas foi ativado com sucesso",
+            },
+            autorevelar:{
+                ativado: '✅ O AUTO-REVELAR em mensagens de visualização única foi ativado com sucesso',
+                desativado: '✅ O AUTO-REVELAR em mensagens de visualização única foi desativado com sucesso',
+                restransmissao: '[🕵️ *Revelar mensagens* 🕵️]\n\n'+
+                '✉️ Nova mensagem detectada :\n'+
+                `Nome : *{p1}*\n`+
+                `Numero : *{p2}*\n`+
+                'Grupo : *{p3}*\n'+
+                'Tipo de mensagem : *{p4}*\n'
             },
             pvliberado:{
                 desativado: "✅ Os comandos em MENSAGENS PRIVADAS foram desativados com sucesso.",

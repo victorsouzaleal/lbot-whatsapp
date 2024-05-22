@@ -97,6 +97,16 @@ export const converterMensagem = async(m, botInfo) =>{
     }
 }
 
+export const obterTipoDeMensagem = (type) => {
+    if(type == MessageTypes.text || type == MessageTypes.extendedText) return 'Texto'
+    if(type == MessageTypes.image) return 'Imagem'
+    if(type == MessageTypes.document) return 'Documento/Arquivo'
+    if(type == MessageTypes.video) return 'Video/GIF'
+    if(type == MessageTypes.sticker) return 'Sticker'
+    if(type == MessageTypes.audio) return 'Audio'
+    return null
+}
+
 export const MessageTypes = {
     text : "conversation",
     extendedText : "extendedTextMessage",

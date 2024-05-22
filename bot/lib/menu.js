@@ -303,6 +303,10 @@ export const menuAdmin = (botInfo)=>{
 |- *${prefixo}limpartipo* [tipo] @usuario - Limpa todos os usuários desse tipo e transforma em usuarios comuns.
 |- *${prefixo}usuarios* [tipo]  - Mostra todos os usuários do tipo escolhido.
 |
+|--〖 REVELAR MENSAGENS 〗
+|- *${prefixo}autorevelar* - Ativa/desativa a revelação automatica de mensagens de visualização única.
+|- *${prefixo}revelar* - Revela o contéudo de uma mensagem de visualização única.
+|
 |--〖 CONTROLE/LIMITE 〗
 |
 |- *${prefixo}pvliberado* - Ativa/desativa os comandos em mensagens privadas.

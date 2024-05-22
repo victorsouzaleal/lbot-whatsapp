@@ -117,6 +117,8 @@ export const listarComandos = (prefixo) => {
             `${prefixo}nomeadm`,
             `${prefixo}prefixo`,
             `${prefixo}autostickerpv`,
+            `${prefixo}autorevelar`,
+            `${prefixo}revelar`,
             `${prefixo}listablock`,
             `${prefixo}bloquear`,
             `${prefixo}usuarios`,

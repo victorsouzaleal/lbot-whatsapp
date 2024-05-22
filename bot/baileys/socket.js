@@ -72,7 +72,7 @@ export const enviarTexto = async(c, chatId, text)=>{
 }
 
 export const retransmitirMensagem = async(c, chatId, mensagem)=>{
-    await c.relayMessage(chatId, mensagem)
+    await c.relayMessage(chatId, mensagem, {})
 }
 
 export const enviarEnquete = async(c, chatId, pollName, pollValues)=>{

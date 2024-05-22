@@ -44,6 +44,8 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     let resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, version)
                     // AUTO-STICKER
                     resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
+                    // AUTO-REVELAR
+                    resposta += (infoBot.autorevelar) ? msgs_texto.admin.infocompleta.resposta_variavel.autorevelar.on: msgs_texto.admin.infocompleta.resposta_variavel.autorevelar.off
                     // PV LIBERADO
                     resposta += (infoBot.pvliberado) ? msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.on: msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.off
                     // LIMITE COMANDOS DIARIO
@@ -214,6 +216,32 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                         await bot.alterarAutoSticker(false, botInfo)
                         await socket.responderTexto(c, chatId, msgs_texto.admin.autostickerpv.desativado,id)
                     } 
+                } catch(err){
+                    throw err
+                }
+                break
+
+            case "autorevelar":
+                try{
+                    let novoEstado = !botInfo.autorevelar
+                    if(novoEstado){
+                        await bot.alterarAutoRevelar(true, botInfo)
+                        await socket.responderTexto(c, chatId, msgs_texto.admin.autorevelar.ativado, id)
+                    } else {
+                        await bot.alterarAutoRevelar(false, botInfo)
+                        await socket.responderTexto(c, chatId, msgs_texto.admin.autorevelar.desativado, id)
+                    } 
+                } catch(err){
+                    throw err
+                }
+                break
+
+            case "revelar":
+                try{
+                    if(!quotedMsg && !quotedMsgObjInfo.viewOnce) return await socket.responderTexto(c, chatId, erroComandoMsg(command, botInfo) , id)
+                    let mensagemVisivel = quotedMsgObj.message
+                    mensagemVisivel[quotedMsgObjInfo.type].viewOnce = false
+                    await socket.retransmitirMensagem(c, chatId, mensagemVisivel, id)
                 } catch(err){
                     throw err
                 }
