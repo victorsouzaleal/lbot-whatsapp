@@ -204,7 +204,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if (!isGroupAdmins) return await socket.responderTexto(c, chatId, msgs_texto.permissao.apenas_admin , id)
                     if (!isBotGroupAdmins) return await socket.responderTexto(c, chatId,msgs_texto.permissao.bot_admin, id)
-                    await socket.revokeGroupInviteLink(c, groupId).then(async ()=>{
+                    await socket.revogarLinkGrupo(c, groupId).then(async ()=>{
                         await socket.responderTexto(c, chatId, msgs_texto.grupo.rlink.sucesso ,id)}
                     ).catch(async ()=>{
                         await socket.responderTexto(c, chatId, msgs_texto.grupo.rlink.erro ,id)
