@@ -4,18 +4,20 @@ import * as eventosSocket from './bot/baileys/eventosSocket.js'
 import {BotControle} from './bot/controles/BotControle.js'
 import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
+import NodeCache from 'node-cache'
 moment.tz.setDefault('America/Sao_Paulo')
 import ffmpeg from 'fluent-ffmpeg'
 import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
     ffmpeg.setFfmpegPath(ffmpegInstaller.path)
 }).catch(()=>{})
 
+const msgTentativasCache = new NodeCache()
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []
-    const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
-    const {version} = await fetchLatestBaileysVersion()
-    const c = makeWASocket(configSocket(state, version))
+    const { state : estadoAuth , saveCreds } = await useMultiFileAuthState('auth_info_baileys')
+    const {version : versao} = await fetchLatestBaileysVersion()
+    const c = makeWASocket(configSocket(estadoAuth, versao, msgTentativasCache))
     const bot = new BotControle()
 
     c.ev.process(async(events)=>{
