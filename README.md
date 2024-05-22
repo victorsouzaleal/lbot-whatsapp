@@ -23,7 +23,7 @@
 
 <br>
 
-## Última Atualização : 20/05/2024 - v2.6.6
+## Última Atualização : 22/05/2024 - v2.6.6
 **[NOVO]** Suporte a mensagens de visualização única<br>
 **[NOVO]** Novo comando de admin **autorevelar** para ativar a revelação automática de mensagens de visualização única<br>
 **[NOVO]** Novo comando de admin **revelar** para revelar uma mensagem de visualização única<br>
