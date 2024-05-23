@@ -3,107 +3,106 @@ import pino from 'pino'
 import {GrupoControle} from '../controles/GrupoControle.js'
 
 
-export const converterMensagem = async(m, botInfo) =>{
-    try {
-        m = m.messages[0]
-        let type = getContentType(m.message)
-        let viewOnce = type.includes('viewOnce')
-        if(viewOnce){
-            m.message = m.message[type].message
-            type = getContentType(m.message)
-        }
-        let quotedMsg = type == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
-        let botNumber = botInfo.hostNumber
-        let sender = (m.key.fromMe) ? botNumber : m.key.participant || m.key.remoteJid
-        let textoRecebido = m.message[type]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
-        let ownerNumber = botInfo.numero_dono
-        let isOwner = ownerNumber == sender
-        let isGroupMsg = m.key.remoteJid.includes("@g.us")
-        
-        let respostaInformacoes = {
-            textoRecebido,
-            command: textoRecebido.toLowerCase().split(' ')[0] || '',
-            args: textoRecebido.split(" "),
-            sender,
-            isOwner,
-            username : m.pushName,
-            broadcast : m.key.remoteJid == "status@broadcast",
-            caption : m.message[type]?.caption,
-            messageId : m.key.id,
-            body : m.message.conversation || m.message.extendedTextMessage?.text,
-            id: m,
-            type,
-            t : m.messageTimestamp,
-            mentionedJidList: m.message[type]?.contextInfo?.mentionedJid || [],
-            mimetype: m.message[type]?.mimetype,
-            mediaUrl: m.message[type]?.url,
-            fromMe : m.key.fromMe,
-            viewOnce,
-            chatId: m.key.remoteJid,
-            isMedia : type == MessageTypes.image || type == MessageTypes.video,
-            seconds : m.message[type]?.seconds,
-            fileLength: m.message[type]?.fileLength,
-            quotedMsg,
-            quotedMsgObj: {},
-            quotedMsgObjInfo: {},
-            isGroupMsg,
-            participant: m.key.participant,
-            grupo : {},
-        }
-        
-
-        if(isGroupMsg){
-            let groupId = isGroupMsg ? m.key.remoteJid : null
-            let grupoInfo = isGroupMsg ? await new GrupoControle().obterGrupoInfo(groupId) : null
-            let groupAdmins = (isGroupMsg && grupoInfo) ? grupoInfo.admins : null
-            let isGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(sender) : null
-            let isBotGroupAdmins = (isGroupMsg && grupoInfo) ? groupAdmins.includes(botNumber) : null
-            respostaInformacoes.grupo = {
-                groupId,
-                grupoInfo,
-                groupAdmins,
-                isGroupAdmins,
-                formattedTitle: grupoInfo?.nome || null,
-                groupOwner: grupoInfo?.dono || null,
-                groupMembers: grupoInfo?.participantes || null,
-                isBotGroupAdmins
+export async function converterMensagem(m, botInfo){
+    return new Promise(async (resolve, reject)=>{
+        try {
+            m = m.messages[0]
+            let tipo = getContentType(m.message)
+            let visualizacao_unica = tipo.includes('viewOnce')
+            if(visualizacao_unica){
+                m.message = m.message[tipo].message
+                tipo = getContentType(m.message)
             }
-        }
-
-        if(quotedMsg) {
-            let quotedType = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
-            let viewOnce = quotedType.includes('viewOnce')
-            if(viewOnce) {
-                m.message.extendedTextMessage.contextInfo.quotedMessage = m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType].message
-                quotedType = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
+            let citou_mensagem = tipo == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
+            let numero_bot = botInfo.hostNumber
+            let remetente = (m.key.fromMe) ? numero_bot : m.key.participant || m.key.remoteJid
+            let texto_recebido = m.message[tipo]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
+            let numero_dono = botInfo.numero_dono
+            let dono = numero_dono == remetente
+            let mensagem_grupo = m.key.remoteJid.includes("@g.us")
+            
+            let respostaInformacoes = {
+                id_mensagem : m.key.id,
+                remetente,
+                tipo,
+                t : m.messageTimestamp,
+                id_chat: m.key.remoteJid,
+                nome_usuario : m.pushName,
+                corpo : m.message.conversation || m.message.extendedTextMessage?.text,
+                cabecalho : m.message[tipo]?.caption,
+                mencionados : m.message[tipo]?.contextInfo?.mentionedJid || [],
+                texto_recebido,
+                comando: texto_recebido.toLowerCase().split(' ')[0] || '',
+                args: texto_recebido.split(" "),
+                citou_mensagem,
+                mensagem_grupo,
+                visualizacao_unica,
+                dono,
+                bot_mensagem : m.key.fromMe,
+                broadcast : m.key.remoteJid == "status@broadcast",
+                mensagem_midia : tipo != MessageTypes.text && tipo != MessageTypes.extendedText,
+                mensagem_completa: m,   
             }
-            respostaInformacoes.quotedMsgObj = generateWAMessageFromContent(m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid, m.message.extendedTextMessage.contextInfo.quotedMessage , { logger : pino() })
-            respostaInformacoes.quotedMsgObjInfo = {
-                type : getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage),
-                sender : m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid,
-                body : m.message.extendedTextMessage.contextInfo.quotedMessage?.conversation || m.message.extendedTextMessage.contextInfo.quotedMessage?.extendedTextMessage?.text,
-                caption : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.caption,
-                url : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.url,
-                mimetype : m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.mimetype,
-                fileLength: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.fileLength,
-                seconds: m.message.extendedTextMessage.contextInfo.quotedMessage[quotedType]?.seconds,
-                viewOnce
+            
+            // Se for mensagem de midia
+            if(respostaInformacoes.mensagem_midia){
+                respostaInformacoes.midia = {
+                    mimetype: m.message[tipo]?.mimetype,
+                    midia_url: m.message[tipo]?.url,
+                    segundos : m.message[tipo]?.seconds,
+                    tamanho_arquivo: m.message[tipo]?.fileLength,
+                }
             }
+            
+            // Se for mensagem de grupo
+            if(mensagem_grupo){
+                let id_grupo = m.key.remoteJid
+                let grupoInfo = await new GrupoControle().obterGrupoInfo(id_grupo)
+                let grupo_admins = grupoInfo ? grupoInfo.admins : null
+                let usuario_admin = grupoInfo ? grupo_admins.includes(remetente) : null
+                let bot_admin = grupoInfo ? grupo_admins.includes(numero_bot) : null
+                respostaInformacoes.grupo = grupoInfo
+                respostaInformacoes.grupo.usuario_admin = usuario_admin
+                respostaInformacoes.grupo.bot_admin = bot_admin
+            }
+            
+            // Se tiver citado alguma mensagem
+            if(citou_mensagem) {
+                let tipoMensagemCitada = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
+                let visualizacao_unica = tipoMensagemCitada.includes('viewOnce')
+                if(visualizacao_unica) {
+                    m.message.extendedTextMessage.contextInfo.quotedMessage = m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada].message
+                    tipoMensagemCitada = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
+                }
+                respostaInformacoes.mensagem_citada = {
+                    tipo : tipoMensagemCitada,
+                    remetente : m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid,
+                    corpo : m.message.extendedTextMessage.contextInfo.quotedMessage?.conversation || m.message.extendedTextMessage.contextInfo.quotedMessage?.extendedTextMessage?.text,
+                    cabecalho : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.caption,
+                    midia_url : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.url,
+                    mimetype : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.mimetype,
+                    tamanho_arquivo: m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.fileLength,
+                    segundos: m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.seconds,
+                    visualizacao_unica,
+                    mensagem : generateWAMessageFromContent(m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid, m.message.extendedTextMessage.contextInfo.quotedMessage , { logger : pino() })
+                }
+            }
+            
+            resolve(respostaInformacoes)
+        } catch (err) {
+            reject(err)
         }
-        
-        return respostaInformacoes
-    } catch (err) {
-        throw err
-    }
+    })
+   
 }
 
-export const obterTipoDeMensagem = (type) => {
-    if(type == MessageTypes.text || type == MessageTypes.extendedText) return 'Texto'
-    if(type == MessageTypes.image) return 'Imagem'
-    if(type == MessageTypes.document) return 'Documento/Arquivo'
-    if(type == MessageTypes.video) return 'Video/GIF'
-    if(type == MessageTypes.sticker) return 'Sticker'
-    if(type == MessageTypes.audio) return 'Audio'
+export const obterTipoDeMensagem = (tipo) => {
+    if(tipo == MessageTypes.text || tipo == MessageTypes.extendedText) return 'Texto'
+    if(tipo == MessageTypes.image) return 'Imagem'
+    if(tipo == MessageTypes.document) return 'Documento/Arquivo'
+    if(tipo == MessageTypes.video) return 'Video/GIF'
+    if(tipo == MessageTypes.sticker) return 'Sticker'
+    if(tipo == MessageTypes.audio) return 'Audio'
     return null
 }
 
@@ -126,4 +125,3 @@ export const tiposPermitidosMensagens = [
     "stickerMessage",
     "audioMessage"
 ]
-
