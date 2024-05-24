@@ -8,17 +8,17 @@ export async function converterMensagem(m, botInfo){
         try {
             m = m.messages[0]
             let tipo = getContentType(m.message)
-            let visualizacao_unica = tipo.includes('viewOnce')
-            if(visualizacao_unica){
+            let mensagem_vunica = tipo.includes('viewOnce')
+            if(mensagem_vunica){
                 m.message = m.message[tipo].message
                 tipo = getContentType(m.message)
             }
-            let citou_mensagem = tipo == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
+            let mensagem_citada = tipo == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
             let numero_bot = botInfo.hostNumber
             let remetente = (m.key.fromMe) ? numero_bot : m.key.participant || m.key.remoteJid
             let texto_recebido = m.message[tipo]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
             let numero_dono = botInfo.numero_dono
-            let dono = numero_dono == remetente
+            let mensagem_dono = numero_dono == remetente
             let mensagem_grupo = m.key.remoteJid.includes("@g.us")
             
             let respostaInformacoes = {
@@ -29,17 +29,17 @@ export async function converterMensagem(m, botInfo){
                 id_chat: m.key.remoteJid,
                 nome_usuario : m.pushName,
                 corpo : m.message.conversation || m.message.extendedTextMessage?.text,
-                cabecalho : m.message[tipo]?.caption,
+                legenda : m.message[tipo]?.caption,
                 mencionados : m.message[tipo]?.contextInfo?.mentionedJid || [],
                 texto_recebido,
                 comando: texto_recebido.toLowerCase().split(' ')[0] || '',
                 args: texto_recebido.split(" "),
-                citou_mensagem,
+                mensagem_citada,
                 mensagem_grupo,
-                visualizacao_unica,
-                dono,
-                bot_mensagem : m.key.fromMe,
-                broadcast : m.key.remoteJid == "status@broadcast",
+                mensagem_vunica,
+                mensagem_dono,
+                mensagem_bot : m.key.fromMe,
+                mensagem_broadcast : m.key.remoteJid == "status@broadcast",
                 mensagem_midia : tipo != MessageTypes.text && tipo != MessageTypes.extendedText,
                 mensagem_completa: m,   
             }
@@ -67,10 +67,10 @@ export async function converterMensagem(m, botInfo){
             }
             
             // Se tiver citado alguma mensagem
-            if(citou_mensagem) {
+            if(mensagem_citada) {
                 let tipoMensagemCitada = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
-                let visualizacao_unica = tipoMensagemCitada.includes('viewOnce')
-                if(visualizacao_unica) {
+                let mensagem_vunica = tipoMensagemCitada.includes('viewOnce')
+                if(mensagem_vunica) {
                     m.message.extendedTextMessage.contextInfo.quotedMessage = m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada].message
                     tipoMensagemCitada = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
                 }
@@ -78,12 +78,12 @@ export async function converterMensagem(m, botInfo){
                     tipo : tipoMensagemCitada,
                     remetente : m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid,
                     corpo : m.message.extendedTextMessage.contextInfo.quotedMessage?.conversation || m.message.extendedTextMessage.contextInfo.quotedMessage?.extendedTextMessage?.text,
-                    cabecalho : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.caption,
+                    legenda : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.caption,
                     midia_url : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.url,
                     mimetype : m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.mimetype,
                     tamanho_arquivo: m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.fileLength,
                     segundos: m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.seconds,
-                    visualizacao_unica,
+                    mensagem_vunica,
                     mensagem : generateWAMessageFromContent(m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid, m.message.extendedTextMessage.contextInfo.quotedMessage , { logger : pino() })
                 }
             }
