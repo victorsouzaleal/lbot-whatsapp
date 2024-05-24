@@ -74,7 +74,7 @@ export async function converterMensagem(m, botInfo){
                     m.message.extendedTextMessage.contextInfo.quotedMessage = m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada].message
                     tipoMensagemCitada = getContentType(m.message.extendedTextMessage?.contextInfo?.quotedMessage)
                 }
-                respostaInformacoes.mensagem_citada = {
+                respostaInformacoes.citacao = {
                     tipo : tipoMensagemCitada,
                     remetente : m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid,
                     corpo : m.message.extendedTextMessage.contextInfo.quotedMessage?.conversation || m.message.extendedTextMessage.contextInfo.quotedMessage?.extendedTextMessage?.text,
