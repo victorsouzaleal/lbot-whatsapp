@@ -335,20 +335,19 @@ export class GrupoControle {
     async filtroAntiLink(c, mensagemBaileys, botInfo){
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
-            const {sender, chatId, isGroupMsg, body, caption, id} = mensagemBaileys
-            const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
-            if(!isGroupMsg) return true
-            if(!grupoInfo?.antilink) return true
+            const {texto_recebido, remetente, id_chat, mensagem_grupo, mensagem_completa, grupo} = mensagemBaileys
+            const {id_grupo, grupo_admins, bot_admin} = grupo ?? {}
+            if(!mensagem_grupo) return true
+            if(!grupo?.antilink) return true
     
-            if (!isBotGroupAdmins) {
-                await this.alterarAntiLink(groupId,false)
+            if (!bot_admin) {
+                await this.alterarAntiLink(id_grupo,false)
             } else {
-                let mensagem = body || caption
-                if(mensagem != undefined){
-                    const isUrl = mensagem.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
-                    if(isUrl && !groupAdmins.includes(sender)){
-                        await socket.enviarTextoComMencoes(c, chatId, criarTexto(msgs_texto.grupo.antilink.detectou, sender.replace("@s.whatsapp.net", "")), [sender])
-                        await socket.deletarMensagem(c, id)
+                if(texto_recebido){
+                    const textoComUrl = texto_recebido.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
+                    if(textoComUrl && !grupo_admins.includes(remetente)){
+                        await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.grupo.antilink.detectou, remetente.replace("@s.whatsapp.net", "")), [remetente])
+                        await socket.deletarMensagem(c, mensagem_completa)
                         return false
                     }
                 }
@@ -446,19 +445,19 @@ export class GrupoControle {
     async filtroAntiFlood(c, mensagemBaileys, botInfo){
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
-            const {chatId, sender, isGroupMsg} = mensagemBaileys
-            const {groupId, groupAdmins, isBotGroupAdmins, grupoInfo} = mensagemBaileys.grupo
- 
-            if(!isGroupMsg) return true
-            if(!grupoInfo?.antiflood.status) return true
-            if (!isBotGroupAdmins) {
-                await this.alterarAntiFlood(groupId, false)
+            const {id_chat, remetente, mensagem_grupo, grupo} = mensagemBaileys
+            const {id_grupo, grupo_admins, bot_admin} = grupo ?? {}
+
+            if(!mensagem_grupo) return true
+            if(!grupo?.antiflood.status) return true
+            if (!bot_admin) {
+                await this.alterarAntiFlood(id_grupo, false)
             } else {
-                let flood = await this.tratarMensagemAntiFlood(grupoInfo, sender)
+                let flood = await this.tratarMensagemAntiFlood(grupo, remetente)
                 if(flood) {
-                    if(!groupAdmins.includes(sender)) {
-                        await socket.removerParticipante(c, groupId, sender)
-                        await socket.enviarTextoComMencoes(c, chatId, criarTexto(msgs_texto.geral.resposta_ban, sender.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfo.nome_bot), [sender])
+                    if(!grupo_admins.includes(remetente)) {
+                        await socket.removerParticipante(c, id_grupo, remetente)
+                        await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.geral.resposta_ban, remetente.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfo.nome_bot), [remetente])
                         return false
                     }
                 } 

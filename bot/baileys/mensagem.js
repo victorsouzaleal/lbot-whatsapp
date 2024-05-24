@@ -41,7 +41,7 @@ export async function converterMensagem(m, botInfo){
                 mensagem_bot : m.key.fromMe,
                 mensagem_broadcast : m.key.remoteJid == "status@broadcast",
                 mensagem_midia : tipo != MessageTypes.text && tipo != MessageTypes.extendedText,
-                mensagem_completa: m,   
+                mensagem_completa: m,
             }
             
             // Se for mensagem de midia
