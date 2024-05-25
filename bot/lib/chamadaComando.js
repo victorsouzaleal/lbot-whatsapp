@@ -29,7 +29,7 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
             //UTILIDADES
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c,id_chat, guiaComandoMsg("utilidade", comando, prefixo), mensagem_completa)
-                //await utilidades(c, mensagemBaileys, botInfo)
+                await utilidades(c, mensagemBaileys, botInfo)
                 consoleComando(mensagem_grupo, "UTILIDADES", comando, "#de9a07", t, nome_usuario, nome_grupo)
             }, {priority: 1})
         }  else if(lista_comandos.figurinhas.includes(comando)){
