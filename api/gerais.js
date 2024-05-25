@@ -4,6 +4,7 @@ import { rastrearEncomendas } from 'correios-brasil'
 import translate from '@vitalets/google-translate-api' ; 
 import google from '@victorsouzaleal/googlethis'
 import Genius from 'genius-lyrics'
+import qs from 'querystring'
 
 
 export const top20TendenciasDia = async(tipoDeDados)=>{
