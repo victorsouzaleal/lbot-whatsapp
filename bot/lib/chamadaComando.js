@@ -36,7 +36,7 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
             //FIGURINHAS
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c,id_chat, guiaComandoMsg("figurinhas", comando, prefixo), mensagem_completa)
-                //await figurinhas(c, mensagemBaileys, botInfo)
+                await figurinhas(c, mensagemBaileys, botInfo)
                 consoleComando(mensagem_grupo, "FIGURINHAS", comando, "#ae45d1", t, nome_usuario, nome_grupo)
             }, {priority: 2})
         } else if(lista_comandos.downloads.includes(comando)){
@@ -77,7 +77,7 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
         } else if(autoStickerPv || autoStickerGrupo){
             //AUTO-STICKER PV OU GRUPO
             queueMensagem.add(async()=>{
-                //await autoSticker(c, mensagemBaileys, botInfo)
+                await autoSticker(c, mensagemBaileys, botInfo)
                 consoleComando(mensagem_grupo, "FIGURINHAS", "AUTO-STICKER", "#ae45d1", t, nome_usuario, nome_grupo)
             }, {priority: 2})
         }
