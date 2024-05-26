@@ -76,7 +76,7 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
             //DIVERSÃO
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, id_chat, guiaComandoMsg("diversao", comando, prefixo), mensagem_completa)
-                //await diversao(c, mensagemBaileys, botInfo)
+                await diversaoComandos(c, mensagemBaileys, botInfo)
                 consoleComando(mensagem_grupo, "DIVERSÃO", comando, "#22e3dd", t, nome_usuario, nome_grupo)
             }, {priority: 2})
         } else if(lista_comandos.admin.includes(comando)){
