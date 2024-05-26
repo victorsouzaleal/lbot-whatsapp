@@ -90,7 +90,7 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
             //INFO
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, id_chat, guiaComandoMsg("info", comando, prefixo), mensagem_completa)
-                //await info(c, mensagemBaileys, botInfo)
+                await infoComandos(c, mensagemBaileys, botInfo)
                 consoleComando(mensagem_grupo, "INFO", comando, "#8ac46e", t, nome_usuario, nome_grupo)
             }, {priority: 3})
         } else if(autoStickerPv || autoStickerGrupo){
