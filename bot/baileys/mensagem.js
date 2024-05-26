@@ -58,12 +58,9 @@ export async function converterMensagem(m, botInfo){
             if(mensagem_grupo){
                 let id_grupo = m.key.remoteJid
                 let grupoInfo = await new GrupoControle().obterGrupoInfo(id_grupo)
-                let grupo_admins = grupoInfo ? grupoInfo.admins : null
-                let usuario_admin = grupoInfo ? grupo_admins.includes(remetente) : null
-                let bot_admin = grupoInfo ? grupo_admins.includes(numero_bot) : null
                 respostaInformacoes.grupo = grupoInfo
-                respostaInformacoes.grupo.usuario_admin = usuario_admin
-                respostaInformacoes.grupo.bot_admin = bot_admin
+                respostaInformacoes.grupo.usuario_admin = grupoInfo ? grupoInfo.admins.includes(remetente) : null
+                respostaInformacoes.grupo.bot_admin = grupoInfo ? grupoInfo.admins.includes(numero_bot) : null
             }
             
             // Se tiver citado alguma mensagem

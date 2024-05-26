@@ -11,13 +11,30 @@ import {listarComandos} from '../comandos/comandos.js'
 
 export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
     try {
+        //Atribuição de valores
         const bot = new BotControle()
         const usuarios = new UsuarioControle()
         const grupos = new GrupoControle()
-        const msgs_texto = obterMensagensTexto(botInfo), lista_comandos = listarComandos(botInfo.prefixo)
-        const {comando, args, remetente, mensagem_dono, mensagem_grupo, tipo, mensagem_completa, id_chat, nome_usuario, id_mensagem, mensagem_vunica, grupo, citacao} = mensagemBaileys
-        const {id_grupo, usuario_admin, bot_admin} = grupo ?? {}
-        const {prefixo, nome_bot} = botInfo, numero_dono = botInfo.numero_dono
+        const {prefixo, nome_bot} = botInfo
+        const numero_dono = botInfo.numero_dono
+        const msgs_texto = obterMensagensTexto(botInfo)
+        const lista_comandos = listarComandos(prefixo)
+        const {
+            comando,
+            args,
+            remetente,
+            mensagem_dono,
+            mensagem_grupo,
+            tipo,
+            mensagem_completa,
+            id_chat,
+            nome_usuario,
+            id_mensagem,
+            mensagem_vunica,
+            grupo,
+            citacao
+        } = mensagemBaileys
+        const {id_grupo, usuario_admin, bot_admin} = {...grupo}
         const msgGuia = (args.length == 1) ? false : args[1] == "guia"
         const usuariosBloqueados = await socket.obterContatosBloqueados(c)
         const usuarioBloqueado = usuariosBloqueados.includes(remetente)

@@ -8,14 +8,26 @@ import {obterMensagensTexto} from '../lib/msgs.js'
 
 
 export const figurinhas = async(c, mensagemBaileys, botInfo) => {
+    //Atribuição de valores
     const msgs_texto = obterMensagensTexto(botInfo)
     const {prefixo, nome_pack, nome_bot } = botInfo
-    const {texto_recebido, comando, args, tipo, mensagem_completa, id_chat, mensagem_citada, midia, citacao} = mensagemBaileys
-    const {mimetype, segundos} = midia ?? {}
-    let cmdSemPrefixo = comando.replace(prefixo, "")
+    const {
+        texto_recebido,
+        comando,
+        args,
+        tipo,
+        mensagem_completa,
+        id_chat,
+        mensagem_citada,
+        midia,
+        citacao
+    } = mensagemBaileys
+    const {mimetype, segundos} = {...midia}
+    const comandoSemPrefixo = comando.replace(prefixo, "")
     
+    //Comandos de figurinhas
     try{
-        switch(cmdSemPrefixo){
+        switch(comandoSemPrefixo){
             case 'snome':
                 try{
                     if(!mensagem_citada || citacao.tipo != MessageTypes.sticker) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem_completa)
@@ -184,11 +196,13 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
 
 export const autoSticker = async(c, mensagemBaileys, botInfo)=>{
     try{
+        //Atribuição de valores
         const msgs_texto = obterMensagensTexto(botInfo)
         const {nome_bot, nome_pack} = botInfo
         const {id_chat, tipo, mensagem_completa, midia} = mensagemBaileys
-        const {segundos} = midia ?? {}
+        const {segundos} = {...midia}
 
+        //Verificando se é imagem ou video e fazendo o sticker automaticamente
         if(tipo == MessageTypes.image || tipo == MessageTypes.video){
             if(tipo == MessageTypes.video && segundos > 9) return
             let bufferMidia = await downloadMediaMessage(mensagem_completa, "buffer")

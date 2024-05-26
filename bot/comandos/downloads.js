@@ -9,13 +9,21 @@ import {obterMensagensTexto} from '../lib/msgs.js'
 
 
 export const downloads = async(c, mensagemBaileys, botInfo) => {
+    //Atribuição de valores
     const msgs_texto = obterMensagensTexto(botInfo)
     const {prefixo} = botInfo
-    const {texto_recebido, comando, args, mensagem_completa, id_chat} = mensagemBaileys
-    let cmdSemPrefixo = comando.replace(prefixo, "")
+    const {
+        texto_recebido,
+        comando,
+        args,
+        mensagem_completa,
+        id_chat
+    } = mensagemBaileys
+    const comandoSemPrefixo = comando.replace(prefixo, "")
 
+    //Comandos de downloads
     try{
-        switch(cmdSemPrefixo){      
+        switch(comandoSemPrefixo){      
             case "play":
                 try{
                     if(args.length === 1) return await socket.responderTexto(c, id_chat,erroComandoMsg(comando, botInfo),mensagem_completa)

@@ -336,7 +336,7 @@ export class GrupoControle {
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
             const {texto_recebido, remetente, id_chat, mensagem_grupo, mensagem_completa, grupo} = mensagemBaileys
-            const {id_grupo, grupo_admins, bot_admin} = grupo ?? {}
+            const {id_grupo, admins, bot_admin} = {...grupo}
             if(!mensagem_grupo) return true
             if(!grupo?.antilink) return true
     
@@ -345,7 +345,7 @@ export class GrupoControle {
             } else {
                 if(texto_recebido){
                     const textoComUrl = texto_recebido.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
-                    if(textoComUrl && !grupo_admins.includes(remetente)){
+                    if(textoComUrl && !admins.includes(remetente)){
                         await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.grupo.antilink.detectou, remetente.replace("@s.whatsapp.net", "")), [remetente])
                         await socket.deletarMensagem(c, mensagem_completa)
                         return false
@@ -446,7 +446,7 @@ export class GrupoControle {
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
             const {id_chat, remetente, mensagem_grupo, grupo} = mensagemBaileys
-            const {id_grupo, grupo_admins, bot_admin} = grupo ?? {}
+            const {id_grupo, admins, bot_admin} = {...grupo}
 
             if(!mensagem_grupo) return true
             if(!grupo?.antiflood.status) return true
@@ -455,7 +455,7 @@ export class GrupoControle {
             } else {
                 let flood = await this.tratarMensagemAntiFlood(grupo, remetente)
                 if(flood) {
-                    if(!grupo_admins.includes(remetente)) {
+                    if(!admins.includes(remetente)) {
                         await socket.removerParticipante(c, id_grupo, remetente)
                         await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.geral.resposta_ban, remetente.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfo.nome_bot), [remetente])
                         return false

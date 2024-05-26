@@ -8,14 +8,28 @@ import {obterMensagensTexto} from '../lib/msgs.js'
 
 
 export const utilidades = async(c, mensagemBaileys, botInfo) => {
+    //Atribuição de valores
     const msgs_texto = obterMensagensTexto(botInfo)
     const {prefixo} = botInfo
-    const {texto_recebido, remetente, comando, mensagem_midia, args, tipo, mensagem_completa, id_chat, mensagem_citada, midia, citacao} = mensagemBaileys
-    const {mimetype} = midia ?? {}
-    let cmdSemPrefixo = comando.replace(prefixo, "")
+    const {
+        texto_recebido,
+        remetente,
+        comando,
+        mensagem_midia,
+        args,
+        tipo,
+        mensagem_completa,
+        id_chat,
+        mensagem_citada,
+        midia,
+        citacao
+    } = mensagemBaileys
+    const {mimetype} = {...midia}
+    const comandoSemPrefixo = comando.replace(prefixo, "")
 
+    //Comandos de utilidades
     try{
-        switch(cmdSemPrefixo){  
+        switch(comandoSemPrefixo){  
             case 'upimg':
                 if (citacao?.tipo != MessageTypes.image && tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem_completa)
                 let bufferImagem = await downloadMediaMessage(mensagem_citada ? citacao.mensagem_citacao : mensagem_completa, 'buffer')
