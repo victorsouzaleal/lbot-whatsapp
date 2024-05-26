@@ -43,7 +43,7 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
             //DOWNLOADS
             queueMensagem.add(async()=>{
                 if(msgGuia) return await socket.responderTexto(c, id_chat, guiaComandoMsg("downloads", comando, prefixo), mensagem_completa)
-                //await downloads(c, mensagemBaileys, botInfo)
+                await downloads(c, mensagemBaileys, botInfo)
                 consoleComando(mensagem_grupo, "DOWNLOADS", comando, "#2195cf", t, nome_usuario, nome_grupo)
             }, {priority: 1})
         } else if (lista_comandos.grupo.includes(comando)){
