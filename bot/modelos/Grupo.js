@@ -124,8 +124,8 @@ export class Grupo{
        await db.grupos.updateAsync({id_grupo}, {$push: { block_cmds: {$each: cmds} }})
     }
 
-    async removerComandosBloqueio(id_grupo, cmd){
-        await db.grupos.updateAsync({id_grupo}, {$pull:{block_cmds: cmd}})
+    async removerComandosBloqueio(id_grupo, cmds){
+        await db.grupos.updateAsync({id_grupo}, {$pull:{block_cmds: {$in: cmds}}})
     }
 
     // Contador
