@@ -264,14 +264,13 @@ export class BotControle{
     async redirecionarMensagemRevelada(c, mensagemBaileys, botInfo){
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
-            const {id : mensagemCompleta, username : nomeUsuario, sender, isGroupMsg, type} = mensagemBaileys
-            const {grupoInfo} = mensagemBaileys.grupo
+            const {mensagem, nome_usuario : nomeUsuario, remetente, mensagem_grupo, tipo, grupo} = mensagemBaileys
             const {numero_dono : numeroDono} = botInfo
-            const numeroUsuario = sender.replace("@s.whatsapp.net", '')
-            const nomeGrupo = isGroupMsg ? grupoInfo.nome : '----'
-            const tipoMensagem = obterTipoDeMensagem(type)
-            let mensagemVisivel = mensagemCompleta.message
-            mensagemVisivel[type].viewOnce = false
+            const numeroUsuario = remetente.replace("@s.whatsapp.net", '')
+            const nomeGrupo = mensagem_grupo ? grupo.nome : '----'
+            const tipoMensagem = obterTipoDeMensagem(tipo)
+            let mensagemVisivel = mensagem.message
+            mensagemVisivel[tipo].viewOnce = false
             await socket.enviarTexto(c, numeroDono, criarTexto(msgs_texto.admin.autorevelar.restransmissao, nomeUsuario, numeroUsuario, nomeGrupo, tipoMensagem))
             await socket.retransmitirMensagem(c, numeroDono, mensagemVisivel)
         } catch(err){

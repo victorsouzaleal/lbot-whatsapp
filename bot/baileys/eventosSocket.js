@@ -59,7 +59,7 @@ export const receberMensagem = async (c, mensagem, botInfo)=>{
                 if(mensagem.messages[0].message == undefined) return
                 const grupos = new GrupoControle()
                 const mensagemBaileys = await converterMensagem(mensagem, botInfo)
-                if(!tiposPermitidosMensagens.includes(mensagemBaileys.type)) return
+                if(!tiposPermitidosMensagens.includes(mensagemBaileys.tipo)) return
                 if(!await grupos.filtroAntiLink(c, mensagemBaileys, botInfo)) return
                 if(!await grupos.filtroAntiFlood(c, mensagemBaileys, botInfo)) return
                 if(!await checagemMensagem(c, mensagemBaileys, botInfo)) return
