@@ -23,11 +23,11 @@
 
 <br>
 
-## Última Atualização : 22/05/2024 - v2.6.6
-**[NOVO]** Suporte a mensagens de visualização única<br>
-**[NOVO]** Novo comando de admin **autorevelar** para ativar a revelação automática de mensagens de visualização única<br>
-**[NOVO]** Novo comando de admin **revelar** para revelar uma mensagem de visualização única<br>
-**[CORREÇÃO]** Corrigido o comando **rlink**
+## Última Atualização : 27/05/2024 - v2.7.0
+**[CÓDIGO]** A estrutura da mensagem recebida foi totalmente modificada para facilitar na criação de novos comandos.
+**[CORREÇÃO/TERMUX]** Correção e melhoria no arquivo de instalação no TERMUX<br>
+**[CORREÇÃO/COMANDO]** Corrigido o comando de grupo **dcmd** para desbloquear comandos em um grupo.
+**[CORREÇÃO/COMANDO]** Corrigido o comando **encurtar** para encurtar um link.
 <br>
 
 
