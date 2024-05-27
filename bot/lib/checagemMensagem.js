@@ -26,7 +26,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             mensagem_dono,
             mensagem_grupo,
             tipo,
-            mensagem_completa,
+            mensagem,
             id_chat,
             nome_usuario,
             id_mensagem,
@@ -35,7 +35,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             citacao
         } = mensagemBaileys
         const {id_grupo, usuario_admin, bot_admin} = {...grupo}
-        const msgGuia = (args.length == 1) ? false : args[1] == "guia"
+        const msgGuia = (!args.length) ? false : args[0] === "guia"
         const usuariosBloqueados = await socket.obterContatosBloqueados(c)
         const usuarioBloqueado = usuariosBloqueados.includes(remetente)
         const comandoExiste = verificarComandoExiste(lista_comandos, comando)
@@ -43,7 +43,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         //Se o numero do dono estiver vazio e o comando for !admin, cadastre quem fez o comando como dono.
         if(!numero_dono && comando == `${prefixo}admin`) {
             await bot.alterarNumeroDono(remetente, botInfo)
-            await socket.responderTexto(c, id_chat, msgs_texto.geral.dono_cadastrado, mensagem_completa)
+            await socket.responderTexto(c, id_chat, msgs_texto.geral.dono_cadastrado, mensagem)
             return false
         }
 
@@ -71,7 +71,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
 
         //SE O USUÁRIO MANDAR MENSAGEM NO PV E AINDA NÃO TIVER RECEBIDO A MENSAGEM DE BOAS VINDAS, ENVIE.
         if(!mensagem_grupo && !dadosUsuario.recebeuBoasVindas && botInfo.pvliberado){
-            await socket.enviarTexto(c, id_chat, criarTexto(msgs_texto.geral.usuario_novo, nome_bot?.trim(), nome_usuario), mensagem_completa)
+            await socket.enviarTexto(c, id_chat, criarTexto(msgs_texto.geral.usuario_novo, nome_bot?.trim(), nome_usuario), mensagem)
             await usuarios.recebeuBoasVindas(remetente)
         }
 
@@ -89,25 +89,25 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         if(comandoExiste){
             //VERIFICAR SE ESTÁ USANDO O COMANDO NO GRUPO E EM UMA MENSAGEM COM VISUALIZACAO UNICA
             if(!mensagem_dono && mensagem_grupo && (mensagem_vunica || citacao?.mensagem_vunica)){
-                await socket.responderTexto(c, id_chat, msgs_texto.geral.visualizacao_unica, mensagem_completa)
+                await socket.responderTexto(c, id_chat, msgs_texto.geral.visualizacao_unica, mensagem)
                 return false
             }
             //LIMITACAO DE COMANDO POR MINUTO
             if(botInfo.limitecomandos.status){
                 let limiteComando = await bot.verificarLimiteComando(remetente, dadosUsuario.tipo, usuario_admin, botInfo)
                 if(limiteComando.comando_bloqueado) {
-                    if(limiteComando.msg != undefined) await socket.responderTexto(c,id_chat, limiteComando.msg, mensagem_completa)
+                    if(limiteComando.msg != undefined) await socket.responderTexto(c,id_chat, limiteComando.msg, mensagem)
                     return false
                 }
             }
             //BLOQUEIO GLOBAL DE COMANDOS
             if(await bot.verificarComandosBloqueadosGlobal(comando, botInfo, prefixo) && !mensagem_dono){
-                await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, comando), mensagem_completa)
+                await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.bcmdglobal.resposta_cmd_bloqueado, comando), mensagem)
                 return false
             }
             //SE FOR MENSAGEM DE GRUPO , COMANDO ESTIVER BLOQUEADO E O USUARIO NAO FOR ADMINISTRADOR DO GRUPO
             if(mensagem_grupo && await grupos.verificarComandosBloqueadosGrupo(comando, grupo, prefixo) && !usuario_admin) {
-                await socket.responderTexto(c,id_chat,criarTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, comando), mensagem_completa)
+                await socket.responderTexto(c,id_chat,criarTexto(msgs_texto.grupo.bcmd.resposta_cmd_bloqueado, comando), mensagem)
                 return false
             }
             //SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
@@ -118,7 +118,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
                     if(!ultrapassou) {
                         await usuarios.adicionarContagemDiariaComandos(remetente) 
                     } else {
-                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, nome_usuario, numero_dono.replace("@s.whatsapp.net", "")), mensagem_completa)
+                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.limitediario.resposta_excedeu_limite, nome_usuario, numero_dono.replace("@s.whatsapp.net", "")), mensagem)
                         return false
                     }   
                 } else {

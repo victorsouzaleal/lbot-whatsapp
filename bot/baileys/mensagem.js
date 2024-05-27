@@ -16,7 +16,8 @@ export async function converterMensagem(m, botInfo){
             let mensagem_citada = tipo == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
             let numero_bot = botInfo.hostNumber
             let remetente = (m.key.fromMe) ? numero_bot : m.key.participant || m.key.remoteJid
-            let texto_recebido = m.message[tipo]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || ''
+            let texto_completo = m.message[tipo]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || '' 
+            let [comando, ...args] = texto_completo.trim().split(" ")
             let numero_dono = botInfo.numero_dono
             let mensagem_dono = numero_dono == remetente
             let mensagem_grupo = m.key.remoteJid.includes("@g.us")
@@ -28,12 +29,12 @@ export async function converterMensagem(m, botInfo){
                 t : m.messageTimestamp,
                 id_chat: m.key.remoteJid,
                 nome_usuario : m.pushName,
-                corpo : m.message.conversation || m.message.extendedTextMessage?.text,
+                corpo : m.message.conversation ?? m.message.extendedTextMessage?.text ?? '',
                 legenda : m.message[tipo]?.caption,
-                mencionados : m.message[tipo]?.contextInfo?.mentionedJid || [],
-                texto_recebido,
-                comando: texto_recebido.toLowerCase().split(' ')[0] || '',
-                args: texto_recebido.split(" "),
+                mencionados : m.message[tipo]?.contextInfo?.mentionedJid ?? [],
+                texto_recebido : args?.join(" ").trim() ?? '',
+                comando: comando?.toLowerCase().trim() ?? '',
+                args,
                 mensagem_citada,
                 mensagem_grupo,
                 mensagem_vunica,
@@ -41,7 +42,7 @@ export async function converterMensagem(m, botInfo){
                 mensagem_bot : m.key.fromMe,
                 mensagem_broadcast : m.key.remoteJid == "status@broadcast",
                 mensagem_midia : tipo != MessageTypes.text && tipo != MessageTypes.extendedText,
-                mensagem_completa: m,
+                mensagem: m,
             }
             
             // Se for mensagem de midia
@@ -81,7 +82,7 @@ export async function converterMensagem(m, botInfo){
                     tamanho_arquivo: m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.fileLength,
                     segundos: m.message.extendedTextMessage.contextInfo.quotedMessage[tipoMensagemCitada]?.seconds,
                     mensagem_vunica,
-                    mensagem_citacao : generateWAMessageFromContent(m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid, m.message.extendedTextMessage.contextInfo.quotedMessage , { logger : pino() })
+                    mensagem: generateWAMessageFromContent(m.message.extendedTextMessage.contextInfo.participant || m.message.extendedTextMessage.contextInfo.remoteJid, m.message.extendedTextMessage.contextInfo.quotedMessage , { logger : pino() })
                 }
             }
             

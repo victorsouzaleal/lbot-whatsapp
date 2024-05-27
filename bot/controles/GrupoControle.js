@@ -335,7 +335,7 @@ export class GrupoControle {
     async filtroAntiLink(c, mensagemBaileys, botInfo){
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
-            const {texto_recebido, remetente, id_chat, mensagem_grupo, mensagem_completa, grupo} = mensagemBaileys
+            const {texto_recebido, remetente, id_chat, mensagem_grupo, mensagem, grupo} = mensagemBaileys
             const {id_grupo, admins, bot_admin} = {...grupo}
             if(!mensagem_grupo) return true
             if(!grupo?.antilink) return true
@@ -347,7 +347,7 @@ export class GrupoControle {
                     const textoComUrl = texto_recebido.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
                     if(textoComUrl && !admins.includes(remetente)){
                         await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.grupo.antilink.detectou, remetente.replace("@s.whatsapp.net", "")), [remetente])
-                        await socket.deletarMensagem(c, mensagem_completa)
+                        await socket.deletarMensagem(c, mensagem)
                         return false
                     }
                 }
