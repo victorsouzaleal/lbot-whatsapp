@@ -46,14 +46,11 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let perguntaSimi = texto_recebido
-                    await api.IA.simiResponde(perguntaSimi).then(async ({resultado})=>{
-                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultado), mensagem)
-                    }).catch(async(err)=>{
-                        if(!err.erro) throw err
-                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.geral.erro_api, comando, err.erro) , mensagem)
-                    })
+                    let {resultado: resultadoTexto} = await api.IA.simiResponde(perguntaSimi)
+                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultadoTexto), mensagem)
                 } catch(err){
-                    throw err
+                    if(!err.erro) throw err
+                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.geral.erro_api, comando, err.erro) , mensagem)
                 }
                 break
             
@@ -287,14 +284,11 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
 
             case "fch":
                 try{
-                    await api.Gerais.obterCartasContraHu().then(async({resultado})=>{
-                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.diversao.fch.resposta, resultado), mensagem)
-                    }).catch(async err=>{
-                        if(!err.erro) throw err
-                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.geral.erro_api, comando, err.erro) , mensagem)
-                    })
+                    let {resultado: resultadoTexto} = await api.Gerais.obterCartasContraHu()
+                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.diversao.fch.resposta, resultadoTexto), mensagem)
                 } catch(err){
-                    throw err
+                    if(!err.erro) throw err
+                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.geral.erro_api, comando, err.erro) , mensagem)
                 }
                 break    
         }
