@@ -6,7 +6,8 @@ import Youtube from 'youtube-sr'; import ytdl from 'ytdl-core'
 import instagramGetUrl from 'instagram-url-direct'
 import getFbVideoInfo from 'fb-downloader-scrapper'
 import Tiktok from '@tobyg74/tiktok-api-dl'
-import {TwitterDL} from 'twitter-downloader';
+import {TwitterDL} from 'twitter-downloader'
+import axios from 'axios'
 
 
 export const obterMidiaTwitter = async(url)=>{
@@ -103,12 +104,22 @@ export const obterMidiaFacebook = async(url)=>{
 
 }
 
-export const obterMidiaInstagram = async(url)=>{
+export const obterMidiaInstagram = async(url, selecao = null)=>{
     return new Promise(async(resolve, reject)=>{
         try{
             let resposta = {sucesso: false}
-            await instagramGetUrl(url).then(res=>{
-                resposta = {sucesso: true, resultado: res}
+            await instagramGetUrl(url).then(async (res)=>{
+                selecao = selecao ? selecao - 1 : 0
+                const linkSelecionado = res.url_list[selecao]
+                if(!linkSelecionado || !linkSelecionado.length){
+                    resposta = {sucesso: false, erro: "Mídia não encontrada, se o numero do video selecionado está correto e existe."}
+                    reject(resposta)
+                }
+                const {data, headers} = await axios.get(linkSelecionado,  { responseType: 'arraybuffer' })
+                const bufferIg = Buffer.from(data, 'utf-8')
+                resposta = {sucesso: true, resultado: {buffer: bufferIg}}
+                if(headers['content-type'] == 'image/jpeg') resposta.resultado.tipo = "imagem"
+                else if (headers['content-type'] == 'video/mp4') resposta.resultado.tipo = "video"
                 resolve(resposta)
             }).catch(()=>{
                 resposta = {sucesso:false, erro: "Erro ao obter o video, verifique o link ou tente mais tarde."}

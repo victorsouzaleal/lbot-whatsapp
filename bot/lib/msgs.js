@@ -152,7 +152,7 @@ export const obterMensagensTexto = (botInfo)=>{
                 tema_longo : '[❗] Tema da imagem é muito longo',
                 tema_vazio : '[❗] Tu é idiota, cadê o tema da imagem?',
                 qtd_imagem : '[❗] Essa quantidade de imagens não é válida (Min: 1 imagem / Máx: 5 imagens)',
-                erro_imagem: '[❗] Não foi possível obter essa imagem.',
+                erro_imagem: '[❗] Não foi possível obter nenhuma imagem, tente novamente.',
                 nao_encontrado: '[❗] Não foi possível encontrar imagem com esse tema, tente novamente.',
                 erro_api: "[❗] Houve um erro na API de pesquisa de imagens, verifique se você não excedeu o limite ou se sua chave está configurada."
             }
