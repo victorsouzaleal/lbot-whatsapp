@@ -280,7 +280,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     let bufferImagem = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
                     let {resultado: resultadoAnimeInfo} = await api.Imagens.obterAnimeInfo(bufferImagem)
                     if(resultadoAnimeInfo.similaridade < 87) return await socket.responderTexto(c, id_chat,msgs_texto.utilidades.anime.similaridade, mensagem)
-                    respostaAnimeInfo.episodio = resultadoAnimeInfo.episodio || "---"
+                    resultadoAnimeInfo.episodio = resultadoAnimeInfo.episodio || "---"
                     let respostaAnimeInfo = criarTexto(msgs_texto.utilidades.anime.resposta, resultadoAnimeInfo.titulo, resultadoAnimeInfo.episodio, resultadoAnimeInfo.tempoInicial, resultadoAnimeInfo.tempoFinal, resultadoAnimeInfo.similaridade, resultadoAnimeInfo.link_previa)                          
                     await socket.responderArquivoLocal(c, MessageTypes.video, id_chat, resultadoAnimeInfo.link_previa, respostaAnimeInfo, mensagem, "video/mp4")
                 } catch(err){
