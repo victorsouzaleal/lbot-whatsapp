@@ -274,8 +274,27 @@ export const obterMensagensTexto = (botInfo)=>{
                 erro_resultado : "[❗] Local não encontrado ou houve um erro na API.\n\n"+
                 "Dica: *Digite cidade e estado completos para maior chance de ser encontrado.*",
                 erro_comando:"[❗] Local não encontrado ou houve um erro na API.",
-                resposta: "☀️ CONSULTA DE CLIMA ☀️\n\n"+
-                "{p1}"
+                resposta: {
+                    clima_atual: "☀️ CLIMA ATUAL ☀️\n\n"+
+                    "Nome : {p1}\n"+
+                    "Estado : {p2}\n"+
+                    "País : {p3}\n"+
+                    "Horário atual : {p4}\n"+
+                    "Temperatura atual : {p5}\n"+
+                    "Sensação térmica : {p6}\n"+
+                    "Condição : {p7}\n"+
+                    "Vento : {p8}\n"+
+                    "Umidade : {p9}\n"+
+                    "Nuvens : {p10}\n\n",
+                    previsao:  "🗓️ Previsão {p1} 🗓️\n\n"+
+                    "Max : {p2}\n"+
+                    "Min : {p3}\n"+
+                    "Condição : {p4}\n"+
+                    "Vento máximo : {p5}\n"+
+                    "Chuva? {p6} de chance\n"+
+                    "Neve? {p7} de chance\n"+
+                    "Nível UV : {p8}\n\n"
+                }
             },
             encurtar:{
                 resposta : "✂️ ENCURTADOR DE LINKS ✂️\n\n"+
@@ -920,9 +939,6 @@ export const obterMensagensTexto = (botInfo)=>{
             premium: "🌟 Premium",
             vip: "🎖️ VIP"
         },
-        api: {
-            newsapi: "Houve um erro na API de Notícias, confira se o limite gratuito da chave excedeu ou se ela está configurada."
-        }
     }
 }
 

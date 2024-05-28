@@ -5,6 +5,7 @@ import translate from '@vitalets/google-translate-api' ;
 import google from '@victorsouzaleal/googlethis'
 import Genius from 'genius-lyrics'
 import qs from 'querystring'
+import { timestampParaData } from '../bot/lib/util.js';
 
 
 export const top20TendenciasDia = async(tipoDeDados)=>{
@@ -199,10 +200,49 @@ export const obterClima = async (local) =>{
     return new Promise(async (resolve, reject)=>{
         try{
             let resposta = {sucesso: false}
-            local = local.normalize("NFD").replace(/[\u0300-\u036f]/g, '')
-            const climaTextoURL = `http://pt.wttr.in/${local}?format=Local%20=%20%l+%5CnClima atual%20=%20%C+%c+%5CnTemperatura%20=%20%t+%5CnUmidade%20=%20%h%5CnVento%20=%20%w%5CnLua%20agora%20=%20%m%5CnNascer%20do%20Sol%20=%20%S%5CnPor%20do%20Sol%20=%20%s`
-            await axios.get(climaTextoURL).then(({data})=>{
-                resposta = {sucesso: true, resultado: {foto_clima: `http://pt.wttr.in/${local}.png`, texto: data}}
+            const climaAPIURL = `http://api.weatherapi.com/v1/forecast.json?key=516f58a20b6c4ad3986123104242805&q=${encodeURIComponent(local)}&days=3&aqi=no&alerts=no`
+            await axios.get(climaAPIURL).then(async ({data})=>{
+                const {data: condicoesClima} = await axios.get("https://www.weatherapi.com/docs/conditions.json", {responseType: 'json'})
+                const condicaoAtual = (condicoesClima.find((condicao)=> condicao.code == data.current.condition.code)).languages.find((idioma) => idioma.lang_iso == 'pt')
+                let clima = {
+                    local: {
+                        nome: data.location.name,
+                        estado: data.location.region,
+                        pais: data.location.country,
+                        horario_atual: timestampParaData(data.location.localtime_epoch * 1000)
+                    },
+                    atual: {
+                        ultima_atualizacao: timestampParaData(data.current.last_updated_epoch * 1000),
+                        temp: `${data.current.temp_c} C°`,
+                        sensacao: `${data.current.feelslike_c} C°`,
+                        condicao: data.current.is_day ? condicaoAtual.day_text : condicaoAtual.night_text,
+                        vento: `${data.current.wind_kph} Km/h`,
+                        umidade: `${data.current.humidity} %`,
+                        nuvens: `${data.current.cloud} %`
+                    },
+                    previsao: []
+                }
+
+                data.forecast.forecastday.forEach((previsao)=>{
+                    const condicaoDia = (condicoesClima.find((condicao)=> condicao.code == previsao.day.condition.code)).languages.find((idioma) => idioma.lang_iso == 'pt')
+                    const [ano, mes, dia] = previsao.date.split("-")
+                    const dadosPrevisao = {
+                        data : `${dia}/${mes}/${ano}`,
+                        max: `${previsao.day.maxtemp_c} C°`,
+                        min: `${previsao.day.mintemp_c} C°`,
+                        media: `${previsao.day.avgtemp_c} C°`,
+                        condicao: `${condicaoDia.day_text}`,
+                        max_vento: `${previsao.day.maxwind_kph} Km/h`,
+                        chuva : `${previsao.day.daily_will_it_rain ? "Sim" : "Não"}`,
+                        chance_chuva : `${previsao.day.daily_chance_of_rain} %`,
+                        neve: `${previsao.day.daily_will_it_snow ? "Sim" : "Não"}`,
+                        chance_neve : `${previsao.day.daily_chance_of_snow} %`,
+                        uv: previsao.day.uv
+                    }
+                    clima.previsao.push(dadosPrevisao)
+                })
+
+                resposta = {sucesso: true, resultado: clima}
                 resolve(resposta)
             }).catch(()=>{
                 resposta = {sucesso: false, erro: "Houve um erro no servidor de pesquisa de clima."}

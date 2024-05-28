@@ -209,8 +209,39 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo),mensagem)
                     let usuarioTexto = texto_recebido
                     let {resultado: resultadoClima} = await api.Gerais.obterClima(usuarioTexto)
-                    let respostaClimaTexto = criarTexto(msgs_texto.utilidades.clima.resposta, resultadoClima.texto), respostaClimaFoto = resultadoClima.foto_clima
-                    await socket.responderTexto(c, id_chat, respostaClimaTexto, mensagem)
+                    //Resposta do clima atual
+                    let respostaClimaAtual = criarTexto(msgs_texto.utilidades.clima.resposta.clima_atual,
+                        resultadoClima.local.nome,
+                        resultadoClima.local.estado,
+                        resultadoClima.local.pais,
+                        resultadoClima.local.horario_atual,
+                        resultadoClima.atual.temp,
+                        resultadoClima.atual.sensacao,
+                        resultadoClima.atual.condicao,
+                        resultadoClima.atual.vento,
+                        resultadoClima.atual.umidade,
+                        resultadoClima.atual.nuvens
+                    )
+
+                    //Resposta das previsões
+                    let respostaPrevisoes = ''
+                    resultadoClima.previsao.forEach((prev)=>{
+                        respostaPrevisoes += criarTexto(msgs_texto.utilidades.clima.resposta.previsao,
+                            prev.data,
+                            prev.max,
+                            prev.min,
+                            prev.condicao,
+                            prev.max_vento,
+                            prev.chance_chuva,
+                            prev.chance_neve,
+                            prev.uv
+                        )
+                    })
+
+                    //Juntando as duas respostas em uma
+                    let respostaFinalClima = respostaClimaAtual + respostaPrevisoes
+
+                    await socket.responderTexto(c, id_chat, respostaFinalClima, mensagem)
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.geral.erro_api, comando, err.erro) , mensagem)
