@@ -1,12 +1,7 @@
 <p align="center">
-<img src="https://avatars0.githubusercontent.com/u/4674786?s=400&u=2f77d382a4428c141558772a2b7ad3a36bebf5bc&v=4" width="128" height="128"/>
+<img src="https://img95.pixhost.to/images/1083/472612217_8876.jpg" width="350" height="350"/>
 </p>
-<p align="center">
-<a href="#"><img title="LBot-WhatsApp" src="https://img.shields.io/badge/LBot%20WhatsApp-green?colorA=%23ff0000&colorB=%23017e40&style=for-the-badge"></a>
-</p>
-<p align="center">
-<a href="https://github.com/victorsouzaleal"><img title="Autor" src="https://img.shields.io/badge/Autor-victorsouzaleal-blue.svg?style=for-the-badge&logo=github"></a>
-</p>
+<h1 align="center">🤖 LBot - Robô para WhatsApp 🤖</h1>
 <p align="center">
 <a href="https://www.codefactor.io/repository/github/victorsouzaleal/lbot-whatsapp"><img src="https://www.codefactor.io/repository/github/victorsouzaleal/lbot-whatsapp/badge" alt="CodeFactor" /></a>
 </p>
@@ -19,19 +14,22 @@
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&color=blue&style=flat-square"></a>
 <a href="#"><img title="Atualizacao" src="https://img.shields.io/badge/atualizado-SIM-blue.svg"/></a>
 </p>
+<p align="center">
+<a href="https://github.com/victorsouzaleal"><img title="Autor" src="https://img.shields.io/badge/Autor-victorsouzaleal-blue.svg?style=for-the-badge&logo=github"></a>
+</p>
 
 
 <br>
 
-## Última Atualização : 27/05/2024 - v2.7.0
-**[CÓDIGO]** A estrutura da mensagem recebida foi totalmente modificada para facilitar na criação de novos comandos.
-**[CORREÇÃO/TERMUX]** Correção e melhoria no arquivo de instalação no TERMUX<br>
-**[CORREÇÃO/COMANDO]** Corrigido o comando de grupo **dcmd** para desbloquear comandos em um grupo.
-**[CORREÇÃO/COMANDO]** Corrigido o comando **encurtar** para encurtar um link.
+## 🔄 Última Atualização : 27/05/2024 - v2.7.0
+**[CÓDIGO]** A estrutura da mensagem recebida foi totalmente modificada para facilitar na criação de novos comandos.<br>
+**[CORREÇÃO/TERMUX]** Correção e melhoria no arquivo de instalação no TERMUX.<br>
+**[CORREÇÃO/COMANDO]** Corrigido o comando de grupo **dcmd** para desbloquear comandos em um grupo.<br>
+**[CORREÇÃO/COMANDO]** Corrigido o comando **encurtar** para encurtar um link.<br>
 <br>
 
 
-## REQUERIMENTOS :
+## 🚨 REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
 - Em sistemas **Windows/Linux** :<br>
         - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
@@ -40,9 +38,9 @@
 
 <br>
 
-## 1 - Instalação :
+## 1 - 💿 Instalação :
 
-### Windows/Linux :
+### 🖥️ Windows/Linux :
 
 Faça o download da última versão lançada no seguinte link: https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest , extraia o zip e entre na pasta do bot para os passos seguintes.
 
@@ -60,12 +58,12 @@ yarn install
 
 <br>
 
-### Termux :
+### 📱 Termux :
 Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 
 <br>
 
-## 2 - Uso :
+## 2 - 🤖 Uso :
 
 **Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. 
 
@@ -77,7 +75,7 @@ Se for a sua primeira vez executando escaneie o QR Code com o seu celular.
 
 <br>
 
-## 3 - Funcionamento :
+## 3 - ⌨️ Funcionamento :
 Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
 <br><br>
 **!menu** - Dá acesso ao MENU PRINCIPAL.
@@ -91,7 +89,7 @@ Todos os comandos agora tem um guia ao digitar **!comando guia**
 
 <br>
 
-## 4 - Configuração do bot e arquivo .env :
+## 4 - ⚙️ Configuração do bot e arquivo .env :
 
 ### Ao abrir o arquivo .env na raiz do projeto após iniciar o bot pela primeira vez ele vai se parecer com isso : </br>
         # CONFIGURAÇÃO DE API KEYS PARA COMANDOS
@@ -117,7 +115,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-## 5 - Recursos/Comandos :
+## 5 - 🛠️ Recursos/Comandos :
 
 ### Figurinhas
 
@@ -173,14 +171,15 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-## 6 - Contato
+## 6 - 👤 Contato
 Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
 
-* **WhatsApp :** https://wa.me/5521995612287
+* **Discord :** victorsouzaleal
+* **Email :** victorsouzaleal@gmail.com
 
 <br>
 
-## 7 - Agradecimentos/Contribuições
+## 7 - 🙏 Agradecimentos/Contribuições
 
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
 * [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
