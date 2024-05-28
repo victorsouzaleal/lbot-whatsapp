@@ -8,13 +8,12 @@ export class UsuarioControle{
         this.usuario = new Usuario()
     }
 
-    async registrarUsuario(id_usuario, nome, botInfo){
+    async registrarUsuario(id_usuario, nome){
         const dadosUsuario = {
             id_usuario,
             nome,
             comandos_total: 0,
             comandos_dia: 0,
-            max_comandos_dia : botInfo.limite_diario.limite_tipos.comum,
             recebeuBoasVindas: false,
             tipo: 'comum'
         }
@@ -35,7 +34,7 @@ export class UsuarioControle{
         let donoAtual = await this.usuario.verificarDono(id_usuario)
         if(!donoAtual){
             let {limite_diario} = botInfo
-            await this.usuario.resetarDonos(limite_diario.limite_tipos.comum)
+            await this.usuario.resetarDonos()
             await this.usuario.atualizarDono(id_usuario)
         }
     }
@@ -54,23 +53,20 @@ export class UsuarioControle{
 
     async limparTipo(tipo, botInfo){
         let {limite_diario} = botInfo
-        if(limite_diario.limite_tipos[tipo] === undefined || tipo === "comum") return false
-        await this.usuario.limparTipo(tipo, limite_diario.limite_tipos.comum)
+        if(!limite_diario.limite_tipos[tipo] || tipo === "comum" || tipo === 'dono') return false
+        await this.usuario.limparTipo(tipo)
         return true
-    }
-
-    async alterarLimiteComandosTipo(tipo, qtdLimite){
-        await this.usuario.definirLimite(tipo, qtdLimite)
     }
 
     async recebeuBoasVindas(id_usuario){
         await this.usuario.alterarRecebeuBoasVindas(id_usuario)
     }
 
-    async verificarUltrapassouLimiteComandos(id_usuario){
+    async verificarUltrapassouLimiteComandos(id_usuario, botInfo){
         let usuario = await this.usuario.obterUsuario(id_usuario)
-        if(usuario.max_comandos_dia == null) return false
-        return (usuario.comandos_dia >= usuario.max_comandos_dia)
+        const maxComandos = botInfo.limite_diario.limite_tipos[usuario.tipo].comandos
+        if(!maxComandos) return false
+        return (usuario.comandos_dia >= maxComandos)
     }
 
     async adicionarContagemDiariaComandos(id_usuario){
@@ -83,8 +79,8 @@ export class UsuarioControle{
 
     async alterarTipoUsuario(id_usuario, tipo, botInfo){
         let {limite_diario} = botInfo
-        if(limite_diario.limite_tipos[tipo] !== undefined){
-            await this.usuario.alterarTipoUsuario(id_usuario, tipo, limite_diario.limite_tipos[tipo])
+        if(limite_diario.limite_tipos[tipo] && tipo != 'dono'){
+            await this.usuario.alterarTipoUsuario(id_usuario, tipo)
             return true
         } else {
             return false

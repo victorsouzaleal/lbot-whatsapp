@@ -46,9 +46,22 @@ export class BotControle{
                 status: false,
                 expiracao: 0,
                 limite_tipos: {
-                    comum : 50,
-                    premium: 100,
-                    vip: null
+                    comum : {
+                        titulo: '👤 Comum',
+                        comandos: 50
+                    },
+                    premium : {
+                        titulo: '🌟 Premium',
+                        comandos: 100,
+                    },
+                    vip : {
+                        titulo: '🎖️ VIP',
+                        comandos: null
+                    },
+                    dono : {
+                        titulo: '💻 Dono',
+                        comandos: null
+                    }
                 }
             },
             limitecomandos:{
@@ -305,9 +318,8 @@ export class BotControle{
         let bot = botInfo
         if(limite == -1) limite = null
         if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
-        bot.limite_diario.limite_tipos[tipo] = parseInt(limite)
+        bot.limite_diario.limite_tipos[tipo].comandos = parseInt(limite)
         await this.bot.atualizarDados(bot)
-        await new UsuarioControle().alterarLimiteComandosTipo(tipo, parseInt(limite))
         return true
     }
 
@@ -335,16 +347,6 @@ export class BotControle{
         bot.limite_diario.expiracao = (status) ? timestamp_atual+86400 : 0
         bot.limite_diario.status = status
         await this.bot.atualizarDados(bot)
-        if(status){
-            for(let tipo in bot.limite_diario.limite_tipos){
-                await new UsuarioControle().alterarLimiteComandosTipo(tipo, parseInt(bot.limite_diario.limite_tipos[tipo]))
-            }
-        } else {
-            await new UsuarioControle().resetarComandosDia()
-            for(let tipo in bot.limite_diario.limite_tipos){
-                await new UsuarioControle().alterarLimiteComandosTipo(tipo, null)
-            }
-        }
     }
 
     async alterarLimitador(botInfo, status= true, cmds_minuto = 5, tempo_bloqueio= 60){

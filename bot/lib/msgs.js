@@ -761,8 +761,10 @@ export const obterMensagensTexto = (botInfo)=>{
             },
             usuarios: {
                 nao_encontrado: "[❗] Não existem usuários com esse tipo ou você digitou um tipo inválido, confira os tipos disponíveis em "+`*${prefixo}tipos*`,
-                resposta_titulo: "🤖 USUÁRIOS - {p1} ({p2})\n\n"+"{p3}",
-                resposta_item: "-> {p1} +{p2} - {p3} cmds\n"
+                resposta: {
+                    titulo: "👥  USUÁRIOS - {p1} ({p2})\n\n",
+                    item: "-> {p1} +{p2} - {p3} cmds\n"
+                }
             },
             limpartipo:{
                 erro: "[❗] O tipo de usuário que você inseriu é inválido, verifique os tipos disponíveis em "+`*${prefixo}tipos*`,
@@ -867,9 +869,12 @@ export const obterMensagensTexto = (botInfo)=>{
                 resposta_inferior: "Total de comandos usados : *{p1}* comandos\n"
             },
             tipos: {
-                resposta: "🤖 TIPOS DE USUÁRIOS :\n\n"+
-                "{p1}",
-                item_tipo: "{p1} - *{p2}* cmds/dia\n"
+                resposta : {
+                    titulo : "👥 Tipos de usuários ({p1}) :\n\n",
+                    item: "Tipo : {p1}\n"+
+                    "Titulo : {p2}\n"+
+                    "Comandos diários : {p3}\n\n"
+                }
             },
             bcgrupos:{
                 anuncio: `[🤖${nome_bot}® - Mensagem para os grupos]\n\n`+
@@ -932,13 +937,7 @@ export const obterMensagensTexto = (botInfo)=>{
             apenas_admin : '[❗] Apenas administradores podem usar este comando.',
             apenas_dono_bot: '[❗] Apenas o dono do BOT pode usar este comando',
             apenas_dono_grupo: '[❗] Apenas o dono do GRUPO pode usar este comando.',
-        },
-        tipos: {
-            dono: "💻 Dono",
-            comum : "👤 Comum",
-            premium: "🌟 Premium",
-            vip: "🎖️ VIP"
-        },
+        }
     }
 }
 

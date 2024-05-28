@@ -49,7 +49,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
 
         // DADOS DO USUÁRIO E REGISTRO
         let usuarioRegistrado = await usuarios.verificarRegistro(remetente)
-        if(!usuarioRegistrado) await usuarios.registrarUsuario(remetente, nome_usuario, botInfo)
+        if(!usuarioRegistrado) await usuarios.registrarUsuario(remetente, nome_usuario)
         if(mensagem_dono) await usuarios.verificarDono(remetente, botInfo)
         // OBTENDO DADOS ATUALIZADOS DO USUÁRIO
         const dadosUsuario = await usuarios.obterDadosUsuario(remetente)
@@ -112,9 +112,9 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
             }
             //SE O RECURSO DE LIMITADOR DIARIO DE COMANDOS ESTIVER ATIVADO E O COMANDO NÃO ESTIVER NA LISTA DE EXCEÇÔES/INFO/GRUPO/ADMIN
             if(botInfo.limite_diario.status){
+                await bot.verificarExpiracaoLimite(botInfo)
                 if(!lista_comandos.excecoes_contagem.includes(comando) && !lista_comandos.admin.includes(comando) && !lista_comandos.grupo.includes(comando) && !lista_comandos.info.includes(comando) && !msgGuia){
-                    await bot.verificarExpiracaoLimite(botInfo)
-                    let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(remetente)
+                    let ultrapassou = await usuarios.verificarUltrapassouLimiteComandos(remetente, botInfo)
                     if(!ultrapassou) {
                         await usuarios.adicionarContagemDiariaComandos(remetente) 
                     } else {
@@ -123,7 +123,6 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
                     }   
                 } else {
                     await usuarios.adicionarContagemTotalComandos(remetente)
-                    await bot.verificarExpiracaoLimite(botInfo)
                 }
             } else {
                 await usuarios.adicionarContagemTotalComandos(remetente)

@@ -29,24 +29,24 @@ export class Usuario {
         return await db.findOneAsync({id_usuario, tipo: "dono"})
     }
 
-    async resetarDonos(max_comandos){
-        await db.updateAsync({tipo: "dono"}, {$set: {tipo: "comum",  max_comandos_dia : max_comandos}}, {multi: true})
+    async resetarDonos(){
+        await db.updateAsync({tipo: "dono"}, {$set: {tipo: "comum"}}, {multi: true})
     }
 
     async atualizarDono(id_usuario){
-        await db.updateAsync({id_usuario}, {$set: {tipo : "dono", max_comandos_dia: null}})
+        await db.updateAsync({id_usuario}, {$set: {tipo : "dono"}})
     }
 
-    async alterarTipoUsuario(id_usuario, tipo, max_comandos){
-        await db.updateAsync({id_usuario}, {$set: {tipo, max_comandos_dia: max_comandos}})
+    async alterarTipoUsuario(id_usuario, tipo){
+        await db.updateAsync({id_usuario}, {$set: {tipo}})
     }
 
     async alterarRecebeuBoasVindas(id_usuario, status = true){
         await db.updateAsync({id_usuario}, {$set : {recebeuBoasVindas : status}})
     }
 
-    async limparTipo(tipo, max_comandos){
-        await db.updateAsync({tipo}, {$set: {tipo: "comum", max_comandos_dia: max_comandos}}, {multi: true})
+    async limparTipo(tipo){
+        await db.updateAsync({tipo}, {$set: {tipo: "comum"}}, {multi: true})
     }
 
     async addContagemDiaria(id_usuario){
@@ -55,10 +55,6 @@ export class Usuario {
 
     async addContagemTotal(id_usuario){
         await db.updateAsync({id_usuario}, {$inc: {comandos_total: 1}})
-    }
-
-    async definirLimite(tipo, limite){
-        await db.updateAsync({tipo}, {$set: {max_comandos_dia: limite}}, {multi: true})
     }
 
     async resetarComandosDia(){

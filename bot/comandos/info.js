@@ -63,8 +63,9 @@ export const info = async(c, mensagemBaileys, botInfo) => {
             
             case `meusdados`:
                 try{
-                    let dadosUsuario = await usuarios.obterDadosUsuario(remetente), tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia ||  "Sem limite" 
-                    tipoUsuario = msgs_texto.tipos[tipoUsuario]
+                    let dadosUsuario = await usuarios.obterDadosUsuario(remetente)
+                    let maxComandosDia = botInfo.limite_diario.limite_tipos[dadosUsuario.tipo].comandos ||  "Sem limite" 
+                    let tipoUsuario = botInfo.limite_diario.limite_tipos[dadosUsuario.tipo].titulo
                     let nomeUsuario = nome_usuario
                     let resposta = criarTexto(msgs_texto.info.meusdados.resposta_geral, tipoUsuario, nomeUsuario, dadosUsuario.comandos_total)
                     if(botInfo.limite_diario.status) resposta += criarTexto(msgs_texto.info.meusdados.resposta_limite_diario, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)
@@ -84,9 +85,12 @@ export const info = async(c, mensagemBaileys, botInfo) => {
             case `menu`:
                 try{
                     let dadosUsuario = await usuarios.obterDadosUsuario(remetente)
-                    let tipoUsuario = dadosUsuario.tipo, maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite", totalComandos = dadosUsuario.comandos_total
-                    tipoUsuario = msgs_texto.tipos[tipoUsuario]
-                    let dadosResposta = '', nomeUsuario = nome_usuario
+                    let maxComandosDia = botInfo.limite_diario.limite_tipos[dadosUsuario.tipo].comandos || "Sem limite"
+                    let totalComandos = dadosUsuario.comandos_total
+                    let tipoUsuario = botInfo.limite_diario.limite_tipos[dadosUsuario.tipo].titulo
+                    let nomeUsuario = nome_usuario
+                    let dadosResposta = ''
+                    
                     if(botInfo.limite_diario.status){
                         dadosResposta = criarTexto(msgs_texto.info.ajuda.resposta_limite_diario, nomeUsuario, dadosUsuario.comandos_dia, maxComandosDia, tipoUsuario, totalComandos)
                     } else {

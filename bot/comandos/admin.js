@@ -397,10 +397,11 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     let tipo = texto_recebido.toLowerCase()
                     let usuariosTipo = await usuarios.obterUsuariosTipo(tipo)
                     if(!usuariosTipo.length) return await socket.responderTexto(c, id_chat, msgs_texto.admin.usuarios.nao_encontrado, mensagem)
+                    let respostaTitulo = criarTexto(msgs_texto.admin.usuarios.resposta.titulo, tipo.toUpperCase(), usuariosTipo.length)
                     let respostaItens = ''
-                    for (let usuario of usuariosTipo) respostaItens += criarTexto(msgs_texto.admin.usuarios.resposta_item, usuario.nome, usuario.id_usuario.replace("@s.whatsapp.net", ""), usuario.comandos_total)
-                    let resposta = criarTexto(msgs_texto.admin.usuarios.resposta_titulo, tipo.toUpperCase(), usuariosTipo.length, respostaItens)
-                    await socket.responderTexto(c, id_chat, resposta, mensagem)
+                    for (let usuario of usuariosTipo) respostaItens += criarTexto(msgs_texto.admin.usuarios.resposta.item, usuario.nome, usuario.id_usuario.replace("@s.whatsapp.net", ""), usuario.comandos_total)
+                    const respostaFinal = respostaTitulo + respostaItens
+                    await socket.responderTexto(c, id_chat, respostaFinal, mensagem)
                 } catch(err){
                     throw err
                 }
@@ -429,7 +430,7 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     if(numero_dono == usuarioAlterado) return await socket.responderTexto(c, id_chat, msgs_texto.admin.alterartipo.tipo_dono, mensagem)
                     let c_registrado = await usuarios.verificarRegistro(usuarioAlterado)
                     if(c_registrado){
-                        let alterou = await usuarios.alterarTipoUsuario(usuarioAlterado, tipoUsuario, botInfo)
+                        let alterou = await usuarios.alterarTipoUsuario(usuarioAlterado, tipoUsuario.toLowerCase(), botInfo)
                         if(!alterou) return await socket.responderTexto(c, id_chat, msgs_texto.admin.alterartipo.tipo_invalido, mensagem)
                         await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.alterartipo.sucesso, tipoUsuario.toUpperCase()), mensagem)
                     } else {
@@ -442,9 +443,15 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
         
             case "tipos":
                 try{
-                    let tipos = botInfo.limite_diario.limite_tipos, respostaTipos = ''
-                    for (let tipo in tipos) respostaTipos += criarTexto(msgs_texto.admin.tipos.item_tipo, msgs_texto.tipos[tipo], tipos[tipo] || "∞")
-                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.tipos.resposta, respostaTipos), mensagem)
+                    let limite_tipos = botInfo.limite_diario.limite_tipos
+                    let tipos = Object.keys(limite_tipos)
+                    let respostaTitulo = criarTexto(msgs_texto.admin.tipos.resposta.titulo, tipos.length - 1)
+                    let respostaItens = ''
+                    for (let tipo of tipos) {
+                        if(tipo != 'dono') respostaItens += criarTexto(msgs_texto.admin.tipos.resposta.item, tipo, limite_tipos[tipo].titulo, limite_tipos[tipo].comandos || "∞") 
+                    }
+                    const respostaFinal = respostaTitulo + respostaItens
+                    await socket.responderTexto(c, id_chat, respostaFinal, mensagem)
                 } catch(err){
                     throw err
                 }
@@ -490,8 +497,8 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     let usuarioRegistrado = await usuarios.verificarRegistro(idUsuario)
                     if (!usuarioRegistrado) return await socket.responderTexto(c, id_chat,msgs_texto.admin.verdados.nao_registrado,mensagem)
                     let dadosUsuario = await usuarios.obterDadosUsuario(idUsuario)
-                    let maxComandosDia = dadosUsuario.max_comandos_dia || "Sem limite"
-                    let tipoUsuario = msgs_texto.tipos[dadosUsuario.tipo]
+                    let maxComandosDia = botInfo.limite_diario.limite_tipos[dadosUsuario.tipo].comandos ?? "Sem limite"
+                    let tipoUsuario = botInfo.limite_diario.limite_tipos[dadosUsuario.tipo].titulo 
                     let nomeUsuario =  dadosUsuario.nome || "Ainda não obtido"
                     let resposta = criarTexto(msgs_texto.admin.verdados.resposta_superior, nomeUsuario, tipoUsuario, dadosUsuario.id_usuario.replace("@s.whatsapp.net",""))
                     if(botInfo.limite_diario.status) resposta += criarTexto(msgs_texto.admin.verdados.resposta_variavel.limite_diario.on, dadosUsuario.comandos_dia, maxComandosDia, maxComandosDia)

@@ -292,16 +292,16 @@ export const menuAdmin = (botInfo)=>{
 |
 |--〖 BLOQUEIO DE COMANDOS 〗 
 |
-|- *${prefixo}bcmdglobal* [comando1 comando2 etc] - Bloqueia os comandos escolhidos globalmente.
-|- *${prefixo}dcmdglobal* [comando1 comando2 etc] - Desbloqueia os comandos escolhidos globalmente.
+|- *${prefixo}bcmdglobal* comando1 comando2 - Bloqueia os comandos escolhidos globalmente.
+|- *${prefixo}dcmdglobal* comando1 comando2 - Desbloqueia os comandos escolhidos globalmente.
 |
 |--〖 BOT USUÁRIOS 〗
 |
 |- *${prefixo}verdados* @usuario - Mostra os dados do usuario cadastrado no bot.
 |- *${prefixo}tipos* - Mostra todos os tipos de usuário disponíveis.
-|- *${prefixo}alterartipo* [tipo] @usuario - Muda o tipo de conta do usuário.
-|- *${prefixo}limpartipo* [tipo] @usuario - Limpa todos os usuários desse tipo e transforma em usuarios comuns.
-|- *${prefixo}usuarios* [tipo]  - Mostra todos os usuários do tipo escolhido.
+|- *${prefixo}alterartipo* tipo @usuario - Muda o tipo de conta do usuário.
+|- *${prefixo}limpartipo* tipo - Limpa todos os usuários desse tipo e transforma em usuarios comuns.
+|- *${prefixo}usuarios* tipo - Mostra todos os usuários do tipo escolhido.
 |
 |--〖 REVELAR MENSAGENS 〗
 |- *${prefixo}autorevelar* - Ativa/desativa a revelação automatica de mensagens de visualização única.
