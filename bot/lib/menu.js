@@ -4,7 +4,7 @@ export const menuPrincipal  = (botInfo)=> {
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>---〖 🔎 *MENU PRINCIPAL* 🔍〗
+|>---〖🔎 *MENU PRINCIPAL*〗
 |
 |- Digite um dos comandos abaixo:
 |
@@ -23,9 +23,9 @@ export const menuFigurinhas = (botInfo)=>{
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 🖼️ *FIGURINHAS* 🖼️ 〗
+|>---〖🖼️ *FIGURINHAS*〗
 |
 |- *${prefixo}s* - Transfome uma IMAGEM/VIDEO em *sticker*.
 |- *${prefixo}s* 1 - Transfome uma IMAGEM em *sticker circular*.
@@ -44,9 +44,9 @@ export const menuInfoSuporte = (botInfo)=>{
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 ❓ *INFO/SUPORTE* ❓ 〗
+|>---〖❓ *INFO/SUPORTE*〗
 |
 |- *${prefixo}info* - Informações do bot e contato do dono.
 |- *${prefixo}reportar* mensagem - Reporte um problema para o dono.
@@ -60,9 +60,9 @@ export const menuDownload = (botInfo)=>{
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 📥 *DOWNLOADS* 📥 〗
+|>---〖📥 *DOWNLOADS*〗
 |
 |- *${prefixo}play* nome- Faz download de uma música e envia.
 |- *${prefixo}yt* nome - Faz download de um video do Youtube e envia.
@@ -80,11 +80,11 @@ export const menuUtilidades = (botInfo)=>{
     return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 ⚒️ *UTILITÁRIOS* ⚒️ 〗
+|>---〖⚒️ *UTILITÁRIOS*〗
 |
-|--〖 🔎 CONSULTAS/TEXTO 〗
+|--〖🔎 *CONSULTAS/TEXTO* 〗
 |
 |- *${prefixo}gpt* frase - Recebe uma resposta da IA CHATGPT.
 |- *${prefixo}filmes* - Exibe as tendências atuais de filmes.
@@ -101,19 +101,19 @@ export const menuUtilidades = (botInfo)=>{
 |- *${prefixo}ddd* - Responda alguém para ver o estado/região.
 |- *${prefixo}tabela* -  Mostra tabela com caracteres para criação de nicks.
 |
-|--〖 🔊 AUDIO 〗
+|--〖🔊 *AUDIO*〗
 |
 |- *${prefixo}ouvir* - Responda um áudio para transformar em texto.
 |- *${prefixo}audio* tipo_edicao - Responda um audio com este comando para fazer a edição.
 |- *${prefixo}voz* idioma texto - Transforma texto em audio.
 |
-|--〖 🖼️ IMAGENS 〗
+|--〖🖼️ *IMAGENS*〗
 |
 |- *${prefixo}upimg* - Faz upload de uma imagem e retorna o link.
 |- *${prefixo}criarimg* frase - Cria uma imagem de acordo com a frase usando IA.
 |- *${prefixo}rbg* - Retira o fundo de uma IMAGEM.
 |
-|--〖 ❔ RECONHECIMENTO 〗
+|--〖❔ *RECONHECIMENTO*〗
 |
 |- *${prefixo}qualmusica* - Responda um audio/video para identificar a música.
 |- *${prefixo}anime* -  Identifica o anime por foto de uma cena.
@@ -127,21 +127,21 @@ export const menuGrupo = (admin, botInfo)=>{
         return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 👨‍👩‍👧‍👦 *GRUPO* 👨‍👩‍👧‍👦 〗
+|>---〖👨‍👩‍👧‍👦 *GRUPO*〗
 |
-|--〖 GERAL 〗
+|--〖🛠️ *GERAL*〗
 |
 |- *${prefixo}status* - Vê os recursos ligados/desligados.
 |- *${prefixo}regras* - Exibe a descrição do grupo com as regras.
 |- *${prefixo}adms* - Lista todos administradores.
 |- *${prefixo}fotogrupo* - Altera foto do grupo
-|- *${prefixo}mt* [mensagem] - Marca todos MEMBROS/ADMINS com uma mensagem.
-|- *${prefixo}mm* [mensagem] - Marca os MEMBROS com uma mensagem.
+|- *${prefixo}mt* mensagem - Marca todos MEMBROS/ADMINS com uma mensagem.
+|- *${prefixo}mm* mensagem - Marca os MEMBROS com uma mensagem.
 |- *${prefixo}dono* - Mostra dono do grupo.
 |
-|--〖 CONTROLE DE ATIVIDADE 〗
+|--〖🎚️ *CONTROLE DE ATIVIDADE*〗
 |
 |- *${prefixo}contador* - Liga/desliga o contador de atividade (Mensagens).
 |- *${prefixo}atividade* @marcarmembro - Mostra a atividade do usuário no grupo. 
@@ -149,18 +149,18 @@ export const menuGrupo = (admin, botInfo)=>{
 |- *${prefixo}ibanir* 1-50 - Bane todos os inativos com  menos de 1 até 50 mensagens.
 |- *${prefixo}topativos* 1-50 - Marca os membros mais ativos em um ranking de 1-50 pessoas.
 |
-|--〖 BLOQUEIO DE COMANDOS 〗
+|--〖🚫 *BLOQUEIO DE COMANDOS*〗
 |
 |- *${prefixo}bcmd* [comando1 comando2 etc] - Bloqueia os comandos escolhidos no grupo.
 |- *${prefixo}dcmd* [comando1 comando2 etc] - Desbloqueia os comandos escolhidos no grupo.
 |
-|--〖 LISTA NEGRA 〗
+|--〖🗒️ *LISTA NEGRA*〗
 |
 |- *${prefixo}blista* +55 (21) 9xxxx-xxxx - Adiciona o número na lista negra do grupo.
 |- *${prefixo}dlista* +55 (21) 9xxxx-xxxx - Remove o número na lista negra do grupo.
 |- *${prefixo}listanegra* - Exibe a lista negra do grupo.
 |
-|--〖 RECURSOS 〗 
+|--〖🧰 *RECURSOS*〗 
 |
 |- *${prefixo}mutar* - Ativa/desativa o uso de comandos.
 |- *${prefixo}autosticker* - Ativa/desativa a criação automática de stickers.
@@ -169,7 +169,7 @@ export const menuGrupo = (admin, botInfo)=>{
 |- *${prefixo}afake* - Ativa/desativa o anti-fake.
 |- *${prefixo}aflood* - Ativa/desativa o anti-flood.
 |
-|--〖 ADMINISTRATIVO 〗
+|--〖⌨️ *ADMINISTRATIVO*〗
 |
 |- *${prefixo}add* +55 (21) 9xxxx-xxxx - Adiciona ao grupo.
 |- *${prefixo}ban* @marcarmembro - Bane do grupo.
@@ -181,29 +181,26 @@ export const menuGrupo = (admin, botInfo)=>{
 |- *${prefixo}apg* - Apaga mensagem do BOT.
 |- *${prefixo}bantodos* - Bane todos os membros.
 |
-|--〖 ENQUETE 〗
+|--〖📊 *ENQUETE*〗
 |
 |- *${prefixo}enquete* pergunta,opcao1,opcao2,etc.. - Abre uma enquete com uma pergunta e as opçôes.
 |
-|--〖 ETC.. 〗
-|
-|- *${prefixo}roletarussa* - Expulsa um membro aleatório do grupo.
 |
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
     } else {
         return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 👨‍👩‍👧‍👦 *GRUPO* 👨‍👩‍👧‍👦 〗
+|>---〖👨‍👩‍👧‍👦 *GRUPO*〗
 |
-|--〖 GERAL 〗
+|--〖🛠️ *GERAL*〗
 |- *${prefixo}regras* - Exibe a descrição do grupo com as regras.
 |- *${prefixo}adms* - Lista todos administradores.
 |- *${prefixo}dono* - Mostra dono do grupo.
 |
-|--〖 ENQUETE 〗
+|--〖📊 *ENQUETE*〗
 |- *${prefixo}enquete* pergunta,opcao1,opcao2,etc.. - Abre uma enquete com uma pergunta e as opçôes.
 |
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
@@ -216,17 +213,17 @@ export const menuDiversao = (grupo, botInfo )=>{
         return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 🕹️ *JOGOS* 🕹️ 〗
+|>---〖🕹️ *JOGOS*〗
 |
-|- *${prefixo}ppt* [pedra, papel, tesoura] - Pedra, papel ou tesoura.
+|- *${prefixo}ppt* pedra, papel ou tesoura - Joga o pedra, papel ou tesoura.
 |- *${prefixo}caracoroa* - Decide no cara ou coroa.
 |
-|>---〖 🧩 *DIVERSÃO* 🧩 〗
+|>---〖🧩 *DIVERSÃO*〗
 |
 |- *${prefixo}mascote* - Exibe o mascote.
-|- *${prefixo}simi [frase]* - Recebe uma resposta do SimSimi.
+|- *${prefixo}simi* frase - Recebe uma resposta do SimSimi.
 |- *${prefixo}viadometro* - Mede o nível de viadagem de alguma pessoa.
 |- *${prefixo}detector* - Detecta mentiras utilizando uma IA avançada.
 |- *${prefixo}casal* - Seleciona aleatoriamente um casal.
@@ -234,25 +231,26 @@ export const menuDiversao = (grupo, botInfo )=>{
 |- *${prefixo}gadometro* - Mencione um membro ou responda ele para descobrir.
 |- *${prefixo}chance* - Calcula a chance de algo acontecer.
 |- *${prefixo}bafometro* - Mede o nível de álcool de uma pessoa.
-|- *${prefixo}top5* [tema] - Ranking dos Top 5 com o tema que você escolher.
+|- *${prefixo}top5* tema - Ranking dos Top 5 com o tema que você escolher.
 |- *${prefixo}par* @pessoa1 @pessoa2 - Mede o nivel de compatibilidade entre 2 pessoas.
+|- *${prefixo}roletarussa* - Expulsa um membro aleatório do grupo.
 |
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
     } else {
         return `|
 |>----〖 *🤖 ${nome_bot?.trim()}®* 〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 🕹️ *JOGOS* 🕹️ 〗
+|>---〖🕹️ *JOGOS*〗
 |
-|- *${prefixo}ppt* [pedra, papel, tesoura] - Pedra, papel ou tesoura.
+|- *${prefixo}ppt* pedra, papel ou tesoura - Joga o Pedra, papel ou tesoura.
 |- *${prefixo}caracoroa* - Decide no cara ou coroa.
 |
-|>---〖 🧩 *DIVERSÃO* 🧩 〗
+|>---〖🧩 *DIVERSÃO*〗
 |
 |- *${prefixo}mascote* - Exibe o mascote.
-|- *${prefixo}simi [frase]* - Recebe uma resposta do SimSimi.
+|- *${prefixo}simi* frase - Recebe uma resposta do SimSimi.
 |- *${prefixo}chance* - Calcula a chance de algo acontecer.
 |- *${prefixo}fch* - Gera uma frase contra a humanidade.
 |
@@ -264,66 +262,64 @@ export const menuDiversao = (grupo, botInfo )=>{
 
 export const menuAdmin = (botInfo)=>{
     let {nome_bot, nome_adm, prefixo} = botInfo
-    return `|
-|>----〖 *🤖 ${nome_bot?.trim()}®* 〗
+    return `|>---〖⚙️ *ADMINISTRAÇÃO*〗
 |
-|>- Guia : *${prefixo}comando* guia
+|>- Guia ❔: *${prefixo}comando* guia
 |
-|>---〖 ⚙️ *ADMINISTRAÇÃO* ⚙️ 〗
+|--〖🎨 *CUSTOMIZAÇÃO*〗
 |
-|--〖 CONFIGURAÇÃO DO BOT 〗
-|
-|- *${prefixo}nomebot* [nome] - Altera nome do bot e atualiza menus
-|- *${prefixo}nomeadm* [nome] - Altera nome do administrador e atualiza menus
-|- *${prefixo}nomesticker* [nome] - Altera nome do pacote de figurinhas
-|- *${prefixo}prefixo* [! . # *] - Altera o prefixo dos comandos
+|- *${prefixo}nomebot* nome - Altera nome do bot e atualiza menus
+|- *${prefixo}nomeadm* nome - Altera nome do administrador e atualiza menus
+|- *${prefixo}nomesticker* nome - Altera nome do pacote de figurinhas
+|- *${prefixo}prefixo* simbolo - Altera o prefixo dos comandos
 |- *${prefixo}fotobot* - Altera foto do BOT
-|- *${prefixo}estado* [online, offline ou manutencao] - Altera o estado atual do bot.
+|- *${prefixo}estado* online, offline ou manutencao - Altera o estado atual do bot.
 |
-|--〖 GERAL 〗
+|--〖🛠️ *GERAL*〗
 |
 |- *${prefixo}infocompleta* - Informação completa do BOT.
 |- *${prefixo}ping* - Informação do sistema e de tempo de resposta.
 |- *${prefixo}bloquear* @usuario  - Bloqueia o usuário mencionado.
 |- *${prefixo}desbloquear* @usuario  - Desbloqueia o usuário mencionado.
 |- *${prefixo}listablock*  - Lista todos os usuários bloqueados.
-|- *${prefixo}bcgrupos* [mensagem] - Faz um anúncio com uma mensagem somente para os GRUPOS.
+|- *${prefixo}bcgrupos* mensagem - Faz um anúncio com uma mensagem somente para os GRUPOS.
 |- *${prefixo}desligar* - Desliga o bot.
 |
-|--〖 BLOQUEIO DE COMANDOS 〗 
+|--〖🚫 *BLOQUEIO DE COMANDOS*〗 
 |
 |- *${prefixo}bcmdglobal* comando1 comando2 - Bloqueia os comandos escolhidos globalmente.
 |- *${prefixo}dcmdglobal* comando1 comando2 - Desbloqueia os comandos escolhidos globalmente.
 |
-|--〖 BOT USUÁRIOS 〗
+|--〖👤 *USUÁRIOS/LIMITES*〗
 |
 |- *${prefixo}verdados* @usuario - Mostra os dados do usuario cadastrado no bot.
 |- *${prefixo}tipos* - Mostra todos os tipos de usuário disponíveis.
 |- *${prefixo}alterartipo* tipo @usuario - Muda o tipo de conta do usuário.
 |- *${prefixo}limpartipo* tipo - Limpa todos os usuários desse tipo e transforma em usuarios comuns.
 |- *${prefixo}usuarios* tipo - Mostra todos os usuários do tipo escolhido.
+|- *${prefixo}taxalimite* qtd-comandos tempo-bloqueio - Ativa/desativa a taxa de comandos por minuto.
+|- *${prefixo}limitediario* - Ativa/desativa o limite diario de comandos por dia.
+|- *${prefixo}mudarlimite* tipo qtd-comandos - Muda o limite de comandos por dia de um tipo de usuário.
+|- *${prefixo}rtodos* - Reseta os comandos diários de todos usuários.
+|- *${prefixo}r* @usuario - Reseta os comandos diários de um usuário.
 |
-|--〖 REVELAR MENSAGENS 〗
+|--〖👁️ *REVELAR MENSAGENS*〗
+|
 |- *${prefixo}autorevelar* - Ativa/desativa a revelação automatica de mensagens de visualização única.
 |- *${prefixo}revelar* - Revela o contéudo de uma mensagem de visualização única.
 |
-|--〖 CONTROLE/LIMITE 〗
+|--〖🎚️ *CONTROLE*〗
 |
 |- *${prefixo}pvliberado* - Ativa/desativa os comandos em mensagens privadas.
 |- *${prefixo}autostickerpv* - Ativa/desativa a criação automática de stickers no privado.
-|- *${prefixo}taxalimite* [qtd-comandos] [tempo-bloqueio] - Ativa/desativa a taxa de comandos por minuto.
-|- *${prefixo}limitediario* - Ativa/desativa o limite diario de comandos por dia.
-|- *${prefixo}mudarlimite* [tipo] [novo-limite] - Muda o limite de comandos por dia de um tipo de usuário.
-|- *${prefixo}rtodos* - Reseta os comandos diários de todos.
-|- *${prefixo}r* @usuario - Reseta os comandos diários de um usuário.
 |
-|--〖 GRUPOS 〗
+|--〖👨‍👩‍👧‍👦 *GRUPOS*〗
 |
 |- *${prefixo}grupos* - Mostra os grupos atuais.
 |- *${prefixo}linkgrupo* numero - Mostra o link do grupo selecionado.
 |- *${prefixo}sair* - Sai do grupo.
 |- *${prefixo}sairgrupos* - Sai de todos os grupos.
-|- *${prefixo}entrargrupo* [link-grupo] - BOT entra no grupo.
+|- *${prefixo}entrargrupo* link-grupo - BOT entra no grupo.
 |
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
