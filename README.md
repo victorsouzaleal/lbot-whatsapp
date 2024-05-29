@@ -21,11 +21,14 @@
 
 <br>
 
-## 🔄 Última Atualização : 27/05/2024 - v2.7.0
-**[CÓDIGO]** A estrutura da mensagem recebida foi totalmente modificada para facilitar na criação de novos comandos.<br>
-**[CORREÇÃO/TERMUX]** Correção e melhoria no arquivo de instalação no TERMUX.<br>
-**[CORREÇÃO/COMANDO]** Corrigido o comando de grupo **dcmd** para desbloquear comandos em um grupo.<br>
-**[CORREÇÃO/COMANDO]** Corrigido o comando **encurtar** para encurtar um link.<br>
+## 🔄 Última Atualização : 29/05/2024 - v2.7.1
+**[COMANDO]** O comando de **clima** foi refeito, agora dá mais detalhes e previsão do tempo para 3 dias.<br>
+**[ALTERAÇÃO]** Os menus tiveram uma pequena alteração visual, principalmente o de **admin**.<br>
+**[ALTERAÇÃO]** Pasta que armazena a sessão do bot agora se chama **sessao**.<br>
+**[ALTERAÇÃO]** As mensagens armazenadas pelo bot agora são limpas a cada inicialização para evitar ocupar muito espaço.<br>
+**[ALTERAÇÃO]** Os códigos relacionados ao **limitediario** foram alterados para facilitar futuros comandos.<br>
+**[ALTERAÇÃO]** O link para baixar o **TERMUX** no README foi atualizado para uma versão mais atual para evitar problemas.<br>
+**[ATUALIZAÇÃO]** A versão do WhatsApp Web foi atualizada para a versão **2.3000.1013789583**<br>
 <br>
 
 
@@ -34,7 +37,7 @@
 - Em sistemas **Windows/Linux** :<br>
         - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
 - No **Termux** :<br>
-        - Ter o [TERMUX](https://play.google.com/store/apps/details?id=com.termux&hl=pt_BR&gl=US) instalado no celular
+        - Ter o [TERMUX](https://github.com/termux/termux-app/releases/download/v0.118.0/termux-app_v0.118.0+github-debug_universal.apk) instalado no celular
 
 <br>
 
@@ -176,6 +179,7 @@ Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualqu
 
 * **Discord :** victorsouzaleal
 * **Email :** victorsouzaleal@gmail.com
+* **X/Twitter :** @victorsouzaleal
 
 <br>
 
