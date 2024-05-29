@@ -17,7 +17,7 @@ const cacheTentativasEnvio = new NodeCache({stdTTL:60, checkperiod:30})
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []
-    const { state : estadoAuth , saveCreds } = await useMultiFileAuthState('auth_info_baileys')
+    const { state : estadoAuth , saveCreds } = await useMultiFileAuthState('sessao')
     const c = makeWASocket(configSocket(estadoAuth, cacheTentativasEnvio))
     const bot = new BotControle()
 

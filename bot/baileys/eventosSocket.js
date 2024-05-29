@@ -24,7 +24,7 @@ export const conexaoEncerrada = async(conexao, botInfo)=>{
         consoleErro(msgs_texto.geral.desconectado.falha_grave, "DESCONECTADO")
     } else {
         if(erroCodigo == DisconnectReason?.loggedOut){
-            fs.rmSync("./auth_info_baileys", {recursive: true, force: true})
+            fs.rmSync("./sessao", {recursive: true, force: true})
             consoleErro(msgs_texto.geral.desconectado.deslogado, "DESCONECTADO")
         } else if(erroCodigo == DisconnectReason?.restartRequired){
             consoleErro(msgs_texto.geral.desconectado.reiniciar, "DESCONECTADO")
