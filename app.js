@@ -1,7 +1,8 @@
 //REQUERINDO MODULOS
-import {makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion} from '@whiskeysockets/baileys'
+import {makeWASocket, useMultiFileAuthState} from '@whiskeysockets/baileys'
 import * as eventosSocket from './bot/baileys/eventosSocket.js'
 import {BotControle} from './bot/controles/BotControle.js'
+import {MensagemControle} from './bot/controles/MensagemControle.js'
 import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
 import NodeCache from 'node-cache'
@@ -11,15 +12,19 @@ import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
     ffmpeg.setFfmpegPath(ffmpegInstaller.path)
 }).catch(()=>{})
 
-const msgTentativasCache = new NodeCache()
+//Cache de tentativa de envios
+const cacheTentativasEnvio = new NodeCache({stdTTL:60, checkperiod:30})
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []
     const { state : estadoAuth , saveCreds } = await useMultiFileAuthState('auth_info_baileys')
-    const {version : versao} = await fetchLatestBaileysVersion()
-    const c = makeWASocket(configSocket(estadoAuth, versao, msgTentativasCache))
+    const c = makeWASocket(configSocket(estadoAuth, cacheTentativasEnvio))
     const bot = new BotControle()
 
+    //Limpando mensagens armazenadas da sessão anterior
+    await new MensagemControle().limparMensagensArmazenadas()
+    
+    //Escutando novos eventos
     c.ev.process(async(events)=>{
         //Obtendo dados do bot
         const botInfo  = await bot.obterInformacoesBot()
