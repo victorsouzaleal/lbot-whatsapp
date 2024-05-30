@@ -53,10 +53,10 @@ export const conexaoAberta = async(c, botInfo)=>{
 
 export const receberMensagem = async (c, mensagem, botInfo)=>{
     try{
+        if(!mensagem.messages[0].message) return
         if(mensagem.messages[0].key.fromMe) await new MensagemControle().armazenarMensagem(mensagem.messages[0])
         switch (mensagem.type) {
             case "notify":
-                if(mensagem.messages[0].message == undefined) return
                 const grupos = new GrupoControle()
                 const mensagemBaileys = await converterMensagem(mensagem, botInfo)
                 if(!tiposPermitidosMensagens.includes(mensagemBaileys.tipo)) return
