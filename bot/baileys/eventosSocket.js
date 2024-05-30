@@ -1,4 +1,4 @@
-import {DisconnectReason} from '@whiskeysockets/baileys'
+import {DisconnectReason, getContentType} from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
 import {criarTexto, consoleErro, corTexto, verificarEnv, criarArquivosNecessarios, verificarNumeroDono, versaoAtual} from'../lib/util.js'
 import {obterMensagensTexto} from '../lib/msgs.js' 
@@ -54,6 +54,8 @@ export const conexaoAberta = async(c, botInfo)=>{
 export const receberMensagem = async (c, mensagem, botInfo)=>{
     try{
         if(!mensagem.messages[0].message) return
+        const tipoMensagem = getContentType(mensagem.messages[0].message)
+        if(!tipoMensagem) return
         if(mensagem.messages[0].key.fromMe) await new MensagemControle().armazenarMensagem(mensagem.messages[0])
         switch (mensagem.type) {
             case "notify":
