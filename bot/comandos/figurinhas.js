@@ -100,8 +100,8 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
                         message: (mensagem_citada) ? citacao.mensagem  : mensagem,
                         seconds: (mensagem_citada) ? citacao.segundos : segundos
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, msgs_texto.figurinhas.sticker.ssf_imagem , mensagem)
-                    await socket.responderTexto(c, id_chat, msgs_texto.figurinhas.sticker.ssf_espera , mensagem)
+                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, msgs_texto.figurinhas.ssf.erro_imagem , mensagem)
+                    await socket.responderTexto(c, id_chat, msgs_texto.figurinhas.ssf.espera , mensagem)
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     let {resultado: resultadoImg} = await api.Imagens.removerFundo(bufferMidia)
                     let {resultado : resultadoSticker} = await api.Stickers.criarSticker(resultadoImg, {pack: nome_pack?.trim(), autor: nome_bot?.trim()})
