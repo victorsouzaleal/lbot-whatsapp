@@ -21,14 +21,8 @@
 
 <br>
 
-## 🔄 Última Atualização : 29/05/2024 - v2.7.1
-**[COMANDO]** O comando de **clima** foi refeito, agora dá mais detalhes e previsão do tempo para 3 dias.<br>
-**[ALTERAÇÃO]** Os menus tiveram uma pequena alteração visual, principalmente o de **admin**.<br>
-**[ALTERAÇÃO]** Pasta que armazena a sessão do bot agora se chama **sessao**.<br>
-**[ALTERAÇÃO]** As mensagens armazenadas pelo bot agora são limpas a cada inicialização para evitar ocupar muito espaço.<br>
-**[ALTERAÇÃO]** Os códigos relacionados ao **limitediario** foram alterados para facilitar futuros comandos.<br>
-**[ALTERAÇÃO]** O link para baixar o **TERMUX** no README foi atualizado para uma versão mais atual para evitar problemas.<br>
-**[ATUALIZAÇÃO]** A versão do WhatsApp Web foi atualizada para a versão **2.3000.1013789583**<br>
+## 🔄 Última Atualização : 30/05/2024 - v2.7.2
+**[CORREÇÃO]** Corrigido erro ao receber mensagem que poderia ocorrer se a mensagem não fosse válida<br>
 <br>
 
 

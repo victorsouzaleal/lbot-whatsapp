@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "exports": "./app.js",
@@ -9,7 +9,14 @@
     "test": "node test.js"
   },
   "author": "Leal",
-  "license": "Apache-2.0",
+  "license": "MIT",
+  "repository": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git",
+  "keywords": [
+    "whatsapp",
+    "whatsapp-bot",
+    "bot",
+    "sticker"
+  ],
   "dependencies": {
     "@deepgram/sdk": "^3.2.0",
     "@hapi/boom": "^10.0.1",
@@ -48,16 +55,6 @@
     "youtube-sr": "^4.2.0",
     "ytdl-core": "4.11.5"
   },
-  "directories": {
-    "lib": "lib"
-  },
-  "repository": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git",
-  "keywords": [
-    "whatsapp",
-    "whatsapp-bot",
-    "bot",
-    "sticker"
-  ],
   "private": false,
   "optionalDependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0"
