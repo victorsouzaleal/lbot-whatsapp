@@ -5,7 +5,8 @@
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "yarn upgrade @victorsouzaleal/lbot-api-comandos@latest && node app.js",
+    "start": "yarn atualizar-api && node app.js",
+    "atualizar-api": "yarn upgrade @victorsouzaleal/lbot-api-comandos@latest",
     "dev": "node app.js"
   },
   "author": "Leal",
