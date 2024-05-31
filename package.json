@@ -1,12 +1,12 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "node test.js"
+    "start": "yarn upgrade @victorsouzaleal/lbot-api-comandos@latest && node app.js",
+    "dev": "node app.js"
   },
   "author": "Leal",
   "license": "MIT",

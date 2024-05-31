@@ -21,8 +21,9 @@
 
 <br>
 
-## 🔄 Última Atualização : 30/05/2024 - v2.7.2
-**[CORREÇÃO]** Corrigido erro ao receber mensagem que poderia ocorrer se a mensagem não fosse válida<br>
+## 🔄 Última Atualização : 31/05/2024 - v2.7.3
+**[NOVO]** Agora sempre antes de iniciar o bot vai verificar e atualizar a biblioteca de API em caso de algum comando quebrar e já houver uma atualização.<br>
+**[ALTERAÇÃO]** Toda a parte relacionada a API foi deletada do projeto e movida para uma biblioteca própria para isso, isso vai facilitar atualizações no caso de um comando parar de funcionar.<br>
 <br>
 
 
