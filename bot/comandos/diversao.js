@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timestampParaData} from '../lib/util.js'
 import path from 'node:path'
-import api from '../../api/api.js'
+import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
@@ -46,7 +46,7 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let perguntaSimi = texto_recebido
-                    let {resultado: resultadoTexto} = await api.IA.simiResponde(perguntaSimi)
+                    let {resultado: resultadoTexto} = await api.IA.obterRespostaSimi(perguntaSimi)
                     await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.diversao.simi.resposta, timestampParaData(Date.now()), resultadoTexto), mensagem)
                 } catch(err){
                     if(!err.erro) throw err

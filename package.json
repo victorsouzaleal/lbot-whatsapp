@@ -18,45 +18,25 @@
     "sticker"
   ],
   "dependencies": {
-    "@deepgram/sdk": "^3.2.0",
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
-    "@tobyg74/tiktok-api-dl": "^1.1.2",
-    "@victorsouzaleal/googlethis": "^1.8.1",
-    "@vitalets/google-translate-api": "^7.0.0",
+    "@victorsouzaleal/lbot-api-comandos": "^1.0.0",
     "@whiskeysockets/baileys": "^6.7.2",
-    "acrcloud": "^1.4.0",
     "axios": "^1.6.8",
     "chalk": "^4.1.0",
-    "correios-brasil": "^2.2.2",
     "dotenv": "^8.2.0",
-    "emoji-mixer": "^1.0.6",
-    "fb-downloader-scrapper": "^2.0.0",
-    "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
-    "genius-lyrics": "^4.2.9",
-    "hercai": "^12.2.0",
-    "instagram-url-direct": "^1.0.16",
     "jimp": "^0.22.12",
     "link-preview-js": "^3.0.5",
     "moment-timezone": "^0.5.31",
     "node-cache": "^5.1.2",
-    "node-gtts": "^2.0.2",
-    "node-upload-images": "^1.0.1",
     "p-queue": "^8.0.1",
     "pino": "^8.19.0",
     "pretty-num": "^0.5.0",
     "prompt": "^1.1.0",
-    "qrcode-terminal": "^0.12.0",
-    "twitter-downloader": "^1.1.7",
-    "wa-leal-stickers": "^1.0.8",
-    "youtube-sr": "^4.2.0",
-    "ytdl-core": "4.11.5"
+    "qrcode-terminal": "^0.12.0"
   },
-  "private": false,
-  "optionalDependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.1.0"
-  }
+  "private": false
 }

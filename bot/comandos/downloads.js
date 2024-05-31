@@ -1,6 +1,6 @@
 //REQUERINDO MÓDULOS
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
-import api from '../../api/api.js'
+import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import duration from 'format-duration-time'

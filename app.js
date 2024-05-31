@@ -7,13 +7,10 @@ import configSocket from './bot/baileys/configSocket.js'
 import moment from "moment-timezone"
 import NodeCache from 'node-cache'
 moment.tz.setDefault('America/Sao_Paulo')
-import ffmpeg from 'fluent-ffmpeg'
-import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
-    ffmpeg.setFfmpegPath(ffmpegInstaller.path)
-}).catch(()=>{})
+
 
 //Cache de tentativa de envios
-const cacheTentativasEnvio = new NodeCache({stdTTL:60, checkperiod:30})
+const cacheTentativasEnvio = new NodeCache()
 
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []

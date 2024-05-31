@@ -3,7 +3,7 @@ import {erroComandoMsg, consoleErro, criarTexto} from '../lib/util.js'
 import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
-import api from '../../api/api.js'
+import api from '@victorsouzaleal/lbot-api-comandos'
 import {obterMensagensTexto} from '../lib/msgs.js'
 
 
@@ -46,7 +46,7 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
 
             case 's':
                 try{
-                    let tipoFigurinha = texto_recebido === '1' ? 'circle' : 'default' 
+                    let tipoFigurinha = texto_recebido === '1' ? 'circulo' : 'padrao' 
                     let dadosMensagem = {
                         tipo : (mensagem_citada) ? citacao.tipo : tipo,
                         mimetype : (mensagem_citada) ? citacao.mimetype : mimetype,

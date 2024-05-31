@@ -1,6 +1,6 @@
 //REQUERINDO MÓDULOS
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
-import api from '../../api/api.js'
+import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
 import {MessageTypes} from '../baileys/mensagem.js'
 import {downloadMediaMessage } from '@whiskeysockets/baileys'
@@ -78,7 +78,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 try{
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let usuarioTexto = texto_recebido
-                    let {resultado: resultadoTexto} = await api.IA.respostaHercaiTexto(usuarioTexto, remetente)
+                    let {resultado: resultadoTexto} = await api.IA.obterRespostaIA(usuarioTexto, remetente)
                     await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.utilidades.gpt.resposta, resultadoTexto), mensagem)
                 } catch(err){
                     if(!err.erro) throw err
@@ -91,7 +91,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let usuarioTexto = texto_recebido
                     await socket.responderTexto(c, id_chat, msgs_texto.utilidades.criarimg.espera, mensagem)
-                    let {resultado: resultadoImagem} = await api.IA.respostaHercaiImagem(usuarioTexto)
+                    let {resultado: resultadoImagem} = await api.IA.obterImagemIA(usuarioTexto)
                     await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, resultadoImagem, '', mensagem) 
                 } catch(err){
                     if(!err.erro) throw err
@@ -145,7 +145,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!mensagem_citada || citacao?.tipo != MessageTypes.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     if(citacao.segundos > 90) return await socket.responderTexto(c, id_chat, msgs_texto.utilidades.ouvir.erro_limite, mensagem)
                     let bufferAudio = await downloadMediaMessage(citacao.mensagem, "buffer")
-                    let {resultado: resultadoTranscricao} = await api.Audios.obterTranscricaoAudio(bufferAudio)
+                    let {resultado: resultadoTranscricao} = await api.Audios.obterTranscricaoAudio(bufferAudio, {deepgram_secret_key : process.env.dg_secret_key?.trim()})
                     let textoTranscricao = resultadoTranscricao.results.channels[0].alternatives[0].transcript
                     await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.utilidades.ouvir.sucesso, textoTranscricao), citacao.mensagem)
                 } catch(err){
@@ -196,7 +196,11 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     let dadosMensagem = mensagem_citada ? citacao.mensagem : mensagem             
                     let bufferMensagemMidia = await downloadMediaMessage(dadosMensagem, "buffer")
                     await socket.responderTexto(c, id_chat, msgs_texto.utilidades.qualmusica.espera, mensagem)
-                    let {resultado: resultadoDadosMusica} = await api.Audios.obterReconhecimentoMusica(bufferMensagemMidia, tipoMensagem)
+                    let {resultado: resultadoDadosMusica} = await api.Audios.obterReconhecimentoMusica(bufferMensagemMidia, {
+                        acr_host: process.env.acr_host?.trim(),
+                        acr_access_key: process.env.acr_access_key?.trim(),
+                        acr_access_secret: process.env.acr_access_secret?.trim()
+                    })
                     await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.utilidades.qualmusica.resposta, resultadoDadosMusica.titulo, resultadoDadosMusica.produtora, resultadoDadosMusica.duracao, resultadoDadosMusica.lancamento, resultadoDadosMusica.album, resultadoDadosMusica.artistas), mensagem)
                 } catch(err){
                     if(!err.erro) throw err
