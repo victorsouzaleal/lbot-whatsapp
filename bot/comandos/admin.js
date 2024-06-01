@@ -53,30 +53,30 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 }
                 break
 
-            case "infocompleta":
+            case "infobot":
                 try{
                     let version = versaoAtual()
                     let infoBot = botInfo
                     let expiracaoLimiteDiario = timestampParaData(infoBot.limite_diario.expiracao * 1000)
                     let botInicializacaoData = timestampParaData(infoBot.iniciado)
-                    let resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, version)
+                    let resposta = criarTexto(msgs_texto.admin.infobot.resposta_superior, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, version)
                     // AUTO-STICKER
-                    resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
+                    resposta += (infoBot.autosticker) ? msgs_texto.admin.infobot.resposta_variavel.autosticker.on: msgs_texto.admin.infobot.resposta_variavel.autosticker.off
                     // AUTO-REVELAR
-                    resposta += (infoBot.autorevelar) ? msgs_texto.admin.infocompleta.resposta_variavel.autorevelar.on: msgs_texto.admin.infocompleta.resposta_variavel.autorevelar.off
+                    resposta += (infoBot.autorevelar) ? msgs_texto.admin.infobot.resposta_variavel.autorevelar.on: msgs_texto.admin.infobot.resposta_variavel.autorevelar.off
                     // PV LIBERADO
-                    resposta += (infoBot.pvliberado) ? msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.on: msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.off
+                    resposta += (infoBot.pvliberado) ? msgs_texto.admin.infobot.resposta_variavel.pvliberado.on: msgs_texto.admin.infobot.resposta_variavel.pvliberado.off
                     // LIMITE COMANDOS DIARIO
-                    resposta += (infoBot.limite_diario.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.on,  expiracaoLimiteDiario) : msgs_texto.admin.infocompleta.resposta_variavel.limite_diario.off
+                    resposta += (infoBot.limite_diario.status) ? criarTexto(msgs_texto.admin.infobot.resposta_variavel.limite_diario.on,  expiracaoLimiteDiario) : msgs_texto.admin.infobot.resposta_variavel.limite_diario.off
                     // LIMITE COMANDOS POR MINUTO
-                    resposta += (infoBot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.on, infoBot.limitecomandos.cmds_minuto_max, infoBot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infocompleta.resposta_variavel.taxa_comandos.off
+                    resposta += (infoBot.limitecomandos.status) ? criarTexto(msgs_texto.admin.infobot.resposta_variavel.taxa_comandos.on, infoBot.limitecomandos.cmds_minuto_max, infoBot.limitecomandos.tempo_bloqueio) : msgs_texto.admin.infobot.resposta_variavel.taxa_comandos.off
                     // BLOQUEIO DE COMANDOS
                     let comandosBloqueados = []
                     for(let comandoBloqueado of infoBot.bloqueio_cmds){
                         comandosBloqueados.push(prefixo+comandoBloqueado)
                     }
-                    resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.on, comandosBloqueados.toString()) : msgs_texto.admin.infocompleta.resposta_variavel.bloqueiocmds.off
-                    resposta += criarTexto(msgs_texto.admin.infocompleta.resposta_inferior, usuariosBloqueados.length, infoBot.cmds_executados, numero_dono.replace("@s.whatsapp.net", ""))
+                    resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(msgs_texto.admin.infobot.resposta_variavel.bloqueiocmds.on, comandosBloqueados.toString()) : msgs_texto.admin.infobot.resposta_variavel.bloqueiocmds.off
+                    resposta += criarTexto(msgs_texto.admin.infobot.resposta_inferior, usuariosBloqueados.length, infoBot.cmds_executados, numero_dono.replace("@s.whatsapp.net", ""))
                     await socket.obterFotoPerfil(c, numero_bot).then(async (fotoBot)=>{
                         await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, fotoBot, resposta, mensagem)
                     }).catch(async ()=>{
@@ -313,7 +313,7 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
 
                 break
 
-            case "taxalimite":
+            case "taxacomandos":
                 try{
                     let novoEstado = !botInfo.limitecomandos.status
                     if(novoEstado){
@@ -377,15 +377,15 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 }
                 break
             
-            case "mudarlimite":
+            case "tipocomandos":
                 try{
-                    if(!botInfo.limite_diario.status) return await socket.responderTexto(c, id_chat, msgs_texto.admin.mudarlimite.erro_limite_diario, mensagem)
+                    if(!botInfo.limite_diario.status) return await socket.responderTexto(c, id_chat, msgs_texto.admin.tipocomandos.erro_limite_diario, mensagem)
                     if(args.length < 2) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let [tipo, qtd] = args
-                    if(qtd != -1) if(isNaN(qtd) || qtd < 5) return await socket.responderTexto(c, id_chat, msgs_texto.admin.mudarlimite.invalido, mensagem)
-                    let alterou = await bot.alterarQtdLimiteDiarioTipo(tipo.toLowerCase(), parseInt(qtd), botInfo)
-                    if(!alterou) return await socket.responderTexto(c, id_chat, msgs_texto.admin.mudarlimite.tipo_invalido, mensagem)
-                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.mudarlimite.sucesso, tipo.toUpperCase(), qtd == -1 ? "∞" : qtd), mensagem)
+                    if(qtd != -1) if(isNaN(qtd) || qtd < 5) return await socket.responderTexto(c, id_chat, msgs_texto.admin.tipocomandos.invalido, mensagem)
+                    let alterou = await bot.alterarComandosTipoUsuario(tipo.toLowerCase(), parseInt(qtd), botInfo)
+                    if(!alterou) return await socket.responderTexto(c, id_chat, msgs_texto.admin.tipocomandos.tipo_invalido, mensagem)
+                    await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.tipocomandos.sucesso, tipo.toUpperCase(), qtd == -1 ? "∞" : qtd), mensagem)
                 } catch(err){
                     throw err
                 }
@@ -419,7 +419,7 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 }
                 break
 
-            case "alterartipo":
+            case "usuariotipo":
                 try{
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let [tipoUsuario, usuarioAlterado] = args
@@ -427,14 +427,14 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     else if(mencionados.length === 1) usuarioAlterado = mencionados[0]
                     else if(args.length == 2) usuarioAlterado = usuarioAlterado.replace(/\W+/g,"")+"@s.whatsapp.net"
                     else return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo),mensagem)
-                    if(numero_dono == usuarioAlterado) return await socket.responderTexto(c, id_chat, msgs_texto.admin.alterartipo.tipo_dono, mensagem)
+                    if(numero_dono == usuarioAlterado) return await socket.responderTexto(c, id_chat, msgs_texto.admin.usuariotipo.tipo_dono, mensagem)
                     let c_registrado = await usuarios.verificarRegistro(usuarioAlterado)
                     if(c_registrado){
                         let alterou = await usuarios.alterarTipoUsuario(usuarioAlterado, tipoUsuario.toLowerCase(), botInfo)
-                        if(!alterou) return await socket.responderTexto(c, id_chat, msgs_texto.admin.alterartipo.tipo_invalido, mensagem)
-                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.alterartipo.sucesso, tipoUsuario.toUpperCase()), mensagem)
+                        if(!alterou) return await socket.responderTexto(c, id_chat, msgs_texto.admin.usuariotipo.tipo_invalido, mensagem)
+                        await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.usuariotipo.sucesso, tipoUsuario.toUpperCase()), mensagem)
                     } else {
-                        await socket.responderTexto(c, id_chat, msgs_texto.admin.alterartipo.nao_registrado, mensagem)
+                        await socket.responderTexto(c, id_chat, msgs_texto.admin.usuariotipo.nao_registrado, mensagem)
                     }
                 } catch(err){
                     throw err

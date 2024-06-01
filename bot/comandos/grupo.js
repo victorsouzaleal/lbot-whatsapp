@@ -128,7 +128,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                 
                 break
 
-            case "blista":
+            case "addlista":
                 try{
                     if (!usuario_admin) return await socket.responderTexto(c, id_chat, msgs_texto.permissao.apenas_admin , mensagem)
                     if (!bot_admin) return await socket.responderTexto(c, id_chat,msgs_texto.permissao.bot_admin, mensagem)
@@ -137,28 +137,28 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                     else if(mencionados.length) blista_numero = mencionados[0]
                     else if(args.length) blista_numero = texto_recebido.replace(/\W+/g,"")+"@s.whatsapp.net"
                     else return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                    if(blista_numero == numero_bot) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.blista.bot_erro , mensagem)
-                    else if(admins.includes(blista_numero)) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.blista.admin_erro , mensagem)
+                    if(blista_numero == numero_bot) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.addlista.bot_erro , mensagem)
+                    else if(admins.includes(blista_numero)) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.addlista.admin_erro , mensagem)
                     let blista_grupo_lista = await grupos.obterListaNegra(id_grupo)
-                    if(blista_grupo_lista.includes(blista_numero)) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.blista.ja_listado, mensagem)
+                    if(blista_grupo_lista.includes(blista_numero)) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.addlista.ja_listado, mensagem)
                     await grupos.adicionarUsuarioListaNegra(id_grupo, blista_numero)
-                    await socket.responderTexto(c, id_chat, msgs_texto.grupo.blista.sucesso, mensagem)
+                    await socket.responderTexto(c, id_chat, msgs_texto.grupo.addlista.sucesso, mensagem)
                     if(participantes.includes(blista_numero)) await socket.removerParticipante(c, id_chat, blista_numero)
                 } catch(err){
                     throw err
                 }
                 break
             
-            case "dlista":
+            case "remlista":
                 try{
                     if (!usuario_admin) return await socket.responderTexto(c, id_chat, msgs_texto.permissao.apenas_admin , mensagem)
                     if (!bot_admin) return await socket.responderTexto(c, id_chat,msgs_texto.permissao.bot_admin, mensagem)
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let dlista_numero = texto_recebido.replace(/\W+/g,"")+"@s.whatsapp.net"
                     let dlista_grupo_lista = await grupos.obterListaNegra(id_grupo)
-                    if(!dlista_grupo_lista.includes(dlista_numero)) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.dlista.nao_listado, mensagem)
+                    if(!dlista_grupo_lista.includes(dlista_numero)) return await socket.responderTexto(c, id_chat, msgs_texto.grupo.remlista.nao_listado, mensagem)
                     await grupos.removerUsuarioListaNegra(id_grupo, dlista_numero)
-                    await socket.responderTexto(c, id_chat, msgs_texto.grupo.dlista.sucesso, mensagem)
+                    await socket.responderTexto(c, id_chat, msgs_texto.grupo.remlista.sucesso, mensagem)
                 } catch(err){
                     throw err
                 }
@@ -638,7 +638,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                 }
                 break
 
-            case 'f':
+            case 'restrito':
                 try{
                     if (!bot_admin) return await socket.responderTexto(c, id_chat, msgs_texto.permissao.bot_admin, mensagem)
                     if (!usuario_admin) return await socket.responderTexto(c, id_chat, msgs_texto.permissao.apenas_admin, mensagem)

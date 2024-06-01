@@ -329,13 +329,13 @@ export const obterMensagensTexto = (botInfo)=>{
             fotogrupo: {
                 sucesso: "🤖✅ A foto do GRUPO foi alterada com sucesso.",
             },
-            blista: {
+            addlista: {
                 sucesso: "✅ O número desse usuário foi adicionado á lista negra e será banido do grupo caso ainda esteja aqui.",
                 bot_erro: "[❗] Calma, você não pode adicionar o BOT a lista negra.",
                 admin_erro: "[❗] Calma, você não pode adicionar um ADMINISTRADOR a lista negra.",
                 ja_listado: "[❗] Este usuário já está na lista negra.",
             },
-            dlista: {
+            remlista: {
                 sucesso: "✅ O número desse usuário foi removido da lista negra.",
                 nao_listado: "[❗] Este usuário não está na lista negra.",
             },
@@ -584,7 +584,7 @@ export const obterMensagensTexto = (botInfo)=>{
                 pendente: "🤖 Não foi possivel entrar neste momento, o grupo provavelmente está com modo para administrador aceitar solicitação.",
                 entrar_sucesso: "🤖✅ Entendido, entrarei em breve no grupo."
             },
-            infocompleta:{
+            infobot:{
                 resposta_superior:"*Administrador do Bot* : {p1}\n"+
                 "*Nome do bot* : {p2}\n"+
                 "*Online desde* : {p3}\n"+
@@ -618,7 +618,7 @@ export const obterMensagensTexto = (botInfo)=>{
                         "-------------------\n",
                     },
                     taxa_comandos:{
-                        on: "*Taxa comandos/minuto* : ✅\n "+
+                        on: "*Taxa comandos/minuto* : ✅\n"+
                         "- *{p1}* Cmds/minuto por usuário\n"+
                         "- Bloqueio : *{p2}* s\n"+
                         "-------------------\n",
@@ -626,7 +626,8 @@ export const obterMensagensTexto = (botInfo)=>{
                         "-------------------\n"
                     },
                     bloqueiocmds:{
-                        on: "*Bloqueio de comandos* : ✅ *{p1}*\n"+
+                        on: "*Bloqueio de comandos* : ✅\n"+
+                        "- Bloqueados: *{p1}*\n"+
                         "-------------------\n",
                         off: "*Bloqueio de comandos* : ❌\n"+
                         "-------------------\n"
@@ -667,13 +668,13 @@ export const obterMensagensTexto = (botInfo)=>{
                 erro: "[❗] O tipo de usuário que você inseriu é inválido, verifique os tipos disponíveis em "+`*${prefixo}tipos*`,
                 sucesso: "✅Todos os usuários do tipo *{p1}* foram convertidos para *COMUM*"
             },
-            mudarlimite: {
+            tipocomandos: {
                 invalido: "[❗] O número para definir o limite de comandos é inválido",
                 tipo_invalido: "[❗] O tipo de usuário que você inseriu é inválido, verifique os tipos disponíveis em "+`*${prefixo}tipos*`,
                 erro_limite_diario: "[❗] Este comando só pode ser usado com o "+`*${prefixo}limitediario*`+" ativado.",
                 sucesso: "✅ O limite diário dos usuários do tipo *{p1}* foi definido para *{p2}* comandos/dia "
             },
-            alterartipo: {
+            usuariotipo: {
                 tipo_dono: "[❗] Não é possivel alterar cargo do dono",
                 tipo_invalido: "[❗] O tipo de usuário que você inseriu é inválido, verifique os tipos disponíveis em "+`*${prefixo}tipos*`,
                 nao_registrado: "[❗] Este usuário ainda não está registrado",

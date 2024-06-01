@@ -133,12 +133,12 @@ export const obterGuias = (prefixo) => {
             `Ex: *${prefixo}regras* - Exibe a descrição/regras do grupo\n`,
             status: cabecalho+
             `Ex: *${prefixo}status* - Exibe as configurações atuais do grupo\n`,
-            blista: cabecalho+
-            `Ex: Responda alguém com *${prefixo}blista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
-            `Ex: Marque alguém com *${prefixo}blista* - Adiciona o numero de quem foi marcado a lista negra e bane em seguida.\n\n`+
-            `Ex: *${prefixo}blista* +55219xxxx-xxxx - Adiciona o número digitado a lista negra do grupo e bane em seguida.\n.`,
-            dlista: cabecalho+
-            `Ex: *${prefixo}dlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
+            addlista: cabecalho+
+            `Ex: Responda alguém com *${prefixo}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
+            `Ex: Marque alguém com *${prefixo}addlista* - Adiciona o numero de quem foi marcado a lista negra e bane em seguida.\n\n`+
+            `Ex: *${prefixo}addlista* +55219xxxx-xxxx - Adiciona o número digitado a lista negra do grupo e bane em seguida.\n.`,
+            remlista: cabecalho+
+            `Ex: *${prefixo}remlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
             listanegra: cabecalho+
             `Ex: *${prefixo}listanegra* - Exibe a lista negra do grupo.\n`,
             bv: cabecalho+
@@ -229,8 +229,8 @@ export const obterGuias = (prefixo) => {
             apg: cabecalho+
             `Ex: Responder com *${prefixo}apg* - Apaga a mensagem que foi respondida com esse comando.\n\n`+
             `*Obs* : O bot precisa ser administrador.\n`,
-            f: cabecalho+
-            `Ex: *${prefixo}f* - Abre/Fecha o grupo.\n`
+            restrito: cabecalho+
+            `Ex: *${prefixo}restrito* - Abre/Restringe o grupo para ADMS.\n`
         },
         diversao:{
             detector:cabecalho+
@@ -276,8 +276,8 @@ export const obterGuias = (prefixo) => {
             `*Obs*: Para ver o número dos grupos é necessário checar no comando *${prefixo}grupos*\n`,
             fotobot: cabecalho+
             `Ex: Envie/responda uma *imagem* com *${prefixo}fotobot* - Altera a foto do BOT.\n`,
-            infocompleta: cabecalho+
-            `Ex: *${prefixo}infocompleta* - Exibe as informações completas do bot, inclusive as configurações atuais.\n`,
+            infobot: cabecalho+
+            `Ex: *${prefixo}infobot* - Exibe as informações completas do bot, inclusive as configurações atuais.\n`,
             entrargrupo:cabecalho+
             `Ex: *${prefixo}entrargrupo* link - Entra em um grupo por link de convite.\n`,
             sair:cabecalho+
@@ -331,23 +331,23 @@ export const obterGuias = (prefixo) => {
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
             limitediario: cabecalho+
             `Ex: *${prefixo}limitediario* - Ativa/desativa o limite diario de comandos.\n`,
-            taxalimite: cabecalho+
-            `Ex: *${prefixo}taxalimite* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
-            `*Obs*: Digite *${prefixo}taxalimite* novamente para desativar a taxa limite de comandos.\n`,
+            taxacomandos: cabecalho+
+            `Ex: *${prefixo}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+            `*Obs*: Digite *${prefixo}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
             tipos: cabecalho+
             `Ex: *${prefixo}tipos* - Exibe os tipos de usuários disponíveis e quantos comandos estão configurados por dia.\n`,
             limpartipo: cabecalho+
             `Ex: *${prefixo}limpartipo* premium - Transforma todos os usuários do tipo *PREMIUM* em *COMUM*.\n\n`+
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
-            mudarlimite: cabecalho+
-            `Ex: *${prefixo}mudarlimite* comum 70 - Altera o limite diário de comandos do usuário *COMUM* para 70/dia.\n\n`+
+            tipocomandos: cabecalho+
+            `Ex: *${prefixo}tipocomandos* comum 70 - Altera o limite diário de comandos do usuário *COMUM* para 70/dia.\n\n`+
             `*Obs*: O comando de *${prefixo}limitediario* deve estar ativado.\n`+
             `*Obs²*: Verifique os tipos disponíveis de usuários em *${prefixo}tipos*.\n`+
             `*Obs³*: Para ficar sem limite de comandos digite -1 no campo de limite.\n`,
-            alterartipo: cabecalho+
-            `Ex: *${prefixo}alterartipo* comum @usuario - Altera o tipo do usuário mencionado para *COMUM*.\n\n`+
-            `Ex: Responder com *${prefixo}alterartipo* premium - Altera o tipo do usuário respondido para *PREMIUM*.\n\n`+
-            `Ex: *${prefixo}alterartipo* vip  55219xxxxxxxx - Altera o tipo do usuário do número para *VIP*.\n\n`+
+            usuariotipo: cabecalho+
+            `Ex: *${prefixo}usuariotipo* comum @usuario - Altera o tipo do usuário mencionado para *COMUM*.\n\n`+
+            `Ex: Responder com *${prefixo}usuariotipo* premium - Altera o tipo do usuário respondido para *PREMIUM*.\n\n`+
+            `Ex: *${prefixo}usuariotipo* vip  55219xxxxxxxx - Altera o tipo do usuário do número para *VIP*.\n\n`+
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
             rtodos: cabecalho+
             `Ex: *${prefixo}rtodos* - Reseta os comandos diários de todos os usuários.\n\n`+

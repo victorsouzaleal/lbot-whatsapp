@@ -314,12 +314,41 @@ export class BotControle{
         await this.bot.atualizarDados(bot)
     }
 
-    async alterarQtdLimiteDiarioTipo(tipo, limite, botInfo){
+    async alterarComandosTipoUsuario(tipo, comandos, botInfo){
         let bot = botInfo
-        if(limite == -1) limite = null
-        if(bot.limite_diario.limite_tipos[tipo] === undefined) return false
-        bot.limite_diario.limite_tipos[tipo].comandos = parseInt(limite)
+        let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
+        comandos = (comandos == -1) ? null : comandos
+        if(!tiposAtuais.includes(tipo)) return false
+        bot.limite_diario.limite_tipos[tipo].comandos = parseInt(comandos)
         await this.bot.atualizarDados(bot)
+        return true
+    }
+
+    async adicionarTipoUsuario(botInfo, tipo, titulo, comandos){
+        let bot = botInfo
+        let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
+        if(tiposAtuais.includes(tipo)) return false
+        bot.limite_diario.limite_tipos[tipo] = {titulo, comandos}
+        await this.bot.atualizarDados(bot)
+        return true
+    }
+
+    async alterarTituloTipoUsuario(botInfo, tipo, titulo){
+        let bot = botInfo
+        let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
+        if(!tiposAtuais.includes(tipo)) return false
+        bot.limite_diario.limite_tipos[tipo].titulo = titulo
+        await this.bot.atualizarDados(bot)
+        return true
+    }
+
+    async removerTipoUsuario(botInfo, tipo){
+        const tiposNaoRemoviveis = ['comum', 'dono']
+        let bot = botInfo
+        let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
+        if(!tiposAtuais.includes(tipo)) return false
+        if(tiposNaoRemoviveis.includes(tipo)) return false
+        delete bot.limite_diario.limite_tipos[tipo]
         return true
     }
 
@@ -376,5 +405,4 @@ export class BotControle{
         bot.nome_pack = nome
         await this.bot.atualizarDados(bot)
     }
-
 }
