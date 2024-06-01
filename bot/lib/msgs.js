@@ -722,6 +722,14 @@ export const obterMensagensTexto = (botInfo)=>{
                 resposta_excedeu_limite: "[❗] {p1} -> Você ultrapassou seu limite diário de comandos por dia.\n\n"+
                 "Entre em contato com o dono para ver sua situação : https://wa.me/{p2}"
             },
+            novotipo:{
+                erro_comandos: "[❗] Houve um erro ao criar um novo tipo, a quantidade de comandos diários tem que ser um número e no mínimo 10.",
+                sucesso_criacao: "✅ Um novo tipo de usuário foi criado com sucesso.\n"+
+                "- Tipo : {p1}\n"+
+                "- Titulo : {p2}\n"+
+                "- Comandos diários : {p3}\n",
+                erro_criacao: `[❗] Houve um erro ao criar um novo tipo, verifique se esse tipo já existe em *${prefixo}tipos*`
+            },
             limitecomandos:{
                 qtd_invalida: "[❗] A quantidade máxima de mensagens por minuto está inválida",
                 tempo_invalido: "[❗] O tempo de bloqueio de mensagens está inválido",

@@ -328,7 +328,8 @@ export class BotControle{
         let bot = botInfo
         let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
         if(tiposAtuais.includes(tipo)) return false
-        bot.limite_diario.limite_tipos[tipo] = {titulo, comandos}
+        comandos = (comandos == -1) ? null : comandos
+        bot.limite_diario.limite_tipos[tipo] = {titulo, comandos : parseInt(comandos)}
         await this.bot.atualizarDados(bot)
         return true
     }

@@ -376,6 +376,17 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     throw err
                 }
                 break
+
+            case "novotipo":
+                if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                let [tipoUsuario, tipoTitulo, tipoComandos] = texto_recebido.split(",")
+                if(!tipoUsuario || !tipoTitulo || !tipoComandos) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                tipoUsuario = tipoUsuario.trim(), tipoTitulo = tipoTitulo.trim(), tipoComandos = tipoComandos.trim()
+                if(tipoComandos != -1 && (isNaN(tipoComandos) || tipoComandos < 10)) return await socket.responderTexto(c, id_chat, msgs_texto.admin.novotipo.erro_comandos, mensagem) 
+                const sucesso = await bot.adicionarTipoUsuario(botInfo, tipoUsuario, tipoTitulo, tipoComandos)
+                if(sucesso) await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.novotipo.sucesso_criacao, tipoUsuario, tipoTitulo, tipoComandos == -1 ? "Sem limite" : tipoComandos), mensagem)
+                else await socket.responderTexto(c, id_chat, msgs_texto.admin.novotipo.erro_criacao, mensagem) 
+                break
             
             case "tipocomandos":
                 try{

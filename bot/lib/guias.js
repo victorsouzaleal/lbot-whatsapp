@@ -349,6 +349,8 @@ export const obterGuias = (prefixo) => {
             `Ex: Responder com *${prefixo}usuariotipo* premium - Altera o tipo do usuário respondido para *PREMIUM*.\n\n`+
             `Ex: *${prefixo}usuariotipo* vip  55219xxxxxxxx - Altera o tipo do usuário do número para *VIP*.\n\n`+
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
+            novotipo: cabecalho+
+            `Ex: *${prefixo}novotipo* teste, 🤖 Teste, 50 - Cria um novo tipo usuário com nome *teste*, com titulo (exibição em menus) *🤖 Teste* e com o máximo de *50* comandos diários.\n`,
             rtodos: cabecalho+
             `Ex: *${prefixo}rtodos* - Reseta os comandos diários de todos os usuários.\n\n`+
             `*Obs*: O comando de *${prefixo}limitediario* deve estar ativado.\n`,
