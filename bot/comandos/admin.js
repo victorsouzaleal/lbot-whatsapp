@@ -403,6 +403,19 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     throw err
                 }
                 break
+
+            case 'tipotitulo':
+                try{
+                    if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    let [tipoUsuario, tipoTitulo] = texto_recebido.split(",").map(arg => {return arg.trim()})
+                    if(!tipoUsuario || !tipoTitulo) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    const sucesso = await bot.alterarTituloTipoUsuario(botInfo, tipoUsuario, tipoTitulo)
+                    if(sucesso) await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.tipotitulo.sucesso, tipoUsuario.toLowerCase().replaceAll(" ", ''), tipoTitulo), mensagem)
+                    else await socket.responderTexto(c, id_chat, msgs_texto.admin.tipotitulo.erro, mensagem)
+                } catch(err){
+                    throw err
+                }
+                break
             
             case "tipocomandos":
                 try{
@@ -472,10 +485,10 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 try{
                     let limite_tipos = botInfo.limite_diario.limite_tipos
                     let tipos = Object.keys(limite_tipos)
-                    let respostaTitulo = criarTexto(msgs_texto.admin.tipos.resposta.titulo, tipos.length - 1)
+                    let respostaTitulo = criarTexto(msgs_texto.admin.tipos.resposta.titulo, tipos.length)
                     let respostaItens = ''
                     for (let tipo of tipos) {
-                        if(tipo != 'dono') respostaItens += criarTexto(msgs_texto.admin.tipos.resposta.item, tipo, limite_tipos[tipo].titulo, limite_tipos[tipo].comandos || "∞") 
+                        respostaItens += criarTexto(msgs_texto.admin.tipos.resposta.item, tipo, limite_tipos[tipo].titulo, limite_tipos[tipo].comandos || "∞") 
                     }
                     const respostaFinal = respostaTitulo + respostaItens
                     await socket.responderTexto(c, id_chat, respostaFinal, mensagem)

@@ -676,7 +676,7 @@ export const obterMensagensTexto = (botInfo)=>{
             },
             usuariotipo: {
                 tipo_dono: "[❗] Não é possivel alterar cargo do dono",
-                tipo_invalido: "[❗] O tipo de usuário que você inseriu é inválido, verifique os tipos disponíveis em "+`*${prefixo}tipos*`,
+                tipo_invalido: `[❗] O tipo de usuário que você inseriu é inválido, verifique se o tipo existe em *${prefixo}tipos* e se não é do tipo *dono*`,
                 nao_registrado: "[❗] Este usuário ainda não está registrado",
                 sucesso: "✅ O tipo desse usuário foi definido para {p1}"
             },
@@ -733,6 +733,10 @@ export const obterMensagensTexto = (botInfo)=>{
             deltipo: {
                 sucesso_remocao: "✅ O tipo *{p1}* foi deletado com sucesso e os usuários desse tipo foram movidos para *COMUM*.",
                 erro_remocao: `[❗] Houve um erro ao deletar este tipo, verifique se esse tipo existe em *${prefixo}tipos* e se não é do tipo *comum* ou *dono* (que não podem ser deletados).`
+            },
+            tipotitulo: {
+                sucesso: "✅ O tipo *{p1}* teve o título de exibição alterado para *{p2}* com sucesso.",
+                erro: `[❗] Houve um erro ao alterar o titulo deste tipo, verifique se esse tipo existe em *${prefixo}tipos*.`
             },
             limitecomandos:{
                 qtd_invalida: "[❗] A quantidade máxima de mensagens por minuto está inválida",
