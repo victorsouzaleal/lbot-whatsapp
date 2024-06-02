@@ -378,14 +378,30 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 break
 
             case "novotipo":
-                if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                let [tipoUsuario, tipoTitulo, tipoComandos] = texto_recebido.split(",")
-                if(!tipoUsuario || !tipoTitulo || !tipoComandos) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                tipoUsuario = tipoUsuario.trim(), tipoTitulo = tipoTitulo.trim(), tipoComandos = tipoComandos.trim()
-                if(tipoComandos != -1 && (isNaN(tipoComandos) || tipoComandos < 10)) return await socket.responderTexto(c, id_chat, msgs_texto.admin.novotipo.erro_comandos, mensagem) 
-                const sucesso = await bot.adicionarTipoUsuario(botInfo, tipoUsuario, tipoTitulo, tipoComandos)
-                if(sucesso) await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.novotipo.sucesso_criacao, tipoUsuario, tipoTitulo, tipoComandos == -1 ? "Sem limite" : tipoComandos), mensagem)
-                else await socket.responderTexto(c, id_chat, msgs_texto.admin.novotipo.erro_criacao, mensagem) 
+                try{
+                    if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    let [tipoUsuario, tipoTitulo, tipoComandos] = texto_recebido.split(",").map(arg => {return arg.trim()})
+                    if(!tipoUsuario || !tipoTitulo || !tipoComandos) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if(tipoComandos != -1 && (isNaN(tipoComandos) || tipoComandos < 10)) return await socket.responderTexto(c, id_chat, msgs_texto.admin.novotipo.erro_comandos, mensagem) 
+                    const sucesso = await bot.adicionarTipoUsuario(botInfo, tipoUsuario, tipoTitulo, tipoComandos)
+                    if(sucesso) await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.novotipo.sucesso_criacao, tipoUsuario.toLowerCase().replaceAll(" ", ''), tipoTitulo, tipoComandos == -1 ? "Sem limite" : tipoComandos), mensagem)
+                    else await socket.responderTexto(c, id_chat, msgs_texto.admin.novotipo.erro_criacao, mensagem)
+                } catch(err){
+                    throw err
+                }
+                break
+
+            case "deltipo":
+                try{
+                    if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    let tipoUsuario = texto_recebido.trim()
+                    await usuarios.limparTipo(tipoUsuario, botInfo)
+                    const sucesso = await bot.removerTipoUsuario(botInfo, tipoUsuario)
+                    if(sucesso)  await socket.responderTexto(c, id_chat, criarTexto(msgs_texto.admin.deltipo.sucesso_remocao, tipoUsuario.toLowerCase().replaceAll(" ", '')), mensagem)
+                    else await socket.responderTexto(c, id_chat, msgs_texto.admin.deltipo.erro_remocao, mensagem)
+                } catch(err){
+                    throw err
+                }
                 break
             
             case "tipocomandos":

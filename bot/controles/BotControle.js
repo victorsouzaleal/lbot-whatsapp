@@ -327,9 +327,10 @@ export class BotControle{
     async adicionarTipoUsuario(botInfo, tipo, titulo, comandos){
         let bot = botInfo
         let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
-        if(tiposAtuais.includes(tipo)) return false
+        let tipoInserido = tipo.toLowerCase().replaceAll(" ", '')
+        if(tiposAtuais.includes(tipoInserido)) return false
         comandos = (comandos == -1) ? null : comandos
-        bot.limite_diario.limite_tipos[tipo] = {titulo, comandos : parseInt(comandos)}
+        bot.limite_diario.limite_tipos[tipoInserido] = {titulo, comandos : parseInt(comandos)}
         await this.bot.atualizarDados(bot)
         return true
     }
@@ -337,8 +338,9 @@ export class BotControle{
     async alterarTituloTipoUsuario(botInfo, tipo, titulo){
         let bot = botInfo
         let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
-        if(!tiposAtuais.includes(tipo)) return false
-        bot.limite_diario.limite_tipos[tipo].titulo = titulo
+        let tipoInserido = tipo.toLowerCase().replaceAll(" ", '')
+        if(!tiposAtuais.includes(tipoInserido)) return false
+        bot.limite_diario.limite_tipos[tipoInserido].titulo = titulo
         await this.bot.atualizarDados(bot)
         return true
     }
@@ -347,9 +349,11 @@ export class BotControle{
         const tiposNaoRemoviveis = ['comum', 'dono']
         let bot = botInfo
         let tiposAtuais = Object.keys(bot.limite_diario.limite_tipos)
-        if(!tiposAtuais.includes(tipo)) return false
-        if(tiposNaoRemoviveis.includes(tipo)) return false
-        delete bot.limite_diario.limite_tipos[tipo]
+        let tipoInserido = tipo.toLowerCase().replaceAll(" ", '')
+        if(!tiposAtuais.includes(tipoInserido)) return false
+        if(tiposNaoRemoviveis.includes(tipoInserido)) return false
+        delete bot.limite_diario.limite_tipos[tipoInserido]
+        await this.bot.atualizarDados(bot)
         return true
     }
 

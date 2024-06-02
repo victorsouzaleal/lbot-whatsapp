@@ -351,6 +351,8 @@ export const obterGuias = (prefixo) => {
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
             novotipo: cabecalho+
             `Ex: *${prefixo}novotipo* teste, 🤖 Teste, 50 - Cria um novo tipo usuário com nome *teste*, com titulo (exibição em menus) *🤖 Teste* e com o máximo de *50* comandos diários.\n`,
+            deltipo: cabecalho+
+            `Ex: *${prefixo}deltipo* vip - Deleta o tipo de usuário *VIP* e move todos os usuários desse tipo para *COMUM*\n`,
             rtodos: cabecalho+
             `Ex: *${prefixo}rtodos* - Reseta os comandos diários de todos os usuários.\n\n`+
             `*Obs*: O comando de *${prefixo}limitediario* deve estar ativado.\n`,

@@ -730,6 +730,10 @@ export const obterMensagensTexto = (botInfo)=>{
                 "- Comandos diários : {p3}\n",
                 erro_criacao: `[❗] Houve um erro ao criar um novo tipo, verifique se esse tipo já existe em *${prefixo}tipos*`
             },
+            deltipo: {
+                sucesso_remocao: "✅ O tipo *{p1}* foi deletado com sucesso e os usuários desse tipo foram movidos para *COMUM*.",
+                erro_remocao: `[❗] Houve um erro ao deletar este tipo, verifique se esse tipo existe em *${prefixo}tipos* e se não é do tipo *comum* ou *dono* (que não podem ser deletados).`
+            },
             limitecomandos:{
                 qtd_invalida: "[❗] A quantidade máxima de mensagens por minuto está inválida",
                 tempo_invalido: "[❗] O tempo de bloqueio de mensagens está inválido",
