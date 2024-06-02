@@ -18,7 +18,8 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
     const usuarios = new UsuarioControle()
     const grupos = new GrupoControle()
     const msgs_texto = obterMensagensTexto(botInfo)
-    const {numero_dono, hostNumber : numero_bot, prefixo, nome_bot, nome_adm} = botInfo
+    const numero_dono = await usuarios.obterIdDono()
+    const {numero_bot, prefixo, nome_bot, nome_adm} = botInfo
     const {
         mensagem_dono,
         texto_recebido,

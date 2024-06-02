@@ -30,13 +30,9 @@ export class UsuarioControle{
         return (registro != null)
     }
 
-    async verificarDono(id_usuario, botInfo){
-        let donoAtual = await this.usuario.verificarDono(id_usuario)
-        if(!donoAtual){
-            let {limite_diario} = botInfo
-            await this.usuario.resetarDonos()
-            await this.usuario.atualizarDono(id_usuario)
-        }
+    async cadastrarDono(id_usuario){
+        await this.usuario.resetarDonos()
+        await this.usuario.atualizarDono(id_usuario)
     }
 
     async obterDadosTodosUsuarios(){
@@ -49,6 +45,15 @@ export class UsuarioControle{
 
     async obterUsuariosTipo(tipo){
         return await this.usuario.obterUsuariosTipo(tipo)
+    }
+
+    async obterDono(){
+        return await this.usuario.obterDono()
+    }
+
+    async obterIdDono(){
+        const dono = await this.usuario.obterDono()
+        return dono?.id_usuario ?? ''
     }
 
     async limparTipo(tipo, botInfo){

@@ -44,7 +44,7 @@ export const conexaoAberta = async(c, botInfo)=>{
         await socket.obterTodosGrupos(c)
         await new BotControle().inicializarBot(c, botInfo)
         await verificarEnv()
-        await verificarNumeroDono(botInfo)
+        await verificarNumeroDono()
     } catch(err){
         consoleErro(err, "Inicialização")
         c.end(new Error("erro_geral"))
@@ -89,7 +89,7 @@ export const adicionadoEmGrupo = async (c, dadosGrupo, botInfo)=>{
 export const atualizacaoParticipantesGrupo = async (c, evento, botInfo)=>{
     try{
         const grupos = new GrupoControle()
-        const isBotUpdate = evento.participants[0] == botInfo.hostNumber
+        const isBotUpdate = evento.participants[0] == botInfo.numero_bot
         const g_info = await grupos.obterGrupoInfo(evento.id)
         if (evento.action == 'add') {
             //SE O PARTICIPANTE ESTIVER NA LISTA NEGRA, EXPULSE

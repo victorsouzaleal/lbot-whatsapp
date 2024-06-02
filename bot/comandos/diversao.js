@@ -5,12 +5,14 @@ import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
 import { MessageTypes } from '../baileys/mensagem.js'
 import {obterMensagensTexto} from '../lib/msgs.js'
+import {UsuarioControle} from '../controles/UsuarioControle.js'
 
 
 export const diversao = async(c, mensagemBaileys, botInfo) => {
     //Atribuição de valores
     const msgs_texto = obterMensagensTexto(botInfo)
-    const {prefixo, hostNumber: numero_bot, numero_dono} = botInfo
+    const numero_dono = await new UsuarioControle().obterIdDono()
+    const {prefixo, numero_bot} = botInfo
     const {
         comando,
         texto_recebido,

@@ -1,6 +1,7 @@
 import {generateWAMessageFromContent, getContentType} from '@whiskeysockets/baileys'
 import pino from 'pino'
 import {GrupoControle} from '../controles/GrupoControle.js'
+import {UsuarioControle} from '../controles/UsuarioControle.js'
 
 
 export async function converterMensagem(m, botInfo){
@@ -14,11 +15,11 @@ export async function converterMensagem(m, botInfo){
                 tipo = getContentType(m.message)
             }
             let mensagem_citada = tipo == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
-            let numero_bot = botInfo.hostNumber
+            let {numero_bot} = botInfo
             let remetente = (m.key.fromMe) ? numero_bot : m.key.participant || m.key.remoteJid
             let texto_completo = m.message[tipo]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || '' 
             let [comando, ...args] = texto_completo.trim().split(" ")
-            let numero_dono = botInfo.numero_dono
+            let numero_dono = await new UsuarioControle().obterIdDono()
             let mensagem_dono = numero_dono == remetente
             let mensagem_grupo = m.key.remoteJid.includes("@g.us")
             

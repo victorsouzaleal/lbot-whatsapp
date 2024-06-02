@@ -21,7 +21,7 @@ export class BotControle{
         try{
             let bot = botInfo
             bot.iniciado = moment.now()
-            bot.hostNumber = await socket.obterNumeroHost(c)
+            bot.numero_bot = await socket.obterNumeroHost(c)
             await this.bot.atualizarDados(bot)
             console.log("[BOT]", corTexto(obterMensagensTexto(bot).inicio.dados_bot))
         }catch(err){
@@ -37,7 +37,6 @@ export class BotControle{
             nome_adm: "Leal",
             nome_pack: "LBOT Stickers",
             prefixo: "!",
-            numero_dono:"",
             cmds_executados:0,
             autosticker: false,
             autorevelar: false,
@@ -278,7 +277,7 @@ export class BotControle{
         try{
             const msgs_texto = obterMensagensTexto(botInfo)
             const {mensagem, nome_usuario : nomeUsuario, remetente, mensagem_grupo, tipo, grupo} = mensagemBaileys
-            const {numero_dono : numeroDono} = botInfo
+            const numeroDono = await new UsuarioControle().obterIdDono()
             const numeroUsuario = remetente.replace("@s.whatsapp.net", '')
             const nomeGrupo = mensagem_grupo ? grupo.nome : '----'
             const tipoMensagem = obterTipoDeMensagem(tipo)
@@ -293,19 +292,13 @@ export class BotControle{
     }
 
     async obterNumeroBot(){
-        let {hostNumber} = await this.obterInformacoesBot()
-        return hostNumber
+        let {numero_bot} = await this.obterInformacoesBot()
+        return numero_bot
     }
 
     async obterNumeroDono(){
         let {numero_dono} = await this.obterInformacoesBot()
         return numero_dono
-    }
-
-    async alterarNumeroDono(numero, botInfo){
-        let bot = botInfo
-        bot.numero_dono = numero
-        await this.bot.atualizarDados(bot)
     }
 
     async alterarPrefixo(prefixo, botInfo){

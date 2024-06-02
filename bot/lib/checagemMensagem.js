@@ -16,7 +16,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         const usuarios = new UsuarioControle()
         const grupos = new GrupoControle()
         const {prefixo, nome_bot} = botInfo
-        const numero_dono = botInfo.numero_dono
+        const numero_dono = await usuarios.obterIdDono()
         const msgs_texto = obterMensagensTexto(botInfo)
         const lista_comandos = listarComandos(prefixo)
         const {
@@ -40,17 +40,17 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         const usuarioBloqueado = usuariosBloqueados.includes(remetente)
         const comandoExiste = verificarComandoExiste(lista_comandos, comando)
         
-        //Se o numero do dono estiver vazio e o comando for !admin, cadastre quem fez o comando como dono.
+        // Verificação se o usuário existe e se não existir faça o cadastro.
+        let usuarioRegistrado = await usuarios.verificarRegistro(remetente)
+        if(!usuarioRegistrado) await usuarios.registrarUsuario(remetente, nome_usuario)
+
+        //Se não houver um usuário do tipo 'dono' e o comando for !admin, altere o tipo de quem fez o comando como dono.
         if(!numero_dono && comando == `${prefixo}admin`) {
-            await bot.alterarNumeroDono(remetente, botInfo)
+            await usuarios.cadastrarDono(remetente)
             await socket.responderTexto(c, id_chat, msgs_texto.geral.dono_cadastrado, mensagem)
             return false
         }
 
-        // DADOS DO USUÁRIO E REGISTRO
-        let usuarioRegistrado = await usuarios.verificarRegistro(remetente)
-        if(!usuarioRegistrado) await usuarios.registrarUsuario(remetente, nome_usuario)
-        if(mensagem_dono) await usuarios.verificarDono(remetente, botInfo)
         // OBTENDO DADOS ATUALIZADOS DO USUÁRIO
         const dadosUsuario = await usuarios.obterDadosUsuario(remetente)
 
@@ -81,7 +81,7 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
         await usuarios.atualizarNome(remetente, nome_usuario)
 
         //SE FOR VISUALIZACAO UNICA E O AUTO REVELAR ESTIVER ATIVO E TIVER UM NUMERO DE DONO JÁ CADASTRADO
-        if(mensagem_vunica && botInfo.autorevelar && botInfo.numero_dono){
+        if(mensagem_vunica && botInfo.autorevelar && numero_dono){
             await bot.redirecionarMensagemRevelada(c, mensagemBaileys, botInfo)
         }
 

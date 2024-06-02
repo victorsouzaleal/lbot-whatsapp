@@ -17,6 +17,10 @@ export class Usuario {
         return await db.findAsync({tipo})
     }
 
+    async obterDono(){
+        return await db.findOneAsync({tipo: 'dono'})
+    }
+
     async obterTodosUsuarios(){
         return await db.findAsync({})
     }

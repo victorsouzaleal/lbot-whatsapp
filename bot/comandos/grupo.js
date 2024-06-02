@@ -11,7 +11,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
     //Atribuição de valores
     const grupos = new GrupoControle()
     const msgs_texto = obterMensagensTexto(botInfo)
-    const {prefixo, nome_bot, hostNumber: numero_bot} = botInfo
+    const {prefixo, nome_bot, numero_bot} = botInfo
     const { 
         comando,
         args,

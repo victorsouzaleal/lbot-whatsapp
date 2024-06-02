@@ -3,6 +3,7 @@ import {obterMensagensTexto} from './msgs.js'
 import {obterGuias} from './guias.js'
 import chalk from 'chalk'
 import {BotControle} from '../controles/BotControle.js'
+import {UsuarioControle} from "../controles/UsuarioControle.js"
 import path from 'node:path'
 import fs from 'fs-extra'
 
@@ -128,10 +129,10 @@ export const verificarEnv = async ()=>{
     }
   }
 
-export const verificarNumeroDono = async(botInfo)=>{
-    let {numero_dono} = botInfo
-    let resposta = (numero_dono == '') ? "O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono." : "✓ Número do DONO configurado."
-    let cor_resposta = (numero_dono == '') ? "#d63e3e" : false
+export const verificarNumeroDono = async()=>{
+    const numero_dono = await new UsuarioControle().obterIdDono()
+    let resposta = (!numero_dono) ? "O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono." : "✓ Número do DONO configurado."
+    let cor_resposta = (!numero_dono) ? "#d63e3e" : false
     console.log("[DONO]", corTexto(resposta, cor_resposta))
 }
 
