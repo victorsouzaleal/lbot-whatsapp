@@ -434,13 +434,13 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
             
             case "usuarios":
                 try{
-                    if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                    let tipo = texto_recebido.toLowerCase()
-                    let usuariosTipo = await usuarios.obterUsuariosTipo(tipo)
-                    if(!usuariosTipo.length) return await socket.responderTexto(c, id_chat, msgs_texto.admin.usuarios.nao_encontrado, mensagem)
-                    let respostaTitulo = criarTexto(msgs_texto.admin.usuarios.resposta.titulo, tipo.toUpperCase(), usuariosTipo.length)
-                    let respostaItens = ''
-                    for (let usuario of usuariosTipo) respostaItens += criarTexto(msgs_texto.admin.usuarios.resposta.item, usuario.nome, usuario.id_usuario.replace("@s.whatsapp.net", ""), usuario.comandos_total)
+                    let listaUsuarios, tipoUsuario, respostaTitulo = '', respostaItens = ''
+                    if(!args.length) tipoUsuario = 'comum'
+                    else tipoUsuario = texto_recebido.toLowerCase()
+                    listaUsuarios = await usuarios.obterUsuariosTipo(tipoUsuario)
+                    if(!listaUsuarios.length) return await socket.responderTexto(c, id_chat, msgs_texto.admin.usuarios.nao_encontrado, mensagem)
+                    respostaTitulo = criarTexto(msgs_texto.admin.usuarios.resposta.titulo, tipoUsuario , listaUsuarios.length)
+                    for (let usuario of listaUsuarios) respostaItens += criarTexto(msgs_texto.admin.usuarios.resposta.item, usuario.nome, usuario.id_usuario.replace("@s.whatsapp.net", ""), usuario.comandos_total)
                     const respostaFinal = respostaTitulo + respostaItens
                     await socket.responderTexto(c, id_chat, respostaFinal, mensagem)
                 } catch(err){

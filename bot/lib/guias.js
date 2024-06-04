@@ -327,7 +327,8 @@ export const obterGuias = (prefixo) => {
             `Ex: *${prefixo}desbloquear* +55 (xx) xxxxx-xxxx - Para o bot desbloquear o número digitado.\n\n`+
             `Ex: Responder alguém com *${prefixo}desbloquear* - Para o bot desbloquear o membro que você respondeu.\n`,
             usuarios: cabecalho+
-            `Ex: *${prefixo}usuarios* comum - Mostra todos os usuários do tipo *COMUM*.\n\n`+
+            `Ex: *${prefixo}usuarios* - Mostra todos os usuários do tipo *COMUM*.\n`+
+            `Ex: *${prefixo}usuarios* vip - Mostra todos os usuários do tipo *VIP*.\n\n`+
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
             limitediario: cabecalho+
             `Ex: *${prefixo}limitediario* - Ativa/desativa o limite diario de comandos.\n`,
