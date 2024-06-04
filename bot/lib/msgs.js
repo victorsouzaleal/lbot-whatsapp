@@ -785,9 +785,10 @@ export const obterMensagensTexto = (botInfo)=>{
             tipos: {
                 resposta : {
                     titulo : "👥 Tipos de usuários ({p1}) :\n\n",
-                    item: "Tipo : {p1}\n"+
-                    "Titulo : {p2}\n"+
-                    "Comandos diários : {p3}\n\n"
+                    item: "Tipo: {p1}\n"+
+                    "Titulo: {p2}\n"+
+                    "Comandos diários: {p3}\n"+
+                    "Usuários: {p4}\n\n"
                 }
             },
             bcgrupos:{

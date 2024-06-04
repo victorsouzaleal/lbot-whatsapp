@@ -489,7 +489,8 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     let respostaTitulo = criarTexto(msgs_texto.admin.tipos.resposta.titulo, tipos.length)
                     let respostaItens = ''
                     for (let tipo of tipos) {
-                        respostaItens += criarTexto(msgs_texto.admin.tipos.resposta.item, tipo, limite_tipos[tipo].titulo, limite_tipos[tipo].comandos || "∞") 
+                        let usuariosTipo = await usuarios.obterUsuariosTipo(tipo)
+                        respostaItens += criarTexto(msgs_texto.admin.tipos.resposta.item, tipo, limite_tipos[tipo].titulo, limite_tipos[tipo].comandos || "∞", usuariosTipo.length) 
                     }
                     const respostaFinal = respostaTitulo + respostaItens
                     await socket.responderTexto(c, id_chat, respostaFinal, mensagem)
