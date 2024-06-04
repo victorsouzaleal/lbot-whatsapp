@@ -333,7 +333,8 @@ export const obterGuias = (prefixo) => {
             limitediario: cabecalho+
             `Ex: *${prefixo}limitediario* - Ativa/desativa o limite diario de comandos.\n`,
             taxacomandos: cabecalho+
-            `Ex: *${prefixo}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+            `Ex: *${prefixo}taxacomandos* 5 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n`+
+            `Ex: *${prefixo}taxacomandos* 10 30 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 30 segundos impossibilitado de fazer comandos.\n\n`+
             `*Obs*: Digite *${prefixo}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
             tipos: cabecalho+
             `Ex: *${prefixo}tipos* - Exibe os tipos de usuários disponíveis e quantos comandos estão configurados por dia.\n`,

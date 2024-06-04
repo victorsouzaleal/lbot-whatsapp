@@ -318,8 +318,9 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 try{
                     let novoEstado = !botInfo.limitecomandos.status
                     if(novoEstado){
-                        if(args.length < 2) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                        if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                         let [qtd_max_minuto, tempo_bloqueio] = args
+                        if(!tempo_bloqueio) tempo_bloqueio = 60
                         if(isNaN(qtd_max_minuto) || qtd_max_minuto < 3) return await socket.responderTexto(c, id_chat,msgs_texto.admin.limitecomandos.qtd_invalida, mensagem)
                         if(isNaN(tempo_bloqueio) || tempo_bloqueio < 10) return await socket.responderTexto(c, id_chat,msgs_texto.admin.limitecomandos.tempo_invalido, mensagem)
                         await bot.alterarLimitador(botInfo, true, parseInt(qtd_max_minuto), parseInt(tempo_bloqueio))
