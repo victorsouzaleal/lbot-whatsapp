@@ -21,9 +21,9 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
-    "@victorsouzaleal/lbot-api-comandos": "^1.0.0",
-    "@whiskeysockets/baileys": "^6.7.2",
-    "axios": "^1.6.8",
+    "@victorsouzaleal/lbot-api-comandos": "^1.0.1",
+    "@whiskeysockets/baileys": "^6.7.4",
+    "axios": "^1.7.2",
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
     "form-data": "^4.0.0",
