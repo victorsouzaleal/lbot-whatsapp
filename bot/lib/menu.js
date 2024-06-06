@@ -310,7 +310,7 @@ export const menuAdmin = (botInfo)=>{
 |
 |--〖👤 *TAXA COMANDOS POR MINUTO*〗
 |
-|- *${prefixo}taxacomandos* qtd-comandos tempo-bloqueio - Ativa/desativa a taxa de comandos por minuto.
+|- *${prefixo}taxacomandos* qtd-comandos - Ativa/desativa a taxa de comandos por minuto.
 |
 |--〖👁️ *REVELAR MENSAGENS*〗
 |

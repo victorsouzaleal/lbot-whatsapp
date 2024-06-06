@@ -327,12 +327,14 @@ export const obterGuias = (prefixo) => {
             `Ex: *${prefixo}desbloquear* +55 (xx) xxxxx-xxxx - Para o bot desbloquear o número digitado.\n\n`+
             `Ex: Responder alguém com *${prefixo}desbloquear* - Para o bot desbloquear o membro que você respondeu.\n`,
             usuarios: cabecalho+
-            `Ex: *${prefixo}usuarios* comum - Mostra todos os usuários do tipo *COMUM*.\n\n`+
+            `Ex: *${prefixo}usuarios* - Mostra todos os usuários do tipo *COMUM*.\n`+
+            `Ex: *${prefixo}usuarios* vip - Mostra todos os usuários do tipo *VIP*.\n\n`+
             `*Obs*: Use o *${prefixo}tipos* para ver os tipos disponíveis de usuários.\n`,
             limitediario: cabecalho+
             `Ex: *${prefixo}limitediario* - Ativa/desativa o limite diario de comandos.\n`,
             taxacomandos: cabecalho+
-            `Ex: *${prefixo}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+            `Ex: *${prefixo}taxacomandos* 5 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n`+
+            `Ex: *${prefixo}taxacomandos* 10 30 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 30 segundos impossibilitado de fazer comandos.\n\n`+
             `*Obs*: Digite *${prefixo}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
             tipos: cabecalho+
             `Ex: *${prefixo}tipos* - Exibe os tipos de usuários disponíveis e quantos comandos estão configurados por dia.\n`,

@@ -41,10 +41,10 @@ export const conexaoAberta = async(c, botInfo)=>{
         console.log(criarTexto(obterMensagensTexto(botInfo).inicio.inicializando, versaoAtual()))
         await criarArquivosNecessarios()
         dotenv.config()
-        await socket.obterTodosGrupos(c)
         await new BotControle().inicializarBot(c, botInfo)
         await verificarEnv()
         await verificarNumeroDono()
+        await socket.obterTodosGrupos(c)
     } catch(err){
         consoleErro(err, "Inicialização")
         c.end(new Error("erro_geral"))

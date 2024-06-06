@@ -18,9 +18,23 @@
 
 <br>
 
-## 🔄 Última Atualização : 31/05/2024 - v2.7.3
-**[NOVO]** Agora sempre antes de iniciar o bot vai verificar e atualizar a biblioteca de API em caso de algum comando quebrar e já houver uma atualização.<br>
-**[ALTERAÇÃO]** Toda a parte relacionada a API foi deletada do projeto e movida para uma biblioteca própria para isso, isso vai facilitar atualizações no caso de um comando parar de funcionar.<br>
+## 🔄 Última Atualização : 07/06/2024 - v2.8.0
+**[ALTERAÇÃO]** Antes de iniciar o bot verifica qual a última versão do WhatsApp Web e usa ela.<br>
+**[ALTERAÇÃO]** O sistema de tipo de usuário foi melhorado e agora é possivel criar, deletar e modificar o titulo de exibição em menus de cada tipo.<br>
+**[NOVO]** Comando de admin **novotipo** para criar um novo tipo de usuário.<br>
+**[NOVO]** Comando de admin **deltipo** para deletar um tipo de usuário.<br>
+**[NOVO]** Comando de admin **tipotitulo** para modificar o titulo de exibição de um tipo de usuário.<br>
+**[ALTERAÇÃO]** Comando de admin **alterartipo** foi alterado para **usuariotipo**.<br>
+**[ALTERAÇÃO]** Comando de admin **taxalimite** foi alterado para **taxacomandos**.<br>
+**[ALTERAÇÃO]** Comando de admin **mudarlimite** foi alterado para **tipocomandos**.<br>
+**[ALTERAÇÃO]** Comando de admin **infocompleta** foi alterado para **infobot**.<br>
+**[ALTERAÇÃO]** Comando de grupo **f** foi alterado para **restrito**.<br>
+**[ALTERAÇÃO]** Comando de grupo **blista** foi alterado para **addlista**.<br>
+**[ALTERAÇÃO]** Comando de grupo **dlista** foi alterado para **remlista**.<br>
+**[ALTERAÇÃO]** Comando de admin **usuarios** agora exibe por padrão todos os usuários do tipo "comum" se nenhum tipo for especificado.<br>
+**[ALTERAÇÃO]** Comando de admin **tipos** agora exibe quantos usuários tem em cada tipo.<br>
+**[ALTERAÇÃO]** Comando de admin **taxacomandos** agora tem como tempo de bloqueio padrão 60 segundos se nenhum tempo de bloqueio for especificado.<br>
+**[CODIGO]** Refatoração e correções gerais no código.
 <br>
 
 
@@ -161,7 +175,6 @@ Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualqu
 
 * **Discord :** victorsouzaleal
 * **Email :** victorsouzaleal@gmail.com
-* **X/Twitter :** @victorsouzaleal
 
 <br>
 
