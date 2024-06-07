@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-import {makeWASocket, useMultiFileAuthState, fetchLatestWaWebVersion, fetchLatestBaileysVersion} from '@whiskeysockets/baileys'
+import {makeWASocket, useMultiFileAuthState, fetchLatestWaWebVersion} from '@whiskeysockets/baileys'
 import * as eventosSocket from './bot/baileys/eventosSocket.js'
 import {BotControle} from './bot/controles/BotControle.js'
 import {MensagemControle} from './bot/controles/MensagemControle.js'
