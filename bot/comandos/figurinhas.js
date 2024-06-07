@@ -46,7 +46,10 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
 
             case 's':
                 try{
-                    let tipoFigurinha = texto_recebido === '1' ? 'circulo' : 'padrao' 
+                    let tipoFigurinha =  'padrao'
+                    if(texto_recebido == '1') tipoFigurinha = 'circulo'
+                    if(texto_recebido == '2') tipoFigurinha = 'auto'
+                    
                     let dadosMensagem = {
                         tipo : (mensagem_citada) ? citacao.tipo : tipo,
                         mimetype : (mensagem_citada) ? citacao.mimetype : mimetype,
