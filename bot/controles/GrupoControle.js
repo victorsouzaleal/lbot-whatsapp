@@ -3,7 +3,7 @@ import {comandosInfo, verificarComandoExiste} from '../comandos/comandos.js'
 import * as socket from '../baileys/socket.js'
 import {consoleErro, criarTexto} from '../lib/util.js'
 import moment from "moment-timezone"
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import {UsuarioControle} from './UsuarioControle.js'
 
 
@@ -250,23 +250,23 @@ export class GrupoControle {
     async adicionarContagemParticipante(id_grupo, id_usuario, tipoMensagem){
         let dadosIncrementados = {msg: 1}
         switch(tipoMensagem){
-            case MessageTypes.text :
-            case MessageTypes.extendedText:
+            case tiposMensagem.texto :
+            case tiposMensagem.textoExt:
                 dadosIncrementados.texto = 1
                 break
-            case MessageTypes.image:
+            case tiposMensagem.imagem:
                 dadosIncrementados.imagem = 1
                 break
-            case MessageTypes.video:
+            case tiposMensagem.video:
                 dadosIncrementados.video = 1
                 break
-            case MessageTypes.sticker:
+            case tiposMensagem.sticker:
                 dadosIncrementados.sticker = 1
                 break
-            case MessageTypes.audio:
+            case tiposMensagem.audio:
                 dadosIncrementados.audio = 1
                 break
-            case MessageTypes.document:
+            case tiposMensagem.documento:
                 dadosIncrementados.outro = 1
                 break    
         }

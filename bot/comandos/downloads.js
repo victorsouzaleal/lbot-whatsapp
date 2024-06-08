@@ -2,7 +2,7 @@
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import duration from 'format-duration-time'
 import {comandosInfo} from '../comandos/comandos.js'
 
@@ -33,7 +33,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     const mensagemEspera = criarTexto(comandos_info.downloads.play.msgs.espera, resultadoInfoVideo.title, resultadoInfoVideo.durationFormatted)
                     await socket.responderTexto(c, id_chat, mensagemEspera, mensagem)
                     const {resultado : resultadoYTMP3} = await api.Downloads.obterYTMP3(resultadoInfoVideo.videoId)
-                    await socket.responderArquivoBuffer(c, MessageTypes.audio, id_chat, resultadoYTMP3, '', mensagem, 'audio/mpeg')
+                    await socket.responderArquivoBuffer(c, tiposMensagem.audio, id_chat, resultadoYTMP3, '', mensagem, 'audio/mpeg')
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -50,7 +50,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     const mensagemEspera = criarTexto(comandos_info.downloads.yt.msgs.espera, resultadoInfoVideo.title, resultadoInfoVideo.durationFormatted)
                     await socket.responderTexto(c, id_chat, mensagemEspera, mensagem)
                     const {resultado : resultadoYTMP4} = await api.Downloads.obterYTMP4(resultadoInfoVideo.videoId)
-                    await socket.responderArquivoBuffer(c, MessageTypes.video, id_chat, resultadoYTMP4, '', mensagem, 'video/mp4')
+                    await socket.responderArquivoBuffer(c, tiposMensagem.video, id_chat, resultadoYTMP4, '', mensagem, 'video/mp4')
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -65,7 +65,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     if(resultadoFB.duration_ms > 180000) return await socket.responderTexto(c, id_chat, comandos_info.downloads.fb.msgs.limite, mensagem)
                     const mensagemEspera = criarTexto(comandos_info.downloads.fb.msgs.espera, resultadoFB.title, duration.default(resultadoFB.duration_ms).format('m:ss'))
                     await socket.responderTexto(c, id_chat, mensagemEspera, mensagem)
-                    await socket.responderArquivoUrl(c, MessageTypes.video, id_chat, resultadoFB.sd, '', mensagem, 'video/mp4')
+                    await socket.responderArquivoUrl(c, tiposMensagem.video, id_chat, resultadoFB.sd, '', mensagem, 'video/mp4')
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -79,8 +79,8 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     if(args.length > 1 && isNaN(selecaoMidia)) return await socket.responderTexto(c, id_chat,erroComandoMsg(comando, botInfo),mensagem)
                     await socket.responderTexto(c, id_chat, comandos_info.downloads.ig.msgs.espera, mensagem)
                     const {resultado: resultadoIG} = await api.Downloads.obterMidiaInstagram(linkMidia, selecaoMidia)
-                    if(resultadoIG.tipo == "imagem") await socket.responderArquivoBuffer(c, MessageTypes.image, id_chat, resultadoIG.buffer, '', mensagem)
-                    if(resultadoIG.tipo == "video") await socket.responderArquivoBuffer(c, MessageTypes.video, id_chat, resultadoIG.buffer, '', mensagem, 'video/mp4')
+                    if(resultadoIG.tipo == "imagem") await socket.responderArquivoBuffer(c, tiposMensagem.imagem, id_chat, resultadoIG.buffer, '', mensagem)
+                    if(resultadoIG.tipo == "video") await socket.responderArquivoBuffer(c, tiposMensagem.video, id_chat, resultadoIG.buffer, '', mensagem, 'video/mp4')
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -94,8 +94,8 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     let usuarioTexto = texto_recebido
                     const {resultado: resultadoTW} = await api.Downloads.obterMidiaTwitter(usuarioTexto)
                     resultadoTW.midias.forEach(async(midia)=>{
-                        if(midia.tipo == "imagem") await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, midia.url, resultadoTW.texto, mensagem)
-                        else if(midia.tipo == "video") await socket.responderArquivoUrl(c, MessageTypes.video, id_chat, midia.url, resultadoTW.texto, mensagem, "video/mp4")
+                        if(midia.tipo == "imagem") await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, midia.url, resultadoTW.texto, mensagem)
+                        else if(midia.tipo == "video") await socket.responderArquivoUrl(c, tiposMensagem.video, id_chat, midia.url, resultadoTW.texto, mensagem, "video/mp4")
                     })
                 } catch(err){
                     if(!err.erro) throw err
@@ -109,7 +109,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     let usuarioTexto = texto_recebido
                     const {resultado : resultadoTK} = await api.Downloads.obterMidiaTiktok(usuarioTexto)
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.downloads.tk.msgs.espera, resultadoTK.autor_perfil, resultadoTK.descricao),mensagem)
-                    await socket.responderArquivoUrl(c, MessageTypes.video, id_chat, resultadoTK.url, '', mensagem, "video/mp4")
+                    await socket.responderArquivoUrl(c, tiposMensagem.video, id_chat, resultadoTK.url, '', mensagem, "video/mp4")
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -125,7 +125,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     for (let i = 0; i < maxImagem; i++){
                         let indexAleatorio = Math.floor(Math.random() * (resultadoImg.length > 30 ? 30 : resultadoImg.length))
                         let imagemEscolhida = resultadoImg[indexAleatorio].url
-                        await socket.enviarArquivoUrl(c, MessageTypes.image, id_chat, imagemEscolhida, '').catch(()=>{})
+                        await socket.enviarArquivoUrl(c, tiposMensagem.imagem, id_chat, imagemEscolhida, '').catch(()=>{})
                         resultadoImg.splice(indexAleatorio, 1)
                         imagensEnviadas++
                     }

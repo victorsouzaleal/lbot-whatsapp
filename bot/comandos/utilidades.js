@@ -2,7 +2,7 @@
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import {downloadMediaMessage } from '@whiskeysockets/baileys'
 import {comandosInfo} from '../comandos/comandos.js'
 
@@ -32,7 +32,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
         switch(comandoSemPrefixo){  
             case 'upimg':
                 try{
-                    if (citacao?.tipo != MessageTypes.image && tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if (citacao?.tipo != tiposMensagem.imagem && tipo != tiposMensagem.imagem) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let bufferImagem = await downloadMediaMessage(mensagem_citada ? citacao.mensagem : mensagem, 'buffer')
                     let {resultado: resultadoLink} = await api.Imagens.imagemUpload(bufferImagem)
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.utilidades.upimg.msgs.resposta, resultadoLink), mensagem)
@@ -92,7 +92,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     let usuarioTexto = texto_recebido
                     await socket.responderTexto(c, id_chat, comandos_info.utilidades.criarimg.msgs.espera, mensagem)
                     let {resultado: resultadoImagem} = await api.IA.obterImagemIA(usuarioTexto)
-                    await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, resultadoImagem, '', mensagem) 
+                    await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, resultadoImagem, '', mensagem) 
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -107,11 +107,11 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                         mimetype : (mensagem_midia)? mimetype : citacao.mimetype,
                         message: (mensagem_citada)? citacao.mensagem  : mensagem,
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.rbg.msgs.invalido , mensagem)
+                    if(dadosMensagem.tipo != tiposMensagem.imagem) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.rbg.msgs.invalido , mensagem)
                     await socket.responderTexto(c, id_chat, comandos_info.utilidades.rbg.msgs.espera, mensagem)
                     let bufferImagem = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     let {resultado: resultadoImagem} = await api.Imagens.removerFundo(bufferImagem)
-                    await socket.responderArquivoBuffer(c, MessageTypes.image, id_chat, resultadoImagem, '', mensagem)
+                    await socket.responderArquivoBuffer(c, tiposMensagem.imagem, id_chat, resultadoImagem, '', mensagem)
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -133,7 +133,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let usuarioTexto = texto_recebido
                     let {resultado: resultadoLetra} = await api.Gerais.obterLetraMusica(usuarioTexto)
-                    await socket.responderArquivoLocal(c, MessageTypes.image, id_chat, resultadoLetra.imagem, criarTexto(comandos_info.utilidades.letra.msgs.resposta, resultadoLetra.titulo, resultadoLetra.artista, resultadoLetra.letra), mensagem)
+                    await socket.responderArquivoLocal(c, tiposMensagem.imagem, id_chat, resultadoLetra.imagem, criarTexto(comandos_info.utilidades.letra.msgs.resposta, resultadoLetra.titulo, resultadoLetra.artista, resultadoLetra.letra), mensagem)
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -142,7 +142,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
 
             case "ouvir":
                 try{
-                    if(!mensagem_citada || citacao?.tipo != MessageTypes.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if(!mensagem_citada || citacao?.tipo != tiposMensagem.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     if(citacao.segundos > 90) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.ouvir.msgs.erro_limite, mensagem)
                     let bufferAudio = await downloadMediaMessage(citacao.mensagem, "buffer")
                     let {resultado: resultadoTranscricao} = await api.Audios.obterTranscricaoAudio(bufferAudio, {deepgram_secret_key : process.env.dg_secret_key?.trim()})
@@ -179,10 +179,10 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let efeitosSuportados = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume'], tipoEfeito = texto_recebido
                     if(!efeitosSuportados.includes(tipoEfeito)) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                    if(!mensagem_citada || citacao.tipo != MessageTypes.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if(!mensagem_citada || citacao.tipo != tiposMensagem.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let bufferAudio = await downloadMediaMessage(citacao.mensagem, "buffer")
                     let {resultado : resultadoAudio} = await api.Audios.obterAudioModificado(bufferAudio, tipoEfeito)
-                    await socket.responderArquivoBuffer(c, MessageTypes.audio, id_chat, resultadoAudio, '', mensagem, "audio/mpeg")
+                    await socket.responderArquivoBuffer(c, tiposMensagem.audio, id_chat, resultadoAudio, '', mensagem, "audio/mpeg")
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -192,7 +192,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
             case "qualmusica":
                 try{
                     let tipoMensagem = mensagem_citada ? citacao.tipo : tipo
-                    if(tipoMensagem != MessageTypes.video && tipoMensagem != MessageTypes.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if(tipoMensagem != tiposMensagem.video && tipoMensagem != tiposMensagem.audio) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let dadosMensagem = mensagem_citada ? citacao.mensagem : mensagem             
                     let bufferMensagemMidia = await downloadMediaMessage(dadosMensagem, "buffer")
                     await socket.responderTexto(c, id_chat, comandos_info.utilidades.qualmusica.msgs.espera, mensagem)
@@ -310,14 +310,14 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                         mimetype: (mensagem_citada)? citacao.mimetype : mimetype,
                         mensagem: (mensagem_citada)? citacao.mensagem : mensagem
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat,erroComandoMsg(comando, botInfo), mensagem)
+                    if(dadosMensagem.tipo != tiposMensagem.imagem) return await socket.responderTexto(c, id_chat,erroComandoMsg(comando, botInfo), mensagem)
                     await socket.responderTexto(c, id_chat, comandos_info.utilidades.anime.msgs.espera, mensagem)
                     let bufferImagem = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
                     let {resultado: resultadoAnimeInfo} = await api.Imagens.obterAnimeInfo(bufferImagem)
                     if(resultadoAnimeInfo.similaridade < 87) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.anime.msgs.similaridade, mensagem)
                     resultadoAnimeInfo.episodio = resultadoAnimeInfo.episodio || "---"
                     let respostaAnimeInfo = criarTexto(comandos_info.utilidades.anime.msgs.resposta, resultadoAnimeInfo.titulo, resultadoAnimeInfo.episodio, resultadoAnimeInfo.tempoInicial, resultadoAnimeInfo.tempoFinal, resultadoAnimeInfo.similaridade, resultadoAnimeInfo.link_previa)                          
-                    await socket.responderArquivoLocal(c, MessageTypes.video, id_chat, resultadoAnimeInfo.link_previa, respostaAnimeInfo, mensagem, "video/mp4")
+                    await socket.responderArquivoLocal(c, tiposMensagem.video, id_chat, resultadoAnimeInfo.link_previa, respostaAnimeInfo, mensagem, "video/mp4")
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -327,11 +327,11 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
             case "traduz":
                 try{
                     let usuarioTexto , idiomaTraducao, idiomasSuportados = ["pt", "es", "en", "ja", "it", "ru", "ko"]
-                    if(mensagem_citada  && (citacao.tipo == MessageTypes.text || citacao.tipo == MessageTypes.extendedText)){
+                    if(mensagem_citada  && (citacao.tipo == tiposMensagem.texto || citacao.tipo == tiposMensagem.textoExt)){
                         if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem);
                         [idiomaTraducao] = args
                         usuarioTexto = citacao.corpo || citacao.legenda
-                    } else if(!mensagem_citada && (tipo == MessageTypes.text || tipo == MessageTypes.extendedText)){
+                    } else if(!mensagem_citada && (tipo == tiposMensagem.texto || tipo == tiposMensagem.textoExt)){
                         if(args.length < 2) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) ,mensagem);
                         [idiomaTraducao, ...usuarioTexto] = args
                         usuarioTexto = usuarioTexto.join(" ")
@@ -353,7 +353,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     let idioma, usuarioTexto
                     if (!args.length) {
                         return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) ,mensagem)
-                    } else if(mensagem_citada  && (citacao.tipo == MessageTypes.extendedText || citacao.tipo == MessageTypes.text)){
+                    } else if(mensagem_citada  && (citacao.tipo == tiposMensagem.textoExt || citacao.tipo == tiposMensagem.texto)){
                         [idioma] = args
                         usuarioTexto = citacao.corpo || citacao.legenda
                     } else {
@@ -364,7 +364,7 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                     if (usuarioTexto.length > 200) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.voz.msgs.texto_longo, mensagem)
                     if(!idiomasSuportados.includes(idioma)) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.voz.msgs.nao_suportado, mensagem)
                     let {resultado: resultadoAudio} = await api.Audios.textoParaVoz(idioma, usuarioTexto)
-                    await socket.responderArquivoBuffer(c, MessageTypes.audio, id_chat, resultadoAudio, '', mensagem, 'audio/mpeg')
+                    await socket.responderArquivoBuffer(c, tiposMensagem.audio, id_chat, resultadoAudio, '', mensagem, 'audio/mpeg')
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)

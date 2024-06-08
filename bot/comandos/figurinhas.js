@@ -1,7 +1,7 @@
 //REQUERINDO MÓDULOS
 import {erroComandoMsg, consoleErro, criarTexto} from '../lib/util.js'
 import * as socket from '../baileys/socket.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import api from '@victorsouzaleal/lbot-api-comandos'
 import {comandosInfo} from '../comandos/comandos.js'
@@ -30,7 +30,7 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
         switch(comandoSemPrefixo){
             case 'snome':
                 try{
-                    if(!mensagem_citada || citacao.tipo != MessageTypes.sticker) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if(!mensagem_citada || citacao.tipo != tiposMensagem.sticker) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let [pack, autor] = texto_recebido.split(',')
                     if(!pack || !autor) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let mensagemSticker = citacao.mensagem
@@ -53,8 +53,8 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
                         message: (mensagem_citada) ? citacao.mensagem  : mensagem,
                         seconds: (mensagem_citada) ? citacao.segundos : segundos
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image && dadosMensagem.tipo != MessageTypes.video) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
-                    if(dadosMensagem.tipo == MessageTypes.video && dadosMensagem.seconds > 9) return socket.responderTexto(c, id_chat, comandos_info.figurinhas.s.msgs.erro_video, mensagem)
+                    if(dadosMensagem.tipo != tiposMensagem.imagem && dadosMensagem.tipo != tiposMensagem.video) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
+                    if(dadosMensagem.tipo == tiposMensagem.video && dadosMensagem.seconds > 9) return socket.responderTexto(c, id_chat, comandos_info.figurinhas.s.msgs.erro_video, mensagem)
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     let {resultado: resultadoSticker} = await api.Stickers.criarSticker(bufferMidia, {pack: nome_pack?.trim(), autor: nome_bot?.trim(), fps: 9, tipo: tipoFigurinha})
                     await socket.enviarFigurinha(c, id_chat, resultadoSticker)
@@ -66,10 +66,10 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
             
             case 'simg':
                 try{
-                    if(!mensagem_citada || citacao.tipo != MessageTypes.sticker) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
+                    if(!mensagem_citada || citacao.tipo != tiposMensagem.sticker) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let bufferSticker = await downloadMediaMessage(citacao.mensagem, "buffer")
                     let {resultado : resultadoImg} = await api.Stickers.stickerParaImagem(bufferSticker)
-                    await socket.responderArquivoBuffer(c, MessageTypes.image, id_chat, resultadoImg, '', mensagem , 'image/png')
+                    await socket.responderArquivoBuffer(c, tiposMensagem.imagem, id_chat, resultadoImg, '', mensagem , 'image/png')
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
@@ -100,7 +100,7 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
                         message: (mensagem_citada) ? citacao.mensagem  : mensagem,
                         seconds: (mensagem_citada) ? citacao.segundos : segundos
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, comandos_info.figurinhas.ssf.msgs.erro_imagem , mensagem)
+                    if(dadosMensagem.tipo != tiposMensagem.imagem) return await socket.responderTexto(c, id_chat, comandos_info.figurinhas.ssf.msgs.erro_imagem , mensagem)
                     await socket.responderTexto(c, id_chat, comandos_info.figurinhas.ssf.msgs.espera , mensagem)
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     let {resultado: resultadoImg} = await api.Imagens.removerFundo(bufferMidia)
@@ -155,8 +155,8 @@ export const autoSticker = async(c, mensagemBaileys, botInfo)=>{
 
     try{
         //Verificando se é imagem ou video e fazendo o sticker automaticamente
-        if(tipo == MessageTypes.image || tipo == MessageTypes.video){
-            if(tipo == MessageTypes.video && segundos > 9) return
+        if(tipo == tiposMensagem.imagem || tipo == tiposMensagem.video){
+            if(tipo == tiposMensagem.video && segundos > 9) return
             let bufferMidia = await downloadMediaMessage(mensagem, "buffer")
             let {resultado: resultadoSticker} = await api.Stickers.criarSticker(bufferMidia, {pack: nome_pack?.trim(), autor: nome_bot?.trim(), fps: 9})
             await socket.enviarFigurinha(c, id_chat, resultadoSticker)

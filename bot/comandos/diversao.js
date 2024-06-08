@@ -3,7 +3,7 @@ import {criarTexto, primeiraLetraMaiuscula, erroComandoMsg, consoleErro, timesta
 import path from 'node:path'
 import api from '@victorsouzaleal/lbot-api-comandos'
 import * as socket from '../baileys/socket.js'
-import { MessageTypes } from '../baileys/mensagem.js'
+import { tiposMensagem } from '../baileys/mensagem.js'
 import {comandosInfo} from '../comandos/comandos.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
 
@@ -37,8 +37,8 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
                     if(!mensagem_citada) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
                     let imgsDetector = ['verdade','vaipra','mentiroso','meengana','kao','incerteza','estresse','conversapraboi']
                     let indexAleatorio = Math.floor(Math.random() * imgsDetector.length)
-                    await socket.responderArquivoLocal(c, MessageTypes.image, id_chat, './bot/midia/detector/calibrando.png', comandos_info.diversao.detector.msgs.espera, mensagem)
-                    await socket.responderArquivoLocal(c, MessageTypes.image, id_chat, `./bot/midia/detector/${imgsDetector[indexAleatorio]}.png`, '', citacao.mensagem)
+                    await socket.responderArquivoLocal(c, tiposMensagem.imagem, id_chat, './bot/midia/detector/calibrando.png', comandos_info.diversao.detector.msgs.espera, mensagem)
+                    await socket.responderArquivoLocal(c, tiposMensagem.imagem, id_chat, `./bot/midia/detector/${imgsDetector[indexAleatorio]}.png`, '', citacao.mensagem)
                 } catch(err){
                     throw err
                 }
@@ -119,7 +119,7 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
                     } else {
                         textoResultado = criarTexto(comandos_info.diversao.caracoroa.msgs.resposta.derrota, primeiraLetraMaiuscula(ladosMoeda[indexAleatorio]))
                     }
-                    await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, path.resolve(`bot/midia/caracoroa/${ladosMoeda[indexAleatorio]}.png`), textoResultado, mensagem)
+                    await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, path.resolve(`bot/midia/caracoroa/${ladosMoeda[indexAleatorio]}.png`), textoResultado, mensagem)
                 } catch(err){
                     throw err
                 }
@@ -165,7 +165,7 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
             case 'mascote':
                 try{
                     const mascoteFotoURL = "https://i.imgur.com/mVwa7q4.png"
-                    await socket.responderArquivoUrl(c, MessageTypes.image,id_chat, mascoteFotoURL, 'Whatsapp Jr.', mensagem)
+                    await socket.responderArquivoUrl(c, tiposMensagem.imagem,id_chat, mascoteFotoURL, 'Whatsapp Jr.', mensagem)
                 } catch(err){
                     throw err
                 }
@@ -174,7 +174,7 @@ export const diversao = async(c, mensagemBaileys, botInfo) => {
             case 'malacos':
                 try{
                     const malacosFotoURL = "https://i.imgur.com/7bcn2TK.jpg"
-                    await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, malacosFotoURL,'Somos o problema', mensagem)
+                    await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, malacosFotoURL,'Somos o problema', mensagem)
                 } catch(err){
                     throw err
                 }

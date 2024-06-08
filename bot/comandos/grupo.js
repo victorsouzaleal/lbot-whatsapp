@@ -2,7 +2,7 @@
 import {criarTexto, erroComandoMsg, consoleErro} from '../lib/util.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import * as socket from '../baileys/socket.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import {downloadMediaMessage} from '@whiskeysockets/baileys'
 import {comandosInfo} from '../comandos/comandos.js'
 
@@ -43,7 +43,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                 try{
                     let grupoDescricao = grupo.descricao || comandos_info.grupo.regras.msgs.sem_descrição
                     await socket.obterFotoPerfil(c, id_grupo).then(async (grupoFoto)=>{
-                        await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, grupoFoto, grupoDescricao, mensagem)
+                        await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, grupoFoto, grupoDescricao, mensagem)
                     }).catch(async ()=>{
                         await socket.responderTexto(c, id_chat, grupoDescricao, mensagem)
                     })
@@ -62,7 +62,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                             mimetype : (mensagem_midia)? mimetype : citacao.mimetype,
                             mensagem: (mensagem_midia) ? mensagem : citacao.mensagem
                         }
-                        if(dadosMensagem.tipo == MessageTypes.image){
+                        if(dadosMensagem.tipo == tiposMensagem.imagem){
                             let fotoBuffer = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
                             await socket.alterarFotoPerfil(c, id_chat, fotoBuffer)
                             await socket.responderTexto(c, id_chat, comandos_info.grupo.fotogrupo.msgs.sucesso, mensagem)

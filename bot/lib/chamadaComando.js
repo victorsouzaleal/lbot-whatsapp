@@ -1,7 +1,7 @@
 //REQUERINDO MODULOS
 import {criarTexto, consoleComando} from './util.js'
 import * as socket from '../baileys/socket.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import moment from "moment-timezone"
 import {grupo as grupoComandos} from '../comandos/grupo.js'
 import {utilidades as utilidadesComandos} from '../comandos/utilidades.js'
@@ -34,8 +34,8 @@ export const chamadaComando = async (c, mensagemBaileys, botInfo) => {
         const queueMensagemEspera = queueMensagem.size > 10
 
         //Verificação do Auto-Sticker
-        const autoStickerPv = (!mensagem_grupo && (tipo == MessageTypes.image || tipo == MessageTypes.video) && botInfo.autosticker)
-        const autoStickerGrupo = (mensagem_grupo && (tipo == MessageTypes.image || tipo == MessageTypes.video) && grupo?.autosticker)
+        const autoStickerPv = (!mensagem_grupo && (tipo == tiposMensagem.imagem || tipo == tiposMensagem.video) && botInfo.autosticker)
+        const autoStickerGrupo = (mensagem_grupo && (tipo == tiposMensagem.imagem || tipo == tiposMensagem.video) && grupo?.autosticker)
 
         //Verificação se há mensagens em espera na fila
         if(queueMensagemEspera) await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.fila_comando, queueMensagem.size), mensagem)

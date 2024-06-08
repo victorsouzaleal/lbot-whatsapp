@@ -4,7 +4,7 @@ import {criarTexto, erroComandoMsg, timestampParaData, consoleErro, versaoAtual}
 import * as socket from '../baileys/socket.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import {comandosInfo} from '../comandos/comandos.js'
 
 
@@ -40,7 +40,7 @@ export const info = async(c, mensagemBaileys, botInfo) => {
                     let botInicializacaoData = timestampParaData(infoBot.iniciado)
                     let resposta = criarTexto(comandos_info.info.info.msgs.resposta, nome_adm?.trim(), nome_bot?.trim(), botInicializacaoData, infoBot.cmds_executados, numero_dono.replace("@s.whatsapp.net", ""), version)
                     await socket.obterFotoPerfil(c, numero_bot).then( async (botFotoURL)=>{
-                        await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, botFotoURL, resposta, mensagem)
+                        await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, botFotoURL, resposta, mensagem)
                     }).catch(async()=>{
                         await socket.responderTexto(c, id_chat, resposta, mensagem)
                     })

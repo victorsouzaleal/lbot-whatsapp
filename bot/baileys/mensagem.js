@@ -14,7 +14,7 @@ export async function converterMensagem(m, botInfo){
                 m.message = m.message[tipo].message
                 tipo = getContentType(m.message)
             }
-            let mensagem_citada = tipo == MessageTypes.extendedText && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
+            let mensagem_citada = tipo == tiposMensagem.textoExt && m.message.extendedTextMessage?.contextInfo?.quotedMessage != undefined
             let {numero_bot} = botInfo
             let remetente = (m.key.fromMe) ? numero_bot : m.key.participant || m.key.remoteJid
             let texto_completo = m.message[tipo]?.caption || m.message.conversation || m.message.extendedTextMessage?.text || '' 
@@ -42,7 +42,7 @@ export async function converterMensagem(m, botInfo){
                 mensagem_dono,
                 mensagem_bot : m.key.fromMe,
                 mensagem_broadcast : m.key.remoteJid == "status@broadcast",
-                mensagem_midia : tipo != MessageTypes.text && tipo != MessageTypes.extendedText,
+                mensagem_midia : tipo != tiposMensagem.texto && tipo != tiposMensagem.textoExt,
                 mensagem: m,
             }
             
@@ -96,20 +96,20 @@ export async function converterMensagem(m, botInfo){
 }
 
 export const obterTipoDeMensagem = (tipo) => {
-    if(tipo == MessageTypes.text || tipo == MessageTypes.extendedText) return 'Texto'
-    if(tipo == MessageTypes.image) return 'Imagem'
-    if(tipo == MessageTypes.document) return 'Documento/Arquivo'
-    if(tipo == MessageTypes.video) return 'Video/GIF'
-    if(tipo == MessageTypes.sticker) return 'Sticker'
-    if(tipo == MessageTypes.audio) return 'Audio'
+    if(tipo == tiposMensagem.texto || tipo == tiposMensagem.textoExt) return 'Texto'
+    if(tipo == tiposMensagem.imagem) return 'Imagem'
+    if(tipo == tiposMensagem.documento) return 'Documento/Arquivo'
+    if(tipo == tiposMensagem.video) return 'Video/GIF'
+    if(tipo == tiposMensagem.sticker) return 'Sticker'
+    if(tipo == tiposMensagem.audio) return 'Audio'
     return null
 }
 
-export const MessageTypes = {
-    text : "conversation",
-    extendedText : "extendedTextMessage",
-    image: "imageMessage",
-    document: "documentMessage",
+export const tiposMensagem = {
+    texto : "conversation",
+    textoExt : "extendedTextMessage",
+    imagem: "imageMessage",
+    documento: "documentMessage",
     video: "videoMessage",
     sticker: "stickerMessage",
     audio: "audioMessage"

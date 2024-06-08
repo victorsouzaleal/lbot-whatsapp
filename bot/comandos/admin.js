@@ -6,7 +6,7 @@ import * as socket from '../baileys/socket.js'
 import {BotControle} from '../controles/BotControle.js'
 import {GrupoControle} from '../controles/GrupoControle.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
-import {MessageTypes} from '../baileys/mensagem.js'
+import {tiposMensagem} from '../baileys/mensagem.js'
 import {downloadMediaMessage} from '@whiskeysockets/baileys'
 import os from 'node:os'
 import {comandosInfo} from '../comandos/comandos.js'
@@ -79,7 +79,7 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                     resposta += (infoBot.bloqueio_cmds.length != 0) ? criarTexto(comandos_info.admin.infobot.msgs.resposta_variavel.bloqueiocmds.on, comandosBloqueados.toString()) : comandos_info.admin.infobot.msgs.resposta_variavel.bloqueiocmds.off
                     resposta += criarTexto(comandos_info.admin.infobot.msgs.resposta_inferior, usuariosBloqueados.length, infoBot.cmds_executados, numero_dono.replace("@s.whatsapp.net", ""))
                     await socket.obterFotoPerfil(c, numero_bot).then(async (fotoBot)=>{
-                        await socket.responderArquivoUrl(c, MessageTypes.image, id_chat, fotoBot, resposta, mensagem)
+                        await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, fotoBot, resposta, mensagem)
                     }).catch(async ()=>{
                         await socket.responderTexto(c, id_chat, resposta, mensagem)
                     })
@@ -289,7 +289,7 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                         mimetype : (mensagem_midia)? mimetype : citacao.mimetype,
                         mensagem: (mensagem_midia) ? mensagem : citacao.mensagem
                     }
-                    if(dadosMensagem.tipo != MessageTypes.image) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
+                    if(dadosMensagem.tipo != tiposMensagem.imagem) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
                     let fotoBuffer = await downloadMediaMessage(dadosMensagem.mensagem, "buffer")
                     await socket.alterarFotoPerfil(c, numero_bot, fotoBuffer)
                     await socket.responderTexto(c, id_chat, comandos_info.admin.fotobot.msgs.sucesso, mensagem)
