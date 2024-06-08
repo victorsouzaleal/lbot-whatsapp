@@ -255,17 +255,6 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
                 }
                 break
 
-            case "revelar":
-                try{
-                    if(!mensagem_citada && !citacao.mensagem_vunica) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
-                    let mensagemVisivel = citacao.mensagem.message
-                    mensagemVisivel[citacao.tipo].viewOnce = false
-                    await socket.retransmitirMensagem(c, id_chat, mensagemVisivel, mensagem)
-                } catch(err){
-                    throw err
-                }
-                break
-
             case "pvliberado":
                 try{
                     let novoEstado = !botInfo.pvliberado

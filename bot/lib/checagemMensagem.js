@@ -84,8 +84,8 @@ export const checagemMensagem = async (c, mensagemBaileys, botInfo) => {
 
         //SE FOR ALGUM COMANDO EXISTENTE
         if(comandoExiste){
-            //VERIFICAR SE ESTÁ USANDO O COMANDO NO GRUPO E EM UMA MENSAGEM COM VISUALIZACAO UNICA
-            if(!mensagem_dono && mensagem_grupo && (mensagem_vunica || citacao?.mensagem_vunica)){
+            //SE NÃO FOR DONO DO BOT OU ADMIN DO GRUPO E TENTAR USAR COMANDO EM UMA MENSAGEM UNICA, DÊ UMA MENSAGEM DE ERRO.
+            if(!mensagem_dono && mensagem_grupo && !usuario_admin && (mensagem_vunica || citacao?.mensagem_vunica)){
                 await socket.responderTexto(c, id_chat, comandos_info.outros.visualizacao_unica, mensagem)
                 return false
             }

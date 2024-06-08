@@ -181,6 +181,10 @@ export const menuGrupo = (admin, botInfo)=>{
 |- *${prefixo}apg* - Apaga uma mensagem do grupo.
 |- *${prefixo}bantodos* - Bane todos os membros.
 |
+|--〖👁️ *REVELAR MENSAGENS*〗
+|
+|- *${prefixo}revelar* - Revela o contéudo de uma mensagem de visualização única.
+|
 |--〖📊 *ENQUETE*〗
 |
 |- *${prefixo}enquete* pergunta,opcao1,opcao2,etc.. - Abre uma enquete com uma pergunta e as opçôes.

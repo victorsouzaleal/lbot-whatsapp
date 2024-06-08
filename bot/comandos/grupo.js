@@ -212,6 +212,18 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                     throw err
                 }
                 break
+
+            case "revelar":
+                try{
+                    if (!usuario_admin) return await socket.responderTexto(c, id_chat, comandos_info.outros.permissao.apenas_admin , mensagem)
+                    if(!mensagem_citada && !citacao.mensagem_vunica) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
+                    let mensagemVisivel = citacao.mensagem.message
+                    mensagemVisivel[citacao.tipo].viewOnce = false
+                    await socket.retransmitirMensagem(c, id_chat, mensagemVisivel, mensagem)
+                } catch(err){
+                    throw err
+                }
+                break
                     
             case 'rlink':
                 try{
