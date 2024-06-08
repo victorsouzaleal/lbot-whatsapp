@@ -68,11 +68,18 @@ export const obterContatosBloqueados = async(c)=>{
 // Envio de mensagens
 export const enviarTexto = async(c, id_chat, texto)=>{
     await atualizarPresenca(c, id_chat, "composing")
-    await c.sendMessage(id_chat, {text : texto, linkPreview: null})
+    return await c.sendMessage(id_chat, {text : texto, linkPreview: null})
 }
 
-export const retransmitirMensagem = async(c, id_chat, mensagem)=>{
-    await c.relayMessage(id_chat, mensagem, {})
+export const retransmitirMensagem = async(c, id_chat, mensagem, mensagemCitacao)=>{
+    mensagem[Object.keys(mensagem)[0]].contextInfo = {
+        stanzaId: mensagemCitacao.key.id,
+        remoteJid: mensagemCitacao.key.remoteJid,
+        participant: mensagemCitacao.key.participant || mensagemCitacao.key.remoteJid,
+        fromMe: mensagemCitacao.key.fromMe,
+        quotedMessage: {}
+    }
+    return await c.relayMessage(id_chat, mensagem, {})
 }
 
 export const enviarEnquete = async(c, id_chat, nomeEnquete, valoresEnquete)=>{

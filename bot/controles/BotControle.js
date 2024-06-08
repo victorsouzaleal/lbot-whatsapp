@@ -238,8 +238,8 @@ export class BotControle{
             const tipoMensagem = obterTipoDeMensagem(tipo)
             let mensagemVisivel = mensagem.message
             mensagemVisivel[tipo].viewOnce = false
-            await socket.enviarTexto(c, numeroDono, criarTexto(comandos_info.admin.autorevelar.msgs.restransmissao, nomeUsuario, numeroUsuario, nomeGrupo, tipoMensagem))
-            await socket.retransmitirMensagem(c, numeroDono, mensagemVisivel)
+            const mensagemInfo = await socket.enviarTexto(c, numeroDono, criarTexto(comandos_info.admin.autorevelar.msgs.restransmissao, nomeUsuario, numeroUsuario, nomeGrupo, tipoMensagem))
+            await socket.retransmitirMensagem(c, numeroDono, mensagemVisivel, mensagemInfo)
         } catch(err){
             err.message = `redirecionarMensagemRevelada - ${err.message}`
             consoleErro(err, "AUTO-REVELAR")
