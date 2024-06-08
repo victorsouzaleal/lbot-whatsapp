@@ -1,6 +1,5 @@
 import {Grupo} from '../modelos/Grupo.js'
-import {obterMensagensTexto} from '../lib/msgs.js'
-import {listarComandos} from '../comandos/comandos.js'
+import {comandosInfo, verificarComandoExiste} from '../comandos/comandos.js'
 import * as socket from '../baileys/socket.js'
 import {consoleErro, criarTexto} from '../lib/util.js'
 import moment from "moment-timezone"
@@ -316,10 +315,10 @@ export class GrupoControle {
 
     async mensagemBemVindo(c, evento, grupoInfo, botInfo){
         try{
-            let msgs_texto = obterMensagensTexto(botInfo)
+            const comandos_info = comandosInfo(botInfo)
             if(grupoInfo.bemvindo.status){
                 let msg_customizada = (grupoInfo.bemvindo.msg != "") ? grupoInfo.bemvindo.msg+"\n\n" : "" 
-                let mensagem_bemvindo = criarTexto(msgs_texto.grupo.bemvindo.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
+                let mensagem_bemvindo = criarTexto(comandos_info.grupo.bv.msgs.mensagem, evento.participants[0].replace("@s.whatsapp.net", ""), grupoInfo.nome, msg_customizada)
                 await socket.enviarTextoComMencoes(c, evento.id, mensagem_bemvindo, [evento.participants[0]])
             }
         } catch(err){
@@ -335,7 +334,7 @@ export class GrupoControle {
 
     async filtroAntiLink(c, mensagemBaileys, botInfo){
         try{
-            const msgs_texto = obterMensagensTexto(botInfo)
+            const comandos_info = comandosInfo(botInfo)
             const {texto_recebido, remetente, id_chat, mensagem_grupo, mensagem, grupo} = mensagemBaileys
             const {id_grupo, admins, bot_admin} = {...grupo}
             if(!mensagem_grupo) return true
@@ -347,7 +346,7 @@ export class GrupoControle {
                 if(texto_recebido){
                     const textoComUrl = texto_recebido.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
                     if(textoComUrl && !admins.includes(remetente)){
-                        await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.grupo.antilink.detectou, remetente.replace("@s.whatsapp.net", "")), [remetente])
+                        await socket.enviarTextoComMencoes(c, id_chat, criarTexto(comandos_info.grupo.alink.msgs.detectou, remetente.replace("@s.whatsapp.net", "")), [remetente])
                         await socket.deletarMensagem(c, mensagem)
                         return false
                     }
@@ -374,7 +373,7 @@ export class GrupoControle {
     async filtroAntiFake(c, evento, grupoInfo, botInfo){
         try{
             if(grupoInfo.antifake.status){
-                let msgs_texto = obterMensagensTexto(botInfo)
+                const comandos_info = comandosInfo(botInfo)
                 let participante = evento.participants[0]
                 let grupoAdmins = grupoInfo.admins
                 let botAdmin = grupoAdmins.includes(botInfo.numero_bot)
@@ -385,7 +384,7 @@ export class GrupoControle {
                     for(ddi of grupoInfo.antifake.ddi_liberados){
                         if(participante.startsWith(ddi)) return true
                     }
-                    await socket.enviarTextoComMencoes(c, evento.id, criarTexto(msgs_texto.geral.resposta_ban, participante.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antifake.motivo, botInfo.nome), [participante])
+                    await socket.enviarTextoComMencoes(c, evento.id, criarTexto(comandos_info.outros.resposta_ban, participante.replace("@s.whatsapp.net", ""), comandos_info.grupo.afake.msgs.motivo, botInfo.nome), [participante])
                     await socket.removerParticipante(c, evento.id, participante)
                     return false
                 }
@@ -448,7 +447,7 @@ export class GrupoControle {
 
     async filtroAntiFlood(c, mensagemBaileys, botInfo){
         try{
-            const msgs_texto = obterMensagensTexto(botInfo)
+            const comandos_info = comandosInfo(botInfo)
             const {id_chat, remetente, mensagem_grupo, grupo} = mensagemBaileys
             const {id_grupo, admins, bot_admin} = {...grupo}
 
@@ -461,7 +460,7 @@ export class GrupoControle {
                 if(flood) {
                     if(!admins.includes(remetente)) {
                         await socket.removerParticipante(c, id_grupo, remetente)
-                        await socket.enviarTextoComMencoes(c, id_chat, criarTexto(msgs_texto.geral.resposta_ban, remetente.replace("@s.whatsapp.net", ""), msgs_texto.grupo.antiflood.motivo, botInfo.nome_bot), [remetente])
+                        await socket.enviarTextoComMencoes(c, id_chat, criarTexto(comandos_info.outros.resposta_ban, remetente.replace("@s.whatsapp.net", ""), comandos_info.grupo.aflood.msgs.motivo, botInfo.nome_bot), [remetente])
                         return false
                     }
                 } 
@@ -489,7 +488,7 @@ export class GrupoControle {
 
     async verificarListaNegraGeral(c, gruposInfo, botInfo){
         try {
-            let msgs_texto = obterMensagensTexto(botInfo)
+            const comandos_info = comandosInfo(botInfo)
             for(let grupo of gruposInfo){
                 let grupoAdmins = await socket.obterAdminsGrupoPorMetadata(grupo),  botAdmin = grupoAdmins.includes(botInfo.numero_bot)
                 if(botAdmin){
@@ -499,7 +498,7 @@ export class GrupoControle {
                     }
                     for(let usuario of usuarios_listados){
                         await socket.removerParticipante(c, grupo.id, usuario)
-                        await socket.enviarTextoComMencoes(c, grupo.id, criarTexto(msgs_texto.geral.resposta_ban, usuario.replace("@s.whatsapp.net", ""), msgs_texto.grupo.listanegra.motivo, botInfo.nome_bot), [usuario])
+                        await socket.enviarTextoComMencoes(c, grupo.id, criarTexto(comandos_info.outros.resposta_ban, usuario.replace("@s.whatsapp.net", ""), comandos_info.grupo.listanegra.msgs.motivo, botInfo.nome_bot), [usuario])
                     }
                 }
             }
@@ -511,13 +510,13 @@ export class GrupoControle {
 
     async verificarListaNegraUsuario(c, evento, botInfo){
         try{
-            let msgs_texto = obterMensagensTexto(botInfo)
+            const comandos_info = comandosInfo(botInfo)
             const grupoAdmins = await this.obterAdminsGrupo(evento.id), botAdmin = grupoAdmins.includes(botInfo.numero_bot)
             if(botAdmin){
                 let lista_negra = await this.obterListaNegra(evento.id)
                 if(lista_negra.includes(evento.participants[0])){
                     await socket.removerParticipante(c, evento.id, evento.participants[0])
-                    await socket.enviarTextoComMencoes(c, evento.id, criarTexto(msgs_texto.geral.resposta_ban, evento.participants[0].replace("@s.whatsapp.net", ""), msgs_texto.grupo.listanegra.motivo, botInfo.nome_bot), [evento.participants[0]])
+                    await socket.enviarTextoComMencoes(c, evento.id, criarTexto(comandos_info.outros.resposta_ban, evento.participants[0].replace("@s.whatsapp.net", ""), comandos_info.grupo.listanegra.msgs.motivo, botInfo.nome_bot), [evento.participants[0]])
                     return false
                 }
             }
@@ -543,103 +542,56 @@ export class GrupoControle {
     }
 
     async bloquearComandosGrupo(comandos, id_grupo, botInfo){
-        let {prefixo} = botInfo
-        let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfo)
-        let comandosBloqueados = [], grupoInfo = await this.obterGrupoInfo(id_grupo), respostaBloqueio = msgs_texto.grupo.bcmd.resposta_titulo
-        let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = comandos[0]
-        if(categorias.includes(primeiroComando)){
-            let comandosCategoria = []
-            switch(primeiroComando){
-                case "figurinhas":
-                    comandosCategoria = listaComandos.figurinhas
-                    break
-                case "utilidades":
-                    comandosCategoria = listaComandos.utilidades
-                    break
-                case "downloads":
-                    comandosCategoria = listaComandos.downloads
-                    break
-                case "diversão":
-                    comandosCategoria = listaComandos.diversao
-                    break
-            }
+        const {prefixo} = botInfo
+        const comandos_info = comandosInfo(botInfo)
+        let comandosBloqueados = []
+        let grupoInfo = await this.obterGrupoInfo(id_grupo)
+        let respostaBloqueio = comandos_info.grupo.bcmd.msgs.resposta_titulo
+        let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversao']
 
-            for(let comando of comandosCategoria){
+        if(categorias.includes(comandos[0])) comandos = Object.keys(comandos_info[comandos[0]]).map(comando => prefixo+comando)
+
+        for(let comando of comandos){
+            if(verificarComandoExiste(botInfo, comando, 'utilidades') || verificarComandoExiste(botInfo, comando, 'diversao') || verificarComandoExiste(botInfo, comando, 'figurinhas') || verificarComandoExiste(botInfo, comando, 'downloads')){
                 if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))){
-                    respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, comando)
+                    respostaBloqueio += criarTexto(comandos_info.grupo.bcmd.msgs.resposta_variavel.ja_bloqueado, comando)
                 } else {
                     comandosBloqueados.push(comando.replace(prefixo, ''))
-                    respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.bloqueado_sucesso, comando)
+                    respostaBloqueio += criarTexto(comandos_info.grupo.bcmd.msgs.resposta_variavel.bloqueado_sucesso, comando)
                 }
-            }
-        } else {
-            for(let comando of comandos){
-                if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando) || listaComandos.figurinhas.includes(comando) || listaComandos.downloads.includes(comando)){
-                    if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))){
-                        respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.ja_bloqueado, comando)
-                    } else {
-                        comandosBloqueados.push(comando.replace(prefixo, ''))
-                        respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.bloqueado_sucesso, comando)
-                    }
-                } else if (listaComandos.grupo.includes(comando) || listaComandos.admin.includes(comando) || listaComandos.info.includes(comando)){
-                    respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.erro, comando)
-                } else {
-                    respostaBloqueio += criarTexto(msgs_texto.grupo.bcmd.resposta_variavel.nao_existe, comando)
-                }
+            } else if (verificarComandoExiste(botInfo, comando, 'grupo') || verificarComandoExiste(botInfo, comando, 'admin') || verificarComandoExiste(botInfo, comando, 'info')){
+                respostaBloqueio += criarTexto(comandos_info.grupo.bcmd.msgs.resposta_variavel.erro, comando)
+            } else {
+                respostaBloqueio += criarTexto(comandos_info.grupo.bcmd.msgs.resposta_variavel.nao_existe, comando)
             }
         }
-
+        
         if(comandosBloqueados.length != 0) await this.bloquearComandos(id_grupo, comandosBloqueados)
         return respostaBloqueio
     }
 
     async desbloquearComandosGrupo(comandos, id_grupo, botInfo){
-        let {prefixo} = botInfo
-        let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfo)
-        let comandosDesbloqueados = [], grupoInfo = await this.obterGrupoInfo(id_grupo), respostaDesbloqueio = msgs_texto.grupo.dcmd.resposta_titulo
-        let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = comandos[0]
-        if(categorias.includes(primeiroComando)){
-            let comandosCategoria = []
-            switch(primeiroComando){
-                case "todos":
-                    comandosCategoria = grupoInfo.block_cmds
-                    break
-                case "figurinhas":
-                    comandosCategoria = listaComandos.figurinhas
-                    break
-                case "utilidades":
-                    comandosCategoria = listaComandos.utilidades
-                    break
-                case "downloads":
-                    comandosCategoria = listaComandos.downloads
-                    break
-                case "diversão":
-                    comandosCategoria = listaComandos.diversao
-                    break
-            }
+        const comandos_info = comandosInfo(botInfo)
+        const {prefixo} = botInfo
+        let comandosDesbloqueados = []
+        let grupoInfo = await this.obterGrupoInfo(id_grupo)
+        let respostaDesbloqueio = comandos_info.grupo.dcmd.msgs.resposta_titulo
+        let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversao']
 
-            for(let comando of comandosCategoria){
-                if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))) {
-                    comandosDesbloqueados.push(comando.replace(prefixo, ''))
-                    respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.desbloqueado_sucesso, comando)
-                } else {
-                    respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.ja_desbloqueado, comando)
-                }
-            }
-
-        } else {
-            for(let comando of comandos){
-                if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))) {
-                    comandosDesbloqueados.push(comando.replace(prefixo, ''))
-                    respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.desbloqueado_sucesso, comando)
-                } else {
-                    respostaDesbloqueio += criarTexto(msgs_texto.grupo.dcmd.resposta_variavel.ja_desbloqueado, comando)
-                }
-            }
+        if(categorias.includes(comandos[0])){
+            if(comandos[0] === 'todos') comandos = grupoInfo.block_cmds.map(comando => prefixo+comando)
+            else comandos = Object.keys(comandos_info[comandos[0]]).map(comando => prefixo+comando)
         }
 
+        for(let comando of comandos){
+            if(grupoInfo.block_cmds.includes(comando.replace(prefixo, ''))) {
+                comandosDesbloqueados.push(comando.replace(prefixo, ''))
+                respostaDesbloqueio += criarTexto(comandos_info.grupo.dcmd.msgs.resposta_variavel.desbloqueado_sucesso, comando)
+            } else {
+                respostaDesbloqueio += criarTexto(comandos_info.grupo.dcmd.msgs.resposta_variavel.ja_desbloqueado, comando)
+            }
+        }
+        
         if(comandosDesbloqueados.length != 0) await this.desbloquearComandos(id_grupo, comandosDesbloqueados)
         return respostaDesbloqueio
     }

@@ -13,7 +13,7 @@
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&style=flat&color=#79C83D"></a>
 <a href="https://github.com/victorsouzaleal"><img title="Autor" src="https://img.shields.io/badge/autor-victorsouzaleal-blue.svg?logo=github&color=#79C83D"></a>
 </p>
-<h3 align="center">⭐ Atualizações toda Sexta-Feira, em outros dias somente em emergência.</h3>
+<h3 align="center">⭐ Atualizações toda semana.</h3>
 
 <br>
 

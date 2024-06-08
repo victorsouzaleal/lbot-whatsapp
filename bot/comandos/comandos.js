@@ -629,42 +629,42 @@ export function comandosInfo(botInfo){
                     resposta_titulo: "[ 🤖 STATUS DO GRUPO 🤖 ]\n\n",
                     resposta_variavel: {
                         bemvindo:{
-                            on: "- Recurso Boas Vindas : ✅\n",
-                            off: "- Recurso Boas Vindas : ❌\n"
+                            on: "Recurso Boas Vindas : ✅\n",
+                            off: "Recurso Boas Vindas : ❌\n"
                         },
                         mutar:{
-                            on: "- Recurso Mutar : ✅\n",
-                            off: "- Recurso Mutar : ❌\n"
+                            on: "Recurso Mutar : ✅\n",
+                            off: "Recurso Mutar : ❌\n"
                         },
                         autosticker:{
-                            on: "- Recurso Auto-Sticker : ✅\n",
-                            off: "- Recurso Auto-Sticker : ❌\n"
+                            on: "Recurso Auto-Sticker : ✅\n",
+                            off: "Recurso Auto-Sticker : ❌\n"
                         },
                         antilink:{
-                            on: "- Recurso Anti-Link : ✅\n",
-                            off: "- Recurso Anti-Link : ❌\n"
+                            on: "Recurso Anti-Link : ✅\n",
+                            off: "Recurso Anti-Link : ❌\n"
                         },
                         antifake:{
-                            on: "- Recurso Anti-Fake : ✅\n"+
-                            "   - *Liberados* : {p1}\n",
-                            off: "- Recurso Anti-Fake : ❌\n"
+                            on: "Recurso Anti-Fake : ✅\n"+
+                            "- *Liberados* : {p1}\n",
+                            off: "Recurso Anti-Fake : ❌\n"
                         },
                         antiflood:{
-                            on: "- Recurso Anti-Flood : ✅\n"+
-                            "   - Máx: *{p1}* msgs / *{p2}* s \n",
-                            off: "- Recurso Anti-Flood : ❌\n"
+                            on: "Recurso Anti-Flood : ✅\n"+
+                            "- Máx: *{p1}* msgs / *{p2}* s \n",
+                            off: "Recurso Anti-Flood : ❌\n"
                         },
                         contador:{
-                            on: "- Recurso Contador : ✅\n"+
-                            "   - {p1}\n",
-                            off: "- Recurso Contador : ❌\n"
+                            on: "Recurso Contador : ✅\n"+
+                            "- {p1}\n",
+                            off: "Recurso Contador : ❌\n"
                         },
                         bloqueiocmds:{
-                            on: "- Bloqueio de comandos : ✅\n"+
-                            "   - *{p1}*\n",
-                            off: "- Bloqueio de comandos : ❌\n"
+                            on: "Bloqueio de comandos : ✅\n"+
+                            "- *{p1}*\n",
+                            off: "Bloqueio de comandos : ❌\n"
                         },
-                        listanegra: "- Lista Negra : *{p1}*\n"
+                        listanegra: "Lista Negra : *{p1}*\n"
                     }
                 }
             },

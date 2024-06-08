@@ -1,5 +1,4 @@
-import {obterMensagensTexto} from '../lib/msgs.js'
-import {listarComandos} from '../comandos/comandos.js'
+import {comandosInfo, verificarComandoExiste} from '../comandos/comandos.js'
 import {consoleErro, criarTexto, corTexto} from '../lib/util.js'
 import {Bot} from '../modelos/Bot.js'
 import {UsuarioControle} from '../controles/UsuarioControle.js'
@@ -23,7 +22,7 @@ export class BotControle{
             bot.iniciado = moment.now()
             bot.numero_bot = await socket.obterNumeroHost(c)
             await this.bot.atualizarDados(bot)
-            console.log("[BOT]", corTexto(obterMensagensTexto(bot).inicio.dados_bot))
+            console.log("[BOT]", corTexto(comandosInfo(bot).outros.dados_bot))
         }catch(err){
             err.message = `botStart - ${err.message}`
             throw err
@@ -90,16 +89,21 @@ export class BotControle{
     }
 
     async verificarLimiteComando(usuario_id, tipo_usuario, isAdmin, botInfo){
-        let bot = botInfo, timestamp_atual = Math.round(new Date().getTime()/1000), resposta = {}
-        let msgs_texto = obterMensagensTexto(bot)
+        let bot = botInfo
+        let resposta = {}
+        const timestamp_atual = Math.round(new Date().getTime()/1000)
+        const comandos_info = comandosInfo(bot)
+        
         //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
         for (let i = 0; i < bot.limitecomandos.usuarios_limitados.length; i++){
             if(bot.limitecomandos.usuarios_limitados[i].horario_liberacao <= timestamp_atual) bot.limitecomandos.usuarios_limitados.splice(i,1)
         }
+
         //VERIFICA OS USUARIOS QUE JÁ ESTÃO COM COMANDO EXPIRADOS NO ULTIMO MINUTO
         for (let i = 0; i < bot.limitecomandos.usuarios.length; i++){
             if(bot.limitecomandos.usuarios[i].expiracao <= timestamp_atual) bot.limitecomandos.usuarios.splice(i,1)
         }
+
         //SE NÃO FOR UM USUARIO DO TIPO DONO OU FOR ADMINISTRADOR DO GRUPO , NÃO FAÇA A CONTAGEM.
             if(tipo_usuario == "dono" || isAdmin){
             resposta = {comando_bloqueado : false}
@@ -120,7 +124,7 @@ export class BotControle{
                         bot.limitecomandos.usuarios.splice(usuarioIndex,1)
                         resposta = {
                             comando_bloqueado: true,
-                            msg: criarTexto(msgs_texto.admin.limitecomandos.resposta_usuario_limitado, bot.limitecomandos.tempo_bloqueio)
+                            msg: criarTexto(comandos_info.admin.taxacomandos.msgs.resposta_usuario_limitado, bot.limitecomandos.tempo_bloqueio)
                         }
                     } else { //SE NÃO ATINGIU A QUANTIDADE MÁXIMA DE COMANDOS
                         resposta = {comando_bloqueado: false}
@@ -166,116 +170,67 @@ export class BotControle{
     }
 
     async bloquearComandosGlobal(usuarioComandos, botInfo){
-        let {prefixo} = botInfo
-        let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfo)
-        let comandosBloqueados = [], respostaBloqueio = msgs_texto.admin.bcmdglobal.resposta_titulo
-        let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
+        const comandos_info = comandosInfo(botInfo)
+        const {prefixo} = botInfo
+        let comandosBloqueados = []
+        let respostaBloqueio = comandos_info.admin.bcmdglobal.msgs.resposta_titulo
+        let categorias = ['figurinhas', 'utilidades', 'downloads', 'diversao']
 
-        if(categorias.includes(primeiroComando)){
-            let comandosCategoria = []
-            switch(primeiroComando){
-                case "figurinhas":
-                    comandosCategoria = listaComandos.figurinhas
-                    break
-                case "utilidades":
-                    comandosCategoria = listaComandos.utilidades
-                    break
-                case "downloads":
-                    comandosCategoria = listaComandos.downloads
-                    break
-                case "diversão":
-                    comandosCategoria = listaComandos.diversao
-                    break
-            }
+        if(categorias.includes(usuarioComandos[0])) usuarioComandos = Object.keys(comandos_info[usuarioComandos[0]]).map(comando => prefixo+comando)
 
-            for(let comando of comandosCategoria){
+        for(let comando of usuarioComandos){
+            if(verificarComandoExiste(botInfo, comando, 'utilidades') || verificarComandoExiste(botInfo, comando, 'diversao') || verificarComandoExiste(botInfo, comando, 'figurinhas') || verificarComandoExiste(botInfo, comando, 'downloads')){
                 if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))){
-                    respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, comando)
+                    respostaBloqueio += criarTexto(comandos_info.admin.bcmdglobal.msgs.resposta_variavel.ja_bloqueado, comando)
                 } else {
                     comandosBloqueados.push(comando.replace(prefixo, ''))
-                    respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, comando)
+                    respostaBloqueio += criarTexto(comandos_info.admin.bcmdglobal.msgs.resposta_variavel.bloqueado_sucesso, comando)
                 }
-            }         
-
-        } else { 
-            for(let comando of usuarioComandos){
-                if(listaComandos.utilidades.includes(comando) || listaComandos.diversao.includes(comando) || listaComandos.figurinhas.includes(comando) || listaComandos.downloads.includes(comando)){
-                    if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))){
-                        respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.ja_bloqueado, comando)
-                    } else {
-                        comandosBloqueados.push(comando.replace(prefixo, ''))
-                        respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.bloqueado_sucesso, comando)
-                    }
-                } else if (listaComandos.grupo.includes(comando) || listaComandos.admin.includes(comando) || listaComandos.info.includes(comando) ){
-                    respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.erro, comando)
-                } else {
-                    respostaBloqueio += criarTexto(msgs_texto.admin.bcmdglobal.resposta_variavel.nao_existe, comando)
-                }
+            } else if (verificarComandoExiste(botInfo, comando, 'grupo') || verificarComandoExiste(botInfo, comando, 'admin') || verificarComandoExiste(botInfo, comando, 'info') ){
+                respostaBloqueio += criarTexto(comandos_info.admin.bcmdglobal.msgs.resposta_variavel.erro, comando)
+            } else {
+                respostaBloqueio += criarTexto(comandos_info.admin.bcmdglobal.msgs.resposta_variavel.nao_existe, comando)
             }
         }
+        
 
         if(comandosBloqueados.length != 0) await this.bloquearComandos(comandosBloqueados, botInfo)
         return respostaBloqueio
     }
 
     async desbloquearComandosGlobal(usuarioComandos, botInfo){
-        let {prefixo} = botInfo
-        let listaComandos = listarComandos(prefixo)
-        let msgs_texto = obterMensagensTexto(botInfo)
-        let comandosDesbloqueados = [], respostaDesbloqueio = msgs_texto.admin.dcmdglobal.resposta_titulo
-        let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversão'], primeiroComando = usuarioComandos[0]
-        if(categorias.includes(primeiroComando)){
-            let comandosCategoria = []
-            switch(primeiroComando){
-                case "todos":
-                    comandosCategoria = botInfo.bloqueio_cmds
-                    break
-                case "figurinhas":
-                    comandosCategoria = listaComandos.figurinhas
-                    break
-                case "utilidades":
-                    comandosCategoria = listaComandos.utilidades
-                    break
-                case "downloads":
-                    comandosCategoria = listaComandos.downloads
-                    break
-                case "diversão":
-                    comandosCategoria = listaComandos.diversao
-                    break
-            }
+        const comandos_info = comandosInfo(botInfo)
+        const {prefixo} = botInfo
+        let comandosDesbloqueados = []
+        let respostaDesbloqueio = comandos_info.admin.dcmdglobal.msgs.resposta_titulo
+        let categorias = ['todos', 'figurinhas', 'utilidades', 'downloads', 'diversao']
 
-            for(let comando of comandosCategoria){
-                if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
-                    comandosDesbloqueados.push(comando.replace(prefixo, ''))
-                    respostaDesbloqueio += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, comando)
-                } else {
-                    respostaDesbloqueio += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.ja_desbloqueado, comando)
-                }
-            }
-        } else {
-            for(let comando of usuarioComandos){
-                if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
-                    comandosDesbloqueados.push(comando.replace(prefixo, ''))
-                    respostaDesbloqueio += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.desbloqueado_sucesso, comando)
-                } else {
-                    respostaDesbloqueio += criarTexto(msgs_texto.admin.dcmdglobal.resposta_variavel.ja_desbloqueado, comando)
-                }
-            }
+        if(categorias.includes(usuarioComandos[0])){
+            if(usuarioComandos[0] === 'todos') usuarioComandos = botInfo.bloqueio_cmds.map(comando => prefixo+comando)
+            else usuarioComandos = Object.keys(comandos_info[usuarioComandos[0]]).map(comando => prefixo+comando)
         }
 
+        for(let comando of usuarioComandos){
+            if(botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))) {
+                comandosDesbloqueados.push(comando.replace(prefixo, ''))
+                respostaDesbloqueio += criarTexto(comandos_info.admin.dcmdglobal.msgs.resposta_variavel.desbloqueado_sucesso, comando)
+            } else {
+                respostaDesbloqueio += criarTexto(comandos_info.admin.dcmdglobal.msgs.resposta_variavel.ja_desbloqueado, comando)
+            }
+        }
+        
         if(comandosDesbloqueados.length != 0)  await this.desbloquearComandos(comandosDesbloqueados, botInfo)
         return respostaDesbloqueio
     }
 
     async verificarComandosBloqueadosGlobal(comando, botInfo){
-        let {prefixo} = botInfo
+        const {prefixo} = botInfo
         return botInfo.bloqueio_cmds.includes(comando.replace(prefixo, ''))
     }
 
     async redirecionarMensagemRevelada(c, mensagemBaileys, botInfo){
         try{
-            const msgs_texto = obterMensagensTexto(botInfo)
+            const comandos_info = comandosInfo(botInfo)
             const {mensagem, nome_usuario : nomeUsuario, remetente, mensagem_grupo, tipo, grupo} = mensagemBaileys
             const numeroDono = await new UsuarioControle().obterIdDono()
             const numeroUsuario = remetente.replace("@s.whatsapp.net", '')
@@ -283,7 +238,7 @@ export class BotControle{
             const tipoMensagem = obterTipoDeMensagem(tipo)
             let mensagemVisivel = mensagem.message
             mensagemVisivel[tipo].viewOnce = false
-            await socket.enviarTexto(c, numeroDono, criarTexto(msgs_texto.admin.autorevelar.restransmissao, nomeUsuario, numeroUsuario, nomeGrupo, tipoMensagem))
+            await socket.enviarTexto(c, numeroDono, criarTexto(comandos_info.admin.autorevelar.msgs.restransmissao, nomeUsuario, numeroUsuario, nomeGrupo, tipoMensagem))
             await socket.retransmitirMensagem(c, numeroDono, mensagemVisivel)
         } catch(err){
             err.message = `redirecionarMensagemRevelada - ${err.message}`

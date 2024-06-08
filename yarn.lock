@@ -540,10 +540,10 @@
     form-data "^4.0.0"
     unraw "^2.0.1"
 
-"@victorsouzaleal/lbot-api-comandos@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@victorsouzaleal/lbot-api-comandos/-/lbot-api-comandos-1.0.1.tgz#0a98237bf23cee25aeb057ee882a2d3b233d7213"
-  integrity sha512-6M0RocMihAX4Z1GMVvT8bl6buvfI6gRLJ5oud8MTdDsOTl+Ku3LNmOOzkOrsL9s9liLOtlOI+dtLJ4g5MZv1Vw==
+"@victorsouzaleal/lbot-api-comandos@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@victorsouzaleal/lbot-api-comandos/-/lbot-api-comandos-1.0.2.tgz#f4ecbec26f187e5de60d368ec560dc160669d09a"
+  integrity sha512-l7OQqFdZXDbMdi13FCgIx5vbWo/DL3ep2z7zgTy1HYdUEPZeqyDqjc0wsG27r51SZmECBWIcy7zbncU0TiwFJQ==
   dependencies:
     "@deepgram/sdk" "^3.2.0"
     "@tobyg74/tiktok-api-dl" "^1.1.2"
