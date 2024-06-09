@@ -57,6 +57,24 @@ export function comandosInfo(botInfo){
         },
         //COMANDOS UTILIDADES
         utilidades: {
+            brasileirao:{
+                descricao: '',
+                guia: `Ex: *${prefixo}brasileirao* - Exibe a tabela e a rodada atual do Brasileirão Serie A.\n`+
+                `Ex: *${prefixo}brasileirao* B - Exibe a tabela e a rodada atual do Brasileirão Serie B.\n`,
+                msgs: {
+                    erro_serie: '[❗] A série digitada não é suportada, atualmente são suportados apenas A e B.',
+                    resposta: '⚽ BRASILEIRÃO SERIE {p1} ⚽ \n\n'+
+                    'Tabela :\n'+
+                    '{p2}\n\n'+
+                    'Rodada Atual :\n\n'+
+                    '{p3}\n',
+                    tabela_item: '- {p1}° {p2} - P:{p3} J:{p4} V:{p5}\n',
+                    partida_item: '- Partida : {p1} x {p2} \n'+
+                    '- Data : {p3} \n'+
+                    '- Local : {p4} \n'+
+                    '- Resultado : {p5}\n\n'
+                }
+            },
             encurtar : {
                 descricao: '',
                 guia: `Ex: *${prefixo}encurtar* link - Encurta o link digitado.\n`,

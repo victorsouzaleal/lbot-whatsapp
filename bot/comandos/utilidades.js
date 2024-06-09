@@ -29,7 +29,51 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
 
     //Comandos de utilidades
     try{
-        switch(comandoSemPrefixo){  
+        switch(comandoSemPrefixo){ 
+            case 'brasileirao':
+                try{
+                    let seriesSuportadas = ['A', 'B'], serieSelecionada
+                    if(!args.length){
+                        serieSelecionada = 'A'
+                    } else {
+                        if(!seriesSuportadas.includes(texto_recebido.toUpperCase())) return await socket.responderTexto(c, id_chat, comandos_info.utilidades.brasileirao.msgs.erro_serie, mensagem)
+                        serieSelecionada = texto_recebido.toUpperCase()
+                    }
+                    const {resultado} = await api.Gerais.obterDadosBrasileirao(serieSelecionada)
+                    const {tabela, rodadas} = resultado
+                    const [rodada] = rodadas.filter(rodada => rodada.rodada_atual === true)
+                    const {partidas} = rodada
+                    
+                    let textoTabela = '', textoPartidas = ''
+                    tabela.forEach(time =>{
+                        textoTabela += criarTexto(
+                            comandos_info.utilidades.brasileirao.msgs.tabela_item,
+                            time.posicao,
+                            time.nome,
+                            time.pontos,
+                            time.jogos,
+                            time.vitorias
+                        )
+                    })
+                    partidas.forEach(partida =>{
+                        textoPartidas += criarTexto(
+                            comandos_info.utilidades.brasileirao.msgs.partida_item,
+                            partida.time_casa,
+                            partida.time_fora,
+                            partida.data,
+                            partida.local,
+                            partida.gols_casa ? partida.resultado_texto : '---'
+                        )
+                    })
+
+                    const textoFinal = criarTexto(comandos_info.utilidades.brasileirao.msgs.resposta, serieSelecionada, textoTabela, textoPartidas)
+                    await socket.responderTexto(c, id_chat, textoFinal, mensagem)
+                } catch(err){
+                    if(!err.erro) throw err
+                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
+                }
+                break
+            
             case 'upimg':
                 try{
                     if (citacao?.tipo != tiposMensagem.imagem && tipo != tiposMensagem.imagem) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
