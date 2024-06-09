@@ -87,6 +87,7 @@ export const menuUtilidades = (botInfo)=>{
 |--〖🔎 *CONSULTAS/TEXTO* 〗
 |
 |- *${prefixo}gpt* frase - Recebe uma resposta da IA CHATGPT.
+|- *${prefixo}brasileirao* - Exibe a tabela e rodada atual do Brasileirão.
 |- *${prefixo}filmes* - Exibe as tendências atuais de filmes.
 |- *${prefixo}series* - Exibe as tendências atuais de séries.
 |- *${prefixo}encurtar* link - Encurta o link digitado.
@@ -180,6 +181,10 @@ export const menuGrupo = (admin, botInfo)=>{
 |- *${prefixo}rlink* - Redefine o link do grupo.
 |- *${prefixo}apg* - Apaga uma mensagem do grupo.
 |- *${prefixo}bantodos* - Bane todos os membros.
+|
+|--〖👁️ *REVELAR MENSAGENS*〗
+|
+|- *${prefixo}revelar* - Revela o contéudo de uma mensagem de visualização única.
 |
 |--〖📊 *ENQUETE*〗
 |

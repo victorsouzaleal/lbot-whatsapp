@@ -13,28 +13,12 @@
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&style=flat&color=#79C83D"></a>
 <a href="https://github.com/victorsouzaleal"><img title="Autor" src="https://img.shields.io/badge/autor-victorsouzaleal-blue.svg?logo=github&color=#79C83D"></a>
 </p>
-<h3 align="center">⭐ Atualizações toda Sexta-Feira, em outros dias somente em emergência.</h3>
-
+<h3 align="center">⭐ Atualizações toda semana.</h3>
 
 <br>
 
-## 🔄 Última Atualização : 07/06/2024 - v2.8.0
-**[ALTERAÇÃO]** Antes de iniciar o bot verifica qual a última versão do WhatsApp Web e usa ela.<br>
-**[ALTERAÇÃO]** O sistema de tipo de usuário foi melhorado e agora é possivel criar, deletar e modificar o titulo de exibição em menus de cada tipo.<br>
-**[NOVO]** Comando de admin **novotipo** para criar um novo tipo de usuário.<br>
-**[NOVO]** Comando de admin **deltipo** para deletar um tipo de usuário.<br>
-**[NOVO]** Comando de admin **tipotitulo** para modificar o titulo de exibição de um tipo de usuário.<br>
-**[ALTERAÇÃO]** Comando de admin **alterartipo** foi alterado para **usuariotipo**.<br>
-**[ALTERAÇÃO]** Comando de admin **taxalimite** foi alterado para **taxacomandos**.<br>
-**[ALTERAÇÃO]** Comando de admin **mudarlimite** foi alterado para **tipocomandos**.<br>
-**[ALTERAÇÃO]** Comando de admin **infocompleta** foi alterado para **infobot**.<br>
-**[ALTERAÇÃO]** Comando de grupo **f** foi alterado para **restrito**.<br>
-**[ALTERAÇÃO]** Comando de grupo **blista** foi alterado para **addlista**.<br>
-**[ALTERAÇÃO]** Comando de grupo **dlista** foi alterado para **remlista**.<br>
-**[ALTERAÇÃO]** Comando de admin **usuarios** agora exibe por padrão todos os usuários do tipo "comum" se nenhum tipo for especificado.<br>
-**[ALTERAÇÃO]** Comando de admin **tipos** agora exibe quantos usuários tem em cada tipo.<br>
-**[ALTERAÇÃO]** Comando de admin **taxacomandos** agora tem como tempo de bloqueio padrão 60 segundos se nenhum tempo de bloqueio for especificado.<br>
-**[CODIGO]** Refatoração e correções gerais no código.
+## 🔄 Última Atualização: [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)
+
 <br>
 
 

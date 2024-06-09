@@ -1,6 +1,5 @@
 import moment from "moment-timezone"
-import {obterMensagensTexto} from './msgs.js'
-import {obterGuias} from './guias.js'
+import {comandosInfo} from '../comandos/comandos.js'
 import chalk from 'chalk'
 import {BotControle} from '../controles/BotControle.js'
 import {UsuarioControle} from "../controles/UsuarioControle.js"
@@ -9,8 +8,8 @@ import fs from 'fs-extra'
 
 
 export const erroComandoMsg = (comando, botInfo) =>{
-  const msgs_texto = obterMensagensTexto(botInfo)
-  return criarTexto(msgs_texto.geral.cmd_erro, comando, comando)
+  const comandos_info = comandosInfo(botInfo)
+  return criarTexto(comandos_info.outros.cmd_erro, comando, comando)
 }
 
 export const versaoAtual = () =>{
@@ -19,12 +18,6 @@ export const versaoAtual = () =>{
 
 export const corTexto = (texto, cor)=>{
     return !cor ? chalk.green(texto) : chalk.hex(cor)(texto)
-}
-
-export const guiaComandoMsg = (tipo,comando, prefixo)=>{
-  let guias = obterGuias(prefixo)
-  comando = comando.replace(prefixo, "")
-  return guias[tipo][comando]
 }
 
 export const criarTexto = (texto, ...params)=>{
@@ -93,19 +86,6 @@ export const criacaoEnv = async ()=>{
     await fs.writeFile(path.resolve('.env'), env , 'utf8')
 }
 
-export const verificarComandoExiste = (lista_comandos, comando) => {
-  const comandoExiste = (
-    lista_comandos.utilidades.includes(comando) ||
-    lista_comandos.grupo.includes(comando) || 
-    lista_comandos.diversao.includes(comando) ||
-    lista_comandos.admin.includes(comando) ||
-    lista_comandos.info.includes(comando) ||
-    lista_comandos.figurinhas.includes(comando) ||
-    lista_comandos.downloads.includes(comando)
-  )
-  return comandoExiste
-}
-
 export const verificarEnv = async ()=>{
     try{
       let resposta = {
@@ -135,8 +115,6 @@ export const verificarNumeroDono = async()=>{
     let cor_resposta = (!numero_dono) ? "#d63e3e" : false
     console.log("[DONO]", corTexto(resposta, cor_resposta))
 }
-
-
 
 export async function criarArquivosNecessarios(){
     try {

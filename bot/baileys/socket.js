@@ -1,4 +1,4 @@
-import {MessageTypes} from './mensagem.js'
+import {tiposMensagem} from './mensagem.js'
 import {delayAleatorio} from '../lib/util.js'
 import api from '@victorsouzaleal/lbot-api-comandos'
 
@@ -68,11 +68,18 @@ export const obterContatosBloqueados = async(c)=>{
 // Envio de mensagens
 export const enviarTexto = async(c, id_chat, texto)=>{
     await atualizarPresenca(c, id_chat, "composing")
-    await c.sendMessage(id_chat, {text : texto, linkPreview: null})
+    return await c.sendMessage(id_chat, {text : texto, linkPreview: null})
 }
 
-export const retransmitirMensagem = async(c, id_chat, mensagem)=>{
-    await c.relayMessage(id_chat, mensagem, {})
+export const retransmitirMensagem = async(c, id_chat, mensagem, mensagemCitacao)=>{
+    mensagem[Object.keys(mensagem)[0]].contextInfo = {
+        stanzaId: mensagemCitacao.key.id,
+        remoteJid: mensagemCitacao.key.remoteJid,
+        participant: mensagemCitacao.key.participant || mensagemCitacao.key.remoteJid,
+        fromMe: mensagemCitacao.key.fromMe,
+        quotedMessage: {}
+    }
+    return await c.relayMessage(id_chat, mensagem, {})
 }
 
 export const enviarEnquete = async(c, id_chat, nomeEnquete, valoresEnquete)=>{
@@ -94,7 +101,7 @@ export const enviarFigurinha = async(c, id_chat, sticker)=>{
 }
 
 export const enviarArquivoUrl = async(c, tipo, id_chat, url, legenda) =>{ 
-    if(tipo == MessageTypes.image){
+    if(tipo == tiposMensagem.imagem){
         return await c.sendMessage(id_chat, {image: {url}, caption: legenda})
     }
 }
@@ -105,34 +112,34 @@ export const responderTexto = async(c, id_chat, texto, mensagemCitacao)=>{
 }
 
 export const responderArquivoLocal = async(c, tipo, id_chat, caminhoArquivo, legenda, mensagemCitacao, mimetype = '') =>{ 
-    if(tipo == MessageTypes.image){
+    if(tipo == tiposMensagem.imagem){
         return await c.sendMessage(id_chat, {image: {url: caminhoArquivo}, caption: legenda}, {quoted: mensagemCitacao})
-    } else if (tipo == MessageTypes.video){
+    } else if (tipo == tiposMensagem.video){
         let base64Thumb = (await api.Videos.obterThumbnailVideo(caminhoArquivo)).resultado
         return await c.sendMessage(id_chat, {video: {url: caminhoArquivo}, mimetype, caption: legenda, jpegThumbnail: base64Thumb}, {quoted: mensagemCitacao})
-    } else if (tipo == MessageTypes.audio){
+    } else if (tipo == tiposMensagem.audio){
         return await c.sendMessage(id_chat, {audio: {url: caminhoArquivo}, mimetype}, {quoted: mensagemCitacao})
     }
 }
 
 export const responderArquivoUrl = async(c, tipo, id_chat, url, legenda, mensagemCitacao, mimetype = '') =>{ 
-    if(tipo == MessageTypes.image){
+    if(tipo == tiposMensagem.imagem){
         return await c.sendMessage(id_chat, {image: {url}, caption: legenda}, {quoted: mensagemCitacao})
-    } else if (tipo == MessageTypes.video){
+    } else if (tipo == tiposMensagem.video){
         let base64Thumb = (await api.Videos.obterThumbnailVideo(url, "url")).resultado
         return await c.sendMessage(id_chat, {video: {url}, mimetype, caption: legenda, jpegThumbnail : base64Thumb}, {quoted: mensagemCitacao})
-    } else if (tipo == MessageTypes.audio){
+    } else if (tipo == tiposMensagem.audio){
         return await c.sendMessage(id_chat, {audio: {url}, mimetype}, {quoted: mensagemCitacao})
     }
 }
 
 export const responderArquivoBuffer = async(c, tipo, id_chat, buffer, legenda, mensagemCitacao, mimetype = '')=>{ 
-    if(tipo == MessageTypes.video){
+    if(tipo == tiposMensagem.video){
         let base64Thumb = (await api.Videos.obterThumbnailVideo(buffer, "buffer")).resultado
         return await c.sendMessage(id_chat, {video: buffer, caption: legenda, mimetype, jpegThumbnail: base64Thumb}, {quoted: mensagemCitacao})
-    } else if(tipo == MessageTypes.image){
+    } else if(tipo == tiposMensagem.imagem){
         return await c.sendMessage(id_chat, {image: buffer, caption: legenda}, {quoted: mensagemCitacao})
-    } else if (tipo == MessageTypes.audio){
+    } else if (tipo == tiposMensagem.audio){
         return await c.sendMessage(id_chat, {audio: buffer, mimetype}, {quoted: mensagemCitacao})
     }
 }
