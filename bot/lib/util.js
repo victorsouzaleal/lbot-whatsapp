@@ -120,10 +120,9 @@ export async function criarArquivosNecessarios(){
     try {
         const bot = new BotControle()
         const existePastaDados = fs.pathExistsSync(path.resolve("dados"))
-        const existePastaTemp = fs.pathExistsSync(path.resolve("temp"))
-        const existeBotJson = fs.existsSync(bot.obterCaminhoJSON()), existeEnv = fs.existsSync(path.resolve('.env'))
+        const existeBotJson = fs.existsSync(bot.obterCaminhoJSON())
+        const existeEnv = fs.existsSync(path.resolve('.env'))
         if(!existePastaDados) fs.mkdirSync(path.resolve("dados"), {recursive: true})
-        if(!existePastaTemp) fs.mkdirSync(path.resolve("temp"), {recursive: true})
         if(existeBotJson && existeEnv) return 
         if(!existeBotJson) await bot.criarArquivo()
         if(!existeEnv) await criacaoEnv()
