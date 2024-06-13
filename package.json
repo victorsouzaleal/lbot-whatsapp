@@ -5,8 +5,8 @@
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "yarn atualizar-api && node app.js",
-    "atualizar-api": "yarn upgrade @victorsouzaleal/lbot-api-comandos@latest",
+    "start": "npm run atualizar-api && node app.js",
+    "atualizar-api": "npm i @victorsouzaleal/lbot-api-comandos@latest --no-save --silent",
     "dev": "node app.js"
   },
   "author": "Leal",
@@ -22,14 +22,14 @@
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
     "@victorsouzaleal/lbot-api-comandos": "^1.0.2",
-    "@whiskeysockets/baileys": "^6.7.4",
+    "@whiskeysockets/baileys": "^6.7.5",
     "axios": "^1.7.2",
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
     "form-data": "^4.0.0",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
-    "jimp": "^0.22.12",
+    "jimp": "^0.16.1",
     "link-preview-js": "^3.0.5",
     "moment-timezone": "^0.5.31",
     "node-cache": "^5.1.2",
@@ -38,6 +38,5 @@
     "pretty-num": "^0.5.0",
     "prompt": "^1.1.0",
     "qrcode-terminal": "^0.12.0"
-  },
-  "private": false
+  }
 }

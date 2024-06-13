@@ -1,5 +1,5 @@
 #!/bin/sh
-pkg install nodejs-lts -y && pkg install python -y && pkg install ffmpeg -y && npm i -g yarn
+pkg install nodejs-lts -y && pkg install python -y && pkg install ffmpeg -y
 cd ~  && [ ! -d ".gyp" ] && mkdir ~/.gyp
 cd ~/.gyp && [ -f "include.gypi" ] && rm ~/.gyp/include.gypi
 echo "{

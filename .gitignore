@@ -1,9 +1,5 @@
 # Ignorar node_modules
 node_modules
-# Ignorar Session data
-*.data.json
-# Ignorar package-lok
-package-lock.json
 #Ignorar node-persist
 .node-persist
 #Ignorar .env

@@ -21,6 +21,9 @@
 
 <br>
 
+## ❔ Como Atualizar :
+
+<br>
 
 ## 🚨 REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
@@ -40,13 +43,7 @@ Faça o download da última versão lançada no seguinte link: https://github.co
 Abra o prompt de comando (terminal) **DENTRO DA PASTA DO PROJETO** e execute os comandos abaixo :
 
 ```bash
-npm i -g yarn
-```
-
-Após terminar de instalar o yarn digite o comando abaixo para instalar as dependências do projeto :
-
-```bash
-yarn install
+npm i
 ```
 
 <br>
@@ -61,7 +58,7 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 **Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. 
 
 ```bash
-yarn start
+npm start
 ```
 
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular.
