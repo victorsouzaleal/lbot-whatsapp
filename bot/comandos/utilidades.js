@@ -30,6 +30,36 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
     //Comandos de utilidades
     try{
         switch(comandoSemPrefixo){ 
+            case 'animes':
+                try{
+                    const {resultado} = await api.Gerais.obterAnimesLancamento()
+                    let respostaTitulo = comandos_info.utilidades.animes.msgs.resposta_titulo, respostaItens = ''
+                    resultado.forEach((anime)=>{
+                        respostaItens += criarTexto(comandos_info.utilidades.animes.msgs.resposta_item, anime.nome, anime.episodio, anime.link)
+                    })
+                    const respostaFinal = respostaTitulo + respostaItens
+                    await socket.responderTexto(c, id_chat, respostaFinal, mensagem)
+                } catch(err){
+                    if(!err.erro) throw err
+                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
+                }
+                break
+
+            case 'mangas':
+                try{
+                    const {resultado} = await api.Gerais.obterMangasLancamento()
+                    let respostaTitulo = comandos_info.utilidades.mangas.msgs.resposta_titulo, respostaItens = ''
+                    resultado.forEach((manga)=>{
+                        respostaItens += criarTexto(comandos_info.utilidades.mangas.msgs.resposta_item, manga.nome, manga.capitulo, manga.link)
+                    })
+                    const respostaFinal = respostaTitulo + respostaItens
+                    await socket.responderTexto(c, id_chat, respostaFinal, mensagem)
+                } catch(err){
+                    if(!err.erro) throw err
+                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
+                }
+                break
+
             case 'brasileirao':
                 try{
                     let seriesSuportadas = ['A', 'B'], serieSelecionada

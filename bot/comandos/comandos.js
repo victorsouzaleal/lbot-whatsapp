@@ -57,6 +57,26 @@ export function comandosInfo(botInfo){
         },
         //COMANDOS UTILIDADES
         utilidades: {
+            animes:{
+                descricao: '',
+                guia: `Ex: *${prefixo}animes* - Exibe os ultimos lançamentos de episódios de anime.\n`,
+                msgs: {
+                    resposta_titulo: '🇯🇵 LANÇAMENTO DE ANIMES 🇯🇵 \n\n',
+                    resposta_item: '- Nome: {p1} \n'+
+                    '- Episódio: {p2} \n'+
+                    '- Link: {p3} \n\n',
+                }
+            },
+            mangas:{
+                descricao: '',
+                guia: `Ex: *${prefixo}mangas* - Exibe os ultimos lançamentos de capitulos de mangá.\n`,
+                msgs: {
+                    resposta_titulo: '🇯🇵 LANÇAMENTO DE MANGÁS 🇯🇵 \n\n',
+                    resposta_item: '- Nome: {p1} \n'+
+                    '- Capítulo: {p2} \n'+
+                    '- Link: {p3} \n\n',
+                }
+            },
             brasileirao:{
                 descricao: '',
                 guia: `Ex: *${prefixo}brasileirao* - Exibe a tabela e a rodada atual do Brasileirão Serie A.\n`+
