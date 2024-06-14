@@ -21,10 +21,6 @@
 
 <br>
 
-## ❔ Como Atualizar :
-
-<br>
-
 ## 🚨 REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
 - Em sistemas **Windows/Linux** :<br>
