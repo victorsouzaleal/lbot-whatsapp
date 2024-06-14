@@ -119,7 +119,7 @@ export const menuUtilidades = (botInfo)=>{
 |--〖❔ *RECONHECIMENTO*〗
 |
 |- *${prefixo}qualmusica* - Responda um audio/video para identificar a música.
-|- *${prefixo}anime* -  Identifica o anime por foto de uma cena.
+|- *${prefixo}qualanime* -  Identifica o anime por foto de uma cena.
 |
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }

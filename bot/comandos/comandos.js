@@ -337,9 +337,9 @@ export function comandosInfo(botInfo){
                     resposta: "📱 Estado : *{p1}* / Região : *{p2}*"
                 }
             },
-            anime: {
+            qualanime: {
                 descricao: '',
-                guia: `Ex: Envie/responda uma imagem com *${prefixo}anime* - Procura o anime pela imagem.\n\n`+
+                guia: `Ex: Envie/responda uma imagem com *${prefixo}qualanime* - Procura o anime pela imagem.\n\n`+
                 `*Obs*: Este comando funciona apenas com *IMAGENS* e deve ser uma *CENA VÁLIDA DE ANIME*, *NÃO* podendo ser imagens com *baixa qualidade*, *wallpappers*, *imagens editadas/recortadas*.\n`,
                 msgs: {
                     espera: "⏳ Estou processando a imagem e pesquisando o anime.",
