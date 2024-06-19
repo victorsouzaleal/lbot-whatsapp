@@ -43,8 +43,7 @@ export const conexaoAberta = async(c, botInfo)=>{
         dotenv.config()
         await new BotControle().inicializarBot(c, botInfo)
         await verificarEnv()
-        await verificarNumeroDono()
-        await socket.obterTodosGrupos(c)
+        await verificarNumeroDono()        
     } catch(err){
         consoleErro(err, "Inicialização")
         c.end(new Error("erro_geral"))
@@ -119,20 +118,25 @@ export const atualizacaoParticipantesGrupo = async (c, evento, botInfo)=>{
     }
 }
 
-export const atualizacaoDadosGrupos = async (c, novosDadosGrupo, botInfo)=>{
+export const atualizacaoDadosGrupos = async (c, botInfo)=>{
     try{
-        const grupos = new GrupoControle()
-        //Cadastro de grupos
-        await grupos.registrarGruposAoIniciar(novosDadosGrupo)
-        //Atualização dos participantes dos grupos
-        await grupos.atualizarDadosGruposInicio(novosDadosGrupo)
-        //Verificar lista negra dos grupos
-        await grupos.verificarListaNegraGeral(c, novosDadosGrupo, botInfo)
-        //Atualização da contagem de mensagens
-        await grupos.atualizarContagemGrupos(novosDadosGrupo)
+        //Obtendo dados dos grupos
+        const dadosGrupos = await socket.obterTodosGrupos(c)
+        //Se não houver grupos retorne
+        if(dadosGrupos.length){
+            const grupos = new GrupoControle()
+            //Cadastro de grupos
+            await grupos.registrarGruposAoIniciar(dadosGrupos)
+            //Atualização dos participantes dos grupos
+            await grupos.atualizarDadosGruposInicio(dadosGrupos)
+            //Verificar lista negra dos grupos
+            await grupos.verificarListaNegraGeral(c, dadosGrupos, botInfo)
+            //Atualização da contagem de mensagens
+            await grupos.atualizarContagemGrupos(dadosGrupos)
+            // Log : Grupos carregados e atualizados
+            console.log('[GRUPOS]', corTexto(comandosInfo(botInfo).outros.grupos_carregados))
+        }
 
-        // Log : Grupos carregados e atualizados
-        console.log('[GRUPOS]', corTexto(comandosInfo(botInfo).outros.grupos_carregados))
         // Log : Servidor iniciado
         console.log('[SERVIDOR]', corTexto(comandosInfo(botInfo).outros.servidor_iniciado))
         return true

@@ -34,6 +34,8 @@ async function connectToWhatsApp(){
             let necessarioReconectar = false
             if(connection == 'open'){
                 await eventosSocket.conexaoAberta(c, botInfo)
+                inicializacaoCompleta = await eventosSocket.atualizacaoDadosGrupos(c, botInfo)
+                await eventosSocket.realizarEventosEspera(c, eventosEsperando)
             } else if (connection == 'close'){
                 necessarioReconectar = await eventosSocket.conexaoEncerrada(update, botInfo)
             }
@@ -69,11 +71,7 @@ async function connectToWhatsApp(){
         //Ao atualizar dados do grupo
         if(events['groups.update']){
             const grupos = events['groups.update']
-            if(!grupos.length) inicializacaoCompleta = true
-            if(grupos.length != 0 && grupos[0].participants != undefined ){
-                inicializacaoCompleta = await eventosSocket.atualizacaoDadosGrupos(c, grupos, botInfo)
-                await eventosSocket.realizarEventosEspera(c, eventosEsperando)
-            } else if (grupos.length == 1 && grupos[0].participants == undefined){
+            if (grupos.length == 1 && grupos[0].participants == undefined){
                 if(inicializacaoCompleta) await eventosSocket.atualizacaoDadosGrupo(grupos[0])
                 else eventosEsperando.push({evento: 'groups.update', dados: grupos})
             }
