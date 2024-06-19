@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.9.1",
+  "version": "2.9.2",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "exports": "./app.js",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
-    "@victorsouzaleal/lbot-api-comandos": "^1.0.3",
+    "@victorsouzaleal/lbot-api-comandos": "^1.0.5",
     "@whiskeysockets/baileys": "^6.7.5",
     "axios": "^1.7.2",
     "chalk": "^4.1.0",
