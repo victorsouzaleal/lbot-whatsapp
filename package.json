@@ -21,12 +21,10 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
-    "@victorsouzaleal/lbot-api-comandos": "^1.0.5",
+    "@victorsouzaleal/lbot-api-comandos": "^1.0.7",
     "@whiskeysockets/baileys": "^6.7.5",
-    "axios": "^1.7.2",
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
-    "form-data": "^4.0.0",
     "format-duration-time": "^1.5.4",
     "fs-extra": "^9.0.1",
     "jimp": "^0.16.1",
@@ -35,8 +33,6 @@
     "node-cache": "^5.1.2",
     "p-queue": "^8.0.1",
     "pino": "^8.19.0",
-    "pretty-num": "^0.5.0",
-    "prompt": "^1.1.0",
     "qrcode-terminal": "^0.12.0"
   }
 }
