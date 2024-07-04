@@ -20,6 +20,7 @@
 ### ⚒️ Utilidades Gerais
 - Chat-GPT ✅
 - Criação de imagens IA ✅
+- Brasileirão A/B ✅
 - Têndencias de Filmes/Séries ✅
 - Encurtar Links ✅
 - Upload de imagens ✅
