@@ -59,6 +59,9 @@ npm start
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular ou insira seu número de telefone.
 <h3>ATENCÃO</h3>
 
+O número de telefone deve ser inserido no formato internacional.
+Ex.: +557498765432
+
 <br>
 
 ## 3 - ⌨️ Funcionamento :
