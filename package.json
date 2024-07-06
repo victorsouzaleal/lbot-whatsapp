@@ -5,7 +5,7 @@
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "npm run atualizar-api && node app.js",
+    "start": "npm run atualizar-api && bash bot.sh",
     "atualizar-api": "npm i @victorsouzaleal/lbot-api-comandos@latest --no-save --silent",
     "dev": "node app.js"
   },
