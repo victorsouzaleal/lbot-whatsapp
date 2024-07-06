@@ -53,10 +53,10 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 **Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. 
 
 ```bash
-npm start
+bash bot.sh
 ```
 
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular.
+Se for a sua primeira vez executando escaneie o QR Code com o seu celular ou insira seu número de telefone.
 
 <br>
 
