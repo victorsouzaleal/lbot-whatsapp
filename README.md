@@ -21,7 +21,7 @@
 <br>
 
 ## 🚨 REQUERIMENTOS :
-- Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
+- Um número de celular conectado ao WhatsApp para conectar o bot.
 - Em sistemas **Windows/Linux** :<br>
         - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
 - No **Termux** :<br>
@@ -57,6 +57,7 @@ npm start
 ```
 
 Se for a sua primeira vez executando escaneie o QR Code com o seu celular ou insira seu número de telefone.
+<h3>ATENCÃO</h3>
 
 <br>
 
