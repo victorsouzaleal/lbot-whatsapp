@@ -13,7 +13,7 @@ fi
 if [ "$(ls -A sessao)" ]; then
     echo -e "\e[33mVerificando se há sessão ativa..."
     echo -e "\e[32mSessão encontrada! Conectando...\e[0m"
-    node ./aut/bot.js
+    node qr.js
 else
     while true; do
         echo -e "\e[31mSem sessão ativa, escolha uma opção:\e[0m"
