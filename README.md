@@ -50,13 +50,13 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 
 ## 2 - 🤖 Uso :
 
-**Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. 
+**Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. Se for sua primeira vez pode demorar um pouco para iniciar pois está baixando as depêndencias necessárias para executar os comandos.
 
 ```bash
 npm start
 ```
 
-Se for a sua primeira vez executando escaneie o QR Code com o seu celular.
+Após a primeira inicialização escaneie o QR Code com o seu celular.
 
 <br>
 
