@@ -426,7 +426,7 @@ export const grupo = async(c, mensagemBaileys, botInfo) => {
                         return await socket.responderTexto(c, id_chat, comandos_info.grupo.aflood.msgs.intervalo,mensagem)
                     }
                     //Filtro - maxMensagem
-                    if(isNaN(maxMensagem) || maxMensagemInserido < 5 || maxMensagemInserido > 20){
+                    if(isNaN(maxMensagem) || maxMensagem < 5 || maxMensagem > 20){
                         return socket.responderTexto(c, id_chat, comandos_info.grupo.aflood.msgs.max,mensagem)
                     }
 
