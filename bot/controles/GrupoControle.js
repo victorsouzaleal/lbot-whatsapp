@@ -382,7 +382,7 @@ export class GrupoControle {
                 if (!botAdmin) {
                     await this.alterarAntiFake(evento.id, false)
                 } else {
-                    for (ddi of grupoInfo.antifake.ddi_liberados) {
+                    for (let ddi of grupoInfo.antifake.ddi_liberados) {
                         if (participante.startsWith(ddi)) return true
                     }
                     await socket.enviarTextoComMencoes(c, evento.id, criarTexto(comandos_info.outros.resposta_ban, participante.replace("@s.whatsapp.net", ""), comandos_info.grupo.afake.msgs.motivo, botInfo.nome), [participante])
