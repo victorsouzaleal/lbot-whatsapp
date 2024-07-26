@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.9.6",
+  "version": "2.9.7",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "exports": "./app.js",
