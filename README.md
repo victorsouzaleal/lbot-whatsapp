@@ -17,6 +17,7 @@
 <br>
 
 <h2 align="center"> 🔄 Última Atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest">AQUI</a> </h2>
+<h4 align="center"> Caso tenha problema na instalação ou algum comando não que funcione, vá para o passo 6. </h4>
 
 <br>
 
@@ -50,7 +51,7 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 
 ## 2 - 🤖 Uso :
 
-**Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando. Se for sua primeira vez pode demorar um pouco para iniciar pois está baixando as depêndencias necessárias para executar os comandos.
+**Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando.
 
 ```bash
 npm start
@@ -147,15 +148,30 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-## 6 - 👤 Contato
-Fiquem a vontade para tirar dúvida, ou se quiser ajudar com ideia ou com qualquer valor para o projeto. O projeto sempre será gratuito, mas não nego uma ajudinha para pagar a internet pelo menos hehe
+## 6 - 💻 Solução de problemas
 
-* **Discord :** victorsouzaleal
+### 6.1 - Comando não está funcionando
+Dependendo do erro pode ser algo que eu já tenha resolvido atualizando a biblioteca de API's, então use o comando abaixo antes de iniciar o bot para instalar as depêndencias novamente para a última versão disponível.
+
+```bash
+npm i
+```
+
+### 6.2 - Termux
+Algumas pessoas podem ter problemas para instalar as depêndencias no Termux, isso pode ser pelo fato da conexão a internet não estar estável o suficiente ou a versão do Termux estar desatualizada, o Termux da Play Store não é atualizado faz anos por isso eu forneço aqui um apk oficial dos desenvolvedores do Termux.
+
+* **Termux APK :** https://github.com/termux/termux-app/releases/download/v0.118.0/termux-app_v0.118.0+github-debug_universal.apk
+
+<br>
+
+## 7 - 👤 Contato
+Caso queira entrar em contato eu tento responder aos emails, ou abra uma issue aqui no GitHub explicando o problema.
+
 * **Email :** victorsouzaleal@gmail.com
 
 <br>
 
-## 7 - 🙏 Agradecimentos/Contribuições
+## 8 - 🙏 Agradecimentos/Contribuições
 
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
 * [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
