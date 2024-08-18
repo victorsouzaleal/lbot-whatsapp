@@ -5,9 +5,7 @@
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "npm run atualizar-api && node app.js",
-    "atualizar-api": "npm i @victorsouzaleal/lbot-api-comandos@latest --no-save --silent",
-    "dev": "node app.js"
+    "start": "node app.js"
   },
   "author": "Leal",
   "license": "MIT",
@@ -21,6 +19,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
+    "@victorsouzaleal/lbot-api-comandos": "^1.0.10",
     "@whiskeysockets/baileys": "^6.7.5",
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
