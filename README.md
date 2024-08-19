@@ -38,8 +38,15 @@ Faça o download da última versão lançada no seguinte link: https://github.co
 
 Abra o prompt de comando (terminal) **DENTRO DA PASTA DO PROJETO** e execute os comandos abaixo :
 
+
+* 1.1 - Instalação do yarn (se estiver no Linux use sudo antes do comando)
 ```bash
-npm i
+npm i -g yarn
+```
+
+* 1.2 - Instalação das dependências do projeto
+```bash
+yarn install
 ```
 
 <br>
@@ -54,7 +61,7 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 **Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando.
 
 ```bash
-npm start
+yarn start
 ```
 
 Após a primeira inicialização escaneie o QR Code com o seu celular.
@@ -154,7 +161,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 Dependendo do erro pode ser algo que eu já tenha resolvido atualizando a biblioteca de API's, então use o comando abaixo antes de iniciar o bot para instalar as depêndencias novamente para a última versão disponível.
 
 ```bash
-npm i
+yarn install
 ```
 
 ### 6.2 - Termux

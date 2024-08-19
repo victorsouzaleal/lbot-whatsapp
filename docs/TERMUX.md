@@ -19,12 +19,12 @@ sh termux_reqs.sh
 
 ### 4 - Agora com os passos anteriores feitos agora vamos voltar a instalação normal do bot
 ```bash
-npm i
+yarn install
 ```
 
 ### 5 - Tudo pronto, agora é só iniciar o bot com o comando abaixo.
 ```bash
-npm start
+yarn start
 ```
 
 <br>
