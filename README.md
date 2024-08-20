@@ -158,10 +158,10 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 ## 6 - 💻 Solução de problemas
 
 ### 6.1 - Comando não está funcionando
-Dependendo do erro pode ser algo que eu já tenha resolvido atualizando a biblioteca de API's, então use o comando abaixo antes de iniciar o bot para instalar as depêndencias novamente para a última versão disponível.
+Dependendo do erro pode ser algo que eu já tenha resolvido atualizando a biblioteca de API's, então use o comando abaixo antes de iniciar o bot para atualizar a api dos comandos para a última versão.
 
 ```bash
-yarn upgrade @victorsouzaleal/lbot-api-comandos
+yarn atualizar-api
 ```
 
 ### 6.2 - Termux
