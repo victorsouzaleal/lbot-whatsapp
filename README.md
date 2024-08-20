@@ -161,7 +161,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 Dependendo do erro pode ser algo que eu já tenha resolvido atualizando a biblioteca de API's, então use o comando abaixo antes de iniciar o bot para instalar as depêndencias novamente para a última versão disponível.
 
 ```bash
-yarn upgrade
+yarn upgrade @victorsouzaleal/lbot-api-comandos
 ```
 
 ### 6.2 - Termux
