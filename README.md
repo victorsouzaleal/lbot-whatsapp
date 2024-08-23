@@ -23,7 +23,7 @@
 ## 🚨 REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
 - Em sistemas **Windows/Linux** :<br>
-        - Ter o [GIT] (https://git-scm.com/) instalado
+        - Ter o [GIT](https://git-scm.com/) instalado <br>
         - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
 - No **Termux** :<br>
         - Ter o [TERMUX](https://github.com/termux/termux-app/releases/download/v0.118.0/termux-app_v0.118.0+github-debug_universal.apk) instalado no celular
