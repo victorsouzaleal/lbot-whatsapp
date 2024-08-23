@@ -1,5 +1,5 @@
 //REQUERINDO MODULOS
-import {makeWASocket, useMultiFileAuthState, fetchLatestWaWebVersion} from '@whiskeysockets/baileys'
+import {makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion} from '@whiskeysockets/baileys'
 import * as eventosSocket from './bot/baileys/eventosSocket.js'
 import {BotControle} from './bot/controles/BotControle.js'
 import {MensagemControle} from './bot/controles/MensagemControle.js'
@@ -15,7 +15,7 @@ const cacheTentativasEnvio = new NodeCache()
 async function connectToWhatsApp(){
     let inicializacaoCompleta = false, eventosEsperando = []
     const { state : estadoAuth , saveCreds } = await useMultiFileAuthState('sessao')
-    let {version : versaoWaWeb} = await fetchLatestWaWebVersion()
+    let {version : versaoWaWeb} = await fetchLatestBaileysVersion()
     const c = makeWASocket(configSocket(estadoAuth, cacheTentativasEnvio, versaoWaWeb))
     const bot = new BotControle()
 
