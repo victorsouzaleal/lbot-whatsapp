@@ -628,8 +628,7 @@ export function comandosInfo(botInfo){
             },
             ig: {
                 descricao: '',
-                guia: `Ex: *${prefixo}ig* link - Faz download de um video/foto do Instagram pelo link digitado e envia.\n\n`+
-                `Ex: *${prefixo}ig* link 2 - Faz download do SEGUNDO video/foto do link (em caso do link ter mais de 1 video/foto).\n`,
+                guia: `Ex: *${prefixo}ig* link - Faz download de videos/fotos do Instagram pelo link digitado e envia.\n`,
                 msgs: {
                     espera: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.",
                 }

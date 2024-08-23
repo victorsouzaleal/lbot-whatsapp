@@ -75,12 +75,13 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
             case "ig":
                 try{
                     if(!args.length) return await socket.responderTexto(c, id_chat,erroComandoMsg(comando, botInfo),mensagem)
-                    let [linkMidia, selecaoMidia] = args
-                    if(args.length > 1 && isNaN(selecaoMidia)) return await socket.responderTexto(c, id_chat,erroComandoMsg(comando, botInfo),mensagem)
+                    let linkMidia = texto_recebido
                     await socket.responderTexto(c, id_chat, comandos_info.downloads.ig.msgs.espera, mensagem)
-                    const {resultado: resultadoIG} = await api.Downloads.obterMidiaInstagram(linkMidia, selecaoMidia)
-                    if(resultadoIG.tipo == "imagem") await socket.responderArquivoBuffer(c, tiposMensagem.imagem, id_chat, resultadoIG.buffer, '', mensagem)
-                    if(resultadoIG.tipo == "video") await socket.responderArquivoBuffer(c, tiposMensagem.video, id_chat, resultadoIG.buffer, '', mensagem, 'video/mp4')
+                    const {resultado: resultadoIG} = await api.Downloads.obterMidiaInstagram(linkMidia)
+                    resultadoIG.forEach(async midia =>{
+                        if(midia.tipo == "imagem") await socket.responderArquivoBuffer(c, tiposMensagem.imagem, id_chat, midia.buffer, '', mensagem)
+                        if(midia.tipo == "video") await socket.responderArquivoBuffer(c, tiposMensagem.video, id_chat, midia.buffer, '', mensagem, 'video/mp4')
+                    })  
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
