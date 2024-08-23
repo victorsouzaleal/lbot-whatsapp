@@ -5,8 +5,8 @@
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "node app.js",
-    "atualizar-api": "yarn upgrade @victorsouzaleal/lbot-api-comandos"
+    "start": "yarn upgrade --silent && node app.js",
+    "dev": "node app.js"
   },
   "author": "Leal",
   "license": "MIT",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
-    "@victorsouzaleal/lbot-api-comandos": "^1.0.13",
+    "@victorsouzaleal/lbot-api-comandos": "^1.0.15",
     "@whiskeysockets/baileys": "^6.7.7",
     "chalk": "^4.1.2",
     "dotenv": "^8.6.0",
