@@ -17,7 +17,6 @@
 <br>
 
 <h2 align="center"> 🔄 Última Atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest">AQUI</a> </h2>
-<h4 align="center"> Caso tenha problema na instalação ou algum comando não que funcione, vá para o passo 6. </h4>
 
 <br>
 
@@ -157,15 +156,8 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 ## 6 - 💻 Solução de problemas
 
-### 6.1 - Comando não está funcionando
-Dependendo do erro pode ser algo que eu já tenha resolvido atualizando a biblioteca de API's, então use o comando abaixo antes de iniciar o bot para atualizar a api dos comandos para a última versão.
-
-```bash
-yarn atualizar-api
-```
-
-### 6.2 - Termux
-Algumas pessoas podem ter problemas para instalar as depêndencias no Termux, isso pode ser pelo fato da conexão a internet não estar estável o suficiente ou a versão do Termux estar desatualizada, o Termux da Play Store não é atualizado faz anos por isso eu forneço aqui um apk oficial dos desenvolvedores do Termux.
+### Termux
+Algumas pessoas podem ter problemas para instalar as depêndencias no Termux, isso pode ser pelo fato da conexão a internet não estar estável o suficiente ou a versão do Termux estar desatualizada, o Termux da Play Store não é atualizada faz anos por isso eu forneço aqui um apk oficial dos desenvolvedores do Termux.
 
 * **Termux APK :** https://github.com/termux/termux-app/releases/download/v0.118.0/termux-app_v0.118.0+github-debug_universal.apk
 
