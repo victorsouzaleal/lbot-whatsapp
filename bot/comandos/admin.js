@@ -173,17 +173,17 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
 
             case "bloquear":
                 try{
-                    let usuariosBloqueados = []
+                    let listaBloqueio = []
                     if(mensagem_citada){
-                        usuariosBloqueados.push(citacao.remetente)
+                        listaBloqueio.push(citacao.remetente)
                     } else if(mencionados.length > 1) {
-                        usuariosBloqueados = mencionados
+                        listaBloqueio = mencionados
                     } else {
                         let numeroInserido = texto_recebido
                         if(numeroInserido.length == 0) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                        usuariosBloqueados.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
+                        listaBloqueio.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
                     }
-                    for (let usuario of usuariosBloqueados){
+                    for (let usuario of listaBloqueio){
                         if(numero_dono == usuario){
                             await socket.responderTexto(c, id_chat, criarTexto(comandos_info.admin.bloquear.msgs.erro_donoerro_dono, usuario.replace(/@s.whatsapp.net/g, '')), mensagem)
                         } else {
@@ -202,17 +202,17 @@ export const admin = async(c, mensagemBaileys, botInfo) => {
 
             case "desbloquear":
                 try{
-                    let usuariosDesbloqueados = []
+                    let listaDesbloqueio = []
                     if(mensagem_citada){
-                        usuariosDesbloqueados.push(citacao.remetente)
+                        listaDesbloqueio.push(citacao.remetente)
                     } else if(mencionados.length > 1) {
-                        usuariosDesbloqueados = mencionados
+                        listaDesbloqueio = mencionados
                     } else {
                         let numeroInserido = texto_recebido
                         if(numeroInserido.length == 0) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                        usuariosDesbloqueados.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
+                        listaDesbloqueio.push(numeroInserido.replace(/\W+/g,"")+"@s.whatsapp.net")
                     }
-                    for (let usuario of usuariosDesbloqueados){
+                    for (let usuario of listaDesbloqueio){
                         if(!usuariosBloqueados.includes(usuario)) {
                             await socket.responderTexto(c, id_chat, criarTexto(comandos_info.admin.desbloquear.msgs.ja_desbloqueado, usuario.replace(/@s.whatsapp.net/g,'')), mensagem)
                         } else {
