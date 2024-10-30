@@ -86,7 +86,7 @@ export const menuUtilidades = (botInfo)=>{
 |
 |--〖🔎 *CONSULTAS/TEXTO* 〗
 |
-|- *${prefixo}gpt* frase - Recebe uma resposta da IA CHATGPT.
+|- *${prefixo}ia* frase - Recebe uma resposta da IA.
 |- *${prefixo}brasileirao* - Exibe a tabela e rodada atual do Brasileirão.
 |- *${prefixo}animes* - Exibe os ultimos lançamentos de animes.
 |- *${prefixo}mangas* - Exibe os ultimos lançamentos de mangás.

@@ -148,12 +148,12 @@ export const utilidades = async(c, mensagemBaileys, botInfo) => {
                 }
                 break
 
-            case "gpt":
+            case "ia":
                 try{
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let usuarioTexto = texto_recebido
                     let {resultado: resultadoTexto} = await api.IA.obterRespostaIA(usuarioTexto, remetente)
-                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.utilidades.gpt.msgs.resposta, resultadoTexto), mensagem)
+                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.utilidades.ia.msgs.resposta, resultadoTexto), mensagem)
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)

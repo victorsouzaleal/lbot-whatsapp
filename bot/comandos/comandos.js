@@ -127,11 +127,11 @@ export function comandosInfo(botInfo){
                     "{p1}\n"
                 }
             },
-            gpt : {
+            ia : {
                 descricao: '',
-                guia: `Ex: *${prefixo}gpt* texto - Recebe uma resposta do CHAT GPT de acordo com o texto.\n`,
+                guia: `Ex: *${prefixo}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
                 msgs: {
-                    resposta: "🤖 Chat GPT v3 :\n\n"+
+                    resposta: "🤖 Resposta da IA :\n\n"+
                     "{p1}"
                 }
             },
