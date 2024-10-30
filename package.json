@@ -1,11 +1,11 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "exports": "./app.js",
   "scripts": {
-    "start": "yarn upgrade --silent && node app.js",
+    "start": "yarn upgrade @victorsouzaleal/lbot-api-comandos --silent && node app.js",
     "dev": "node app.js"
   },
   "author": "Leal",
@@ -21,7 +21,7 @@
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
     "@victorsouzaleal/lbot-api-comandos": "^1.0.15",
-    "@whiskeysockets/baileys": "^6.7.7",
+    "@whiskeysockets/baileys": "^6.7.9",
     "chalk": "^4.1.2",
     "dotenv": "^8.6.0",
     "format-duration-time": "^1.5.4",
