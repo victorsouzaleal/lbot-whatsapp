@@ -32,7 +32,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     else if (resultadoInfoVideo.lengthSeconds > 300) return await socket.responderTexto(c, id_chat, comandos_info.downloads.play.msgs.limite, mensagem)
                     const mensagemEspera = criarTexto(comandos_info.downloads.play.msgs.espera, resultadoInfoVideo.title, resultadoInfoVideo.durationFormatted)
                     await socket.responderTexto(c, id_chat, mensagemEspera, mensagem)
-                    const {resultado : resultadoYTMP3} = await api.Downloads.obterYTMP3(resultadoInfoVideo.videoId)
+                    const {resultado : resultadoYTMP3} = await api.Downloads.obterYTMP3(usuarioTexto)
                     await socket.responderArquivoBuffer(c, tiposMensagem.audio, id_chat, resultadoYTMP3, '', mensagem, 'audio/mpeg')
                 } catch(err){
                     if(!err.erro) throw err
@@ -49,7 +49,7 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     else if(resultadoInfoVideo.lengthSeconds > 300) return await socket.responderTexto(c, id_chat, comandos_info.downloads.yt.msgs.limite, mensagem)
                     const mensagemEspera = criarTexto(comandos_info.downloads.yt.msgs.espera, resultadoInfoVideo.title, resultadoInfoVideo.durationFormatted)
                     await socket.responderTexto(c, id_chat, mensagemEspera, mensagem)
-                    const {resultado : resultadoYTMP4} = await api.Downloads.obterYTMP4(resultadoInfoVideo.videoId)
+                    const {resultado : resultadoYTMP4} = await api.Downloads.obterYTMP4(usuarioTexto)
                     await socket.responderArquivoBuffer(c, tiposMensagem.video, id_chat, resultadoYTMP4, '', mensagem, 'video/mp4')
                 } catch(err){
                     if(!err.erro) throw err
