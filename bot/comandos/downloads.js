@@ -109,8 +109,18 @@ export const downloads = async(c, mensagemBaileys, botInfo) => {
                     if(!args.length) return await socket.responderTexto(id_chat,erroComandoMsg(comando, botInfo),mensagem)
                     let usuarioTexto = texto_recebido
                     const {resultado : resultadoTK} = await api.Downloads.obterMidiaTiktok(usuarioTexto)
-                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.downloads.tk.msgs.espera, resultadoTK.autor_perfil, resultadoTK.descricao),mensagem)
-                    await socket.responderArquivoUrl(c, tiposMensagem.video, id_chat, resultadoTK.url, '', mensagem, "video/mp4")
+                    await socket.responderTexto(c, id_chat, criarTexto(comandos_info.downloads.tk.msgs.espera, resultadoTK.autor_perfil, resultadoTK.descricao), mensagem)
+                    if(resultadoTK.tipo == "video"){
+                        await socket.responderArquivoUrl(c, tiposMensagem.video, id_chat, resultadoTK.url, '', mensagem, "video/mp4")
+                    } else {
+                        if(resultadoTK.url.length == 1){
+                            await socket.responderArquivoUrl(c, tiposMensagem.imagem, id_chat, resultadoTK.url, "", mensagem)
+                        } else {
+                            for await (const imagem_url of resultadoTK.url) {
+                                await socket.enviarArquivoUrl(c, tiposMensagem.imagem, id_chat, imagem_url, "")
+                            }
+                        }
+                    }
                 } catch(err){
                     if(!err.erro) throw err
                     await socket.responderTexto(c, id_chat, criarTexto(comandos_info.outros.erro_api, comando, err.erro) , mensagem)
