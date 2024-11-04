@@ -4,7 +4,7 @@ A instalação no Termux é um pouco diferente e vai precisar instalar alguns re
 
 ### 1 - No Termux comece usando este comando para atualizar os pacotes e instalar o GIT.
 ```bash
-pkg update -y && pkg upgrade -y && pkg install git -y
+pkg update && yes | pkg upgrade && pkg install git -y
 ```
 
 ### 2 - Após o GIT ser instalado vamos baixar o projeto do Bot e entrar na pasta.
