@@ -849,9 +849,9 @@
     form-data "^4.0.0"
 
 "@types/node@*":
-  version "22.8.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.8.6.tgz#e8a0c0871623283d8b3ef7d7b9b1bfdfd3028e22"
-  integrity sha512-tosuJYKrIqjQIlVCM4PEGxOmyg3FCPa/fViuJChnGeEIhjA46oy8FMVoF9su1/v8PNs2a8Q0iFNyOx0uOF91nw==
+  version "22.8.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.8.7.tgz#04ab7a073d95b4a6ee899f235d43f3c320a976f4"
+  integrity sha512-LidcG+2UeYIWcMuMUpBKOnryBWG/rnmOHQR5apjn8myTQcx3rinFRn7DcIFhMnS0PPFSC6OafdIKEad0lj6U0Q==
   dependencies:
     undici-types "~6.19.8"
 
@@ -873,9 +873,9 @@
   integrity sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==
 
 "@types/node@^18.19.39":
-  version "18.19.63"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.63.tgz#2b2cdb8b3bd2b739ae38c5676cd012c80568022f"
-  integrity sha512-hcUB7THvrGmaEcPcvUZCZtQ2Z3C+UR/aOcraBLCvTsFMh916Gc1kCCYcfcMuB76HM2pSerxl1PoP3KnmHzd9Lw==
+  version "18.19.64"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.64.tgz#122897fb79f2a9ec9c979bded01c11461b2b1478"
+  integrity sha512-955mDqvO2vFf/oL7V3WiUtiz+BugyX8uVbaT2H8oj3+8dRyH2FLiNdowe7eNqRM7IOIZvzDH76EoAT+gwm6aIQ==
   dependencies:
     undici-types "~5.26.4"
 
@@ -980,9 +980,9 @@
     unraw "^2.0.1"
 
 "@victorsouzaleal/lbot-api-comandos@^1.0.15":
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/@victorsouzaleal/lbot-api-comandos/-/lbot-api-comandos-1.0.19.tgz#aabfc20da709401f503121323223503e26fcfb6e"
-  integrity sha512-lng5PiSa0jdUgxGxkQLJaV0kIuZuf70zyYs+3lPnHtuXwqJ4t6oI3f5+gGAiUzlxjE200CiDj5c3avt95+ibAw==
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/@victorsouzaleal/lbot-api-comandos/-/lbot-api-comandos-1.0.22.tgz#a9c3c1a8780a0e6ae54c1b190877fd3f5ca29c80"
+  integrity sha512-RvprxjT2e7T/yKLMZJdeD/6oCGkYTC/pf1ULFMFgTyXBuxeKkaKitOgjShORCrAbNOF1zQC1MBnG0PXcTg3GOA==
   dependencies:
     "@deepgram/sdk" "^3.5.1"
     "@distube/ytdl-core" "^4.15.1"
@@ -2292,9 +2292,9 @@ inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.3:
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
 instagram-url-direct@^1.0.18:
-  version "1.0.21"
-  resolved "https://registry.yarnpkg.com/instagram-url-direct/-/instagram-url-direct-1.0.21.tgz#a4ed3d223d59a698fb1f3f628fdd0f095a4531af"
-  integrity sha512-C/VipxWk70l5+82QHpQMmDNcpmZfOPpaJAWBqHl5FeOhubtfamfX2SA3wsgzapadFsbk27+bXUoEK5mcw5GV/A==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/instagram-url-direct/-/instagram-url-direct-1.1.1.tgz#bccc0e621803a452084898e02378bbd4cf12434f"
+  integrity sha512-OrhVCyzKsomnMFEBTqdB1ZKOT97PzpguNgBiam9TX0GqhB62/NYGhsn8szyGd3Gd2dRKO/PvUthJ0OvyPsEgWw==
   dependencies:
     axios "^1.7.7"
     qs "^6.13.0"
@@ -3716,9 +3716,9 @@ url@0.11.0:
     querystring "0.2.0"
 
 user-agents@^1.1.225, user-agents@^1.1.231:
-  version "1.1.344"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.1.344.tgz#449480033d1c1bed4c39d0cb175558cbdb27347b"
-  integrity sha512-rotT014UIciz4HhHbp12atgQW7hpcjRaZ8XROZjH7wtgmBisjAo+FzI3nGROK0tPUD2N4UwVrX/2KnHPdnVsng==
+  version "1.1.348"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.1.348.tgz#af4ffcc2de6f05b96c09037ecaa5fef46e3d335e"
+  integrity sha512-cDfqwzKq09Mjl1ve5SQ+VvV+/SZWAGE9cZKapXYNEezaKnILO4IIQhDQpvzcfY3XFREdtofsrY9lEQlAJDoz5Q==
   dependencies:
     lodash.clonedeep "^4.5.0"
 
