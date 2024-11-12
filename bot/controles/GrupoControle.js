@@ -231,7 +231,7 @@ export class GrupoControle {
         ativos.forEach((ativo) => {
             if (grupoInfo.participantes.includes(ativo.id_usuario)) ativosNoGrupo.push(ativo)
         })
-        return ativosNoGrupo.length >= qtd ? ativosNoGrupo.slice(0, (qtd - 1)) : ativosNoGrupo
+        return ativosNoGrupo.length >= qtd ? ativosNoGrupo.slice(0, qtd) : ativosNoGrupo
     }
 
     async registrarContagemParticipante(id_grupo, id_usuario) {
