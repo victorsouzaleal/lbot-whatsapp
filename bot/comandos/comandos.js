@@ -404,22 +404,6 @@ export function comandosInfo(botInfo){
                     erro: ''
                 }
             },
-            tps: {
-                descricao: '',
-                guia: `Ex: *${prefixo}tps* texto - Transforma o texto que você digitou em sticker.\n`,
-                msgs: {
-                    texto_longo : "[❗] Texto é muito longo, no máximo 30 caracteres. ",
-                    espera: "⏳ Em andamento , estou transformando seu texto em sticker."
-                }
-            },
-            atps: {
-                descricao: '',
-                guia: `Ex: *${prefixo}atps* texto - Transforma o texto que você digitou em sticker animado.\n`,
-                msgs: {
-                    texto_longo : "[❗] Texto é muito longo, no máximo 30 caracteres. ",
-                    espera: "⏳ Em andamento , estou transformando seu texto em sticker animado."
-                }
-            },
             snome: {
                 descricao: '',
                 guia: `Ex: Responda um *STICKER* com *${prefixo}snome* pack, autor - Renomeia o nome do pack e do autor do sticker.`,

@@ -33,8 +33,6 @@ export const menuFigurinhas = (botInfo)=>{
 |- *${prefixo}simg* - Transforme um STICKER NÃO ANIMADO em *foto*.
 |- *${prefixo}ssf* - Transforme uma IMAGEM em *sticker sem fundo*.
 |- *${prefixo}emojimix* 💩+😀 - Tranforme 2 emojis em *sticker*
-|- *${prefixo}tps* texto - Tranforme texto em *sticker*
-|- *${prefixo}atps* texto - Tranforme texto em *sticker animado*
 |
 ╰╼❥ ${nome_bot?.trim()}® by *${nome_adm?.trim()}*`
 }
