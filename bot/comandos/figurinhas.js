@@ -85,7 +85,7 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
                     if(!args.length) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
                     let [emoji1, emoji2] = texto_recebido.split("+")
                     if(!emoji1 || !emoji2) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo), mensagem)
-                    let {resultado: resultadoEmoji} = await api.Imagens.misturarEmojis(emoji1, emoji2)
+                    let {resultado: resultadoEmoji} = await api.Imagens.misturarEmojis(emoji1.trim(), emoji2.trim())
                     let {resultado : resultadoSticker} = await api.Stickers.criarSticker(resultadoEmoji, {pack: nome_pack?.trim(), autor: nome_bot?.trim()})
                     await socket.enviarFigurinha(c, id_chat, resultadoSticker)
                 } catch(err){
