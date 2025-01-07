@@ -1,3 +1,4 @@
+import {getContentType } from '@whiskeysockets/baileys'
 import {tiposMensagem} from './mensagem.js'
 import {delayAleatorio} from '../lib/util.js'
 import api from '@victorsouzaleal/lbot-api-comandos'
@@ -97,7 +98,22 @@ export const enviarTextoComMencoes = async(c, id_chat, texto, mencionados)=>{
 }
 
 export const retransmitirMensagemMarcando = async(c, id_chat, mensagem, mencionados)=>{
-    return await c.sendMessage(id_chat, {forward : mensagem , mentions: mencionados})
+    let tipoMensagem = getContentType(mensagem.message)
+    if(tipoMensagem == "conversation"){
+        let textoMensagem = mensagem.message[tipoMensagem]
+        mensagem.message = {
+            extendedTextMessage : {
+                text: textoMensagem,
+                contextInfo : {
+                    mentionedJid: mencionados,
+                    isForwarded: true
+                }
+            }
+        }
+    } else {
+        mensagem.message[tipoMensagem].contextInfo = {mentionedJid : mencionados, isForwarded: true} 
+    }
+    return await c.relayMessage(id_chat, mensagem.message, {})
 }
 
 export const enviarFigurinha = async(c, id_chat, sticker)=>{ 
