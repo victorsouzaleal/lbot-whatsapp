@@ -797,6 +797,11 @@ export function comandosInfo(botInfo){
                     sem_membros: "[❗] Não existem membros comuns para serem marcados.\n",
                 }
             },
+            rt: {
+                descricao: '',
+                guia: `Ex: Responda uma mensagem com *${prefixo}rt* - Retransmite a mensagem e marca todos os membros do grupo.\n`,
+                msgs: {}
+            },
             adms: {
                 descricao: '',
                 guia: `Ex: Responder com *${prefixo}adms* - Marca todos os *ADMINISTRADORES* em uma postagem.\n\n`+

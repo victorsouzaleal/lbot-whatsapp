@@ -96,6 +96,10 @@ export const enviarTextoComMencoes = async(c, id_chat, texto, mencionados)=>{
     return await c.sendMessage(id_chat, {text : texto , mentions: mencionados})
 }
 
+export const retransmitirMensagemMarcando = async(c, id_chat, mensagem, mencionados)=>{
+    return await c.sendMessage(id_chat, {forward : mensagem , mentions: mencionados})
+}
+
 export const enviarFigurinha = async(c, id_chat, sticker)=>{ 
     return await c.sendMessage(id_chat, {sticker})
 }

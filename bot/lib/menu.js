@@ -139,6 +139,7 @@ export const menuGrupo = (admin, botInfo)=>{
 |- *${prefixo}adms* - Lista todos administradores.
 |- *${prefixo}fotogrupo* - Altera foto do grupo
 |- *${prefixo}mt* mensagem - Marca todos MEMBROS/ADMINS com uma mensagem.
+|- *${prefixo}rt* - Responda uma mensagem para retransmitir e marcar todos os membros.
 |- *${prefixo}mm* mensagem - Marca os MEMBROS com uma mensagem.
 |- *${prefixo}dono* - Mostra dono do grupo.
 |
