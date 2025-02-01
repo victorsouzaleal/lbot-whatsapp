@@ -43,9 +43,14 @@ export const encerrarBot = async(c)=>{
     return await c.end(new Error("Comando"))
 }
 
-export const obterFotoPerfil = async(c, id_chat)=>{
-    return await c.profilePictureUrl(id_chat, "image")
-}
+export const obterFotoPerfil = async (c, id_chat) => {
+    try {
+      return await c.profilePictureUrl(id_chat, 'image')
+    } catch (err) {
+      console.error('Erro ao obter foto de perfil:', err)
+      return null
+    }
+  }
 
 export const bloquearContato = async(c, id_usuario)=>{
     return await c.updateBlockStatus(id_usuario, "block")
