@@ -5,8 +5,6 @@ import {tiposMensagem} from '../baileys/mensagem.js'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 import api from '@victorsouzaleal/lbot-api-comandos'
 import {comandosInfo} from '../comandos/comandos.js'
-import { obterFotoPerfil } from '../baileys/socket.js'
-import { Usuario } from '../modelos/Usuario.js'
 
 
 export const figurinhas = async(c, mensagemBaileys, botInfo) => {
@@ -58,34 +56,7 @@ export const figurinhas = async(c, mensagemBaileys, botInfo) => {
                         message: (mensagem_citada) ? citacao.mensagem  : mensagem,
                         seconds: (mensagem_citada) ? citacao.segundos : segundos
                     }
-
-                    if (
-                        dadosMensagem.tipo == tiposMensagem.texto ||
-                        dadosMensagem.tipo == tiposMensagem.textoExt
-                      ) {
-                        const jidCitado = mensagemBaileys.citacao?.remetente
-                        let ppUrl = await obterFotoPerfil(c, jidCitado)
-                        if (!ppUrl) {
-                          ppUrl = './defaultpic.png'
-                        }
-                        const usuario = new Usuario()
-                        const usuarioCitado = await usuario.obterUsuario(jidCitado)
-                        const nomeUsuario = usuarioCitado?.nome || 'sem nome'
-            
-                        const bufferSticker = await textoImagem(
-                          mensagemBaileys,
-                          ppUrl,
-                          nomeUsuario
-                        )
-            
-                        let { resultado: resultadoSticker } =
-                          await api.Stickers.criarSticker(bufferSticker, {
-                            pack: nome_pack?.trim(),
-                            autor: nome_bot?.trim(),
-                            tipo: tipoFigurinha
-                          })
-                        await socket.enviarFigurinha(c, id_chat, resultadoSticker)        
-                    } else if (dadosMensagem.tipo != tiposMensagem.imagem && dadosMensagem.tipo != tiposMensagem.video) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
+                    if(dadosMensagem.tipo != tiposMensagem.imagem && dadosMensagem.tipo != tiposMensagem.video) return await socket.responderTexto(c, id_chat, erroComandoMsg(comando, botInfo) , mensagem)
                     if(dadosMensagem.tipo == tiposMensagem.video && dadosMensagem.seconds > 9) return socket.responderTexto(c, id_chat, comandos_info.figurinhas.s.msgs.erro_video, mensagem)
                     let bufferMidia = await downloadMediaMessage(dadosMensagem.message, "buffer")
                     let {resultado: resultadoSticker} = await api.Stickers.criarSticker(bufferMidia, {pack: nome_pack?.trim(), autor: nome_bot?.trim(), fps: 9, tipo: tipoFigurinha})
