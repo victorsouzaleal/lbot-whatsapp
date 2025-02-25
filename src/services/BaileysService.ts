@@ -67,7 +67,7 @@ export class BaileysService{
 
     public getHostNumber(){
         let id = this.client.user?.id.replace(/:[0-9]+/ism, '')
-        return id
+        return id || ''
     }
 
     public async getBlockedContacts(){

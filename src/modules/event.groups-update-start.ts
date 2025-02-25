@@ -3,7 +3,7 @@ import { BotController } from '../controllers/BotController.js'
 import { BaileysController } from '../controllers/BaileysController.js'
 import { buildText, showConsoleError, colorText, getGroupParticipantsByMetadata, getGroupAdminsByMetadata } from './util.js'
 import { GroupController } from '../controllers/GroupController.js'
-import getGeneralMessagesBot from './bot-general-messages.js'
+import getGeneralMessagesBot from './bot.general-messages.js'
 
 export async function updateGroupsOnStart(client: WASocket){
     try{

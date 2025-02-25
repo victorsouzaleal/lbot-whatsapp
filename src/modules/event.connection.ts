@@ -4,9 +4,9 @@ import fs from "fs-extra"
 import dotenv from 'dotenv'
 import { BotController } from '../controllers/BotController.js'
 import { BaileysController } from '../controllers/BaileysController.js'
-import botMessages from './bot-general-messages.js'
+import botMessages from './bot.general-messages.js'
 import { buildText, showConsoleError, getCurrentBotVersion, colorText } from './util.js'
-import getGeneralMessagesBot from './bot-general-messages.js'
+import getGeneralMessagesBot from './bot.general-messages.js'
 import { UserController } from '../controllers/UserController.js'
 
 export async function connectionOpen(client: WASocket){

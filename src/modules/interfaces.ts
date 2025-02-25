@@ -5,7 +5,7 @@ export type MessageTypes = "conversation" | "extendedTextMessage" | "imageMessag
 export type MimeTypes = "audio/mp4" | "audio/mp3" | "image/png" | "image/webp" | "video/mp4" | "document/pdf" | "application/pdf"
 export interface Bot {
     started: number,
-    host_number: string | undefined,
+    host_number: string,
     name: string,
     author_sticker: string,
     pack_sticker: string,
@@ -97,20 +97,11 @@ export type DeletedMessage = {
 } | proto.IMessageKey
 
 
-export type allowedTypes = 
-    "conversation" |
-    "extendedTextMessage" |
-    "audioMessage" |
-    "imageMessage" |
-    "audioMessage" |
-    "documentMessage" |
-    "stickerMessage" |
-    "videoMessage"
 
 export interface Message {
     message_id: string,
     sender: string,
-    type: allowedTypes,
+    type: MessageTypes,
     t : number | Long.Long,
     chat_id: string,
     pushname? : string | null,
@@ -122,7 +113,8 @@ export interface Message {
     args: string[],
     isQuoted: boolean,
     isGroupMsg : boolean,
-    isAdmin : boolean,
+    isGroupAdmin: boolean,
+    isBotAdmin : boolean,
     isBotMessage: boolean,
     isBroadcast: boolean,
     isMedia: boolean,

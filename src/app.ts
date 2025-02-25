@@ -5,13 +5,13 @@ import NodeCache from 'node-cache'
 import configSocket from './config.js'
 moment.tz.setDefault('America/Sao_Paulo')
 import { BotController } from './controllers/BotController.js'
-import { connectionClose, connectionOpen } from './modules/connection.js'
-import { messageReceived } from './modules/message-received.js'
-import { addedOnGroup } from './modules/group-added.js'
-import { groupParticipantsUpdated } from './modules/group-participants-updated.js'
-import { partialGroupUpdate } from './modules/group-partial-update.js'
-import { updateGroupsOnStart } from './modules/groups-update-start.js'
-import { executeEventQueue, queueEvent } from './modules/events-queue.js'
+import { connectionClose, connectionOpen } from './modules/event.connection.js'
+import { messageReceived } from './modules/event.message-received.js'
+import { addedOnGroup } from './modules/event.group-added.js'
+import { groupParticipantsUpdated } from './modules/event.group-participants-updated.js'
+import { partialGroupUpdate } from './modules/event.group-partial-update.js'
+import { updateGroupsOnStart } from './modules/event.groups-update-start.js'
+import { executeEventQueue, queueEvent } from './modules/event.events-queue.js'
 
 
 //Cache de tentativa de envios

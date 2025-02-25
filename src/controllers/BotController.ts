@@ -8,7 +8,7 @@ export class BotController {
         this.botService = new BotService()
     }
 
-    public startBot(hostNumber? : string){
+    public startBot(hostNumber : string){
         return this.botService.startBot(hostNumber)
     }
 

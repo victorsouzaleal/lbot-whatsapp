@@ -3,8 +3,8 @@ import { AntiFloodMessage, Bot, CommandCategory, CounterUser, Group, Message, Me
 import { GroupMetadata, ParticipantAction } from 'baileys'
 import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText } from '../modules/util.js'
 import moment from 'moment-timezone'
-import botCommands from '../modules/bot-commands-list.js'
-import getGeneralMessagesBot from "../modules/bot-general-messages.js";
+import botCommands from '../modules/commands/commands.list.js'
+import getGeneralMessagesBot from "../modules/bot.general-messages.js";
 import { group } from "console";
 
 const db = {
@@ -192,13 +192,9 @@ export class GroupService {
     }
 
     async isMessageWithLink(message: Message, group: Group, botInfo : Bot){
-        const { body, caption, sender, chat_id, isGroupMsg} = message
+        const { body, caption, isGroupAdmin} = message
         const userText = body || caption
-        if(!isGroupMsg) return false
-        const isRegistered = await this.isRegistered(chat_id)
-        if(!isRegistered) return false
         const { id, admins } = group
-        if(!botInfo.host_number) return false
         const isBotAdmin = admins.includes(botInfo.host_number)
         if (!group?.antilink) return false
 
@@ -207,7 +203,7 @@ export class GroupService {
         } else {
             if (userText) {
                 const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
-                if (isUrl && !admins.includes(sender)) return true
+                if (isUrl && !isGroupAdmin) return true
             }
         }
         return false

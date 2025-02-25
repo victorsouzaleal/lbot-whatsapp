@@ -1,4 +1,4 @@
-import { Bot } from "./interfaces.js"
+import { Bot } from "../interfaces.js"
 
 // MAIN MENU
 export const mainMenu  = (botInfo : Bot)=> { 

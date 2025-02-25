@@ -1,5 +1,5 @@
 import {proto}  from 'baileys'
-import { allowedTypes, Message } from '../modules/interfaces.js'
+import { Group, Message, MessageTypes } from '../modules/interfaces.js'
 import { getContentType, generateWAMessageFromContent, WAMessage } from 'baileys'
 import NodeCache from 'node-cache'
 
@@ -20,7 +20,7 @@ export class MessageService{
     }
 
     private isAllowedType(type : keyof proto.IMessage){
-        const allowedTypes : allowedTypes[] = [
+        const allowedTypes : MessageTypes[] = [
             "conversation",
             "extendedTextMessage",
             "audioMessage",
@@ -31,10 +31,10 @@ export class MessageService{
             "videoMessage",
         ]
 
-        return allowedTypes.includes(type as allowedTypes)
+        return allowedTypes.includes(type as MessageTypes)
     }
     
-    public async formatWAMessage(m: WAMessage, idHost: string, idAdmin?: string){
+    public async formatWAMessage(m: WAMessage, group: Group|null, idHost: string, idAdmin?: string){
         if(!m.message) return false
         const type = getContentType(m.message)
         if(!type) return false
@@ -47,18 +47,19 @@ export class MessageService{
         const caption = (typeof m.message[type] != "string" && m.message[type] && "caption" in m.message[type]) ? m.message[type].caption as string | null: undefined
         const text =  caption || body || ''
         const [command, ...args] = text.trim().split(" ") 
-        const isAdmin = idAdmin == sender
+        const isBotAdmin = idAdmin == sender
         const isGroupMsg = m.key.remoteJid?.includes("@g.us") ?? false
         const message_id = m.key.id
         const t = m.messageTimestamp
         const chat_id = m.key.remoteJid
+        const isGroupAdmin = (sender && group) ? group.admins.includes(sender) : false
 
         if(!message_id || !t || !sender || !chat_id ) return false 
 
         let formattedMessage : Message = {
             message_id,
             sender,
-            type : type as allowedTypes,
+            type : type as MessageTypes,
             t,
             chat_id,
             pushname: m.pushName,
@@ -70,7 +71,8 @@ export class MessageService{
             args,
             isQuoted,
             isGroupMsg,
-            isAdmin,
+            isGroupAdmin,
+            isBotAdmin,
             isBotMessage: m.key.fromMe ?? false,
             isBroadcast: m.key.remoteJid == "status@broadcast",
             isMedia: type != "conversation" && type != "extendedTextMessage",

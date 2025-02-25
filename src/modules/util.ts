@@ -5,8 +5,8 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { GroupMetadata } from "baileys"
 import { Bot, CommandCategory } from "./interfaces.js"
-import getCommandsBot from "./bot-commands-list.js"
-import getGeneralMessagesBot from "./bot-general-messages.js"
+import getCommandsBot from "./commands/commands.list.js"
+import getGeneralMessagesBot from "./bot.general-messages.js"
 
 export function commandExist(botInfo: Bot, command: string, category? : CommandCategory){
     const commandsData = getCommandsBot(botInfo)

@@ -3,7 +3,7 @@ import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
 import { buildText, commandExist } from "../modules/util.js"
-import getCommandsBot from "../modules/bot-commands-list.js"
+import getCommandsBot from "../modules/commands/commands.list.js"
 
 export class BotService {
     private pathJSON = path.resolve("storage/bot.json")
@@ -18,7 +18,7 @@ export class BotService {
     private initBot(){
         const bot : Bot = {
             started : 0,
-            host_number: undefined,
+            host_number: '',
             name: "LBOT",
             author_sticker: "Leal",
             pack_sticker: "LBOT Sticker",
@@ -39,7 +39,7 @@ export class BotService {
         this.setBot(bot)
     }
 
-    public startBot(hostNumber? : string){
+    public startBot(hostNumber : string){
         let bot = this.getBot()
         bot.started = moment.now()
         bot.host_number = hostNumber
@@ -152,7 +152,7 @@ export class BotService {
     }
 
     // Block/Unblock Commands
-    async blockCommandsGlobally(commands : string[]){
+    public blockCommandsGlobally(commands : string[]){
         let botInfo = this.getBot()
         const COMMANDS_DATA = getCommandsBot(botInfo)
         const {prefix: PREFIX} = botInfo
@@ -180,7 +180,7 @@ export class BotService {
         return blockResponse
     }
 
-    async unblockCommandsGlobally(commands: string[]){
+    public unblockCommandsGlobally(commands: string[]){
         let botInfo = this.getBot()
         const COMMANDS_DATA = getCommandsBot(botInfo)
         const {prefix} = botInfo
@@ -206,7 +206,7 @@ export class BotService {
         return unblockResponse
     }
 
-    async isCommandBlockedGlobally(command: string){
+    public isCommandBlockedGlobally(command: string){
         let botInfo = this.getBot()
         const {prefix} = botInfo
         return botInfo.block_cmds.includes(command.replace(prefix, ''))
