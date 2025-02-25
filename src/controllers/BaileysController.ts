@@ -1,6 +1,6 @@
 import { WASocket, WAMessage,proto} from 'baileys'
 import { BaileysService } from '../services/BaileysService.js'
-import { MessageTypes, MimeTypes } from '../modules/interfaces.js'
+import { MessageTypes, MimeTypes } from '../interfaces/message.interface.js'
 
 export class BaileysController {
     private baileysService

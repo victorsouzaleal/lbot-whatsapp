@@ -1,7 +1,7 @@
 import NodeCache from "node-cache"
 import { MessageService } from "../services/MessageService.js"
 import {WAMessage, proto} from 'baileys'
-import { Group } from "../modules/interfaces.js"
+import { Group } from "../interfaces/group.interface.js"
 
 export class MessageController{
     private messageService

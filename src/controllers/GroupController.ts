@@ -1,6 +1,8 @@
 import { GroupMetadata, WASocket, ParticipantAction } from "baileys"
 import { GroupService } from "../services/GroupService.js"
-import { Bot, Group, Message, MessageTypes } from "../modules/interfaces.js"
+import { Bot } from "../interfaces/bot.interface.js"
+import { Group } from "../interfaces/group.interface.js"
+import { Message, MessageTypes } from "../interfaces/message.interface.js"
 
 export class GroupController {
     private groupService

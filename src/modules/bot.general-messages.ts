@@ -1,4 +1,4 @@
-import { Bot } from "./interfaces.js"
+import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getGeneralMessagesBot (botInfo? : Bot){
     let prefix = botInfo?.prefix

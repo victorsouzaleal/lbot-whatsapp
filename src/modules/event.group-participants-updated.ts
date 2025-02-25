@@ -1,11 +1,10 @@
 import {WASocket, ParticipantAction} from 'baileys'
 import { BaileysController } from '../controllers/BaileysController.js'
 import { buildText, showConsoleError} from './util.js'
-import { Bot} from './interfaces.js'
+import { Bot } from '../interfaces/bot.interface.js'
+import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/GroupController.js'
 import getGeneralMessagesBot from './bot.general-messages.js'
-import { Group } from './interfaces.js'
-
 
 export async function groupParticipantsUpdated (client: WASocket, event: {id: string, author: string, participants: string[], action: ParticipantAction}, botInfo: Bot){
     try{

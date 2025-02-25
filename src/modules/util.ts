@@ -1,10 +1,10 @@
 import moment from "moment-timezone"
 import chalk from 'chalk'
-import { UserController } from "../controllers/UserController.js"
 import path from 'node:path'
 import fs from 'fs-extra'
 import { GroupMetadata } from "baileys"
-import { Bot, CommandCategory } from "./interfaces.js"
+import { Bot } from "../interfaces/bot.interface.js"
+import { CommandCategory } from "../interfaces/command.interface.js"
 import getCommandsBot from "./commands/commands.list.js"
 import getGeneralMessagesBot from "./bot.general-messages.js"
 

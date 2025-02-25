@@ -1,5 +1,7 @@
 import { WASocket } from "baileys";
-import { Bot, Group, Message } from "./interfaces.js";
+import { Bot } from "../interfaces/bot.interface.js";
+import { Group } from "../interfaces/group.interface.js";
+import { Message } from "../interfaces/message.interface.js";
 import { BaileysController } from "../controllers/BaileysController.js";
 import { UserController } from "../controllers/UserController.js";
 import getGeneralMessagesBot from "./bot.general-messages.js";

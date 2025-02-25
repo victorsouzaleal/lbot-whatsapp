@@ -1,4 +1,5 @@
-import { Bot } from "../interfaces.js"
+import { Bot } from "../../interfaces/bot.interface.js"
+
 export default function getCommandsBot (botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name 
     const GUIDE_TITLE = `❔ USO DO COMANDO ❔\n\n`

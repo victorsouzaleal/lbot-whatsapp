@@ -1,0 +1,1 @@
+export type CommandCategory  = "info" | "utility" | "sticker" | "download" | "fun" | "group" | "admin"

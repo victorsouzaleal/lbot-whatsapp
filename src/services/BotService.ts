@@ -1,4 +1,5 @@
-import { Bot, CommandCategory} from "../modules/interfaces.js"
+import { Bot } from "../interfaces/bot.interface.js"
+import { CommandCategory } from "../interfaces/command.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"

@@ -11,7 +11,7 @@ import { addedOnGroup } from './modules/event.group-added.js'
 import { groupParticipantsUpdated } from './modules/event.group-participants-updated.js'
 import { partialGroupUpdate } from './modules/event.group-partial-update.js'
 import { updateGroupsOnStart } from './modules/event.groups-update-start.js'
-import { executeEventQueue, queueEvent } from './modules/event.events-queue.js'
+import { executeEventQueue, queueEvent } from './modules/event.queue.js'
 
 
 //Cache de tentativa de envios

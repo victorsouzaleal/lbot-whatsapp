@@ -1,6 +1,6 @@
 import { WASocket, WAMessage, GroupMetadata, WAPresence } from 'baileys'
 import { randomDelay } from '../modules/util.js'
-import { DeletedMessage, MessageTypes, MimeTypes } from '../modules/interfaces.js'
+import { DeletedMessage, MessageTypes, MimeTypes } from '../interfaces/message.interface.js'
 import api from '@victorsouzaleal/biblioteca-lbot'
 
 export class BaileysService{

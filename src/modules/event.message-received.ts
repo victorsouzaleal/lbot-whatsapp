@@ -1,7 +1,7 @@
 import {getContentType, WASocket, WAMessage, MessageUpsertType} from 'baileys'
 import { showConsoleError} from './util.js'
 import { MessageController } from '../controllers/MessageController.js'
-import { Bot} from './interfaces.js'
+import { Bot } from '../interfaces/bot.interface.js'
 import NodeCache from 'node-cache'
 import { UserController } from '../controllers/UserController.js'
 import { handleGroupMessage, handlePrivateMessage } from './message.handler.js'

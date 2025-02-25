@@ -1,11 +1,13 @@
 import Datastore from "@seald-io/nedb";
-import { AntiFloodMessage, Bot, CommandCategory, CounterUser, Group, Message, MessageTypes } from '../modules/interfaces.js'
-import { GroupMetadata, ParticipantAction } from 'baileys'
+import { AntiFloodMessage, CounterUser, Group } from "../interfaces/group.interface.js";
+import { Bot } from "../interfaces/bot.interface.js";
+import { CommandCategory } from "../interfaces/command.interface.js";
+import { Message, MessageTypes } from "../interfaces/message.interface.js";
+import { GroupMetadata } from 'baileys'
 import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText } from '../modules/util.js'
 import moment from 'moment-timezone'
 import botCommands from '../modules/commands/commands.list.js'
 import getGeneralMessagesBot from "../modules/bot.general-messages.js";
-import { group } from "console";
 
 const db = {
     groups : new Datastore({filename : './storage/groups.db', autoload: true}),

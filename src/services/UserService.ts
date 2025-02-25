@@ -1,6 +1,6 @@
 import Datastore from "@seald-io/nedb";
 const db = new Datastore({filename : './storage/users.db', autoload: true})
-import { UsersType, User } from '../modules/interfaces.js'
+import { User } from "../interfaces/user.interface.js";
 
 export class UserService{
 

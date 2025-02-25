@@ -1,5 +1,6 @@
 import {proto}  from 'baileys'
-import { Group, Message, MessageTypes } from '../modules/interfaces.js'
+import { Group } from '../interfaces/group.interface.js'
+import { Message, MessageTypes } from '../interfaces/message.interface.js'
 import { getContentType, generateWAMessageFromContent, WAMessage } from 'baileys'
 import NodeCache from 'node-cache'
 

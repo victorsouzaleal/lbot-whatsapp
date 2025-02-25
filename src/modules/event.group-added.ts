@@ -1,7 +1,7 @@
 import {WASocket, GroupMetadata} from 'baileys'
 import { BaileysController } from '../controllers/BaileysController.js'
 import { buildText, showConsoleError } from './util.js'
-import { Bot } from './interfaces.js'
+import { Bot } from '../interfaces/bot.interface.js'
 import { GroupController } from '../controllers/GroupController.js'
 import getGeneralMessagesBot from './bot.general-messages.js'
 

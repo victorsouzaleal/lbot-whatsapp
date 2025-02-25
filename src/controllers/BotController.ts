@@ -1,5 +1,4 @@
 import { BotService } from "../services/BotService.js"
-import { UsersType } from "../modules/interfaces.js"
 
 export class BotController {
     private botService
