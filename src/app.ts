@@ -44,10 +44,11 @@ async function connect(){
                 connectionOpen(client)
                 isBotReady = await updateGroupsOnStart(client)
                 await executeEventQueue(client, eventsCache)
-            } else if (connection == 'close'){
+            } else if (connection == 'close')
                 needReconnect = connectionClose(connectionState)
-            }
-            if(needReconnect) connect()
+            
+            if(needReconnect) 
+                connect()
         }
 
         // Credenciais
@@ -58,30 +59,38 @@ async function connect(){
         // Receber mensagem
         if(events['messages.upsert']){
             const message = events['messages.upsert']
-            if(isBotReady) await messageReceived(client, message, botInfo, messagesCache)
-            else queueEvent(eventsCache, "messages.upsert", message)
+            if(isBotReady) 
+                await messageReceived(client, message, botInfo, messagesCache)
+            else 
+                queueEvent(eventsCache, "messages.upsert", message)
         }
 
         // Atualização de participantes no grupo
         if(events['group-participants.update']){
             const participantsUpdate = events['group-participants.update']
-            if(isBotReady) await groupParticipantsUpdated(client, participantsUpdate, botInfo)
-            else queueEvent(eventsCache, "group-participants.update", participantsUpdate)
+            if(isBotReady) 
+                await groupParticipantsUpdated(client, participantsUpdate, botInfo)
+            else 
+                queueEvent(eventsCache, "group-participants.update", participantsUpdate)
         }
 
         // Novo grupo
         if(events['groups.upsert']){
             const groups = events['groups.upsert']
-            if(isBotReady) await addedOnGroup(client, groups, botInfo)
-            else queueEvent(eventsCache, "groups.upsert", groups)
+            if(isBotReady) 
+                await addedOnGroup(client, groups, botInfo)
+            else 
+                queueEvent(eventsCache, "groups.upsert", groups)
         }
 
         // Atualização parcial de dados do grupo
         if(events['groups.update']){
             const groups = events['groups.update']
             if (groups.length == 1 && groups[0].participants == undefined){
-                if(isBotReady) await partialGroupUpdate(groups[0])
-                else queueEvent(eventsCache, "groups.update", groups)
+                if(isBotReady) 
+                    await partialGroupUpdate(groups[0])
+                else 
+                    queueEvent(eventsCache, "groups.update", groups)
             }
         }
 

@@ -51,7 +51,7 @@ export class MessageService{
         const isBotAdmin = idAdmin == sender
         const isGroupMsg = m.key.remoteJid?.includes("@g.us") ?? false
         const message_id = m.key.id
-        const t = m.messageTimestamp
+        const t = m.messageTimestamp as number
         const chat_id = m.key.remoteJid
         const isGroupAdmin = (sender && group) ? group.admins.includes(sender) : false
 
@@ -63,9 +63,9 @@ export class MessageService{
             type : type as MessageTypes,
             t,
             chat_id,
-            pushname: m.pushName,
+            pushname: m.pushName || '',
             body: m.message.conversation || m.message.extendedTextMessage?.text || '',
-            caption,
+            caption : caption || '',
             mentioned: contextInfo?.mentionedJid || [],
             text_command: args?.join(" ").trim() || '',
             command: command?.toLowerCase().trim() || '',

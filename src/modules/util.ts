@@ -27,13 +27,13 @@ export function commandExist(botInfo: Bot, command: string, category? : CommandC
     return commands.includes(command)
 }
 
-export function getCommandCategory(command: string){
+export function getCommandCategory(command: string, prefix: string){
     const commandsData = getCommandsBot()
     const categories = Object.keys(commandsData)
     let foundCategory : CommandCategory | null = null 
     for (let category of categories){
         const commandsCategory = Object.keys(commandsData[category as CommandCategory])
-        if(commandsCategory.includes(command)) foundCategory = category as CommandCategory
+        if(commandsCategory.includes(command.replace(prefix, ''))) foundCategory = category as CommandCategory
     }
     return foundCategory
 }
@@ -100,17 +100,20 @@ export function currentDate(){
 }
 
 export function getResponseTime(timestamp: number){
-    let responseTime = ((moment.now() - timestamp)/1000).toFixed(2)
+    let responseTime = ((moment.now()/1000) - timestamp).toFixed(2)
     return responseTime
 }
 
-export function showCommandConsole(isGroup : boolean, category: string, command: string, hexColor: string, timestamp: number, userName: string, chatName: string){
-    let tMessage = timestampToDate(timestamp)
-    let tReply = getResponseTime(timestamp)
+export function showCommandConsole(isGroup : boolean, categoryName: string, command: string, hexColor: string, messageTimestamp: number, pushName: string, groupName?: string){
+    let formattedMessageTimestamp = timestampToDate(messageTimestamp * 1000)
+    let responseTimeSeconds = getResponseTime(messageTimestamp)
+    if(!pushName) pushName = "DESCONHECIDO"
+    if(!groupName) groupName = "DESCONHECIDO"
+
     if(isGroup){
-      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[GRUPO - ${category}]`, hexColor), tMessage, colorText(command), 'de', colorText(userName), 'em', colorText(chatName), `(${colorText(`${tReply}s`)})`)
+      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[GRUPO - ${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), 'em', colorText(groupName), `(${colorText(`${responseTimeSeconds}s`)})`)
     } else {
-      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[PRIVADO - ${category}]`, hexColor), tMessage, colorText(command), 'de', colorText(userName), `(${colorText(`${tReply}s`)})`)
+      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[PRIVADO - ${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), `(${colorText(`${responseTimeSeconds}s`)})`)
     }
 }
 

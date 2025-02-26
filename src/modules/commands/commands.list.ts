@@ -42,12 +42,12 @@ export default function getCommandsBot (botInfo?: Bot){
             info: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}info* - Exibe as informações do bot, dono, etc.\n`,
                 msgs: {
-                    reply: "*Criador do Bot* : {p1}\n"+
-                    "*Nome do bot* : {p2}\n"+
-                    "*Online desde* : {p3}\n"+
-                    "*Comandos executados* : {p4}\n"+
-                    "*Contato do criador* : wa.me/{p5}\n"+
-                    "*Versão atual* : {p6}\n"+
+                    reply: "*Nome do bot* : {p1}\n"+
+                    "*Online desde* : {p2}\n"+
+                    "*Comandos executados* : {p3}\n"+
+                    "*Contato do administrador* : wa.me/{p4}\n"+
+                    "*Versão atual* : {p5}\n"+
+                    "*Criador* : victorsouzaleal\n"+
                     "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n"
                 }
             }
