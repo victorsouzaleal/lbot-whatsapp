@@ -13,7 +13,7 @@ export default function getGeneralMessagesBot (botInfo? : Bot){
             new_group: "Saudações *{p1}* , se tiverem alguma dúvida só digitar "+`*${prefix}menu*`,
             error_command_usage: "[❗] Ops, parece que você usou o comando *{p1}* incorretamente ou não sabe como utilizá-lo. Quer aprender a usar?\n\n Digite :\n  - Ex: *{p2} guia* para ver o guia.",
             error_command: "[❗] Não foi possível realizar o comando *{p1}*, cheque o motivo do erro abaixo.\n\n"+
-            "Motivo do erro : _{p2}_\n",
+            "Erro : _{p2}_\n",
             antispamcmds_limited_message : "[❗] Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
             group_blocked_command: "[❗] O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
             globally_blocked_command: "[❗] O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",

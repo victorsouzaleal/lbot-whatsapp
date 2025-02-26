@@ -11,14 +11,16 @@ export default function getCommandsBot (botInfo?: Bot){
                 msgs: {
                     reply: "Olá, *{p1}*\n"+
                     "Tipo de Usuário : *{p2}*\n"+
-                    "Comandos feitos : *{p3}*\n"
+                    "Comandos feitos : *{p3}*\n",
+                    error_user_not_found: "Usuário não foi encontrado no banco de dados.",
+                    error_invalid_option: "A opção selecionada não existe no menu.",
                 }
             },
             reportar: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}reportar* mensagem - Reporta uma mensagem para a administração do Bot.\n`,
                 msgs: {
                     reply: `✅ Obrigado, seu problema foi reportado com sucesso e será analisado pelo dono.`,
-                    error: '[❗] Não foi possível enviar a mensagem para o dono, pois ele ainda não está cadastrado.',
+                    error: 'Não foi possível enviar a mensagem para o dono, pois ele ainda não está cadastrado.',
                     reply_admin: "[ 🤖 REPORTAR ⚙️]\n\n"+
                     "*Usuário* : {p1}\n"+
                     "*Contato* : http://wa.me/{p2}\n"+
@@ -37,6 +39,7 @@ export default function getCommandsBot (botInfo?: Bot){
                     "Nome : *{p2}*\n"+
                     "Total de comandos usados : *{p3}* comandos\n"+
                     "Mensagens neste grupo : *{p4}* mensagens\n",
+                    error_not_found: 'Usuário não foi encontrado.'
                 }
             },
             info: {
