@@ -8,11 +8,11 @@ export class UserController{
     }
 
     public async registerUser(idUser: string, name?: string|null){
-        return this.userService.setUser(idUser, name)
+        return await this.userService.setUser(idUser, name)
     }
 
     async setName(idUser: string, name: string){
-        await this.userService.setName(idUser, name)
+        return await this.userService.setName(idUser, name)
     }
 
     async isUserRegistered(idUser: string){
@@ -40,11 +40,11 @@ export class UserController{
     }
 
     async setReceivedWelcome(idUser: string, status = true){
-        await this.userService.setReceivedWelcome(idUser, status)
+        return await this.userService.setReceivedWelcome(idUser, status)
     }
 
     async increaseUserCommandsCount(idUser: string){
-        await this.userService.increaseUserCommandsCount(idUser)
+        return await this.userService.increaseUserCommandsCount(idUser)
     }
 
 }

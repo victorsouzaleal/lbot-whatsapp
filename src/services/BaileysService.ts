@@ -1,10 +1,9 @@
 import { WASocket, WAMessage, GroupMetadata, WAPresence } from 'baileys'
 import { randomDelay } from '../modules/util.js'
 import { DeletedMessage, MessageTypes, MimeTypes } from '../interfaces/message.interface.js'
-import api from '@victorsouzaleal/biblioteca-lbot'
+import {videoLibrary} from '@victorsouzaleal/biblioteca-lbot'
 
 export class BaileysService{
-
     private client
 
     constructor(client: WASocket){
@@ -111,7 +110,7 @@ export class BaileysService{
         if(type == "imageMessage"){
             return await this.client.sendMessage(idChat, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
-            const base64Thumb = (await api.Videos.obterThumbnailVideo(url)).resultado
+            const base64Thumb = await videoLibrary.videoThumbnail(url, 'file')
             return await this.client.sendMessage(idChat, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
         } else if (type == "audioMessage"){
             return await this.client.sendMessage(idChat, {audio: {url}, mimetype}, {quoted})
@@ -122,7 +121,7 @@ export class BaileysService{
         if(type == "imageMessage"){
             return await this.client.sendMessage(idChat, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
-            const base64Thumb = (await api.Videos.obterThumbnailVideo(url)).resultado
+            const base64Thumb = await videoLibrary.videoThumbnail(url, 'file')
             return await this.client.sendMessage(idChat, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
         } else if (type == "audioMessage"){
             return await this.client.sendMessage(idChat, {audio: {url}, mimetype}, {quoted})
@@ -131,7 +130,7 @@ export class BaileysService{
 
     public async replyFileFromBuffer (idChat: string, type: MessageTypes, buffer: Buffer, caption: string, quoted: WAMessage, mimetype? : MimeTypes){ 
         if(type == "videoMessage"){
-            const base64Thumb = (await api.Videos.obterThumbnailVideo(buffer, "buffer")).resultado
+            const base64Thumb = await videoLibrary.videoThumbnail(buffer, 'buffer')
             return await this.client.sendMessage(idChat, {video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted})
         } else if(type == "imageMessage"){
             return await this.client.sendMessage(idChat, {image: buffer, caption}, {quoted})
