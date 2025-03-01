@@ -3,9 +3,10 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { getCommandCategory, getCommandGuide, showCommandConsole } from "./util.js";
 import { Group } from "../interfaces/group.interface.js";
-import { categoryInfo } from "./commands/commands.category-info.js";
-import { BaileysController } from "../controllers/BaileysController.js";
+import { categoryInfo } from "../commands/info.command.js";
+import { BaileysController } from "../controllers/baileys.controller.js";
 import { CommandCategory } from "../interfaces/command.interface.js";
+import { categoryUtility } from "../commands/utility.command.js";
 
 export async function commandInvoker(client: WASocket, botInfo: Bot, message: Message, group: Group|null){
     const isGuide = (!message.args.length) ? false : message.args[0] === 'guia'
@@ -14,9 +15,8 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
     switch (commandCategory) {
         case 'info':
             //Categoria INFO
-            if(isGuide){
+            if(isGuide) {
                 await sendCommandGuide(client, botInfo, message, commandCategory)
-                return
             } else {
                 await categoryInfo(client, botInfo, message, group)
                 showCommandConsole(message.isGroupMsg, "INFO", message.command, "#8ac46e", message.t, message.pushname, group?.name)
@@ -24,7 +24,12 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
             break
         case 'utility':
             //Categoria UTILIDADE
-            showCommandConsole(message.isGroupMsg, "UTILIDADE", message.command, "#de9a07", message.t, message.pushname, group?.name)
+            if(isGuide){
+                await sendCommandGuide(client, botInfo, message, commandCategory)
+            } else {
+                await categoryUtility(client, botInfo, message, group)
+                showCommandConsole(message.isGroupMsg, "UTILIDADE", message.command, "#de9a07", message.t, message.pushname, group?.name)
+            }
             break
         case 'sticker':
             //Categoria STICKER

@@ -1,7 +1,7 @@
 import {pino} from 'pino'
 import {isJidBroadcast, makeCacheableSignalKeyStore, AuthenticationState, WAVersion, UserFacingSocketConfig} from 'baileys'
 import NodeCache from 'node-cache'
-import { MessageController } from './controllers/MessageController.js'
+import { MessageController } from './controllers/message.controller.js'
 
 export default function configSocket (state : AuthenticationState, retryCache : NodeCache, version: WAVersion, messageCache: NodeCache){
     const config : UserFacingSocketConfig =  {
@@ -17,8 +17,10 @@ export default function configSocket (state : AuthenticationState, retryCache : 
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
         getMessage: async (key) => {
-            return (key.id) ? await new MessageController().getMessage(key.id, messageCache) : undefined
+            const message = (key.id) ? new MessageController().getMessage(key.id, messageCache) : undefined
+            return message
         }
     }
+
     return config
 }

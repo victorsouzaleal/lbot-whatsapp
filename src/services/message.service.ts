@@ -7,7 +7,7 @@ import NodeCache from 'node-cache'
 export class MessageService{
     constructor(){}
 
-    async store(message : proto.IWebMessageInfo, messageCache: NodeCache){
+    storeMessageCache(message : proto.IWebMessageInfo, messageCache: NodeCache){
         if(message.key.remoteJid && message.key.id && message.message){
             messageCache.set(message.key.id,{
                 message : message.message
@@ -15,8 +15,8 @@ export class MessageService{
         }
     }
 
-    async get(message_id: string, messageCache: NodeCache){
-        let message : proto.IMessage | undefined = messageCache.get(message_id)
+    getMessageCache(messageId: string, messageCache: NodeCache){
+        let message : proto.IMessage | undefined = messageCache.get(messageId)
         return message
     }
 
@@ -35,27 +35,27 @@ export class MessageService{
         return allowedTypes.includes(type as MessageTypes)
     }
     
-    public async formatWAMessage(m: WAMessage, group: Group|null, idHost: string, idAdmin?: string){
-        if(!m.message) return false
+    formatWAMessage(m: WAMessage, group: Group|null, hostId: string, adminId?: string){
+        if(!m.message) return
         const type = getContentType(m.message)
-        if(!type) return false
-        if(!this.isAllowedType(type)) return false
-        if(!m.message[type]) return false
+        if(!type) return 
+        if(!this.isAllowedType(type)) return 
+        if(!m.message[type]) return 
         const contextInfo : proto.IContextInfo | undefined  = (typeof m.message[type] != "string" && m.message[type] && "contextInfo" in m.message[type]) ? m.message[type].contextInfo as proto.IContextInfo: undefined
         const isQuoted = (contextInfo?.quotedMessage) ? true : false
-        const sender = (m.key.fromMe) ? idHost : m.key.participant || m.key.remoteJid
+        const sender = (m.key.fromMe) ? hostId : m.key.participant || m.key.remoteJid
         const body =  m.message.conversation ||  m.message.extendedTextMessage?.text || undefined
         const caption = (typeof m.message[type] != "string" && m.message[type] && "caption" in m.message[type]) ? m.message[type].caption as string | null: undefined
         const text =  caption || body || ''
         const [command, ...args] = text.trim().split(" ") 
-        const isBotAdmin = idAdmin == sender
+        const isBotAdmin = adminId == sender
         const isGroupMsg = m.key.remoteJid?.includes("@g.us") ?? false
         const message_id = m.key.id
         const t = m.messageTimestamp as number
         const chat_id = m.key.remoteJid
         const isGroupAdmin = (sender && group) ? group.admins.includes(sender) : false
 
-        if(!message_id || !t || !sender || !chat_id ) return false 
+        if(!message_id || !t || !sender || !chat_id ) return 
 
         let formattedMessage : Message = {
             message_id,
@@ -97,10 +97,10 @@ export class MessageService{
 
         if(formattedMessage.isQuoted){
             const quotedMessage = contextInfo?.quotedMessage
-            if(!quotedMessage) return false
+            if(!quotedMessage) return
             const typeQuoted = getContentType(quotedMessage)
             const senderQuoted = contextInfo.participant || contextInfo.remoteJid
-            if(!typeQuoted || !senderQuoted ) return false
+            if(!typeQuoted || !senderQuoted ) return
             const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
             const urlQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "url" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].url as string | null : undefined
             const mimetypeQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "mimetype" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].mimetype as string | null : undefined

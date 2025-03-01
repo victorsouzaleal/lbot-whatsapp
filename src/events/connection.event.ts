@@ -2,12 +2,11 @@ import {DisconnectReason, ConnectionState, WASocket} from 'baileys'
 import { Boom } from '@hapi/boom'
 import fs from "fs-extra"
 import dotenv from 'dotenv'
-import { BotController } from '../controllers/BotController.js'
-import { BaileysController } from '../controllers/BaileysController.js'
-import botMessages from './bot.general-messages.js'
-import { buildText, showConsoleError, getCurrentBotVersion, colorText } from './util.js'
-import getGeneralMessagesBot from './bot.general-messages.js'
-import { UserController } from '../controllers/UserController.js'
+import { BotController } from '../controllers/bot.controller.js'
+import { BaileysController } from '../controllers/baileys.controller.js'
+import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../lib/util.js'
+import getGeneralMessagesBot from '../lib/general-messages.js'
+import { UserController } from '../controllers/user.controller.js'
 
 export async function connectionOpen(client: WASocket){
     try{
@@ -28,10 +27,11 @@ export async function connectionOpen(client: WASocket){
 
 export function connectionClose(connectionState : Partial<ConnectionState>){
     try{
-        const generalMessages = botMessages()
+        const generalMessages = getGeneralMessagesBot()
         const { lastDisconnect } = connectionState
         let needReconnect = false
         const errorCode = (new Boom(lastDisconnect?.error)).output.statusCode
+
         if(lastDisconnect?.error?.message == "admin_command"){
             showConsoleError(generalMessages.disconnected.command, 'CONNECTION')
         } else if(lastDisconnect?.error?.message == "fatal_error"){
@@ -47,6 +47,7 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
                 showConsoleError(buildText(generalMessages.disconnected.bad_connection, errorCode.toString(), lastDisconnect?.error?.message), 'CONNECTION')
             }
         }
+
         return needReconnect
     } catch{
         return false
@@ -74,6 +75,7 @@ function checkEnv(){
 
  async function checkAdminNumber(){
     const ownerNumber = await new UserController().getAdminId()
+    
     if(!ownerNumber){
         console.log("[DONO]", colorText("O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono.", "#d63e3e"))
     } else {

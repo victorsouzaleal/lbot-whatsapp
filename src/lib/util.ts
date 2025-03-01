@@ -5,8 +5,8 @@ import fs from 'fs-extra'
 import { GroupMetadata } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import { CommandCategory } from "../interfaces/command.interface.js"
-import getCommandsBot from "./commands/commands.list.js"
-import getGeneralMessagesBot from "./bot.general-messages.js"
+import getCommandsBot from "./commands-list.js"
+import getGeneralMessagesBot from "./general-messages.js"
 
 export function commandExist(botInfo: Bot, command: string, category? : CommandCategory){
     const commandsData = getCommandsBot(botInfo)
