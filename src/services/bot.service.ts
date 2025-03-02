@@ -1,5 +1,5 @@
 import { Bot } from "../interfaces/bot.interface.js"
-import { CommandCategory } from "../interfaces/command.interface.js"
+import { CategoryCommand } from "../interfaces/command.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
@@ -159,9 +159,9 @@ export class BotService {
         const COMMANDS_DATA = getCommandsBot(botInfo)
         const {prefix: PREFIX} = botInfo
         let blockResponse = COMMANDS_DATA.admin.bcmdglobal.msgs.reply_title
-        let categories : CommandCategory[] = ['sticker', 'utility', 'download', 'fun']
+        let categories : CategoryCommand[] = ['sticker', 'utility', 'download', 'fun']
 
-        if(categories.includes(commands[0] as CommandCategory)) commands = Object.keys(COMMANDS_DATA[commands[0] as CommandCategory]).map(command => PREFIX+command)
+        if(categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(COMMANDS_DATA[commands[0] as CategoryCommand]).map(command => PREFIX+command)
 
         for(let command of commands){
             if(commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')){
@@ -187,11 +187,11 @@ export class BotService {
         const COMMANDS_DATA = getCommandsBot(botInfo)
         const {prefix} = botInfo
         let unblockResponse = COMMANDS_DATA.admin.dcmdglobal.msgs.reply_title
-        let categories : CommandCategory[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
+        let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
 
         if(categories.includes(commands[0])){
             if(commands[0] === 'all') commands = botInfo.block_cmds.map(command => prefix+command)
-            else commands = Object.keys(COMMANDS_DATA[commands[0] as CommandCategory]).map(command => prefix+command)
+            else commands = Object.keys(COMMANDS_DATA[commands[0] as CategoryCommand]).map(command => prefix+command)
         }
 
         for(let command of commands){

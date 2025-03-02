@@ -10,11 +10,15 @@ export async function categoryUtility(client: WASocket, botInfo: Bot, message: M
 
     try{
         switch(commandWithoutPrefix){
-            case 'voz':
+            case 'animes':
                 
                 break
         }
     } catch (err : any){
         await new BaileysController(client).replyText(message.chat_id, messageErrorCommand(botInfo, message.command, err.message), message.wa_message)
     }
+}
+
+async function animesCommand(){
+    
 }

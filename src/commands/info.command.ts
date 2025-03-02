@@ -10,30 +10,7 @@ import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import * as menu from "../lib/menu-builder.js";
 
-export async function categoryInfo(client: WASocket, botInfo: Bot, message: Message, group: Group|null){
-    const commandWithoutPrefix = message.command.replace(botInfo.prefix, '')
-
-    try{
-        switch(commandWithoutPrefix){
-            case 'info':
-                await commandInfo(client, botInfo, message)
-                break
-            case 'reportar':
-                await commandReport(client, botInfo, message)
-                break
-            case 'meusdados':
-                await commandMyData(client, botInfo, group, message)
-                break
-            case 'menu':
-                await commandMenu(client, botInfo, message)
-                break
-        }
-    } catch (err : any){
-        await new BaileysController(client).replyText(message.chat_id, messageErrorCommand(botInfo, message.command, err.message), message.wa_message)
-    }
-}
-
-async function commandInfo(client: WASocket, botInfo: Bot, message: Message){
+export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommandsBot(botInfo)
     const admin = await new UserController().getAdminId() || ''
@@ -48,7 +25,7 @@ async function commandInfo(client: WASocket, botInfo: Bot, message: Message){
     })
 }
 
-async function commandReport(client: WASocket, botInfo: Bot, message: Message){
+export async function reportarCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
 
     if(!message.args.length) {
@@ -66,7 +43,7 @@ async function commandReport(client: WASocket, botInfo: Bot, message: Message){
     await baileysController.replyText(message.chat_id, commandsData.info.reportar.msgs.reply, message.wa_message)
 }
 
-async function commandMyData(client: WASocket, botInfo: Bot, group: Group|null, message: Message){
+export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommandsBot(botInfo)
     let userData = await new UserController().getUser(message.sender)
@@ -86,7 +63,7 @@ async function commandMyData(client: WASocket, botInfo: Bot, group: Group|null, 
     await baileysController.replyText(message.chat_id, replyMessage, message.wa_message)
 }
 
-async function commandMenu(client: WASocket, botInfo: Bot, message: Message){
+export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommandsBot(botInfo)
     const userData = await new UserController().getUser(message.sender)

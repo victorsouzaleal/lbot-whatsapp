@@ -1,7 +1,7 @@
 import Datastore from "@seald-io/nedb";
 import { AntiFloodMessage, CounterUser, Group } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
-import { CommandCategory } from "../interfaces/command.interface.js";
+import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
 import { GroupMetadata } from 'baileys'
 import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText } from '../lib/util.js'
@@ -293,9 +293,9 @@ export class GroupService {
         const commands_data = botCommands(botInfo)
         let blockedCommands : string[] = []
         let blockResponse = commands_data.group.bcmd.msgs.reply_title
-        let categories : CommandCategory[]  = ['sticker', 'utility', 'download', 'fun']
+        let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'fun']
 
-        if (categories.includes(commands[0] as CommandCategory)) commands = Object.keys(commands_data[commands[0] as CommandCategory]).map(command => prefix + command)
+        if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commands_data[commands[0] as CategoryCommand]).map(command => prefix + command)
 
         for (let command of commands) {
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
@@ -322,11 +322,11 @@ export class GroupService {
         const { prefix } = botInfo
         let unblockedCommands : string[] = []
         let unblockResponse = commands_data.group.dcmd.msgs.reply_title
-        let categories : CommandCategory[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
+        let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
 
         if (categories.includes(commands[0])) {
             if (commands[0] === 'all') commands = group.block_cmds.map(command => prefix + command)
-            else commands = Object.keys(commands_data[commands[0] as CommandCategory]).map(command => prefix + command)
+            else commands = Object.keys(commands_data[commands[0] as CategoryCommand]).map(command => prefix + command)
         }
 
         for (let command of commands) {

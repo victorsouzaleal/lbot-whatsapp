@@ -29,7 +29,7 @@
     "@seald-io/nedb": "^4.0.4",
     "@types/prompt-sync": "^4.2.3",
     "@victorsouzaleal/biblioteca-lbot": "^2.0.3",
-    "baileys": "^6.7.14",
+    "baileys": "^6.7.15",
     "chalk": "^4.1.0",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.3.0",

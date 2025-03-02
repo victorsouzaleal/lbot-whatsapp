@@ -4,11 +4,11 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { GroupMetadata } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
-import { CommandCategory } from "../interfaces/command.interface.js"
+import {CategoryCommand, Commands } from "../interfaces/command.interface.js"
 import getCommandsBot from "./commands-list.js"
 import getGeneralMessagesBot from "./general-messages.js"
 
-export function commandExist(botInfo: Bot, command: string, category? : CommandCategory){
+export function commandExist(botInfo: Bot, command: string, category? : CategoryCommand){
     const commandsData = getCommandsBot(botInfo)
     let commands
     if(!category){
@@ -30,19 +30,19 @@ export function commandExist(botInfo: Bot, command: string, category? : CommandC
 export function getCommandCategory(command: string, prefix: string){
     const commandsData = getCommandsBot()
     const categories = Object.keys(commandsData)
-    let foundCategory : CommandCategory | null = null 
+    let foundCategory : CategoryCommand | null = null 
     for (let category of categories){
-        const commandsCategory = Object.keys(commandsData[category as CommandCategory])
-        if(commandsCategory.includes(command.replace(prefix, ''))) foundCategory = category as CommandCategory
+        const commandsCategory = Object.keys(commandsData[category as CategoryCommand])
+        if(commandsCategory.includes(command.replace(prefix, ''))) foundCategory = category as CategoryCommand
     }
     return foundCategory
 }
 
-export function getCommandGuide(botInfo: Bot, command: string, category : CommandCategory){
+export function getCommandGuide(botInfo: Bot, command: string, category : CategoryCommand){
     const commandsData = getCommandsBot()
     const {prefix} = botInfo
     command = command.replace(prefix, '')
-    const commandsCategory  = commandsData[category] as {[command: string] : {guide: string}}
+    const commandsCategory  = commandsData[category] as Commands
     return commandsCategory[command].guide || ''
 }
 
