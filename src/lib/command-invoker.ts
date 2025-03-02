@@ -5,13 +5,12 @@ import { getCommandCategory, getCommandGuide, messageErrorCommand, showCommandCo
 import { Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
 import { Commands, CategoryCommand} from "../interfaces/command.interface.js";
-import { categoryUtility } from "../commands/utility.command.js";
-import getCommandsBot from "./commands-list.js";
+import getCommands from "../commands/list.commands.js";
 
 export async function commandInvoker(client: WASocket, botInfo: Bot, message: Message, group: Group|null){
     const isGuide = (!message.args.length) ? false : message.args[0] === 'guia'
     const categoryCommand = getCommandCategory(message.command, botInfo.prefix)
-    const commandsData = getCommandsBot(botInfo)
+    const commandsData = getCommands(botInfo)
     const commandWithoutPrefix = message.command.replace(botInfo.prefix, '')
     try{
         switch (categoryCommand) {

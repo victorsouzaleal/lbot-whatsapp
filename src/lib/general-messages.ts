@@ -1,6 +1,6 @@
 import { Bot } from "../interfaces/bot.interface.js"
 
-export default function getGeneralMessagesBot (botInfo? : Bot){
+export default function getGeneralMessages (botInfo? : Bot){
     let prefix = botInfo?.prefix
     return {
             starting: "  _____     ______      ___    _________  \r\n |_   _|   |_   _ \\   .\'   `. |  _   _  | \r\n   | |       | |_) | \/  .-.  \\|_\/ | | \\_| \r\n   | |   _   |  __\'. | |   | |    | |     \r\n  _| |__\/ | _| |__) |\\  `-\'  \/   _| |_    \r\n |________||_______\/  `.___.\'   |_____|   \r\n" + "\n  Iniciando na versão {p1}\n",

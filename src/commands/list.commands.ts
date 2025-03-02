@@ -1,12 +1,11 @@
-import * as infoCommand from "../commands/info.command.js"
+import * as infoCommand from "./category-info.commands.js"
 import { Bot } from "../interfaces/bot.interface.js"
 
-export default function getCommandsBot (botInfo?: Bot){
+export default function getCommands (botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name 
     const GUIDE_TITLE = `❔ USO DO COMANDO ❔\n\n`
     return {
-        // ************* INFO *************
-        info: {
+        info: { // ************* INFO *************
             menu: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}menu* - Exibe o menu de comandos gerais.\n`,
                 msgs: {
@@ -60,8 +59,8 @@ export default function getCommandsBot (botInfo?: Bot){
                 function: infoCommand.infoCommand
             }
         },
-        // ************* UTILITY *************
-        utility: {
+
+        utility: { // ************* UTILITY *************
             animes:{
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}animes* - Exibe os ultimos lançamentos de episódios de anime.\n`,
                 msgs: {
@@ -368,8 +367,8 @@ export default function getCommandsBot (botInfo?: Bot){
                 function : infoCommand.menuCommand
             }
         },
-        // ************* STICKER *************
-        sticker: {
+        
+        sticker: { // ************* STICKER *************
             s: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma *IMAGEM/VIDEO* com *${PREFIX}s* - Transforma em sticker.\n`+
                 `Ex: Envie/responda uma *IMAGEM* com *${PREFIX}s 1* - Transforma em sticker circular.\n`+
@@ -412,8 +411,8 @@ export default function getCommandsBot (botInfo?: Bot){
                 function : infoCommand.menuCommand
             }
         },
-        // ************* FUN *************
-        fun: {
+        
+        fun: { // ************* FUN *************
             mascote: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}mascote* - Exibe o inigualável e onipotente WhatsApp Jr.\n`,
                 msgs: {
@@ -571,8 +570,8 @@ export default function getCommandsBot (botInfo?: Bot){
                 function : infoCommand.menuCommand
             }
         },
-        // ************* DOWNLOAD *************
-        download: {
+        
+        download: { // ************* DOWNLOAD *************
             play: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}play* musica - Faz download de uma música do Youtube e envia como audio.\n`,
                 msgs: {
@@ -636,8 +635,8 @@ export default function getCommandsBot (botInfo?: Bot){
                 function : infoCommand.menuCommand
             }
         },
-        // ************* GROUP *************
-        group: {
+        
+        group: { // ************* GROUP *************
             status: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}status* - Exibe as configurações atuais do grupo\n`,
                 msgs: {
@@ -987,8 +986,8 @@ export default function getCommandsBot (botInfo?: Bot){
                 function : infoCommand.menuCommand
             }
         },
-        // ************* ADMIN *************
-        admin: {
+        
+        admin: { // ************* ADMIN *************
             sair: {
                 guide: GUIDE_TITLE +`Ex: Digite *${PREFIX}sair* em um grupo - Faz o bot sair do grupo atual.\n`+
                 `Ex: *${PREFIX}sair* 1 - Faz o bot sair do grupo selecionado.\n\n`+

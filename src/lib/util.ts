@@ -5,11 +5,11 @@ import fs from 'fs-extra'
 import { GroupMetadata } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import {CategoryCommand, Commands } from "../interfaces/command.interface.js"
-import getCommandsBot from "./commands-list.js"
-import getGeneralMessagesBot from "./general-messages.js"
+import getCommands from "../commands/list.commands.js"
+import getGeneralMessages from "./general-messages.js"
 
 export function commandExist(botInfo: Bot, command: string, category? : CategoryCommand){
-    const commandsData = getCommandsBot(botInfo)
+    const commandsData = getCommands(botInfo)
     let commands
     if(!category){
         commands = [
@@ -28,7 +28,7 @@ export function commandExist(botInfo: Bot, command: string, category? : Category
 }
 
 export function getCommandCategory(command: string, prefix: string){
-    const commandsData = getCommandsBot()
+    const commandsData = getCommands()
     const categories = Object.keys(commandsData)
     let foundCategory : CategoryCommand | null = null 
     for (let category of categories){
@@ -39,7 +39,7 @@ export function getCommandCategory(command: string, prefix: string){
 }
 
 export function getCommandGuide(botInfo: Bot, command: string, category : CategoryCommand){
-    const commandsData = getCommandsBot()
+    const commandsData = getCommands()
     const {prefix} = botInfo
     command = command.replace(prefix, '')
     const commandsCategory  = commandsData[category] as Commands
@@ -67,12 +67,12 @@ export function getGroupAdminsByMetadata(group: GroupMetadata){
 }
 
 export function messageErrorCommandUsage(botInfo: Bot, command: string){
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     return buildText(generalMessages.error_command_usage, command, command)
 }
 
 export function messageErrorCommand(botInfo: Bot, command: string, reason: string){
-    const generalMessages = getGeneralMessagesBot()
+    const generalMessages = getGeneralMessages()
     return buildText(generalMessages.error_command, command, reason)
 }
 

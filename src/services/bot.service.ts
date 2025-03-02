@@ -4,7 +4,7 @@ import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
 import { buildText, commandExist } from "../lib/util.js"
-import getCommandsBot from "../lib/commands-list.js"
+import getCommands from "../commands/list.commands.js"
 
 export class BotService {
     private pathJSON = path.resolve("storage/bot.json")
@@ -113,17 +113,17 @@ export class BotService {
 
     isSpamCommand(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
         let bot = this.getBot()
-        const CURRENT_TIMESTAMP =  Math.round(moment.now()/1000)
+        const currentTimestamp =  Math.round(moment.now()/1000)
         let isSpam = false
 
         //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
         for (let i = 0; i < bot.antispam_cmds.limited_users.length; i++){
-            if(bot.antispam_cmds.limited_users[i].expiration <= CURRENT_TIMESTAMP) bot.antispam_cmds.limited_users.splice(i,1)
+            if(bot.antispam_cmds.limited_users[i].expiration <= currentTimestamp) bot.antispam_cmds.limited_users.splice(i,1)
         }
 
         //VERIFICA OS USUARIOS QUE JÁ ESTÃO COM COMANDO EXPIRADOS NO ULTIMO MINUTO
         for (let i = 0; i < bot.antispam_cmds.users.length; i++){
-            if(bot.antispam_cmds.users[i].expiration <= CURRENT_TIMESTAMP) bot.antispam_cmds.users.splice(i,1)
+            if(bot.antispam_cmds.users[i].expiration <= currentTimestamp) bot.antispam_cmds.users.splice(i,1)
         }
 
         //SE NÃO FOR UM USUARIO ADMIN E NÃO FOR ADMINISTRADOR DO GRUPO , FAÇA A CONTAGEM.
@@ -139,12 +139,12 @@ export class BotService {
                     bot.antispam_cmds.users[userIndex].cmds++ //ADICIONA A CONTAGEM DE COMANDOS ATUAIS
                     if(bot.antispam_cmds.users[userIndex].cmds >= bot.antispam_cmds.max_cmds_minute){ //SE ATINGIR A QUANTIDADE MAXIMA DE COMANDOS POR MINUTO
                         //ADICIONA A LISTA DE USUARIOS LIMITADOS
-                        bot.antispam_cmds.limited_users.push({id_user: userId, expiration: CURRENT_TIMESTAMP + bot.antispam_cmds.block_time})
+                        bot.antispam_cmds.limited_users.push({id_user: userId, expiration: currentTimestamp + bot.antispam_cmds.block_time})
                         bot.antispam_cmds.users.splice(userIndex, 1)
                         isSpam = true
                     }
                 } else {//SE NÃO EXISTIR NA LISTA
-                    bot.antispam_cmds.users.push({id_user: userId, cmds: 1, expiration: CURRENT_TIMESTAMP+60})
+                    bot.antispam_cmds.users.push({id_user: userId, cmds: 1, expiration: currentTimestamp+60})
                 }
             }
         }
@@ -156,25 +156,25 @@ export class BotService {
     // Block/Unblock Commands
     blockCommandsGlobally(commands : string[]){
         let botInfo = this.getBot()
-        const COMMANDS_DATA = getCommandsBot(botInfo)
-        const {prefix: PREFIX} = botInfo
-        let blockResponse = COMMANDS_DATA.admin.bcmdglobal.msgs.reply_title
+        const commandsData = getCommands(botInfo)
+        const {prefix: prefix} = botInfo
+        let blockResponse = commandsData.admin.bcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] = ['sticker', 'utility', 'download', 'fun']
 
-        if(categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(COMMANDS_DATA[commands[0] as CategoryCommand]).map(command => PREFIX+command)
+        if(categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix+command)
 
         for(let command of commands){
             if(commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')){
-                if(botInfo.block_cmds.includes(command.replace(PREFIX, ''))){
-                    blockResponse += buildText(COMMANDS_DATA.admin.bcmdglobal.msgs.reply_item_already_blocked, command)
+                if(botInfo.block_cmds.includes(command.replace(prefix, ''))){
+                    blockResponse += buildText(commandsData.admin.bcmdglobal.msgs.reply_item_already_blocked, command)
                 } else {
-                    botInfo.block_cmds.push(command.replace(PREFIX, ''))
-                    blockResponse += buildText(COMMANDS_DATA.admin.bcmdglobal.msgs.reply_item_blocked, command)
+                    botInfo.block_cmds.push(command.replace(prefix, ''))
+                    blockResponse += buildText(commandsData.admin.bcmdglobal.msgs.reply_item_blocked, command)
                 }
             } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info') ){
-                blockResponse += buildText(COMMANDS_DATA.admin.bcmdglobal.msgs.reply_item_error, command)
+                blockResponse += buildText(commandsData.admin.bcmdglobal.msgs.reply_item_error, command)
             } else {
-                blockResponse += buildText(COMMANDS_DATA.admin.bcmdglobal.msgs.reply_item_not_exist, command)
+                blockResponse += buildText(commandsData.admin.bcmdglobal.msgs.reply_item_not_exist, command)
             }
         }
 
@@ -184,23 +184,23 @@ export class BotService {
 
     unblockCommandsGlobally(commands: string[]){
         let botInfo = this.getBot()
-        const COMMANDS_DATA = getCommandsBot(botInfo)
+        const commandsData = getCommands(botInfo)
         const {prefix} = botInfo
-        let unblockResponse = COMMANDS_DATA.admin.dcmdglobal.msgs.reply_title
+        let unblockResponse = commandsData.admin.dcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
 
         if(categories.includes(commands[0])){
             if(commands[0] === 'all') commands = botInfo.block_cmds.map(command => prefix+command)
-            else commands = Object.keys(COMMANDS_DATA[commands[0] as CategoryCommand]).map(command => prefix+command)
+            else commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix+command)
         }
 
         for(let command of commands){
             if(botInfo.block_cmds.includes(command.replace(prefix, ''))) {
                 let commandIndex = botInfo.block_cmds.findIndex(command_blocked=> command_blocked == command)
                 botInfo.block_cmds.splice(commandIndex,1)
-                unblockResponse += buildText(COMMANDS_DATA.admin.dcmdglobal.msgs.reply_item_unblocked, command)
+                unblockResponse += buildText(commandsData.admin.dcmdglobal.msgs.reply_item_unblocked, command)
             } else {
-                unblockResponse += buildText(COMMANDS_DATA.admin.dcmdglobal.msgs.reply_item_not_blocked, command)
+                unblockResponse += buildText(commandsData.admin.dcmdglobal.msgs.reply_item_not_blocked, command)
             }
         }
 

@@ -4,7 +4,7 @@ import { Group } from "../interfaces/group.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
 import { UserController } from "../controllers/user.controller.js";
-import getGeneralMessagesBot from "./general-messages.js";
+import getGeneralMessages from "./general-messages.js";
 import { GroupController } from "../controllers/group.controller.js";
 import { buildText, commandExist } from "./util.js";
 import { BotController } from "../controllers/bot.controller.js";
@@ -122,7 +122,7 @@ async function isUserBlocked(baileysController: BaileysController, userId: strin
 
 async function isAdminRegister(baileysController: BaileysController, userController: UserController, botInfo: Bot, message: Message){
     const hasBotAdmin = await userController.getAdminId()
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     if(!hasBotAdmin && message.command == `${botInfo.prefix}admin`){
         await userController.registerOwner(message.sender)
         await baileysController.replyText(message.chat_id, generalMessages.admin_registered, message.wa_message)
@@ -157,7 +157,7 @@ async function isBotLimitedByGroupRestricted(group: Group, botInfo: Bot){
 }
 
 async function sendPrivateWelcome(userController : UserController, baileysController: BaileysController, message: Message, botInfo: Bot){
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const user = await userController.getUser(message.sender)
     if(user && !user.receivedWelcome){
         await baileysController.sendText(message.chat_id, buildText(generalMessages.new_user, botInfo.name, message.pushname))
@@ -177,7 +177,7 @@ async function isUserLimitedBySpamCommands(botController: BotController, baileys
     if(botInfo.antispam_cmds.status){
         const isSpam = botController.isCommandSpam(message.sender, message.isBotAdmin, message.isGroupAdmin)
         if(isSpam){
-            const generalMessages = getGeneralMessagesBot(botInfo)
+            const generalMessages = getGeneralMessages(botInfo)
             await baileysController.replyText(message.chat_id, buildText(generalMessages.antispamcmds_limited_message, botInfo.antispam_cmds.block_time), message.wa_message)
             return true
         }
@@ -187,7 +187,7 @@ async function isUserLimitedBySpamCommands(botController: BotController, baileys
 
 async function isCommandBlockedGlobally(baileysController: BaileysController, botController: BotController, botInfo: Bot, message: Message ){
     const commandBlocked = botController.isCommandBlockedGlobally(message.command)
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     if(commandBlocked && !message.isBotAdmin){
         await baileysController.replyText(message.chat_id, buildText(generalMessages.globally_blocked_command, message.command), message.wa_message)
         return true
@@ -197,7 +197,7 @@ async function isCommandBlockedGlobally(baileysController: BaileysController, bo
 
 async function isCommandBlockedGroup(baileysController: BaileysController, groupController: GroupController, group: Group, isGroupAdmin: boolean, botInfo: Bot, message: Message){
     const commandBlocked = groupController.isBlockedCommand(group, message.command, botInfo)
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     if(commandBlocked && !isGroupAdmin){
         await baileysController.replyText(message.chat_id, buildText(generalMessages.group_blocked_command, message.command), message.wa_message)
         return true
@@ -206,7 +206,7 @@ async function isCommandBlockedGroup(baileysController: BaileysController, group
 }
 
 async function isDetectedByAntilink(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
     if(isDetectedByAntilink){
         await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, message.sender.replace("@s.whatsapp.net", "")), [message.sender])
@@ -217,7 +217,7 @@ async function isDetectedByAntilink(baileysController: BaileysController, groupC
 }
 
 async function isDetectedByAntiflood(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntiflood = await groupController.isFloodMessage(group, message.sender)
     if(isDetectedByAntiflood){
         await baileysController.removeParticipant(message.chat_id, message.sender)

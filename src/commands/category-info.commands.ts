@@ -3,16 +3,16 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
-import { buildText, getCurrentBotVersion, messageErrorCommand, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
-import getGeneralMessagesBot from "../lib/general-messages.js";
-import getCommandsBot from "../lib/commands-list.js";
+import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
+import getGeneralMessages from "../lib/general-messages.js";
+import getCommands from "./list.commands.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import * as menu from "../lib/menu-builder.js";
 
 export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
-    const commandsData = getCommandsBot(botInfo)
+    const commandsData = getCommands(botInfo)
     const admin = await new UserController().getAdminId() || ''
     let currentVersion = getCurrentBotVersion()
     let startedDate = timestampToDate(botInfo.started)
@@ -33,7 +33,7 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
         return
     }
 
-    const commandsData = getCommandsBot(botInfo)
+    const commandsData = getCommands(botInfo)
     const adminBot = await new UserController().getAdminId()
 
     if(!adminBot) throw new Error(commandsData.info.reportar.msgs.error)
@@ -45,7 +45,7 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
-    const commandsData = getCommandsBot(botInfo)
+    const commandsData = getCommands(botInfo)
     let userData = await new UserController().getUser(message.sender)
     if(!userData) throw new Error(commandsData.info.meusdados.msgs.error_not_found)
     let userName = userData.name || ''
@@ -65,7 +65,7 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
-    const commandsData = getCommandsBot(botInfo)
+    const commandsData = getCommands(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
     if(!userData) throw new Error(commandsData.info.menu.msgs.error_user_not_found)
@@ -93,7 +93,7 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
                 response += menu.downloadMenu(botInfo)
                 break
             case "4":
-                if(!message.isGroupMsg) throw new Error(getGeneralMessagesBot(botInfo).permission.group)
+                if(!message.isGroupMsg) throw new Error(getGeneralMessages(botInfo).permission.group)
 
                 if(message.isGroupAdmin) response += menu.groupAdminMenu(botInfo)
                 else response += menu.groupMenu(botInfo)

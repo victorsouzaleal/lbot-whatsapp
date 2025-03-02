@@ -3,7 +3,7 @@ import { BotController } from '../controllers/bot.controller.js'
 import { BaileysController } from '../controllers/baileys.controller.js'
 import { buildText, showConsoleError, colorText, getGroupParticipantsByMetadata, getGroupAdminsByMetadata } from './util.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getGeneralMessagesBot from './general-messages.js'
+import getGeneralMessages from './general-messages.js'
 
 export async function updateGroupsOnStart(client: WASocket){
     try{
@@ -21,11 +21,11 @@ export async function updateGroupsOnStart(client: WASocket){
             //Verificar lista negra dos grupos
             await filterGroupsBlacklist(client, allGroups)
             // Log : Grupos carregados e atualizados
-            console.log('[GRUPOS]', colorText(getGeneralMessagesBot(botInfo).groups_loaded))
+            console.log('[GRUPOS]', colorText(getGeneralMessages(botInfo).groups_loaded))
         }
 
         // Log : Servidor iniciado
-        console.log('[SERVIDOR]', colorText(getGeneralMessagesBot(botInfo).server_started))
+        console.log('[SERVIDOR]', colorText(getGeneralMessages(botInfo).server_started))
         return true
     } catch(err: any){
         showConsoleError(err, "GROUPS-START-UPDATE")
@@ -46,7 +46,7 @@ async function filterGroupsBlacklist(client: WASocket, groups: GroupMetadata[]){
             for (let participant of participants){
                 const isUserBlacklisted = await groupController.isBlackListed(group.id, participant)
                 if(isUserBlacklisted){
-                    const generalMessages = getGeneralMessagesBot(botInfo)
+                    const generalMessages = getGeneralMessages(botInfo)
                     const baileysController = new BaileysController(client)
                     await baileysController.removeParticipant(group.id, participant)
                     await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.blacklist_ban_message, participant.replace("@s.whatsapp.net", ""), botInfo.name), [participant])

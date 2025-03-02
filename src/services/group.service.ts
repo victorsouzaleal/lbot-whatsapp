@@ -6,8 +6,8 @@ import { Message, MessageTypes } from "../interfaces/message.interface.js";
 import { GroupMetadata } from 'baileys'
 import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText } from '../lib/util.js'
 import moment from 'moment-timezone'
-import botCommands from '../lib/commands-list.js'
-import getGeneralMessagesBot from "../lib/general-messages.js";
+import getCommands from '../commands/list.commands.js'
+import getGeneralMessages from "../lib/general-messages.js";
 
 const db = {
     groups : new Datastore({filename : './storage/groups.db', autoload: true}),
@@ -166,7 +166,7 @@ export class GroupService {
     }
 
     getWelcomeMessage(group: Group, botInfo: Bot, userId: string){
-        const generalMessages = getGeneralMessagesBot(botInfo)
+        const generalMessages = getGeneralMessages(botInfo)
         const custom_message = (group.welcome.msg != "") ? group.welcome.msg + "\n\n" : ""
         const message_welcome = buildText(generalMessages.group_welcome_message, userId.replace("@s.whatsapp.net", ""), group.name, custom_message)
         return message_welcome
@@ -290,25 +290,25 @@ export class GroupService {
     // ***** Block/Unblock commands *****
     async blockCommands(group: Group, commands : string[], botInfo: Bot){
         const { prefix } = botInfo
-        const commands_data = botCommands(botInfo)
+        const commandsData = getCommands(botInfo)
         let blockedCommands : string[] = []
-        let blockResponse = commands_data.group.bcmd.msgs.reply_title
+        let blockResponse = commandsData.group.bcmd.msgs.reply_title
         let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'fun']
 
-        if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commands_data[commands[0] as CategoryCommand]).map(command => prefix + command)
+        if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix + command)
 
         for (let command of commands) {
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
                 if (group.block_cmds.includes(command.replace(prefix, ''))) {
-                    blockResponse += buildText(commands_data.group.bcmd.msgs.reply_item_already_blocked, command)
+                    blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_already_blocked, command)
                 } else {
                     blockedCommands.push(command.replace(prefix, ''))
-                    blockResponse += buildText(commands_data.group.bcmd.msgs.reply_item_blocked, command)
+                    blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_blocked, command)
                 }
             } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info')) {
-                blockResponse += buildText(commands_data.group.bcmd.msgs.reply_item_error, command)
+                blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_error, command)
             } else {
-                blockResponse += buildText(commands_data.group.bcmd.msgs.reply_item_not_exist, command)
+                blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_not_exist, command)
             }
         }
 
@@ -318,23 +318,23 @@ export class GroupService {
     }
 
     async unblockCommand(group: Group, commands: string[], botInfo: Bot){
-        const commands_data = botCommands(botInfo)
+        const commandsData = getCommands(botInfo)
         const { prefix } = botInfo
         let unblockedCommands : string[] = []
-        let unblockResponse = commands_data.group.dcmd.msgs.reply_title
+        let unblockResponse = commandsData.group.dcmd.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
 
         if (categories.includes(commands[0])) {
             if (commands[0] === 'all') commands = group.block_cmds.map(command => prefix + command)
-            else commands = Object.keys(commands_data[commands[0] as CategoryCommand]).map(command => prefix + command)
+            else commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix + command)
         }
 
         for (let command of commands) {
             if (group.block_cmds.includes(command.replace(prefix, ''))) {
                 unblockedCommands.push(command.replace(prefix, ''))
-                unblockResponse += buildText(commands_data.group.dcmd.msgs.reply_item_unblocked, command)
+                unblockResponse += buildText(commandsData.group.dcmd.msgs.reply_item_unblocked, command)
             } else {
-                unblockResponse += buildText(commands_data.group.dcmd.msgs.reply_item_not_blocked, command)
+                unblockResponse += buildText(commandsData.group.dcmd.msgs.reply_item_not_blocked, command)
             }
         }
 

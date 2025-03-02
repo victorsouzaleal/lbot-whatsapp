@@ -5,12 +5,12 @@ import dotenv from 'dotenv'
 import { BotController } from '../controllers/bot.controller.js'
 import { BaileysController } from '../controllers/baileys.controller.js'
 import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../lib/util.js'
-import getGeneralMessagesBot from '../lib/general-messages.js'
+import getGeneralMessages from '../lib/general-messages.js'
 import { UserController } from '../controllers/user.controller.js'
 
 export async function connectionOpen(client: WASocket){
     try{
-        const generalMessages = getGeneralMessagesBot()
+        const generalMessages = getGeneralMessages()
         const botController = new BotController()
         const baileysController = new BaileysController(client)
         console.log(buildText(generalMessages.starting, getCurrentBotVersion()))
@@ -27,7 +27,7 @@ export async function connectionOpen(client: WASocket){
 
 export function connectionClose(connectionState : Partial<ConnectionState>){
     try{
-        const generalMessages = getGeneralMessagesBot()
+        const generalMessages = getGeneralMessages()
         const { lastDisconnect } = connectionState
         let needReconnect = false
         const errorCode = (new Boom(lastDisconnect?.error)).output.statusCode

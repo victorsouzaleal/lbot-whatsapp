@@ -4,7 +4,7 @@ import { buildText, showConsoleError} from '../lib/util.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getGeneralMessagesBot from '../lib/general-messages.js'
+import getGeneralMessages from '../lib/general-messages.js'
 
 export async function groupParticipantsUpdated (client: WASocket, event: {id: string, author: string, participants: string[], action: ParticipantAction}, botInfo: Bot){
     try{
@@ -50,7 +50,7 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
 async function filterUserBlacklist(client: WASocket, botInfo: Bot, group: Group, userId: string){
     const groupAdmins = group.admins
     const isUserBlacklisted = await new GroupController().isBlackListed(group.id, userId)
-    const generalMessages = getGeneralMessagesBot(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const isBotAdmin = botInfo.host_number ? groupAdmins.includes(botInfo.host_number) : false
     if (isBotAdmin && isUserBlacklisted) {
         const baileysController = new BaileysController(client)
@@ -70,7 +70,7 @@ async function filterUserAntifake(client: WASocket, botInfo: Bot, group: Group, 
             const isFake = groupController.isNumberFake(group, userId)
             if(isFake){
                 const baileysController = new BaileysController(client)
-                const generalMessages = getGeneralMessagesBot(botInfo)
+                const generalMessages = getGeneralMessages(botInfo)
                 await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.antifake_ban_message, userId.replace("@s.whatsapp.net", ""), botInfo.name), [userId])
                 await baileysController.removeParticipant(group.id, userId)
                 return false
