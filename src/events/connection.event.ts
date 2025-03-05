@@ -17,7 +17,6 @@ export async function connectionOpen(client: WASocket){
         dotenv.config()
         botController.startBot(baileysController.getHostNumber())
         console.log("[BOT]", colorText(generalMessages.bot_data))
-        checkEnv()
         await checkAdminNumber()
     } catch(err: any) {
         showConsoleError(err.message, "CONNECTION")
@@ -51,25 +50,6 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
         return needReconnect
     } catch{
         return false
-    }
-}
-
-function checkEnv(){
-    try{
-        if(process.env.acr_host && process.env.acr_access_key && process.env.acr_access_secret){
-            console.log("[ENV]", colorText('✓ API ACRCloud configurada.'))
-        } else {
-            console.log("[ENV]", colorText('A API do ACRCloud ainda não foi configurada corretamente', '#d63e3e'))
-        }
-        
-        if(process.env.dg_secret_key){
-            console.log("[ENV]", colorText('✓ API DEEPGRAM configurada.'))
-        } else {
-            console.log("[ENV]", colorText('A API do DEEPGRAM ainda não foi configurada.', '#d63e3e'))
-        }
-    } catch(err : any){
-        err.message = `checkEnv - ${err.message}`
-        throw err
     }
 }
 

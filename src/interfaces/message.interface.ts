@@ -2,7 +2,7 @@ import {proto, WAMessage} from 'baileys'
 
 export type MessageTypes = "conversation" | "extendedTextMessage" | "imageMessage" | "documentMessage" | "videoMessage" | "stickerMessage" | "audioMessage"
 
-export type MimeTypes = "audio/mp4" | "audio/mp3" | "image/png" | "image/webp" | "video/mp4" | "document/pdf" | "application/pdf"
+export type MimeTypes = "audio/mpeg"| "audio/mp4" | "audio/mp3" | "image/png" | "image/webp" | "video/mp4" | "document/pdf" | "application/pdf"
 
 export interface Message {
     message_id: string,
@@ -12,7 +12,7 @@ export interface Message {
     chat_id: string,
     pushname : string,
     body: string,
-    caption?: string,
+    caption: string,
     mentioned: string[],
     text_command: string,
     command: string,
@@ -26,20 +26,23 @@ export interface Message {
     isMedia: boolean,
     wa_message: WAMessage,
     media? : {
-        mimetype?: string | null,
-        url?: string | null,
-        seconds?: number | null,
-        file_length?: number | Long | null
+        mimetype: string,
+        url: string,
+        seconds?: number,
+        file_length: number | Long 
     },
     quotedMessage?: {
         type: keyof proto.IMessage,
-        sender: string | null,
+        sender: string,
         body: string,
-        caption? : string | null,
-        url?: string | null,
-        mimetype?: string | null,
-        file_length?: number | Long | null,
-        seconds?: number | null,
+        caption : string,
+        isMedia: boolean,
+        media? : {
+            url: string,
+            mimetype: string,
+            file_length: number | Long,
+            seconds?: number,
+        }
         wa_message : WAMessage
     }
 

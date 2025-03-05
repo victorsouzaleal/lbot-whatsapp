@@ -196,7 +196,7 @@ export class BotService {
 
         for(let command of commands){
             if(botInfo.block_cmds.includes(command.replace(prefix, ''))) {
-                let commandIndex = botInfo.block_cmds.findIndex(command_blocked=> command_blocked == command)
+                let commandIndex = botInfo.block_cmds.findIndex(command_blocked => command_blocked == command)
                 botInfo.block_cmds.splice(commandIndex,1)
                 unblockResponse += buildText(commandsData.admin.dcmdglobal.msgs.reply_item_unblocked, command)
             } else {

@@ -86,10 +86,12 @@ export class MessageService{
             const seconds = (typeof m.message[type] != "string" && m.message[type] && "seconds" in m.message[type]) ? m.message[type].seconds as number | null : undefined
             const file_length = (typeof m.message[type] != "string" && m.message[type] && "fileLength" in m.message[type]) ? m.message[type].fileLength as number | Long | null : undefined
 
+            if(!mimetype || !url || !file_length) return
+
             formattedMessage.media = {
                 mimetype,
                 url,
-                seconds,
+                seconds : seconds || undefined,
                 file_length
             }
         }
@@ -102,21 +104,31 @@ export class MessageService{
             const senderQuoted = contextInfo.participant || contextInfo.remoteJid
             if(!typeQuoted || !senderQuoted ) return
             const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
-            const urlQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "url" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].url as string | null : undefined
-            const mimetypeQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "mimetype" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].mimetype as string | null : undefined
-            const fileLengthQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "fileLength" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].fileLength as number| Long | null : undefined
-            const secondsQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "seconds" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].seconds as number| null : undefined
+          
 
             formattedMessage.quotedMessage = {
                 type: typeQuoted,
                 sender: senderQuoted,
                 body: quotedMessage.conversation || quotedMessage.extendedTextMessage?.text || '',
-                caption: captionQuoted,
-                url: urlQuoted,
-                mimetype: mimetypeQuoted,
-                file_length: fileLengthQuoted,
-                seconds: secondsQuoted,
+                caption: captionQuoted || '',
+                isMedia : typeQuoted != "conversation" && typeQuoted != "extendedTextMessage",
                 wa_message: generateWAMessageFromContent(senderQuoted, quotedMessage, {userJid: senderQuoted})
+            }
+
+            if(formattedMessage.quotedMessage?.isMedia){
+                const urlQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "url" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].url as string | null : undefined
+                const mimetypeQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "mimetype" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].mimetype as string | null : undefined
+                const fileLengthQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "fileLength" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].fileLength as number| Long | null : undefined
+                const secondsQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "seconds" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].seconds as number| null : undefined
+                
+                if(!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) return
+
+                formattedMessage.media = {
+                    url: urlQuoted,
+                    mimetype: mimetypeQuoted,
+                    file_length: fileLengthQuoted,
+                    seconds: secondsQuoted || undefined,
+                }
             }
             
         }

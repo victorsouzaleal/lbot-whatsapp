@@ -2,11 +2,13 @@ import moment from "moment-timezone"
 import chalk from 'chalk'
 import path from 'node:path'
 import fs from 'fs-extra'
-import { GroupMetadata } from "baileys"
+import { GroupMetadata, WASocket } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import {CategoryCommand, Commands } from "../interfaces/command.interface.js"
 import getCommands from "../commands/list.commands.js"
 import getGeneralMessages from "./general-messages.js"
+import { BaileysController } from "../controllers/baileys.controller.js"
+import { Message } from "../interfaces/message.interface.js"
 
 export function commandExist(botInfo: Bot, command: string, category? : CategoryCommand){
     const commandsData = getCommands(botInfo)
@@ -39,7 +41,7 @@ export function getCommandCategory(command: string, prefix: string){
 }
 
 export function getCommandGuide(botInfo: Bot, command: string, category : CategoryCommand){
-    const commandsData = getCommands()
+    const commandsData = getCommands(botInfo)
     const {prefix} = botInfo
     command = command.replace(prefix, '')
     const commandsCategory  = commandsData[category] as Commands
@@ -66,9 +68,9 @@ export function getGroupAdminsByMetadata(group: GroupMetadata){
     return groupAdmins
 }
 
-export function messageErrorCommandUsage(botInfo: Bot, command: string){
+export function messageErrorCommandUsage(botInfo: Bot, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
-    return buildText(generalMessages.error_command_usage, command, command)
+    return buildText(generalMessages.error_command_usage, message.command, message.command)
 }
 
 export function messageErrorCommand(botInfo: Bot, command: string, reason: string){

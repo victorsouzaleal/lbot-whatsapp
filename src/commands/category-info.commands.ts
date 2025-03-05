@@ -28,10 +28,7 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 export async function reportarCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
 
-    if(!message.args.length) {
-        await baileysController.replyText(message.chat_id, messageErrorCommandUsage(botInfo, message.command) , message.wa_message)
-        return
-    }
+    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const commandsData = getCommands(botInfo)
     const adminBot = await new UserController().getAdminId()

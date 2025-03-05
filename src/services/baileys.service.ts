@@ -128,7 +128,7 @@ export class BaileysService{
         if(type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
-            const base64Thumb = await videoLibrary.videoThumbnail(url, 'file')
+            const base64Thumb = await videoLibrary.videoThumbnail(url, 'url')
             return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
         } else if (type == "audioMessage"){
             return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted})
