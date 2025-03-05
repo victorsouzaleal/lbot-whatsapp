@@ -1,4 +1,5 @@
 import * as infoCommand from "./category-info.commands.js"
+import * as utilityCommand from './category-utility.commands.js'
 import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getCommands (botInfo?: Bot){
@@ -69,7 +70,7 @@ export default function getCommands (botInfo?: Bot){
                     '- Episódio: {p2} \n'+
                     '- Link: {p3} \n\n',
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.animesCommand
             },
             mangas:{
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}mangas* - Exibe os ultimos lançamentos de capitulos de mangá.\n`,
@@ -79,7 +80,7 @@ export default function getCommands (botInfo?: Bot){
                     '- Capítulo: {p2} \n'+
                     '- Link: {p3} \n\n',
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.mangasCommand
             },
             brasileirao:{
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}brasileirao* - Exibe a tabela e a rodada atual do Brasileirão Serie A.\n`+
@@ -95,7 +96,7 @@ export default function getCommands (botInfo?: Bot){
                     '- Local : {p4} \n'+
                     '- Resultado : {p5}\n\n'
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.brasileiraoCommand
             },
             encurtar : {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}encurtar* link - Encurta o link digitado.\n`,
@@ -103,7 +104,7 @@ export default function getCommands (botInfo?: Bot){
                     reply: "✂️ ENCURTADOR DE LINKS ✂️\n\n"+
                     "*Link :* {p1}\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.encurtarCommand
             },
             upimg: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}upimg* - Faz upload da imagem e retorna o link.\n`,
@@ -111,7 +112,7 @@ export default function getCommands (botInfo?: Bot){
                     reply: "🖼️ UPLOAD DE IMAGEM 🖼️\n\n"+
                     "*Link :* {p1}\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.upimgCommand
             },
             filmes: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}filmes* - Exibe as tendências atuais de filmes.\n`,
@@ -119,7 +120,7 @@ export default function getCommands (botInfo?: Bot){
                     reply: "🎬 TÊNDENCIAS DE FILMES 🎬\n\n"+
                     "{p1}\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.filmesCommand
             },
             series: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}series* - Exibe as tendências atuais de séries.\n`,
@@ -127,15 +128,16 @@ export default function getCommands (botInfo?: Bot){
                     reply: "📺 TÊNDENCIAS DE SÉRIES 📺\n\n"+
                     "{p1}\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.seriesCommand
             },
+            /*
             ia : {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
                 msgs: {
                     reply: "🤖 Resposta da IA :\n\n"+
                     "{p1}"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.iaCommand
             },
             criarimg: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}criarimg* texto - Criar uma imagem de acordo com o texto usando IA.\n`,
@@ -143,31 +145,33 @@ export default function getCommands (botInfo?: Bot){
                     wait: '[AGUARDE] 📸 Sua imagem está sendo gerada pela IA, pode levar entre 20-40s.',
                 },
                 function : infoCommand.menuCommand
-            },
+            },*/
             tabela: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}tabela* - Exibe a tabela de letras para criação de nicks.\n`,
                 msgs: {
                     reply: "🤖 Tabela de Nicks :\n\n"+
                     "{p1}"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.tabelaCommand
             },
             rbg: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}rbg* - Retira o fundo da imagem.\n\n`,
                 msgs: {
-                    error: "[❗] Este comando só funciona com IMAGENS.",
+                    error_message: "Houve um erro ao pegar os dados da mensagem.",
+                    error_only_image : "Este comando só funciona com IMAGENS.",
                     wait: "[AGUARDE] 📸 O fundo da imagem está sendo removido.",
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.rbgCommand
             },
             ouvir: {
                 guide: GUIDE_TITLE +`Ex: Responda um áudio com *${PREFIX}ouvir* para transformar em texto.\n`,
                 msgs: {
-                    error: "[❗] Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
+                    error_audio_limit: "Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
+                    error_key: "A chave de API do Deepgram ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
                     reply: "🔤 Transcrição de áudio :\n\n"+
                     "-- {p1}"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.ouvirCommand
             },
             audio: {
                 guide: GUIDE_TITLE +`Responda um aúdio com um desses comandos :\n\n`+
@@ -181,7 +185,7 @@ export default function getCommands (botInfo?: Bot){
                 msgs: {
                     error: "[❗] Houve um erro na conversão de audio"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.audioCommand
             },
             traduz: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}traduz* pt texto - Traduz o texto que foi digitado para *Português*.\n\n`+
@@ -209,7 +213,7 @@ export default function getCommands (botInfo?: Bot){
                     "*Texto*: {p1}\n\n"+
                     "*Tradução* : {p2}"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.traduzCommand
             },
             voz: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}voz* pt texto - Manda um audio falando o texto digitado com a voz do Google em Português-Brasil.\n\n`+
@@ -224,10 +228,9 @@ export default function getCommands (botInfo?: Bot){
                 `- 🇰🇷 Coreano (ko)\n`+
                 `- 🇸🇪 Sueco (sv)\n`,
                 msgs: {
-                    error_text : '[❗] Cadê o texto do comando?',
-                    error_text_long: '[❗] Texto muito longo.',
-                    error_audio: "[❗] Houve um erro na criação do áudio",
-                    error_not_supported: "[❗] Sem dados do idioma ou idioma não suportado. Atualmente suportamos :\n\n"+
+                    error_text : 'O texto para ser transformado em áudio está vazio.',
+                    error_text_long: 'O texto muito longo, há um limite de 500 caracteres.',
+                    error_not_supported: "O idioma escolhido não é suportado. Atualmente suportamos :\n\n"+
                     `- 🇧🇷 Português - ${PREFIX}voz pt\n`+
                     `- 🇺🇸 Inglês - ${PREFIX}voz en\n`+
                     `- 🇯🇵 Japonês - ${PREFIX}voz ja\n`+
@@ -237,7 +240,7 @@ export default function getCommands (botInfo?: Bot){
                     `- 🇰🇷 Coreano - ${PREFIX}voz ko\n`+
                     `- 🇸🇪 Sueco - ${PREFIX}voz sv\n`
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.vozCommand
             },
             letra: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}letra* nome-musica - Exibe a letra da música que você digitou.\n`,
@@ -247,7 +250,7 @@ export default function getCommands (botInfo?: Bot){
                     "Artista : *{p2}*\n\n"+
                     "{p3}"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.letraCommand
             },
             noticias: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}noticias* - Exibe as notícias atuais.\n`,
@@ -257,50 +260,50 @@ export default function getCommands (botInfo?: Bot){
                     "Publicado por *{p2}* há *{p3}*\n"+
                     "*Link* : {p4}\n\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.noticiasCommand
             },
+            /*
             rastreio: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}rastreio* PBXXXXXXXXXXX - Exibe o rastreio da encomenda dos correios que você digitou.\n`,
                 msgs: {
-                    error: '[❗] Código de rastreio deve ter 13 digitos.',
+                    error: 'Código de rastreio deve ter 13 digitos.',
                     reply_title: "📦📦*RASTREIO*📦📦\n\n",
                     reply_item: "Status : {p1}\n"+
                     "Data : {p2}\n"+
                     "Hora : {p3}\n"+
                     "{p4}\n"
                 },
-                function : infoCommand.menuCommand
-            },
+                function : utilityCommand.rastreioCommand
+            },*/
             calc: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}calc* 8x8 - Exibe o resultado do cálculo.\n\n`+
                 `Ex: *${PREFIX}calc* 1mm em 1km - Exibe o resultado do conversão de medidas.\n`,
                 msgs: {
                     reply: "🧮 O resultado é *{p1}* "
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.calcCommand
             },
             pesquisa: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}pesquisa* tema - Faz uma pesquisa com o tema que você digitar.\n`,
                 msgs: {
                     reply_title: "🔎 Resultados da pesquisa de : *{p1}*🔎\n\n",
                     reply_item: "🔎 {p1}\n"+
-                    "*Link* : {p2}\n\n"+
-                    "*Descrição* : {p3}\n\n"
+                    "*Link* : {p2}\n\n",
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.pesquisaCommand
             },
             moeda: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}moeda* real 20 - Converte 20 reais para outras moedas\n\n`+
                 `Ex: *${PREFIX}moeda* dolar 20 - Converte 20 dólares para outras moedas.\n\n`+
                 `Ex: *${PREFIX}moeda* euro 20 - Converte 20 euros para outras moedas.\n`,
                 msgs: {
-                    reply_title: "💵 Conversão - *{p1} {p2}*\n",
+                    reply_title: "💵 Conversão de {p1} - *{p2}*\n",
                     reply_item: "----------------------------\n"+ 
                     "*Conversão* : {p1}\n"+
                     "*Valor convertido* : *{p2}* {p3}\n"+
                     "*Última atualização* : {p4}\n\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.moedaCommand
             },
             clima: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}clima* Rio de Janeiro - Mostra o clima atual e dos próximos dias para o Rio de Janeiro.\n`,
@@ -325,23 +328,24 @@ export default function getCommands (botInfo?: Bot){
                     "Neve? {p7} de chance\n"+
                     "Nível UV : {p8}\n\n"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.climaCommand
             },
             ddd: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}ddd* 21 - Exibe qual estado e região do DDD 21.\n\n`+
                 `Ex: Responda com *${PREFIX}ddd* - Exibe qual estado e região do membro respondido.\n`,
                 msgs: {
-                    error: "[❗] Esse comando só é aceito com números brasileiros.",
+                    error: "Esse comando só é aceito com números brasileiros.",
                     reply: "📱 Estado : *{p1}* / Região : *{p2}*"
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.dddCommand
             },
             qualanime: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma imagem com *${PREFIX}qualanime* - Procura o anime pela imagem.\n\n`+
                 `*Obs*: Este comando funciona apenas com *IMAGENS* e deve ser uma *CENA VÁLIDA DE ANIME*, *NÃO* podendo ser imagens com *baixa qualidade*, *wallpappers*, *imagens editadas/recortadas*.\n`,
                 msgs: {
                     wait: "⏳ Estou processando a imagem e pesquisando o anime.",
-                    error: "[❗] Nível de similaridade é muito baixo, certifique se enviar uma cena VÁLIDA de anime (Não funciona com imagens não oficiais, Wallpapers ou imagens recortadas e/ou baixa qualidade).",
+                    error_similarity: "Nível de similaridade é muito baixo, certifique se enviar uma cena VÁLIDA de anime (Não funciona com imagens não oficiais, Wallpapers ou imagens recortadas e/ou baixa qualidade).",
+                    error_message: "Houve um erro ao obter os dados da mensagem",
                     reply: "〘 Pesquisa de anime 〙\n\n"+
                     "Título: *{p1}*\n"+
                     "Episódio: {p2}\n"+
@@ -349,12 +353,14 @@ export default function getCommands (botInfo?: Bot){
                     "Similaridade: *{p5}%*\n"+
                     "Prévia : {p6}",
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.qualanimeCommand
             },
             qualmusica: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda um audio/video com *${PREFIX}qualmusica* - Procura a música tocada no audio/video.\n\n`+
                 `*Obs*: Este comando funciona apenas com *AUDIO/VIDEO*.\n`,
                 msgs: {
+                    error_message: "Houve um erro ao obter os dados da mensagem.",
+                    error_key: "A chave de API do ACRCloud ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
                     wait: "⏳ Em andamento , estou procurando sua música.",
                     reply: "💿 Reconhecimento de Música\n\n"+
                     "Título: *{p1}*\n"+
@@ -364,7 +370,7 @@ export default function getCommands (botInfo?: Bot){
                     "Album: *{p5}*\n"+
                     "Artistas: *{p6}*\n",
                 },
-                function : infoCommand.menuCommand
+                function : utilityCommand.qualmusicaCommand
             }
         },
         
