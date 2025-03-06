@@ -123,7 +123,7 @@ export class MessageService{
                 
                 if(!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) return
 
-                formattedMessage.media = {
+                formattedMessage.quotedMessage.media = {
                     url: urlQuoted,
                     mimetype: mimetypeQuoted,
                     file_length: fileLengthQuoted,
