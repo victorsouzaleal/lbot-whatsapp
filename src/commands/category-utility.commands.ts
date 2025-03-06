@@ -48,8 +48,7 @@ export async function brasileiraoCommand(client: WASocket, botInfo: Bot, message
         serieSelected = message.text_command.toUpperCase() as "A" | "B"
     }
 
-    const brasileirao = await generalLibrary.brasileiraoTable(serieSelected)
-    const {tabela : table, rodadas : rounds} = brasileirao
+    const {tabela: table, rodadas: rounds} = await generalLibrary.brasileiraoTable(serieSelected)
 
     if(!rounds) return
 
@@ -116,14 +115,14 @@ export async function upimgCommand(client: WASocket, botInfo: Bot, message: Mess
 export async function filmesCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
-    let movieTrendings = await generalLibrary.moviedbTrendings("filmes")
+    let movieTrendings = await generalLibrary.moviedbTrendings("movie")
     await baileysController.replyText(message.chat_id, buildText(commandsData.utility.filmes.msgs.reply, movieTrendings), message.wa_message)
 }
 
 export async function seriesCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
-    let movieTrendings = await generalLibrary.moviedbTrendings("series")
+    let movieTrendings = await generalLibrary.moviedbTrendings("tv")
     await baileysController.replyText(message.chat_id, buildText(commandsData.utility.series.msgs.reply, movieTrendings), message.wa_message)
 }
 

@@ -90,7 +90,6 @@ export const utilityMenu = (botInfo : Bot)=>{
 |
 |--〖🔎 *CONSULTAS/TEXTO* 〗
 |
-|- *${prefix}ia* frase - Recebe uma resposta da IA.
 |- *${prefix}brasileirao* - Exibe a tabela e rodada atual do Brasileirão.
 |- *${prefix}animes* - Exibe os ultimos lançamentos de animes.
 |- *${prefix}mangas* - Exibe os ultimos lançamentos de mangás.
@@ -104,7 +103,6 @@ export const utilityMenu = (botInfo : Bot)=>{
 |- *${prefix}noticias* - Obtem noticias atuais.
 |- *${prefix}moeda* tipo valor - Converte o valor de uma determinada moeda para outras.
 |- *${prefix}calc* expressao - Calcula alguma conta que queira fazer.
-|- *${prefix}rastreio* código - Rastreamento dos CORREIOS.
 |- *${prefix}ddd* - Responda alguém para ver o estado/região.
 |- *${prefix}tabela* -  Mostra tabela com caracteres para criação de nicks.
 |
@@ -117,7 +115,6 @@ export const utilityMenu = (botInfo : Bot)=>{
 |--〖🖼️ *IMAGENS*〗
 |
 |- *${prefix}upimg* - Faz upload de uma imagem e retorna o link.
-|- *${prefix}criarimg* frase - Cria uma imagem de acordo com a frase usando IA.
 |- *${prefix}rbg* - Retira o fundo de uma IMAGEM.
 |
 |--〖❔ *RECONHECIMENTO*〗
