@@ -1,5 +1,6 @@
 import * as infoCommand from "./category-info.commands.js"
 import * as utilityCommand from './category-utility.commands.js'
+import * as stickerCommand from './category-sticker.commands.js'
 import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getCommands (botInfo?: Bot){
@@ -157,7 +158,7 @@ export default function getCommands (botInfo?: Bot){
             rbg: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}rbg* - Retira o fundo da imagem.\n\n`,
                 msgs: {
-                    error_message: "Houve um erro ao pegar os dados da mensagem.",
+                    error_message: "Houve um erro ao obter os dados da mensagem.",
                     error_only_image : "Este comando só funciona com IMAGENS.",
                     wait: "[AGUARDE] 📸 O fundo da imagem está sendo removido.",
                 },
@@ -380,26 +381,28 @@ export default function getCommands (botInfo?: Bot){
                 `Ex: Envie/responda uma *IMAGEM* com *${PREFIX}s 1* - Transforma em sticker circular.\n`+
                 `Ex: Envie/responda uma *IMAGEM* com *${PREFIX}s 2* - Transforma em sticker sem perder a proporção.\n`,
                 msgs: {
-                    error: '[❗] Envie um video/gif com no máximo 8 segundos.',
+                    error_limit: 'O video/gif deve ter no máximo 8 segundos.',
+                    error_message: "Houve um erro ao obter os dados da mensagem."
                 },
-                function : infoCommand.menuCommand
+                function : stickerCommand.sCommand
             },
             simg: {
                 guide: GUIDE_TITLE +`Ex: Responda um sticker com *${PREFIX}simg* - Transforma o sticker em imagem.\n\n`+
                 `*Obs*: Este comando funciona apenas com *STICKERS NÃO ANIMADOS*.\n`,
                 msgs: {
-                    error: `[❗] Este comando é válido apenas para stickers.`
+                    error_sticker: `Este comando pode ser usado apenas respondendo stickers.`
                 },
-                function : infoCommand.menuCommand
+                function : stickerCommand.simgCommand
             },
             ssf: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}ssf* - Retira o fundo da imagem e transforma em sticker.\n\n`+
                 `*Obs*: Este comando funciona apenas com *IMAGENS*.\n`,
                 msgs: {
                     wait: `[AGUARDE] 📸 O fundo da imagem está sendo removido e o sticker será enviado em breve.`,
-                    error: `[❗] Este comando é válido apenas para imagens.`
+                    error_image: `Este comando é válido apenas para imagens.`,
+                    error_message: "Houve um erro ao obter os dados da mensagem."
                 },
-                function : infoCommand.menuCommand
+                function : stickerCommand.ssfCommand
             },
             emojimix: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}emojimix* 💩+😀 - Junta os dois emojis e transforma em sticker.\n\n`+
@@ -407,14 +410,14 @@ export default function getCommands (botInfo?: Bot){
                 msgs: {
                     error: ''
                 },
-                function : infoCommand.menuCommand
+                function : stickerCommand.emojimixCommand
             },
             snome: {
                 guide: GUIDE_TITLE +`Ex: Responda um *STICKER* com *${PREFIX}snome* pack, autor - Renomeia o nome do pack e do autor do sticker.`,
                 msgs: {
-                    error: ''
+                    error_message: "Houve um erro ao obter os dados da mensagem."
                 },
-                function : infoCommand.menuCommand
+                function : stickerCommand.snomeCommand
             }
         },
         
