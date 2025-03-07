@@ -1,7 +1,7 @@
 import { WASocket, WAMessage, GroupMetadata, WAPresence } from 'baileys'
 import { randomDelay } from '../lib/util.js'
 import { DeletedMessage, MessageTypes, MimeTypes } from '../interfaces/message.interface.js'
-import {videoLibrary} from '@victorsouzaleal/biblioteca-lbot'
+import { convertLibrary } from '@victorsouzaleal/biblioteca-lbot'
 
 export class BaileysService{
     private client
@@ -101,7 +101,7 @@ export class BaileysService{
         if(type === "imageMessage") {
             return this.client.sendMessage(chatId, {image: {url}, caption})
         }else if(type === 'videoMessage'){
-            const base64Thumb = await videoLibrary.videoThumbnail(url, 'url')
+            const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
             return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb})
         } else if(type === 'audioMessage'){
             return this.client.sendMessage(chatId, {audio: {url}, mimetype})
@@ -117,7 +117,7 @@ export class BaileysService{
         if(type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
-            const base64Thumb = await videoLibrary.videoThumbnail(url, 'file')
+            const base64Thumb = await convertLibrary.convertVideoToThumbnail('file', url)
             return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
         } else if (type == "audioMessage"){
             return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted})
@@ -128,7 +128,7 @@ export class BaileysService{
         if(type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
-            const base64Thumb = await videoLibrary.videoThumbnail(url, 'url')
+            const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
             return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
         } else if (type == "audioMessage"){
             return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted})
@@ -137,7 +137,7 @@ export class BaileysService{
 
     async replyFileFromBuffer (chatId: string, type: MessageTypes, buffer: Buffer, caption: string, quoted: WAMessage, mimetype? : MimeTypes){ 
         if(type == "videoMessage"){
-            const base64Thumb = await videoLibrary.videoThumbnail(buffer, 'buffer')
+            const base64Thumb = await convertLibrary.convertVideoToThumbnail('buffer', buffer)
             return this.client.sendMessage(chatId, {video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted})
         } else if(type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: buffer, caption}, {quoted})
