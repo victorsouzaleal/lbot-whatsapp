@@ -71,7 +71,7 @@ export const downloadMenu = (botInfo : Bot)=>{
 |- *${prefix}yt* nome - Envia um vídeo do Youtube.
 |- *${prefix}fb* link - Envia um vídeo do Facebook.
 |- *${prefix}ig* link - Envia videos/fotos do Instagram.
-|- *${prefix}tw* link - Envia videos/fotos do Twitter/X.
+|- *${prefix}x* link - Envia videos/fotos do X.
 |- *${prefix}tk* link - Envia vídeo do Tiktok.
 |- *${prefix}img* tema - Envia imagens do Google Imagens.
 |

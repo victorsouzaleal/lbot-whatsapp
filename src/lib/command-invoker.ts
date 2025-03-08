@@ -53,7 +53,15 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'download':
                 //Categoria DOWNLOAD
-                showCommandConsole(message.isGroupMsg, "DOWNLOAD", message.command, "#2195cf", message.t, message.pushname, group?.name)
+                if(isGuide){
+                    await sendCommandGuide(client, botInfo, message, categoryCommand)
+                } else {
+                    if(Object.keys(commandsData.download).includes(commandWithoutPrefix)){
+                        const commandsDownload = commandsData.download as Commands
+                        await commandsDownload[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
+                        showCommandConsole(message.isGroupMsg, "DOWNLOAD", message.command, "#2195cf", message.t, message.pushname, group?.name)
+                    }         
+                }
                 break
             case 'fun':
                 //Categoria DIVERSÃO

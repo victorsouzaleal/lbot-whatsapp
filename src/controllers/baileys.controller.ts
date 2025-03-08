@@ -71,8 +71,8 @@ export class BaileysController {
         return this.baileysService.sendSticker(chatId, sticker)
     }
 
-    sendFileFromUrl (type: MessageTypes, chatId: string, url: string, caption: string){ 
-        return this.baileysService.sendFileFromUrl(type, chatId, url, caption)
+    sendFileFromUrl (chatId: string, type: MessageTypes, url: string, caption: string){ 
+        return this.baileysService.sendFileFromUrl(chatId, type, url, caption)
     }
 
     replyText (chatId: string, text: string, quoted: WAMessage){ 

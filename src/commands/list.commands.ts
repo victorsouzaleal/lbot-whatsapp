@@ -1,6 +1,7 @@
 import * as infoCommand from "./category-info.commands.js"
 import * as utilityCommand from './category-utility.commands.js'
 import * as stickerCommand from './category-sticker.commands.js'
+import * as downloadCommand from './category-download.commands.js'
 import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getCommands (botInfo?: Bot){
@@ -587,10 +588,10 @@ export default function getCommands (botInfo?: Bot){
                     wait: "[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\n"+
                     "Titulo: *{p1}*\n"+
                     "Duração: *{p2}*",
-                    error_limit: "[❗] A música deve ter menos de *5 minutos*",
-                    error_live: "[❗] Houve um erro de download, o bot não aceita download de lives."
+                    error_limit: "O vídeo deve ter no máximo *6 minutos*",
+                    error_live: "Esse vídeo não pode ser convertido em áudio, lives não são aceitas."
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.playCommand
             },
             yt: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}yt* titulo - Faz download de um video do Youtube com o titulo digitado e envia.\n`,
@@ -598,10 +599,10 @@ export default function getCommands (botInfo?: Bot){
                     wait: "[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n\n"+
                     "Titulo: *{p1}*\n"+
                     "Duração: *{p2}*",
-                    error_limit: "[❗] O video deve ter menos de *5 minutos*",
-                    error_live: "[❗] Houve um erro de download, o bot não aceita download de lives."
+                    error_limit: "O video deve ter no máximo *6 minutos*",
+                    error_live: "Houve um erro de download, o bot não aceita download de lives."
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.ytCommand
             },
             fb: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}fb* link - Faz download de um video do Facebook pelo link digitado e envia.\n`,
@@ -609,23 +610,27 @@ export default function getCommands (botInfo?: Bot){
                     wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                     "Titulo: *{p1}*\n"+
                     "Duração: *{p2}*",
-                    error: "[❗] O video deve ter menos de *3 minutos*",
+                    error_limit: "O video deve ter no máximo *6 minutos*",
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.fbCommand
             },
             ig: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}ig* link - Faz download de videos/fotos do Instagram pelo link digitado e envia.\n`,
                 msgs: {
-                    wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.",
+                    wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
+                    "Autor: *{p1}* (@{p2})\n"+
+                    "Descrição: {p3}\n"+
+                    "Likes: *{p4}*"
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.igCommand
             },
-            tw: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}tw* link - Faz download de um video/imagem do Twitter pelo link digitado e envia.\n`,
+            x: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}x* link - Faz download de um video/imagem do X pelo link digitado e envia.\n`,
                 msgs: {
-                    wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.",
+                    wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
+                    "Post: {p1}",
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.xCommand
             },
             tk: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}tk* link - Faz download de um video do Tiktok pelo link digitado e envia.\n`,
@@ -634,14 +639,14 @@ export default function getCommands (botInfo?: Bot){
                     "Perfil: *@{p1}*\n"+
                     "Descrição: *{p2}*\n",
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.tkCommand
             },
             img: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}img* tema - Envia uma imagem com o tema que você digitar.\n`,
                 msgs: {
-                    error: '[❗] Não foi possível obter nenhuma imagem, tente novamente.',
+                    error: 'Não foi possível obter nenhuma imagem, tente novamente com outra pesquisa.',
                 },
-                function : infoCommand.menuCommand
+                function : downloadCommand.imgCommand
             }
         },
         

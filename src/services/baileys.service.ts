@@ -97,7 +97,7 @@ export class BaileysService{
         return this.client.sendMessage(chatId, {sticker})
     }
 
-    async sendFileFromUrl(type: MessageTypes, chatId: string, url: string, caption: string, mimetype?: MimeTypes){
+    async sendFileFromUrl(chatId: string, type: MessageTypes, url: string, caption: string, mimetype?: MimeTypes){
         if(type === "imageMessage") {
             return this.client.sendMessage(chatId, {image: {url}, caption})
         }else if(type === 'videoMessage'){
