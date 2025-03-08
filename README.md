@@ -16,6 +16,17 @@
 
 <br>
 
+<h1 align="center"> ATENÇÃO : SOBRE O ESTADO ATUAL DO BOT </h1>
+<h3 align='center'>
+O bot está sendo reescrito atualmente para Typescript (70% completo atualmente) , isso vai me permitir fazer manutenção mais fácilmente no código, corrigir alguns problemas e ver quais comandos não estão funcionando. Após a atualização 3.0 eu pretendo ter um número público para deixar o bot online para uso geral mas para isso preciso de alguém que possa me ajudar com número de WhatsApp que não esteja usando.
+
+<br><br>
+
+Para entrar em contato : [CLIQUE AQUI](https://wa.me/5521995612287)
+</h3>
+
+<br>
+
 <h2 align="center"> 🔄 Última Atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest">AQUI</a> </h2>
 
 <br>
@@ -167,6 +178,7 @@ Algumas pessoas podem ter problemas para instalar as depêndencias no Termux, is
 Caso queira entrar em contato eu tento responder aos emails, ou abra uma issue aqui no GitHub explicando o problema.
 
 * **Email :** victorsouzaleal@gmail.com
+* **WhatsApp:** https://wa.me/5521995612287
 
 <br>
 
