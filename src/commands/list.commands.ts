@@ -2,6 +2,7 @@ import * as infoCommand from "./category-info.commands.js"
 import * as utilityCommand from './category-utility.commands.js'
 import * as stickerCommand from './category-sticker.commands.js'
 import * as downloadCommand from './category-download.commands.js'
+import * as funCommand from './category-fun.commands.js'
 import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getCommands (botInfo?: Bot){
@@ -428,7 +429,7 @@ export default function getCommands (botInfo?: Bot){
                 msgs: {
                     reply: 'WhatsApp Jr.'
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.mascoteCommand
             },
             simi: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}simi* frase  - Envia um texto para o SimSimi responder.\n`,
@@ -436,7 +437,7 @@ export default function getCommands (botInfo?: Bot){
                     reply: `{p1} - 🐤 *SIMI* : \n\n`+
                     `{p2}`,
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.simiCommand
             },
             viadometro: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}viadometro* @membro - Mede o nível de viadagem do membro mencionado.\n\n`+
@@ -448,35 +449,37 @@ export default function getCommands (botInfo?: Bot){
                     '██████         60%\n\n - EITA MAMOU O BONDE',
                     '████████     80%\n\n - JÁ SENTOU EM ALGUEM',
                     '██████████ 100%\n\n - BIXONA ALERTA VERMELHO CUIDADO COM SEUS ORGÃOS SEXUAIS'],
-                    error: "[❗] Erro: Apenas um membro por vez deve ser mencionado.",
+                    error_mention: "Apenas UM membro deve ser marcado por vez.",
+                    error_message: "Houve um erro ao obter os dados da mensagem.",
                     reply: "🧩 *VIADÔMETRO* - {p1}"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.viadometroCommand
             },
             detector: {
                 guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}detector* - Exibe o resultado da máquina da verdade.\n`,
                 msgs: {
-                    wait: "⏳ Calibrando a máquina da verdade"
+                    wait: "⏳ Calibrando a máquina da verdade",
+                    error_message: "Houve um erro ao obter os dados da mensagem."
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.detectorCommand
             },
             roletarussa: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}roletarussa* - Bane um membro aleatório do grupo.\n\n`+
                 `*Obs*: Comando apenas para administradores, pode banir qualquer um exceto o dono do grupo e o BOT.\n`,
                 msgs: {
-                    error: "[❗] Não existe membros válidos para participarem da roleta.",
+                    error: "Não existem membros válidos para participarem da roleta.",
                     wait: "🎲 Sorteando uma vítima 🎲",
                     reply: "🔫 Você foi o escolhido @{p1}, até a próxima."
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.roletarussaCommand
             },
             casal: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}casal* - Escolhe 2 pessoas aleatórias do grupo para formar um casal.\n`,
                 msgs: {
-                    error: "[❗] Este comando precisa de no mínimo 2 membros no grupo.",
+                    error: "Este comando precisa de no mínimo 2 membros no grupo.",
                     reply: "👩‍❤️‍👨 Está rolando um clima entre @{p1} e @{p2}"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.casalCommand
             },
             caracoroa: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}caracoroa* cara - Escolhe cara e joga a moeda.\n\n`+
@@ -488,7 +491,7 @@ export default function getCommands (botInfo?: Bot){
                     reply_defeat: "🕹️ *DERROTA!* 🕹️\n\n"+
                     "O resultado caiu *{p1}*\n"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.caracoroaCommand
             },
             ppt: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}ppt* pedra - Escolhe pedra, para jogar pedra, papel ou tesoura.\n\n`+
@@ -503,7 +506,7 @@ export default function getCommands (botInfo?: Bot){
                     reply_draw: "🕹️ *EMPATE!* 🕹️\n\n"+
                     "Você escolheu {p1} e o bot escolheu {p2}\n"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.pptCommand
             },
             gadometro: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}gadometro* @membro - Mede o nível de gadisse do membro mencionado.\n\n`+
@@ -515,10 +518,11 @@ export default function getCommands (botInfo?: Bot){
                     '🐃🐃🐃 60%\n\n - CUIDADO : GADO EXPERIENTE, INVADE PV E FALA LINDA EM TODAS FOTOS',
                     '🐃🐃🐃🐃 80%\n\n - ALERTA : GADO MASTER, SÓ APARECE COM MULHER ON',
                     '🐃🐃🐃🐃🐃 100%\n\n - PERIGO : GADO MEGA BLASTER ULTRA PAGA BOLETO DE MULHER QUE TEM NAMORADO'],
-                    error: "[❗] Erro: Apenas um membro por vez deve ser mencionado.",
+                    error_mention: "Apenas UM membro deve ser marcado por vez.",
+                    error_message: "Houve um erro ao obter os dados da mensagem.",
                     reply: "🧩 *GADÔMETRO* - {p1}"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.gadometroCommand
             },
             bafometro: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}bafometro* @membro - Mede o nível de alcool do membro mencionado.\n\n`+
@@ -530,19 +534,20 @@ export default function getCommands (botInfo?: Bot){
                     '🍺🍺🍺  60%\n\n - TÁ MAMADO E COMEÇANDO A FAZER MERDA',
                     '🍺🍺🍺🍺  80%\n\n - TÁ LOUCÃO NEM CONSEGUE DIFERENCIAR MULHER E HOMEM',
                     '🍺🍺🍺🍺🍺  100%\n\n - ALERTA: ESTÁ FORA DE SI , BEIJANDO MENDIGO E CACHORRO DE RUA'],
-                    error: "[❗] Erro: Apenas um membro por vez deve ser mencionado.",
-                    reply: "🧩 *BAFÔMETRO* - {p1}"
+                    reply: "🧩 *BAFÔMETRO* - {p1}",
+                    error_mention: "Apenas UM membro deve ser marcado por vez.",
+                    error_message: "Houve um erro ao obter os dados da mensagem.",
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.bafometroCommand
             },
             top5: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}top5* tema - Exibe uma ranking de 5 membros aleatórios com o tema que você escolher.\n`,
                 msgs: {
-                    error: "[❗] O grupo deve ter no mínimo 5 membros para usar este comando.",
+                    error_members: "O grupo deve ter no mínimo 5 membros para usar este comando.",
                     reply_title: "╔══✪〘🏆 TOP 5 {p1} 🏆 〙\n╠\n",
                     reply_item: "╠➥ {p1} {p2}° Lugar @{p3}\n"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.top5Command
             },
             par: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}par* @membro1 @membro2 - Mede o nível de compatibilidade dos 2 membros mencionados.\n`,
@@ -556,28 +561,21 @@ export default function getCommands (botInfo?: Bot){
                     ],
                     reply: "👩‍❤️‍👨 PAR - @{p1} & @{p2}\n\n{p3}"
                 },
-                function : infoCommand.menuCommand
-            },
-            malacos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}malacos* - Exibe o melhor time da Serie Z.\n`,
-                msgs: {
-                    reply: 'Somos o problema'
-                },
-                function : infoCommand.menuCommand
+                function : funCommand.parCommand
             },
             chance: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}chance de ficar rico* - Calcula sua chance de um tema aleatório a sua escolha.\n`,
                 msgs: {
                     reply: "🧩 *CHANCE* - Você tem *{p1}%* de chance {p2}"
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.chanceCommand
             }, 
-            fch: {
+            frase: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}fch* - Exibe uma frase aleatória montada com as cartas do jogo Cartas contra a Humanidade.\n`,
                 msgs: {
-                    reply: "🧩〘*FRASES CONTRA A HUMANIDADE*〙\n\n - {p1}",
+                    reply: "🙊💬 *FRASES DO WHATSAPP JR.*\n\n - {p1}",
                 },
-                function : infoCommand.menuCommand
+                function : funCommand.fraseCommand
             }
         },
         

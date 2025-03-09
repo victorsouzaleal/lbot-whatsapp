@@ -228,10 +228,10 @@ export const funMenu = (botInfo : Bot) =>{
 |
 |----〖🧩 *DIVERSÃO*〗
 |
-|- *${prefix}mascote* - Exibe o mascote.
-|- *${prefix}simi* frase - Recebe uma resposta do SimSimi.
+|- *${prefix}mascote* - Exibe o onipotente e onipresente WhatsApp Jr.
+|- *${prefix}frase* - Receba uma frase dúvidosa do WhatsApp Jr.
+|- *${prefix}simi* texto - Recebe uma resposta do SimSimi.
 |- *${prefix}chance* - Calcula a chance de algo acontecer.
-|- *${prefix}fch* - Gera uma frase contra a humanidade.
 |
 ╰╼❥ _*by @Victorsouzaleal*_`
 }
@@ -251,12 +251,12 @@ export const funGroupMenu = (botInfo : Bot) =>{
 |
 |----〖🧩 *DIVERSÃO*〗
 |
-|- *${prefix}mascote* - Exibe o mascote.
-|- *${prefix}simi* frase - Recebe uma resposta do SimSimi.
+|- *${prefix}mascote* - Exibe o onipotente e onipresente WhatsApp Jr.
+|- *${prefix}frase* - Receba uma frase dúvidosa do WhatsApp Jr.
+|- *${prefix}simi* texto - Recebe uma resposta do SimSimi.
 |- *${prefix}viadometro* - Mede o nível de viadagem de alguma pessoa.
 |- *${prefix}detector* - Detecta mentiras utilizando uma IA avançada.
 |- *${prefix}casal* - Seleciona aleatoriamente um casal.
-|- *${prefix}fch* - Gera uma frase contra a humanidade.
 |- *${prefix}gadometro* - Mencione um membro ou responda ele para descobrir.
 |- *${prefix}chance* - Calcula a chance de algo acontecer.
 |- *${prefix}bafometro* - Mede o nível de álcool de uma pessoa.

@@ -65,7 +65,16 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'fun':
                 //Categoria DIVERSÃO
-                showCommandConsole(message.isGroupMsg, "DIVERSÃO", message.command, "#22e3dd", message.t, message.pushname, group?.name)
+                if(isGuide){
+                    await sendCommandGuide(client, botInfo, message, categoryCommand)
+                } else {
+                    if(Object.keys(commandsData.fun).includes(commandWithoutPrefix)){
+                        const commandsFun = commandsData.fun as Commands
+                        await commandsFun[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
+                        showCommandConsole(message.isGroupMsg, "DIVERSÃO", message.command, "#22e3dd", message.t, message.pushname, group?.name)
+                    }         
+                }
+                
                 break
             case 'group':
                 //Categoria GRUPO

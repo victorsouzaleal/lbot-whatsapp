@@ -10,7 +10,7 @@ export type Commands = {
     [command_name : string] : {
         guide: string,
         msgs?: {
-            [message_type : string] : string
+            [message_type : string] : string | string[]
         }
         function: CommandFunction
     }

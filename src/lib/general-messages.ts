@@ -44,12 +44,12 @@ export default function getGeneralMessages (botInfo? : Bot){
                 bad_connection: "A sua conexão com o WhatsApp foi encerrada, tentando reconectar... Motivo : {p1} - {p2}"
             },
             permission: {
-                group: '[❗] Este comando só pode ser usado em grupos',
-                bot_group_admin: '[❗] Permita que o BOT tenha permissões administrativas.',
-                ban_admin : '[❗] O Bot não tem permissão para banir um administrador',
-                admin_group_only : '[❗] Apenas administradores do grupo podem usar este comando.',
-                admin_bot_only: '[❗] Apenas o administrador do BOT pode usar este comando',
-                owner_group_only: '[❗] Apenas o dono do GRUPO pode usar este comando.',
+                group: 'Este comando só pode ser usado em grupos.',
+                bot_group_admin: 'Esse comando só pode ser realizado se o BOT for administrador do grupo.',
+                ban_admin : 'O BOT não tem permissão para banir um administrador.',
+                admin_group_only : 'Apenas administradores do grupo podem usar este comando.',
+                admin_bot_only: 'Apenas o administrador do BOT pode usar este comando.',
+                owner_group_only: 'Apenas o dono do GRUPO pode usar este comando.',
             }
         }
 }
