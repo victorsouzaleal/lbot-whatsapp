@@ -73,6 +73,10 @@ export class GroupController {
         return this.groupService.removeGroup(groupId)
     }
 
+    incrementGroupCommands(groupId: string){
+        return this.groupService.incrementGroupCommands(groupId)
+    }
+
     // *********************** Adiciona/Atualiza/Remove participantes e admins. ***********************
     isParticipant(groupId: string, userId: string) {
         return this.groupService.isParticipant(groupId, userId)

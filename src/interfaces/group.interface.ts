@@ -2,6 +2,7 @@ export interface Group {
     id: string,
     name : string, 
     description : string | undefined,
+    commands_executed: number,
     participants : string[],
     admins : string[],
     owner : string | undefined,

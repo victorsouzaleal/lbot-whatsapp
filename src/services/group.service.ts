@@ -29,6 +29,7 @@ export class GroupService {
             id: group.id,
             name: group.subject,
             description: group.desc,
+            commands_executed: 0,
             participants,
             admins,
             owner: group.owner,
@@ -99,13 +100,17 @@ export class GroupService {
         return group?.restricted
     }
 
-    async setName(groupId: string, name: string){
+    setName(groupId: string, name: string){
         return db.groups.updateAsync({id: groupId}, { $set : { name } })
     }
 
-    async setRestricted(groupId: string, restricted: boolean){
+    setRestricted(groupId: string, restricted: boolean){
         return db.groups.updateAsync({id: groupId}, { $set: { restricted } })
     }
+
+    incrementGroupCommands(groupId: string){
+        return db.groups.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
+    } 
 
     // *********************** Add/Update/Remove participants and admins. ***********************
     async getParticipants(groupId: string){

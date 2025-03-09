@@ -110,6 +110,9 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
         //Incrementa contagem de comandos do bot
         botController.incrementExecutedCommands()
 
+        //Incrementa contagem de comandos do grupo
+        await groupController.incrementGroupCommands(group.id)
+
         //Faz a chamada do comando
         await commandInvoker(client, botInfo, message, group)
     }
