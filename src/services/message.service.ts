@@ -3,6 +3,7 @@ import { Group } from '../interfaces/group.interface.js'
 import { Message, MessageTypes } from '../interfaces/message.interface.js'
 import { getContentType, generateWAMessageFromContent, WAMessage } from 'baileys'
 import NodeCache from 'node-cache'
+import { User } from '../interfaces/user.interface.js'
 
 export class MessageService{
     constructor(){}
@@ -35,20 +36,22 @@ export class MessageService{
         return allowedTypes.includes(type as MessageTypes)
     }
     
-    formatWAMessage(m: WAMessage, group: Group|null, hostId: string, adminId?: string){
+    formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){
         if(!m.message) return
+        
         const type = getContentType(m.message)
+
         if(!type) return 
         if(!this.isAllowedType(type)) return 
-        if(!m.message[type]) return 
+        if(!m.message[type]) return
+
         const contextInfo : proto.IContextInfo | undefined  = (typeof m.message[type] != "string" && m.message[type] && "contextInfo" in m.message[type]) ? m.message[type].contextInfo as proto.IContextInfo: undefined
         const isQuoted = (contextInfo?.quotedMessage) ? true : false
         const sender = (m.key.fromMe) ? hostId : m.key.participant || m.key.remoteJid
         const body =  m.message.conversation ||  m.message.extendedTextMessage?.text || undefined
         const caption = (typeof m.message[type] != "string" && m.message[type] && "caption" in m.message[type]) ? m.message[type].caption as string | null: undefined
         const text =  caption || body || ''
-        const [command, ...args] = text.trim().split(" ") 
-        const isBotAdmin = adminId == sender
+        const [command, ...args] = text.trim().split(" ")
         const isGroupMsg = m.key.remoteJid?.includes("@g.us") ?? false
         const message_id = m.key.id
         const t = m.messageTimestamp as number
@@ -73,7 +76,7 @@ export class MessageService{
             isQuoted,
             isGroupMsg,
             isGroupAdmin,
-            isBotAdmin,
+            isBotAdmin : admins.map(admin => admin.id).includes(sender),
             isBotMessage: m.key.fromMe ?? false,
             isBroadcast: m.key.remoteJid == "status@broadcast",
             isMedia: type != "conversation" && type != "extendedTextMessage",

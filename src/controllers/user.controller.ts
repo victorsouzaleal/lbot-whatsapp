@@ -19,7 +19,7 @@ export class UserController{
         return this.userService.isUserRegistered(userId)
     }
 
-    registerOwner(userId: string){
+    registerAdmin(userId: string){
         return this.userService.setAdmin(userId)
     }
 
@@ -31,12 +31,8 @@ export class UserController{
         return this.userService.getUser(userId)
     }
 
-    getAdmin(){
-        return this.userService.getAdmin()
-    }
-
-    getAdminId(){
-        return this.userService.getAdminId()
+    getAdmins(){
+        return this.userService.getAdmins()
     }
 
     setReceivedWelcome(userId: string, status = true){

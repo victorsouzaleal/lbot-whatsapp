@@ -54,11 +54,11 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
 }
 
  async function checkAdminNumber(){
-    const ownerNumber = await new UserController().getAdminId()
+    const admins = await new UserController().getAdmins()
     
-    if(!ownerNumber){
-        console.log("[DONO]", colorText("O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono.", "#d63e3e"))
+    if(!admins.length){
+        console.log("[ADMIN]", colorText("O número do ADMIN ainda não foi configurado, digite !admin para cadastrar seu número como administrador.", "#d63e3e"))
     } else {
-        console.log("[DONO]", colorText("✓ Número do DONO configurado."))
+        console.log("[ADMIN]", colorText("✓ Número do ADMIN configurado."))
     }
 }

@@ -13,10 +13,16 @@ import * as menu from "../lib/menu-builder.js";
 export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
-    const admin = await new UserController().getAdminId() || ''
+    const admins = await new UserController().getAdmins()
     let currentVersion = getCurrentBotVersion()
     let startedDate = timestampToDate(botInfo.started)
-    let reply = buildText(commandsData.info.info.msgs.reply, botInfo.name.trim(), startedDate, botInfo.executed_cmds, admin.replace("@s.whatsapp.net", ""), currentVersion)
+    let contactAdminsText = ''
+
+    admins.forEach(admin => {
+        contactAdminsText += `- https://wa.me/${admin.id.replace("@s.whatsapp.net", "")}\n`
+    })
+
+    let reply = buildText(commandsData.info.info.msgs.reply, botInfo.name.trim(), startedDate, botInfo.executed_cmds, contactAdminsText, currentVersion)
     baileysController.getProfilePicUrl(botInfo.host_number).then(async(url)=>{
         if(url) await baileysController.replyFileFromUrl(message.chat_id, "imageMessage", url, reply, message.wa_message)
         else await baileysController.replyText(message.chat_id, reply, message.wa_message)
@@ -31,12 +37,15 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
     if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const commandsData = getCommands(botInfo)
-    const adminBot = await new UserController().getAdminId()
+    const admins = await new UserController().getAdmins()
 
-    if(!adminBot) throw new Error(commandsData.info.reportar.msgs.error)
+    if(!admins.length) throw new Error(commandsData.info.reportar.msgs.error)
 
-    let replyAdmin = buildText(commandsData.info.reportar.msgs.reply_admin, message.pushname, message.sender.replace("@s.whatsapp.net",""), message.text_command)
-    await baileysController.sendText(adminBot, replyAdmin)
+    admins.forEach(async (admin) => {
+        let replyAdmin = buildText(commandsData.info.reportar.msgs.reply_admin, message.pushname, message.sender.replace("@s.whatsapp.net",""), message.text_command)
+        await baileysController.sendText(admin.id, replyAdmin)
+    })
+
     await baileysController.replyText(message.chat_id, commandsData.info.reportar.msgs.reply, message.wa_message)
 }
 

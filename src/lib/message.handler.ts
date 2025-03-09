@@ -121,13 +121,15 @@ async function isUserBlocked(baileysController: BaileysController, userId: strin
 }
 
 async function isAdminRegister(baileysController: BaileysController, userController: UserController, botInfo: Bot, message: Message){
-    const hasBotAdmin = await userController.getAdminId()
+    const admins = await userController.getAdmins()
     const generalMessages = getGeneralMessages(botInfo)
-    if(!hasBotAdmin && message.command == `${botInfo.prefix}admin`){
-        await userController.registerOwner(message.sender)
+
+    if(!admins.length && message.command == `${botInfo.prefix}admin`){
+        await userController.registerAdmin(message.sender)
         await baileysController.replyText(message.chat_id, generalMessages.admin_registered, message.wa_message)
         return true
     }
+    
     return false
 }
 

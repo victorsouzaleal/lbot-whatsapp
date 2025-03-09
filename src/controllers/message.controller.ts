@@ -2,6 +2,7 @@ import NodeCache from "node-cache"
 import { MessageService } from "../services/message.service.js"
 import {WAMessage, proto} from 'baileys'
 import { Group } from "../interfaces/group.interface.js"
+import { User } from "../interfaces/user.interface.js"
 
 export class MessageController{
     private messageService
@@ -18,7 +19,7 @@ export class MessageController{
         return this.messageService.getMessageCache(messageId, messageCache)
     }
 
-    formatWAMessage(message: WAMessage, group: Group|null, hostId: string, adminId?: string){
-        return this.messageService.formatWAMessage(message, group, hostId, adminId)
+    formatWAMessage(message: WAMessage, group: Group|null, hostId: string, admins: User[]){
+        return this.messageService.formatWAMessage(message, group, hostId, admins)
     }
 }

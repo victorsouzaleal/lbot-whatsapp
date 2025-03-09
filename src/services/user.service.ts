@@ -35,26 +35,16 @@ export class UserService{
     }
 
     async setAdmin(userId : string){
-        await this.resetAdmins()
         return db.updateAsync({id : userId}, {$set: {admin : true}})
     }
-
-    async getAdmin(){
-        const doc : any = await db.findOneAsync({admin : true})
-        return doc as User | null
-    }
-
-    async getAdminId(){
-        const owner = await this.getAdmin()
-        return owner?.id
+    
+    async getAdmins(){
+        const doc : any = await db.findAsync({admin : true})
+        return doc as User[]
     }
 
     setName(userId : string, name : string){
         return db.updateAsync({id: userId}, {$set:{name}})
-    }
-
-    private resetAdmins(){
-        return db.updateAsync({admin: true}, {$set: {admin: false}}, {multi: true})
     }
 
     setReceivedWelcome(userId: string, status = true){
