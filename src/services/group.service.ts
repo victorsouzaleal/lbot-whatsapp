@@ -71,6 +71,7 @@ export class GroupService {
 
     updatePartialGroup(group: Partial<GroupMetadata>) {
         if(group.id){
+            if (group.desc) return this.setDescription(group.id, group.desc)
             if (group.subject) return this.setName(group.id, group.subject)
             if (group.announce) return this.setRestricted(group.id, group.announce)
         }
@@ -106,6 +107,10 @@ export class GroupService {
 
     setRestricted(groupId: string, restricted: boolean){
         return db.groups.updateAsync({id: groupId}, { $set: { restricted } })
+    }
+
+    setDescription(groupId: string, description?: string){
+        return db.groups.updateAsync({id: groupId}, { $set: { description } })
     }
 
     incrementGroupCommands(groupId: string){
