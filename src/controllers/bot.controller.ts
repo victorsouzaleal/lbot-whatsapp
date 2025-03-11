@@ -35,8 +35,9 @@ export class BotController {
         return this.botService.incrementExecutedCommands()
     }
 
-    // Bot features
-    // Autosticker
+    // Recursos do BOT
+
+    // Auto-Sticker Privado
     setAutosticker(status: boolean){
         return this.botService.setAutosticker(status)
     }
@@ -46,16 +47,16 @@ export class BotController {
         return this.botService.setPvAllowed(status)
     }
 
-    // Antispam
-    setAntispamCommands(status = true, maxCommandsMinute = 5, blockTime = 60){
-        return this.botService.setAntispamCommands(status, maxCommandsMinute, blockTime)
+    // Taxa de comandos
+    setCommandRate(status = true, maxCommandsMinute = 5, blockTime = 60){
+        return this.botService.setCommandRate(status, maxCommandsMinute, blockTime)
     }
 
-    isCommandSpam(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
-        return this.botService.isSpamCommand(userId, isAdminBot, isAdminGroup)
+    isCommandLimitedByRate(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
+        return this.botService.isCommandLimitedByRate(userId, isAdminBot, isAdminGroup)
     }
 
-    // Block/Unblock commands globally
+    // Bloquear/Desbloquear comandos globalmente
     blockCommandsGlobally(commands: string[]){
         return this.botService.blockCommandsGlobally(commands)
     }

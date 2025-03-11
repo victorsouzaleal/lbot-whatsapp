@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.10.8",
+  "version": "3.0.0",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "main": "dist/app.js",
   "type": "module",
@@ -21,6 +21,7 @@
     "sticker"
   ],
   "devDependencies": {
+    "@types/format-duration": "^3.0.0",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.13.1",
     "tsc-alias": "^1.8.10",
@@ -30,10 +31,11 @@
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
     "@types/prompt-sync": "^4.2.3",
-    "@victorsouzaleal/biblioteca-lbot": "^2.1.0",
+    "@victorsouzaleal/biblioteca-lbot": "file:../biblioteca-lbot/victorsouzaleal-biblioteca-lbot-2.1.0.tgz",
     "baileys": "^6.7.16",
     "chalk": "^4.1.0",
     "dotenv": "^16.4.7",
+    "format-duration": "^3.0.2",
     "fs-extra": "^11.3.0",
     "instagram-url-direct": "^2.0.2",
     "moment-timezone": "^0.5.47",

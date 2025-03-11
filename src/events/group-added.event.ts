@@ -11,7 +11,7 @@ export async function addedOnGroup (client: WASocket, groupMetadata: GroupMetada
         await new GroupController().registerGroup(groupMetadata[0])
         await new BaileysController(client).sendText(groupMetadata[0].id, buildText(generalMessages.new_group, groupMetadata[0].subject)).catch(()=>{})
     } catch(err: any){
-        showConsoleError(err.message, "GROUPS-UPSERT")
+        showConsoleError(err, "GROUPS-UPSERT")
         client.end(new Error("fatal_error"))
     }
 }

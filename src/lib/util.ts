@@ -140,7 +140,6 @@ export function randomDelay(ms_min : number, ms_max : number){
    })
 }
 
-export function showConsoleError(message: string, error_type? : string){
-  if(!error_type) error_type = 'API'
-  console.error(colorText(`[${error_type}]`,"#d63e3e"), message)
+export function showConsoleError(err: any, error_type : string){
+  console.error(colorText(`[${error_type}]`,"#d63e3e"), err)
 }

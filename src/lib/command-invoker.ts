@@ -7,12 +7,15 @@ import { BaileysController } from "../controllers/baileys.controller.js";
 import { Commands, CategoryCommand} from "../interfaces/command.interface.js";
 import getCommands from "../commands/list.commands.js";
 import { autoSticker } from "../commands/category-sticker.commands.js";
+import getGeneralMessages from "./general-messages.js";
 
 export async function commandInvoker(client: WASocket, botInfo: Bot, message: Message, group: Group|null){
     const isGuide = (!message.args.length) ? false : message.args[0] === 'guia'
     const categoryCommand = getCommandCategory(message.command, botInfo.prefix)
     const commandsData = getCommands(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const commandWithoutPrefix = message.command.replace(botInfo.prefix, '')
+
     try{
         switch (categoryCommand) {
             case 'info':
@@ -47,7 +50,7 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                     if(Object.keys(commandsData.sticker).includes(commandWithoutPrefix)){
                         const commandsSticker = commandsData.sticker as Commands
                         await commandsSticker[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
-                        showCommandConsole(message.isGroupMsg, "FIGURINHA", message.command, "#ae45d1", message.t, message.pushname, group?.name)
+                        showCommandConsole(message.isGroupMsg, "STICKER", message.command, "#ae45d1", message.t, message.pushname, group?.name)
                     }         
                 }
                 break
@@ -74,11 +77,20 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                         showCommandConsole(message.isGroupMsg, "DIVERSÃO", message.command, "#22e3dd", message.t, message.pushname, group?.name)
                     }         
                 }
-                
                 break
             case 'group':
                 //Categoria GRUPO
-                showCommandConsole(message.isGroupMsg, "GRUPO", message.command, "#e0e031", message.t, message.pushname, group?.name)
+                if(!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
+
+                if(isGuide){
+                    await sendCommandGuide(client, botInfo, message, categoryCommand)
+                } else {
+                    if(Object.keys(commandsData.group).includes(commandWithoutPrefix)){
+                        const commandsGroup = commandsData.group as Commands
+                        await commandsGroup[commandWithoutPrefix].function(client, botInfo, message, group)
+                        showCommandConsole(message.isGroupMsg, "GRUPO", message.command, "#e0e031", message.t, message.pushname, group?.name)
+                    }         
+                }
                 break
             case 'admin':
                 //Categoria ADMIN
@@ -88,7 +100,7 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 //Outros - Autosticker
                 if((message.isGroupMsg && group?.autosticker) || (!message.isGroupMsg && botInfo.autosticker)){
                     await autoSticker(client, botInfo, message, group || undefined)
-                    showCommandConsole(message.isGroupMsg, "FIGURINHA", "AUTO-STICKER", "#ae45d1", message.t, message.pushname, group?.name)
+                    showCommandConsole(message.isGroupMsg, "STICKER", "AUTO-STICKER", "#ae45d1", message.t, message.pushname, group?.name)
                 }
                 break
         }

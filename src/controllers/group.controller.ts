@@ -141,13 +141,13 @@ export class GroupController {
         return this.groupService.setMuted(groupId, status)
     }
 
-    // ***** Antiflood *****
-    setAntiflood(groupId: string, status = true, maxMessages = 10, interval = 10) {
-        return this.groupService.setAntiflood(groupId, status, maxMessages, interval)
+    // ***** Anti-Spam *****
+    setAntiSpam(groupId: string, status = true, maxMessages = 10, interval = 10) {
+        return this.groupService.setAntiSpam(groupId, status, maxMessages, interval)
     }
 
-    isFloodMessage(group: Group, userId: string){
-        return this.groupService.isFloodMessage(group, userId)
+    isSpamMessage(group: Group, userId: string){
+        return this.groupService.isSpamMessage(group, userId)
     }
 
     // ***** Lista negra *****

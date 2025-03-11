@@ -35,6 +35,6 @@ export async function messageReceived (client: WASocket, messages : {messages: W
                 break
         }
     } catch(err: any){
-        showConsoleError(err.message, "MESSAGES.UPSERT")
+        showConsoleError(err, "MESSAGES.UPSERT")
     }
 }

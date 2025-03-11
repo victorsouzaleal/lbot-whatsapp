@@ -11,8 +11,8 @@ export class BaileysController {
         this.baileysService = new BaileysService(this.client)
     }
     
-    deleteMessage (message : WAMessage, isQuoted = false){
-        return this.baileysService.deleteMessage(message, isQuoted)
+    deleteMessage (message : WAMessage, deleteQuoted : boolean){
+        return this.baileysService.deleteMessage(message, deleteQuoted)
     }
 
     readMessage(chatId: string, sender: string, messageId: string){

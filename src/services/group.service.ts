@@ -1,5 +1,5 @@
 import Datastore from "@seald-io/nedb";
-import { AntiFloodMessage, CounterUser, Group } from "../interfaces/group.interface.js";
+import { AntiSpamMessage, CounterUser, Group } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
@@ -38,7 +38,7 @@ export class GroupService {
             welcome : { status: false, msg: '' },
             antifake : { status: false, allowed: [] },
             antilink : false,
-            antiflood : { status: false, max_messages: 10, interval: 10, messages: [] },
+            antispam : { status: false, max_messages: 10, interval: 10, messages: [] },
             autosticker : false,
             counter : { status: false, started: '' },
             block_cmds : [],
@@ -230,50 +230,50 @@ export class GroupService {
         return db.groups.updateAsync({id: groupId}, { $set: { autosticker: status } })
     }
 
-    // ***** Antiflood *****
-    setAntiflood(groupId: string, status: boolean, maxMessages: number, interval: number){
-        return db.groups.updateAsync({id : groupId}, { $set:{ 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
+    // ***** Anti-Spam *****
+    setAntiSpam(groupId: string, status: boolean, maxMessages: number, interval: number){
+        return db.groups.updateAsync({id : groupId}, { $set:{ 'antispam.status' : status, 'antispam.max_messages' : maxMessages, 'antispam.interval' : interval } })
     }
 
-    setMessagesAntiFlood(groupId: string, antiFloodMessages : AntiFloodMessage[]){
-        return db.groups.updateAsync({id : groupId}, { $set: {'antiflood.messages': antiFloodMessages} })
+    setMessagesAntiSpam(groupId: string, antiSpamMessages : AntiSpamMessage[]){
+        return db.groups.updateAsync({id : groupId}, { $set: {'antispam.messages': antiSpamMessages} })
     }
 
-    async isFloodMessage(group: Group, userId: string){
+    async isSpamMessage(group: Group, userId: string){
         let timestamp = Math.round(moment.now()/1000), resposta = false
 
         //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
-        for (let i = 0; i < group.antiflood.messages.length; i++) {
-            if (timestamp >= group.antiflood.messages[i].expire) group.antiflood.messages.splice(i, 1)
+        for (let i = 0; i < group.antispam.messages.length; i++) {
+            if (timestamp >= group.antispam.messages[i].expire) group.antispam.messages.splice(i, 1)
         }
 
         //PESQUISA O INDICE DO USUARIO
-        let userIndex = group.antiflood.messages.findIndex(user => user.id == userId)
+        let userIndex = group.antispam.messages.findIndex(user => user.id == userId)
 
         //SE O USUARIO JÁ ESTIVER NA LISTA
         if (userIndex != -1) {
             //INCREMENTA A CONTAGEM
-            group.antiflood.messages[userIndex].qty++
-            let max_messages = group.antiflood.max_messages
-            if (group.antiflood.messages[userIndex].qty >= max_messages) {
-                group.antiflood.messages.splice(userIndex, 1)
+            group.antispam.messages[userIndex].qty++
+            let max_messages = group.antispam.max_messages
+            if (group.antispam.messages[userIndex].qty >= max_messages) {
+                group.antispam.messages.splice(userIndex, 1)
                 resposta = true
             } else {
                 resposta = false
             }
         } else {
             //ADICIONA O USUARIO NA LISTA
-            const messageAntiflood : AntiFloodMessage = {
+            const messageAntiSpam : AntiSpamMessage = {
                 id : userId,
-                expire : timestamp + group.antiflood.interval,
+                expire : timestamp + group.antispam.interval,
                 qty: 1
             }
-            group.antiflood.messages.push(messageAntiflood)
+            group.antispam.messages.push(messageAntiSpam)
             resposta = false
         }
 
         //ATUALIZAÇÃO E RETORNO
-        await this.setMessagesAntiFlood(group.id, group.antiflood.messages)
+        await this.setMessagesAntiSpam(group.id, group.antispam.messages)
         return resposta
     }
 
@@ -305,6 +305,9 @@ export class GroupService {
         let blockResponse = commandsData.group.bcmd.msgs.reply_title
         let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'fun']
 
+        if(commands[0] == 'diversao') commands[0] = 'fun'
+        if(commands[0] == 'utilidade') commands[0] = 'utility'
+
         if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix + command)
 
         for (let command of commands) {
@@ -333,6 +336,10 @@ export class GroupService {
         let unblockedCommands : string[] = []
         let unblockResponse = commandsData.group.dcmd.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
+
+        if(commands[0] == 'todos') commands[0] = 'all'
+        if(commands[0] == 'utilidade') commands[0] = 'utility'
+        if(commands[0] == 'diversao') commands[0] = 'fun'
 
         if (categories.includes(commands[0])) {
             if (commands[0] === 'all') commands = group.block_cmds.map(command => prefix + command)

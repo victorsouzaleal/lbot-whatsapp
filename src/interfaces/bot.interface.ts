@@ -8,7 +8,7 @@ export interface Bot {
     executed_cmds: number,
     autosticker: boolean,
     block_cmds: string[],
-    antispam_cmds:{
+    command_rate:{
         status: boolean,
         max_cmds_minute: number,
         block_time: number,

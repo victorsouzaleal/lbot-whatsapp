@@ -32,7 +32,7 @@ export class BotService {
             executed_cmds: 0,
             autosticker: false,
             block_cmds: [],    
-            antispam_cmds:{
+            command_rate:{
                 status: false,
                 max_cmds_minute: 5,
                 block_time: 60,
@@ -102,58 +102,58 @@ export class BotService {
         return this.updateBot(bot)
     }
 
-    // Antispam
-    setAntispamCommands(status: boolean, maxCommandsMinute: number, blockTime: number){
+    // Taxa de comando
+    setCommandRate(status: boolean, maxCommandsMinute: number, blockTime: number){
         let bot = this.getBot()
-        bot.antispam_cmds.status = status
-        bot.antispam_cmds.max_cmds_minute = maxCommandsMinute
-        bot.antispam_cmds.block_time = blockTime
+        bot.command_rate.status = status
+        bot.command_rate.max_cmds_minute = maxCommandsMinute
+        bot.command_rate.block_time = blockTime
         return this.updateBot(bot)
     }
 
-    isSpamCommand(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
+    isCommandLimitedByRate(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
         let bot = this.getBot()
         const currentTimestamp =  Math.round(moment.now()/1000)
-        let isSpam = false
+        let isLimitedByRate = false
 
         //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
-        for (let i = 0; i < bot.antispam_cmds.limited_users.length; i++){
-            if(bot.antispam_cmds.limited_users[i].expiration <= currentTimestamp) bot.antispam_cmds.limited_users.splice(i,1)
+        for (let i = 0; i < bot.command_rate.limited_users.length; i++){
+            if(bot.command_rate.limited_users[i].expiration <= currentTimestamp) bot.command_rate.limited_users.splice(i,1)
         }
 
         //VERIFICA OS USUARIOS QUE JÁ ESTÃO COM COMANDO EXPIRADOS NO ULTIMO MINUTO
-        for (let i = 0; i < bot.antispam_cmds.users.length; i++){
-            if(bot.antispam_cmds.users[i].expiration <= currentTimestamp) bot.antispam_cmds.users.splice(i,1)
+        for (let i = 0; i < bot.command_rate.users.length; i++){
+            if(bot.command_rate.users[i].expiration <= currentTimestamp) bot.command_rate.users.splice(i,1)
         }
 
         //SE NÃO FOR UM USUARIO ADMIN E NÃO FOR ADMINISTRADOR DO GRUPO , FAÇA A CONTAGEM.
         if(!isAdminBot && !isAdminGroup){
             //VERIFICA SE O USUARIO ESTÁ LIMITADO
-            let limitedUserIndex = bot.antispam_cmds.limited_users.findIndex(usuario => usuario.id_user == userId)
+            let limitedUserIndex = bot.command_rate.limited_users.findIndex(usuario => usuario.id_user == userId)
             //SE O USUÁRIO NÃO ESTIVER LIMITADO
             if(limitedUserIndex === -1){
                 //OBTEM O INDICE DO USUARIO NA LISTA DE USUARIOS
-                let userIndex = bot.antispam_cmds.users.findIndex(user=> user.id_user == userId)
+                let userIndex = bot.command_rate.users.findIndex(user=> user.id_user == userId)
                 //VERIFICA SE O USUARIO ESTÁ NA LISTA DE USUARIOS
                 if(userIndex !== -1){
-                    bot.antispam_cmds.users[userIndex].cmds++ //ADICIONA A CONTAGEM DE COMANDOS ATUAIS
-                    if(bot.antispam_cmds.users[userIndex].cmds >= bot.antispam_cmds.max_cmds_minute){ //SE ATINGIR A QUANTIDADE MAXIMA DE COMANDOS POR MINUTO
+                    bot.command_rate.users[userIndex].cmds++ //ADICIONA A CONTAGEM DE COMANDOS ATUAIS
+                    if(bot.command_rate.users[userIndex].cmds >= bot.command_rate.max_cmds_minute){ //SE ATINGIR A QUANTIDADE MAXIMA DE COMANDOS POR MINUTO
                         //ADICIONA A LISTA DE USUARIOS LIMITADOS
-                        bot.antispam_cmds.limited_users.push({id_user: userId, expiration: currentTimestamp + bot.antispam_cmds.block_time})
-                        bot.antispam_cmds.users.splice(userIndex, 1)
-                        isSpam = true
+                        bot.command_rate.limited_users.push({id_user: userId, expiration: currentTimestamp + bot.command_rate.block_time})
+                        bot.command_rate.users.splice(userIndex, 1)
+                        isLimitedByRate = true
                     }
                 } else {//SE NÃO EXISTIR NA LISTA
-                    bot.antispam_cmds.users.push({id_user: userId, cmds: 1, expiration: currentTimestamp+60})
+                    bot.command_rate.users.push({id_user: userId, cmds: 1, expiration: currentTimestamp+60})
                 }
             }
         }
 
         this.updateBot(bot)
-        return isSpam
+        return isLimitedByRate
     }
 
-    // Block/Unblock Commands
+    // Bloquear/Desbloquear comandos
     blockCommandsGlobally(commands : string[]){
         let botInfo = this.getBot()
         const commandsData = getCommands(botInfo)

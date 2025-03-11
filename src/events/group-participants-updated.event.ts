@@ -42,7 +42,7 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
             await groupController.removeAdmin(event.id, event.participants[0])
         }
     } catch(err: any){
-        showConsoleError(err.message, "GROUP-PARTICIPANTS-UPDATE")
+        showConsoleError(err, "GROUP-PARTICIPANTS-UPDATE")
         client.end(new Error("fatal_error"))
     }
 }

@@ -107,7 +107,6 @@ export class MessageService{
             const senderQuoted = contextInfo.participant || contextInfo.remoteJid
             if(!typeQuoted || !senderQuoted ) return
             const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
-          
 
             formattedMessage.quotedMessage = {
                 type: typeQuoted,
@@ -115,7 +114,7 @@ export class MessageService{
                 body: quotedMessage.conversation || quotedMessage.extendedTextMessage?.text || '',
                 caption: captionQuoted || '',
                 isMedia : typeQuoted != "conversation" && typeQuoted != "extendedTextMessage",
-                wa_message: generateWAMessageFromContent(senderQuoted, quotedMessage, {userJid: senderQuoted})
+                wa_message: generateWAMessageFromContent(formattedMessage.chat_id, quotedMessage, {userJid: senderQuoted})
             }
 
             if(formattedMessage.quotedMessage?.isMedia){

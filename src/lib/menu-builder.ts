@@ -136,12 +136,10 @@ export const groupMenu = (botInfo : Bot) =>{
 |----〖👨‍👩‍👧‍👦 *GRUPO*〗
 |
 |--〖🛠️ *GERAL*〗
-|- *${prefix}regras* - Exibe a descrição do grupo com as regras.
+|
+|- *${prefix}grupo* - Exibe os dados gerais do grupo.
 |- *${prefix}adms* - Lista todos administradores.
 |- *${prefix}dono* - Mostra dono do grupo.
-|
-|--〖📊 *ENQUETE*〗
-|- *${prefix}enquete* pergunta,opcao1,opcao2,etc.. - Abre uma enquete com uma pergunta e as opçôes.
 |
 ╰╼❥ _*by @Victorsouzaleal*_`
 }
@@ -158,21 +156,18 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 |
 |--〖🛠️ *GERAL*〗
 |
-|- *${prefix}status* - Vê os recursos ativos/desativados.
-|- *${prefix}regras* - Exibe a descrição do grupo com as regras.
+|- *${prefix}grupo* - Exibe os dados gerais do grupo.
 |- *${prefix}adms* - Lista todos administradores.
 |- *${prefix}fotogrupo* - Altera foto do grupo
 |- *${prefix}mt* mensagem - Marca todos MEMBROS/ADMINS com uma mensagem.
 |- *${prefix}mm* mensagem - Marca os MEMBROS com uma mensagem.
 |- *${prefix}dono* - Mostra dono do grupo.
 |
-|--〖🎚️ *CONTROLE DE ATIVIDADE*〗
+|--〖🎚️ *CONTADOR/ATIVIDADE*〗
 |
 |- *${prefix}contador* - Liga/desliga o contador de atividade (Mensagens).
-|- *${prefix}atividade* @marcarmembro - Mostra a atividade do usuário no grupo. 
-|- *${prefix}imarcar* 1-50 - Marca todos os inativos com menos de 1 até 50 mensagens.
-|- *${prefix}ibanir* 1-50 - Bane todos os inativos com  menos de 1 até 50 mensagens.
-|- *${prefix}topativos* 1-50 - Marca os membros mais ativos em um ranking de 1-50 pessoas.
+|- *${prefix}atividade* @marcarmembro - Mostra a atividade do membro.
+|- *${prefix}topativos* - Marca os 10 membros mais ativos.
 |
 |--〖🚫 *BLOQUEIO DE COMANDOS*〗
 |
@@ -183,16 +178,16 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 |
 |- *${prefix}listanegra* - Exibe a lista negra do grupo.
 |- *${prefix}addlista* +55 (21) 9xxxx-xxxx - Adiciona o número na lista negra do grupo.
-|- *${prefix}remlista* +55 (21) 9xxxx-xxxx - Remove o número na lista negra do grupo.
+|- *${prefix}rmlista* +55 (21) 9xxxx-xxxx - Remove o número na lista negra do grupo.
 |
 |--〖🧰 *RECURSOS*〗 
 |
 |- *${prefix}mutar* - Ativa/desativa o uso de comandos.
 |- *${prefix}autosticker* - Ativa/desativa a criação automática de stickers.
-|- *${prefix}alink* - Ativa/desativa o anti-link.
-|- *${prefix}bv* - Ativa/desativa o bem-vindo.
-|- *${prefix}afake* - Ativa/desativa o anti-fake.
-|- *${prefix}aflood* - Ativa/desativa o anti-flood.
+|- *${prefix}bemvindo* - Ativa/desativa a mensagem de BEM-VINDO.
+|- *${prefix}antilink* - Ativa/desativa o Anti-LINK.
+|- *${prefix}antifake* - Ativa/desativa o Anti-FAKE.
+|- *${prefix}antispam* - Ativa/desativa o Anti-SPAM.
 |
 |--〖⌨️ *ADMINISTRATIVO*〗
 |
@@ -204,11 +199,6 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 |- *${prefix}link* - Exibe o link do grupo.
 |- *${prefix}rlink* - Redefine o link do grupo.
 |- *${prefix}apg* - Apaga uma mensagem do grupo.
-|- *${prefix}bantodos* - Bane todos os membros.
-|
-|--〖📊 *ENQUETE*〗
-|
-|- *${prefix}enquete* pergunta,opcao1,opcao2,etc.. - Abre uma enquete com uma pergunta e as opçôes.
 |
 ╰╼❥ _*by @Victorsouzaleal*_`
 }

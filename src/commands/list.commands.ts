@@ -3,6 +3,7 @@ import * as utilityCommand from './category-utility.commands.js'
 import * as stickerCommand from './category-sticker.commands.js'
 import * as downloadCommand from './category-download.commands.js'
 import * as funCommand from './category-fun.commands.js'
+import * as groupCommand from './category-group.commands.js'
 import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getCommands (botInfo?: Bot){
@@ -55,7 +56,8 @@ export default function getCommands (botInfo?: Bot){
                     reply: "*Nome do bot* : {p1}\n"+
                     "*Online desde* : {p2}\n"+
                     "*Comandos executados* : {p3}\n"+
-                    "*Contato do administrador* : wa.me/{p4}\n"+
+                    "*Contato do administradores* : \n"+
+                    "{p4}"+
                     "*Versão atual* : {p5}\n"+
                     "*Criador* : victorsouzaleal\n"+
                     "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n"
@@ -649,47 +651,46 @@ export default function getCommands (botInfo?: Bot){
         },
         
         group: { // ************* GROUP *************
-            status: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}status* - Exibe as configurações atuais do grupo\n`,
+            grupo: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}grupo* - Exibe os dados atuais do grupo.\n`,
                 msgs: {
-                    reply_title: "[ 🤖 STATUS DO GRUPO 🤖 ]\n\n",
-                    reply_item_welcome_on: "Recurso Boas Vindas : ✅\n",
-                    reply_item_welcome_off: "Recurso Boas Vindas : ❌\n",
-                    reply_item_mute_on : "Recurso Mutar : ✅\n",
-                    reply_item_mute_off : "Recurso Mutar : ❌\n",
-                    reply_item_autosticker_on : "Recurso Auto-Sticker : ✅\n",
-                    reply_item_autosticker_off : "Recurso Auto-Sticker : ❌\n",
-                    reply_item_antilink_on : "Recurso Anti-Link : ✅\n",
-                    reply_item_antilink_off : "Recurso Anti-Link : ❌\n",
-                    reply_item_antifake_on : "Recurso Anti-Fake : ✅\n"+
-                    "- *Liberados* : {p1}\n",
-                    reply_item_antifake_off : "Recurso Anti-Fake : ❌\n",
-                    reply_item_antiflood_on : "Recurso Anti-Flood : ✅\n"+
+                    reply_title: "👥 *DADOS GERAIS DO GRUPO* \n\n"+
+                    "*Nome*: {p1}\n"+
+                    "*Participantes*: {p2}\n"+
+                    "*Admins*: {p3} \n"+
+                    "*Descrição/Regras*: {p4}\n\n"+
+                    "*Comandos executados*: {p5} \n\n",
+                    reply_resource_title: '🧰 *RECURSOS DO GRUPO* \n\n',
+                    reply_item_welcome_on: "*Boas vindas*: ✅\n",
+                    reply_item_welcome_off: "*Boas vindas*: ❌\n",
+                    reply_item_mute_on : "*Mutar*: ✅\n",
+                    reply_item_mute_off : "*Mutar*: ❌\n",
+                    reply_item_autosticker_on : "*Auto-Sticker*: ✅\n",
+                    reply_item_autosticker_off : "*Auto-Sticker*: ❌\n",
+                    reply_item_antilink_on : "*Anti-Link*: ✅\n",
+                    reply_item_antilink_off : "*Anti-Link*: ❌\n",
+                    reply_item_antifake_on : "*Anti-Fake*: ✅\n"+
+                    "- *Prefixos liberados* : {p1}\n",
+                    reply_item_antifake_off : "*Anti-Fake*: ❌\n",
+                    reply_item_antispam_on : "*Anti-Spam*: ✅\n"+
                     "- Máx: *{p1}* msgs / *{p2}* s \n",
-                    reply_item_antiflood_off : "Recurso Anti-Flood : ❌\n",
-                    reply_item_counter_on : "Recurso Contador : ✅\n"+
+                    reply_item_antispam_off : "*Anti-Spam*: ❌\n",
+                    reply_item_counter_on : "*Contador*: ✅\n"+
                     "- {p1}\n",
-                    reply_item_counter_off : "Recurso Contador : ❌\n",
-                    reply_item_blockcmds_on : "Bloqueio de comandos : ✅\n"+
+                    reply_item_counter_off : "*Contador*: ❌\n",
+                    reply_item_blockcmds_on : "*Bloqueio de comandos*: ✅\n"+
                     "- *{p1}*\n",
-                    reply_item_blockcmds_off : "Bloqueio de comandos : ❌\n",
-                    reply_item_blacklist : "Lista Negra : *{p1}*\n"
+                    reply_item_blockcmds_off : "*Bloqueio de comandos*: ❌\n",
+                    reply_item_blacklist : "*Lista Negra*: *{p1}*\n"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.grupoCommand
             },
             fotogrupo: {
                 guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}fotogrupo* - Altera a foto do grupo.\n\n`,
                 msgs: {
                     reply: "🤖✅ A foto do GRUPO foi alterada com sucesso.",
                 },
-                function : infoCommand.menuCommand
-            },
-            regras: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}regras* - Exibe a descrição/regras do grupo\n`,
-                msgs: {
-                    error: "[❗] O grupo ainda não tem uma descrição."
-                },
-                function : infoCommand.menuCommand
+                function : groupCommand.fotogrupoCommand
             },
             addlista: {
                 guide: GUIDE_TITLE +`Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
@@ -697,121 +698,114 @@ export default function getCommands (botInfo?: Bot){
                 `Ex: *${PREFIX}addlista* +55219xxxx-xxxx - Adiciona o número digitado a lista negra do grupo e bane em seguida.\n.`,
                 msgs: {
                     reply: "✅ O número desse usuário foi adicionado á lista negra e será banido do grupo caso ainda esteja aqui.",
-                    error_add_bot: "[❗] Calma, você não pode adicionar o BOT a lista negra.",
-                    error_add_admin: "[❗] Calma, você não pode adicionar um ADMINISTRADOR a lista negra.",
-                    error_already_listed: "[❗] Este usuário já está na lista negra.",
+                    error_add_bot: "O BOT não pode ser adicionado a lista negra.",
+                    error_add_admin: "O ADMINISTRADOR DO GRUPO não pode ser adicionado a lista negra.",
+                    error_already_listed: "Este usuário já está na lista negra.",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.addlistaCommand
             },
-            remlista: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}remlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
+            rmlista: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}rmlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
                 msgs: {
                     reply: "✅ O número desse usuário foi removido da lista negra.",
-                    error: "[❗] Este usuário não está na lista negra.",
+                    error_not_listed: "Este usuário não está na lista negra.",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.rmlistaCommand
             },
             listanegra: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}listanegra* - Exibe a lista negra do grupo.\n`,
                 msgs: {
-                    error: "🤖 Não existe usuários na lista negra deste grupo.",
-                    reply_title: "╔══✪〘❌ Lista Negra 〙✪══\n╠\n",
-                    reply_item: "╠➥ +{p1}\n"
+                    error_empty_list: "Não existem usuários na lista negra deste grupo.",
+                    reply_title: "❌ LISTA NEGRA DO GRUPO\n\n"+
+                    "Quantidade de usuários na lista : *{p1}*\n\n",
+                    reply_item_with_username: "{p1} - +{p2} ({p3})\n",
+                    reply_item_no_username: "{p1} - +{p2} (DESCONHECIDO)\n"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.listanegraCommand
             },
             add: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}add* 5521xxxxxxxxx - Digite o numero com o código do país para adicionar a pessoa.\n\n`+
                 `Ex: *${PREFIX}add* 5521xxxxxxxxx, 5521xxxxxxxxx - Digite os numeros com o código do país (adiciona mais de uma pessoa no grupo).\n`,
                 msgs: {
-                    error_add: "[❗] O número +{p1} não pode ser adicionado. Provavelmente está com privacidade ativada, já está no grupo ou o grupo não aceita mais membros.",
-                    error_invalid_number: "[❗] Houve um erro em adicionar o número {p1}, verifique se o número existe ou tente tirar o 9.",
+                    reply: '✅ O número +{p1} foi adicionado ao grupo com sucesso.',
+                    error_add: "O número +{p1} não pode ser adicionado. Provavelmente está com privacidade ativada, já está no grupo ou o grupo não aceita mais membros.",
+                    error_input: "Foi encontrado texto no número inserido, digite corretamente o número de quem você deseja adicionar ao grupo.",
+                    error_invalid_number: "Houve um erro em adicionar o número +{p1}, verifique se o número existe ou tente tirar o 9.",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.addCommand
             },
             ban: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}ban* @membro - Para banir um membro marcando ele.\n\n`+
-                `Ex: Responder alguém com *${PREFIX}ban* - Bane a pessoa que você respondeu.\n`,
+                `Ex: Responder alguém com *${PREFIX}ban* - Bane o membro que você respondeu.\n`,
                 msgs: {
-                    error_ban_admin: "[❗] O bot não pode banir um administrador",
-                    error_ban: "[❗] Não foi possível banir este membro, provavelmente ele já saiu do grupo."
+                    reply_title: '🚷 BANIMENTO DE MEMBROS\n\n',
+                    reply_item_success: "+{p1} foi banido do grupo com sucesso.\n",
+                    reply_item_ban_admin: "+{p1} não pode ser banido, o bot não pode banir um administrador.\n",
+                    reply_item_not_found: "+{p1} não pode ser banido, provavelmente ele já saiu do grupo.\n",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.banCommand
             },
             promover: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}promover* @membro - Promove o membro mencionado a *ADMINISTRADOR*.\n\n`+
                 `Ex: Responder com *${PREFIX}promover* - Promove o usuário respondido a *ADMINISTRADOR*.\n`,
                 msgs: {
                     error: "[❗] O BOT não pode ser promovido por ele mesmo.",
-                    reply_title: "[👤 PROMOVER MEMBROS 👤]\n\n"+
-                    "{p1}",
-                    reply_item_success: "➥ @{p1} virou *ADMINISTRADOR*.\n",
+                    reply_title: "👤 ⬆️ PROMOVER MEMBROS\n\n",
+                    reply_item_success: "➥ @{p1} foi promovido para *ADMINISTRADOR*.\n",
                     reply_item_error: "➥ @{p1} já é um *ADMINISTRADOR*.\n",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.promoverCommand
             },
             rebaixar: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}rebaixar* @admin - Rebaixa o administrador mencionado a *MEMBRO*.\n\n`+
                 `Ex: Responder com *${PREFIX}rebaixar* - Rebaixa o administrador respondido a *MEMBRO*.\n`,
                 msgs: {
                     error: "[❗] O BOT não pode ser rebaixado por ele mesmo.",
-                    reply_title: "[👤 REBAIXAR MEMBROS 👤]\n\n"+
-                    "{p1}",
-                    reply_item_success: "➥ @{p1} virou *MEMBRO*.\n",
-                    reply_item_error: "➥ @{p1} já é um *MEMBRO*.\n"
+                    reply_title: "👤 ⬇️ REBAIXAR MEMBROS\n\n",
+                    reply_item_success: "➥ @{p1} foi rebaixado para *MEMBRO*.\n",
+                    reply_item_error_is_member: "➥ @{p1} já é um *MEMBRO*.\n",
+                    reply_item_error: "➥ @{p1} não pode ser rebaixado.\n"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.rebaixarCommand
             },
             mt: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}mt* - Marca todos os *MEMBROS/ADMIN* do grupo.\n\n`+
                 `Ex: *${PREFIX}mt* mensagem - Marca todos os *MEMBROS/ADMIN* do grupo com uma mensagem.\n`,
                 msgs: {
-                    reply: "〘 🤖 Marquei os *{p1}* membros/admins 〙\n",
-                    reply_with_message: "〘 🤖 Marquei os *{p1}* membros/admins 〙\n\n"+
+                    reply: "🤖❕ Marquei todos os *{p1}* membros/admins.",
+                    reply_with_message: "🤖❕ Marquei todos os *{p1}* membros/admins.\n\n"+
                     "Mensagem: *{p2}*\n"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.mtCommand
             },
             mm: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}mm* - Marca todos os *MEMBROS* do grupo.\n\n`+
                 `Ex: *${PREFIX}mm* mensagem - Marca todos os *MEMBROS* do grupo com uma mensagem.\n`,
                 msgs: {
-                    reply: "〘 🤖 Marquei os *{p1}* membros 〙\n",
-                    reply_with_message: "〘 🤖 Marquei os *{p1}* membros 〙\n\n"+
+                    reply: "🤖❕ Marquei todos os *{p1}* membros.",
+                    reply_with_message: "🤖❕ Marquei os *{p1}* membros.\n\n"+
                     "Mensagem: *{p2}*\n",
-                    error: "[❗] Não existem membros comuns para serem marcados.\n",
+                    error_no_members: "Não existem membros comuns para serem marcados.",
                 },
-                function : infoCommand.menuCommand
-            },
-            rt: {
-                guide: GUIDE_TITLE +`Ex: Responda uma mensagem com *${PREFIX}rt* - Retransmite a mensagem e marca todos os membros do grupo.\n`,
-                function : infoCommand.menuCommand
+                function : groupCommand.mmCommand
             },
             adms: {
                 guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}adms* - Marca todos os *ADMINISTRADORES* em uma postagem.\n\n`+
                 `Ex: *${PREFIX}adms* - Marca os *ADMINISTRADORES* do grupo.\n`,
                 msgs: {
-                    reply_title: "〘 🤖 Marquei os *{p1}* admins 〙\n\n",
-                    reply_message: "Mensagem: *{p1}* \n\n",
-                    reply_item: "➸ @{p1}\n",
+                    reply: "🤖❕ Marquei todos os *{p1}* admins.",
+                    reply_with_message: "🤖❕ Marquei todos os *{p1}* admins.\n\n"+
+                    "Mensagem: *{p2}*\n",
                 },
-                function : infoCommand.menuCommand
-            },
-            enquete: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}enquete* tema,opcao1,opcao2,opcao3 - Cria uma enquete com um tema e as opções de voto.\n`,  
-                msgs: {
-                    error: "[❗] A enquete precisa de no mínimo 2 opçôes",
-                    reply: "✅ A enquete foi aberta com sucesso",
-                },
-                function : infoCommand.menuCommand
+                function : groupCommand.admsCommand
             },
             dono: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}dono* - Exibe e marca o dono do grupo.\n`,
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}dono* - Exibe quem é dono do grupo.\n`,
                 msgs: {
-                    reply: "🤖 O Dono do grupo é : @{p1}",
-                    error: "🤖 O Dono do grupo teve o número banido ou cancelado."
+                    reply: "🤖 O dono do grupo é : +{p1}",
+                    error: "Não foi possível exibir o dono do grupo, o dono teve o número banido ou cancelado."
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.donoCommand
             },
             mutar: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}mutar* - Liga/desliga a execução de comandos dos membros.\n`,
@@ -819,35 +813,39 @@ export default function getCommands (botInfo?: Bot){
                     reply_on: "✅ O recurso de MUTAR GRUPO foi ativado com sucesso",
                     reply_off: "✅ O recurso de MUTAR GRUPO foi desativado com sucesso"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.mutarCommand
             },
             link: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}link* - Exibe o link do grupo.\n`,
                 msgs: {
-                    reply: "〘 Grupo : *{p1}* 〙\n\n"+
-                    "- Link : {p2}"
+                    reply: "👥 Grupo: *{p1}*\n\n"+
+                    "*Link do grupo*: {p2}"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.linkCommand
             },
             rlink: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}rlink* - Redefine o link do grupo.\n`,
                 msgs: {
-                    error: "[❗] Houve um erro na redefinição de link",
-                    reply: "✅ Link foi redefinido com sucesso"
+                    error: "Houve um erro na redefinição de link",
+                    reply: "✅ Link do grupo foi redefinido com sucesso."
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.rlinkCommand
             },
             restrito: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}restrito* - Abre/Restringe o grupo para ADMS.\n`,
-                function : infoCommand.menuCommand
+                msgs: {
+                    reply_on: "✅ O grupo foi restrito apenas para ADMINISTRADORES poderem conversar.",
+                    reply_off: '✅ O grupo foi liberado para todos os MEMBROS poderem conversar.'
+                },
+                function : groupCommand.restritoCommand
             },
-            alink: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}alink* - Liga/desliga o antilink e apaga a mensagem de quem postar qualquer tipo de link.\n`,
+            antilink: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}antilink* - Liga/desliga o antilink e apaga a mensagem de quem postar qualquer tipo de link.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de ANTI-LINK foi ativado com sucesso",
                     reply_off: "✅ O recurso de ANTI-LINK foi desativado com sucesso"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.antilinkCommand
             },
             autosticker: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}autosticker* - Liga/desliga a criação automatica de stickers sem precisar de comandos.\n`,
@@ -855,63 +853,56 @@ export default function getCommands (botInfo?: Bot){
                     reply_on: "✅ O recurso de AUTO-STICKER foi ativado com sucesso",
                     reply_off: "✅ O recurso de AUTO-STICKER foi desativado com sucesso"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.autostickerCommand
             },
-            bv: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bv*  - Liga/desliga a mensagem de bem-vindo para novos membros.\n\n`+
-                `Ex: *${PREFIX}bv* mensagem - Liga a mensagem de bem-vindo com uma mensagem da sua escolha.\n`,
+            bemvindo: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}bemvindo*  - Liga/desliga a mensagem de bem-vindo para novos membros.\n\n`+
+                `Ex: *${PREFIX}bemvindo* mensagem - Liga a mensagem de bem-vindo com uma mensagem da sua escolha.\n`,
                 msgs: {
-                    reply_on: "✅ O recurso de boas vindas foi ativado com sucesso",
-                    reply_off: "✅ O recurso de boas vindas foi desativado com sucesso",
+                    reply_on: "✅ O recurso de BOAS VINDAS foi ativado com sucesso",
+                    reply_off: "✅ O recurso de BOAS VINDAS foi desativado com sucesso",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.bemvindoCommand
             },
-            afake: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}afake* - Liga/desliga o anti-fake em grupos.\n`+
-                `Ex: *${PREFIX}afake* DDI - Configura o anti-fake para que todos números com o DDI exterior seja banido, exceto o que você escolheu.\n`+
-                `Ex: *${PREFIX}afake* DDI1 DDI2 DDI3 - Configura o anti-fake para que todos números com DDI exterior sejam banidos, excetos o que você escolheu.\n\n`+
+            antifake: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}antifake* - Liga/desliga o anti-fake em grupos.\n`+
+                `Ex: *${PREFIX}antifake* DDI - Configura o anti-fake para que todos números com o DDI exterior seja banido, exceto o que você escolheu.\n`+
+                `Ex: *${PREFIX}antifake* DDI1 DDI2 DDI3 - Configura o anti-fake para que todos números com DDI exterior sejam banidos, excetos o que você escolheu.\n\n`+
                 `*Obs*: A ativação do anti-fake bane pessoas com DDI do exterior (que não sejam 55 - Brasil).\n`,
                 msgs: {
                     reply_on: "✅ O recurso de ANTI-FAKE foi ativado com sucesso",
                     reply_off: "✅ O recurso de ANTI-FAKE foi desativado com sucesso"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.antifakeCommand
             },
-            aflood: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}aflood*  - Liga/desliga o anti-flood.\n\n`+
-                `Ex: *${PREFIX}aflood* 5 15  - Maxímo de mensagens fica 5 mensagens a cada 15 segundos.\n`,
+            antispam: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}antispam*  - Liga/desliga o anti-spam.\n\n`+
+                `Ex: *${PREFIX}antispam* 5 15  - Maxímo de mensagens fica 5 mensagens a cada 15 segundos.\n`,
                 msgs: {
-                    error_value_message: "[❗] Escolha um valor entre 5-20 mensagens para o anti-flood.",
-                    error_value_interval: "[❗] Escolha um valor entre 10-60 segundos para o intervalo do anti-flood.",
-                    reply_on: "✅ O recurso de ANTI-FLOOD foi ativado para *{p1}* mensagens a cada *{p2}* segundos.",
-                    reply_off: "✅ O recurso de ANTI-FLOOD foi desativado com sucesso"
+                    error_value_message: "O valor de mensagem é inválido, escolha um valor entre 5-20 mensagens para o Anti-SPAM.",
+                    error_value_interval: "O valor do intervalo é inválido, escolha um valor entre 10-60 segundos para o intervalo do Anti-SPAM.",
+                    reply_on: "✅ O recurso de ANTI-SPAM foi ativado para *{p1}* mensagens a cada *{p2}* segundos.",
+                    reply_off: "✅ O recurso de ANTI-SPAM foi desativado com sucesso"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.antispamCommand
             },
             apg: {
                 guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}apg* - Apaga a mensagem que foi respondida com esse comando.\n\n`+
                 `*Obs* : O bot precisa ser administrador.\n`,
-                function : infoCommand.menuCommand
-            },
-            bantodos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bantodos* - Bane todos os membros do grupo.\n\n`+
-                `*Obs* : Apenas o dono do grupo pode usar este comando.\n`,
-                msgs: {
-                    reply: '🤖✅ Todos banidos com sucesso.'
-                },
-                function : infoCommand.menuCommand
+                function : groupCommand.apgCommand
             },
             topativos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}topativos* 10 - Marca os 10 membros com mais mensagens do grupo.\n\n`+
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}topativos* - Marca os 10 membros com mais mensagens do grupo.\n`+
+                `Ex: *${PREFIX}topativos* 15 - Marca os 15 membros com mais mensagens do grupo.\n\n`+
                 `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
                 msgs: {
-                    error_value_invalid: "[❗] A quantidade de pessoas não é um número válido.",
-                    error_value_limit: "[❗] A quantidade de pessoas deve ser entre 1 e 50",
-                    error_counter: "[❗] Este comando só funciona quando o contador está ativado.",
-                    reply_title: "╔══✪〘🏆 TOP {p1} ATIVOS 🏆 〙\n╠\n",
-                    reply_item: "╠➥ {p1} {p2}° Lugar @{p3} - *{p4}* Msgs\n"
+                    error_value_invalid: "A quantidade de pessoas não é um número válido.",
+                    error_value_limit: "A quantidade de pessoas deve ser entre 1 e 50",
+                    error_counter: "Este comando só funciona quando o contador está ativado.",
+                    reply_title: "🏆 TOP {p1} ATIVOS 🏆\n\n",
+                    reply_item: "{p1} {p2}° Lugar @{p3} - *{p4}* Msgs\n"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.topativosCommand
             },
             contador: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}contador* - Liga/desliga a contagem de mensagens no grupo.\n`,
@@ -919,16 +910,16 @@ export default function getCommands (botInfo?: Bot){
                     reply_on: "✅ O recurso de CONTADOR foi ligado com sucesso",
                     reply_off: "✅ O recurso de CONTADOR foi desligado com sucesso",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.contadorCommand
             }, 
             atividade: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}atividade* @membro - Mostra a atividade do membro mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}atividade* - Mostra a atividade do membro que você respondeu.\n\n`+
                 `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
                 msgs: {
-                    error_counter: "[❗] Este comando só funciona quando o contador está ativado.",
-                    error_not_member: "[❗] Não é possível ver a atividade de quem não está no grupo.",
-                    reply: "🤖 *Atividade do usuário* 🤖\n\n"+
+                    error_counter: "Este comando só funciona quando o contador está ativado.",
+                    error_not_registered: "Esse membro ainda não enviou nenhuma mensagem desde que o contador foi ativado.",
+                    reply: "👤📊 *Atividade do membro*\n\n"+
                     "📱 *Total de mensagens* : {p1}\n"+
                     "═════════════════\n"+
                     "🔤 Textos enviados : {p2}\n"+
@@ -938,64 +929,38 @@ export default function getCommands (botInfo?: Bot){
                     "🎧 Aúdios enviados : {p6}\n"+
                     "🧩 Outros : {p7}\n"
                 },
-                function : infoCommand.menuCommand
-            },
-            imarcar: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}imarcar* 5 - Marca todos os membros com menos de 5 mensagens.\n\n`+
-                `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
-                msgs: {
-                    error_value_invalid: "[❗] A quantidade mínima de mensagens não é um número válido.",
-                    error_value_limit: "[❗] A quantidade mínima de mensagens deve ser entre [1-50]",
-                    error_counter: "[❗] Este comando só funciona quando o contador está ativado.",
-                    reply_no_inactives: "✅ Não existe membros inativos neste grupo.",
-                    reply_title: "╔══✪〘🤖 Marcando todos que tem menos de {p1} mensagens〙\n\n"+
-                    "👤 *Membros inativos* : {p2}\n",
-                    reply_item: "╠➥ @{p1} - *{p2}* Msgs\n"
-                },
-                function : infoCommand.menuCommand
-            },
-            ibanir: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ibanir* 10 - Bane todos os membros com menos de 10 mensagens.\n\n`+
-                `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
-                msgs: {
-                    error_value_invalid: "[❗] A quantidade mínima de mensagens não é um número válido.",
-                    error_value_limit: "[❗] A quantidade mínima de mensagens deve ser entre 1 e 50",
-                    error_counter: "[❗] Este comando só funciona quando o contador está ativado.",
-                    reply: "🤖✅ {p1} Membros com menos de {p2} mensagens foram banidos.",
-                    reply_no_inactives: "✅ Não existem membros inativos válidos para serem banidos."
-                },
-                function : infoCommand.menuCommand
+                function : groupCommand.atividadeCommand
             },
             bcmd: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}bcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
-                `Ex: *${PREFIX}bcmd* figurinhas - Bloqueia todos os comandos da categoria FIGURINHAS.\n\n`+
-                `Ex: *${PREFIX}bcmd* utilidades - Bloqueia todos os comandos da categoria UTILIDADES.\n\n`+
-                `Ex: *${PREFIX}bcmd* downloads - Bloqueia todos os comandos da categoria DOWNLOADS.\n\n`+
+                `Ex: *${PREFIX}bcmd* sticker - Bloqueia todos os comandos da categoria STICKER.\n\n`+
+                `Ex: *${PREFIX}bcmd* utilidade - Bloqueia todos os comandos da categoria UTILIDADE.\n\n`+
+                `Ex: *${PREFIX}bcmd* download - Bloqueia todos os comandos da categoria DOWNLOAD.\n\n`+
                 `Ex: *${PREFIX}bcmd* diversao - Bloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
                 `*Obs* : Você não pode bloquear comandos de administrador.\n`,
                 msgs: {
-                    reply_title: "[🤖 *Bloquear comandos* 🤖]\n\n",
-                    reply_item_already_blocked: "- Comando *{p1}* já está bloqueado.\n",
-                    reply_item_blocked: "- Comando *{p1}* bloqueado com sucesso.\n",
-                    reply_item_error : "- Comando *{p1}* não pode ser bloqueado.\n",
-                    reply_item_not_exist: "- Comando *{p1}* não existe.\n",
+                    reply_title: "🔒 *Bloquear comandos no grupo*\n\n",
+                    reply_item_already_blocked: "Comando *{p1}* já está bloqueado.\n",
+                    reply_item_blocked: "Comando *{p1}* bloqueado com sucesso.\n",
+                    reply_item_error : "Comando *{p1}* não pode ser bloqueado.\n",
+                    reply_item_not_exist: "Comando *{p1}* não existe.\n",
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.bcmdCommand
             },
             dcmd: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}dcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
                 `Ex: *${PREFIX}dcmd* todos - Desbloqueia todos os comandos.\n\n`+
-                `Ex: *${PREFIX}dcmd* figurinhas - Desbloqueia todos os comandos da categoria FIGURINHAS.\n\n`+
-                `Ex: *${PREFIX}dcmd* utilidades - Desbloqueia todos os comandos da categoria UTILIDADES.\n\n`+
-                `Ex: *${PREFIX}dcmd* downloads - Desbloqueia todos os comandos da categoria DOWNLOADS.\n\n`+
+                `Ex: *${PREFIX}dcmd* sticker - Desbloqueia todos os comandos da categoria STICKER.\n\n`+
+                `Ex: *${PREFIX}dcmd* utilidade - Desbloqueia todos os comandos da categoria UTILIDADE.\n\n`+
+                `Ex: *${PREFIX}dcmd* download - Desbloqueia todos os comandos da categoria DOWNLOAD.\n\n`+
                 `Ex: *${PREFIX}dcmd* diversao - Desbloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
                 `*Obs* : Verifique os comandos que estão bloqueados com *${PREFIX}status*.\n`,
                 msgs: {
-                    reply_title: "[🤖 *Desbloquear Comandos* 🤖]\n\n",
-                    reply_item_unblocked: "- Comando *{p1}* foi desbloqueado.\n",
-                    reply_item_not_blocked: "- Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
+                    reply_title: "🔓 *Desbloquear comandos no grupo*\n\n",
+                    reply_item_unblocked: "Comando *{p1}* foi desbloqueado.\n",
+                    reply_item_not_blocked: "Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
                 },
-                function : infoCommand.menuCommand
+                function : groupCommand.dcmdCommand
             }
         },
         
@@ -1073,11 +1038,11 @@ export default function getCommands (botInfo?: Bot){
                     "-------------------\n",
                     reply_item_pvallowed_off : "*PV Liberado* : ❌\n"+
                     "-------------------\n",
-                    reply_item_antispamcmds_on: "*Taxa comandos/minuto* : ✅\n"+
+                    reply_item_taxacomandos_on: "*Taxa comandos/minuto* : ✅\n"+
                     "- *{p1}* Cmds/minuto por usuário\n"+
                     "- Bloqueio : *{p2}* s\n"+
                     "-------------------\n",
-                    reply_item_antispam_comando_off: "*Taxa comandos/minuto* : ❌\n"+
+                    reply_item_taxacomandos_off: "*Taxa comandos/minuto* : ❌\n"+
                     "-------------------\n",
                     reply_item_blockcmds_on : "*Bloqueio de comandos* : ✅\n"+
                     "- Bloqueados: *{p1}*\n"+
@@ -1176,8 +1141,8 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function : infoCommand.menuCommand
             },
-            antispamcmds: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antispamcmds* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+            taxacomandos: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
                 `*Obs*: Digite *${PREFIX}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
                 msgs: {
                     error_msg_number_invalid: "[❗] A quantidade máxima de mensagens por minuto está inválida",

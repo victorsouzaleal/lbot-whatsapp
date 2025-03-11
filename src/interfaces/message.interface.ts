@@ -47,10 +47,3 @@ export interface Message {
     }
 
 }
-
-export type DeletedMessage = {
-    remoteJid?: string | null
-    fromMe? : boolean,
-    id?: string | null,
-    participant?: string | null
-} | proto.IMessageKey

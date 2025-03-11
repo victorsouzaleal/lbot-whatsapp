@@ -1,6 +1,6 @@
 import { WASocket, WAMessage, GroupMetadata, WAPresence } from 'baileys'
 import { randomDelay } from '../lib/util.js'
-import { DeletedMessage, MessageTypes, MimeTypes } from '../interfaces/message.interface.js'
+import {MessageTypes, MimeTypes } from '../interfaces/message.interface.js'
 import { convertLibrary } from '@victorsouzaleal/biblioteca-lbot'
 
 export class BaileysService{
@@ -18,16 +18,16 @@ export class BaileysService{
         await this.client.sendPresenceUpdate('paused', chatId)
     }
 
-    deleteMessage(message : WAMessage, isQuoted = false){
-        let deletedMessage : DeletedMessage
+    deleteMessage(message : WAMessage, deleteQuoted : boolean){
+        let deletedMessage
         let chatId = message.key.remoteJid
 
         if(!chatId) return
 
-        if(isQuoted){
+        if(deleteQuoted){
             deletedMessage = {
                 remoteJid: message.key.remoteJid,
-                fromMe: false,
+                fromMe: message.key.participant === message?.message?.extendedTextMessage?.contextInfo?.participant,
                 id: message.message?.extendedTextMessage?.contextInfo?.stanzaId,
                 participant: message?.message?.extendedTextMessage?.contextInfo?.participant
             }

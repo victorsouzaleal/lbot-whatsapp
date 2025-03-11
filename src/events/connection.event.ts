@@ -19,7 +19,7 @@ export async function connectionOpen(client: WASocket){
         console.log("[BOT]", colorText(generalMessages.bot_data))
         await checkAdminNumber()
     } catch(err: any) {
-        showConsoleError(err.message, "CONNECTION")
+        showConsoleError(err, "CONNECTION")
         client.end(new Error("fatal_error"))
     }
 }
@@ -32,18 +32,18 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
         const errorCode = (new Boom(lastDisconnect?.error)).output.statusCode
 
         if(lastDisconnect?.error?.message == "admin_command"){
-            showConsoleError(generalMessages.disconnected.command, 'CONNECTION')
+            showConsoleError(new Error(generalMessages.disconnected.command), 'CONNECTION')
         } else if(lastDisconnect?.error?.message == "fatal_error"){
-            showConsoleError(generalMessages.disconnected.fatal_error, 'CONNECTION')
+            showConsoleError(new Error(generalMessages.disconnected.fatal_error), 'CONNECTION')
         } else {
             needReconnect = true
             if(errorCode == DisconnectReason?.loggedOut){
                 fs.rmSync("session", {recursive: true, force: true})
-                showConsoleError(generalMessages.disconnected.logout, 'CONNECTION')
+                showConsoleError(new Error(generalMessages.disconnected.logout), 'CONNECTION')
             } else if(errorCode == DisconnectReason?.restartRequired){
-                showConsoleError(generalMessages.disconnected.restart, 'CONNECTION')
+                showConsoleError(new Error(generalMessages.disconnected.restart), 'CONNECTION')
             } else {
-                showConsoleError(buildText(generalMessages.disconnected.bad_connection, errorCode.toString(), lastDisconnect?.error?.message), 'CONNECTION')
+                showConsoleError(new Error(buildText(generalMessages.disconnected.bad_connection, errorCode.toString(), lastDisconnect?.error?.message)), 'CONNECTION')
             }
         }
 

@@ -37,8 +37,8 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
     await updateUserName(userController, message)
 
     if(isCommand || isAutosticker){
-        //Se o limitador de comandos estiver ativado e o usuário estiver limitado, retorne.
-        if(await isUserLimitedBySpamCommands(botController, baileysController, botInfo, message)) return
+        //Se a taxa de comandos estiver ativado e o usuário estiver limitado, retorne.
+        if(await isUserLimitedByCommandRate(botController, baileysController, botInfo, message)) return
 
         //Se o comando estiver bloqueado globalmente, retorne.
         if(await isCommandBlockedGlobally(baileysController, botController, botInfo, message)) return
@@ -76,8 +76,8 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     //Se o antilink estiver ativado, e for detectado um link na mensagem, retorne.
     if(await isDetectedByAntilink(baileysController, groupController, botInfo, group, message)) return
 
-    //Se o antiflood estiver ativado, e for detectada como flood, retorne.
-    if(await isDetectedByAntiflood(baileysController, groupController, botInfo, group, message)) return
+    //Se o Anti-Spam estiver ativado, e for detectada como spam, retorne.
+    if(await isDetectedByAntiSpam(baileysController, groupController, botInfo, group, message)) return
 
     //Verifica se é um registro de admin, se for retorne.
     if(await isAdminRegister(baileysController, userController, botInfo, message)) return
@@ -95,8 +95,8 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     await updateUserName(userController, message)
 
     if(isCommand || isAutosticker){
-        //Se o limitador de comandos estiver ativado e o usuário estiver limitado, retorne.
-        if(await isUserLimitedBySpamCommands(botController, baileysController, botInfo, message)) return
+        //Se a taxa de comandos estiver ativa e o usuário estiver limitado, retorne.
+        if(await isUserLimitedByCommandRate(botController, baileysController, botInfo, message)) return
 
         //Se o comando estiver bloqueado globalmente, retorne.
         if(await isCommandBlockedGlobally(baileysController, botController, botInfo, message)) return
@@ -178,12 +178,12 @@ async function updateUserName(userController: UserController, message: Message){
     if(message.pushname) await userController.setName(message.sender, message.pushname)
 }
 
-async function isUserLimitedBySpamCommands(botController: BotController, baileysController: BaileysController, botInfo: Bot, message: Message){
-    if(botInfo.antispam_cmds.status){
-        const isSpam = botController.isCommandSpam(message.sender, message.isBotAdmin, message.isGroupAdmin)
+async function isUserLimitedByCommandRate(botController: BotController, baileysController: BaileysController, botInfo: Bot, message: Message){
+    if(botInfo.command_rate.status){
+        const isSpam = botController.isCommandLimitedByRate(message.sender, message.isBotAdmin, message.isGroupAdmin)
         if(isSpam){
             const generalMessages = getGeneralMessages(botInfo)
-            await baileysController.replyText(message.chat_id, buildText(generalMessages.antispamcmds_limited_message, botInfo.antispam_cmds.block_time), message.wa_message)
+            await baileysController.replyText(message.chat_id, buildText(generalMessages.taxacomandos_limited_message, botInfo.command_rate.block_time), message.wa_message)
             return true
         }
     }
@@ -215,18 +215,18 @@ async function isDetectedByAntilink(baileysController: BaileysController, groupC
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
     if(isDetectedByAntilink){
         await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, message.sender.replace("@s.whatsapp.net", "")), [message.sender])
-        await baileysController.deleteMessage(message.wa_message, message.isQuoted)
+        await baileysController.deleteMessage(message.wa_message, false)
         return true
     }
     return false
 }
 
-async function isDetectedByAntiflood(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
+async function isDetectedByAntiSpam(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
-    const isDetectedByAntiflood = await groupController.isFloodMessage(group, message.sender)
-    if(isDetectedByAntiflood){
+    const isDetectedByAntiSpam = await groupController.isSpamMessage(group, message.sender)
+    if(isDetectedByAntiSpam){
         await baileysController.removeParticipant(message.chat_id, message.sender)
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, message.sender.replace("@s.whatsapp.net", ""), botInfo.name), [message.sender])
+        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antispam_ban_messages, message.sender.replace("@s.whatsapp.net", ""), botInfo.name), [message.sender])
         return true
     }
     return false

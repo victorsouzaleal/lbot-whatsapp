@@ -1,38 +1,38 @@
 export interface Group {
-    id: string,
-    name : string, 
-    description : string | undefined,
-    commands_executed: number,
-    participants : string[],
-    admins : string[],
-    owner : string | undefined,
-    restricted : boolean | undefined,
-    muted : boolean,
-    welcome : {
-        status: boolean,
+    id: string
+    name : string
+    description?: string
+    commands_executed: number
+    participants : string[]
+    admins : string[]
+    owner?: string
+    restricted?: boolean
+    muted: boolean,
+    welcome: {
+        status: boolean
         msg : string
     },
     antifake: {
-        status: boolean,
+        status: boolean
         allowed : string[]
     },
-    antilink: boolean,
-    antiflood: {
-        status: boolean,
-        max_messages: number,
-        interval: number,
-        messages : AntiFloodMessage []
+    antilink: boolean
+    antispam: {
+        status: boolean
+        max_messages: number
+        interval: number
+        messages : AntiSpamMessage []
     },
-    autosticker: boolean,
+    autosticker: boolean
     counter: {
-        status: boolean,
+        status: boolean
         started: string
     }
-    block_cmds: string[],
+    block_cmds: string[]
     blacklist : string[]
 }
 
-export interface AntiFloodMessage {
+export interface AntiSpamMessage {
     id: string,
     expire: number,
     qty: number
