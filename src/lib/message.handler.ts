@@ -74,10 +74,10 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     if(await isBotLimitedByGroupRestricted(group, botInfo)) return
 
     //Se o antilink estiver ativado, e for detectado um link na mensagem, retorne.
-    if(await isDetectedByAntilink(baileysController, groupController, botInfo, group, message)) return
+    if(await isDetectedByAntiLink(baileysController, groupController, botInfo, group, message)) return
 
-    //Se o Anti-Spam estiver ativado, e for detectada como spam, retorne.
-    if(await isDetectedByAntiSpam(baileysController, groupController, botInfo, group, message)) return
+    //Se o Anti-FLOOD estiver ativado, e for detectada como FLOOD, retorne.
+    if(await isDetectedByAntiFlood(baileysController, groupController, botInfo, group, message)) return
 
     //Verifica se é um registro de admin, se for retorne.
     if(await isAdminRegister(baileysController, userController, botInfo, message)) return
@@ -210,7 +210,7 @@ async function isCommandBlockedGroup(baileysController: BaileysController, group
     return false
 }
 
-async function isDetectedByAntilink(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
+async function isDetectedByAntiLink(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
     if(isDetectedByAntilink){
@@ -221,12 +221,12 @@ async function isDetectedByAntilink(baileysController: BaileysController, groupC
     return false
 }
 
-async function isDetectedByAntiSpam(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
+async function isDetectedByAntiFlood(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
-    const isDetectedByAntiSpam = await groupController.isSpamMessage(group, message.sender)
-    if(isDetectedByAntiSpam){
+    const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender)
+    if(isDetectedByAntiFlood){
         await baileysController.removeParticipant(message.chat_id, message.sender)
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antispam_ban_messages, message.sender.replace("@s.whatsapp.net", ""), botInfo.name), [message.sender])
+        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, message.sender.replace("@s.whatsapp.net", ""), botInfo.name), [message.sender])
         return true
     }
     return false

@@ -672,9 +672,9 @@ export default function getCommands (botInfo?: Bot){
                     reply_item_antifake_on : "*Anti-Fake*: ✅\n"+
                     "- *Prefixos liberados* : {p1}\n",
                     reply_item_antifake_off : "*Anti-Fake*: ❌\n",
-                    reply_item_antispam_on : "*Anti-Spam*: ✅\n"+
+                    reply_item_antiflood_on : "*Anti-Flood*: ✅\n"+
                     "- Máx: *{p1}* msgs / *{p2}* s \n",
-                    reply_item_antispam_off : "*Anti-Spam*: ❌\n",
+                    reply_item_antiflood_off : "*Anti-Flood*: ❌\n",
                     reply_item_counter_on : "*Contador*: ✅\n"+
                     "- {p1}\n",
                     reply_item_counter_off : "*Contador*: ❌\n",
@@ -832,7 +832,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.rlinkCommand
             },
             restrito: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}restrito* - Abre/Restringe o grupo para ADMS.\n`,
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}restrito* - Abre/fecha o grupo apenas para administradores conversarem.\n`,
                 msgs: {
                     reply_on: "✅ O grupo foi restrito apenas para ADMINISTRADORES poderem conversar.",
                     reply_off: '✅ O grupo foi liberado para todos os MEMBROS poderem conversar.'
@@ -840,7 +840,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.restritoCommand
             },
             antilink: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antilink* - Liga/desliga o antilink e apaga a mensagem de quem postar qualquer tipo de link.\n`,
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}antilink* - Liga/desliga o Anti-LINK no grupo e apaga a mensagem de quem postar qualquer tipo de link.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de ANTI-LINK foi ativado com sucesso",
                     reply_off: "✅ O recurso de ANTI-LINK foi desativado com sucesso"
@@ -865,7 +865,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.bemvindoCommand
             },
             antifake: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antifake* - Liga/desliga o anti-fake em grupos.\n`+
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}antifake* - Liga/desliga o Anti-FAKE no grupo.\n`+
                 `Ex: *${PREFIX}antifake* DDI - Configura o anti-fake para que todos números com o DDI exterior seja banido, exceto o que você escolheu.\n`+
                 `Ex: *${PREFIX}antifake* DDI1 DDI2 DDI3 - Configura o anti-fake para que todos números com DDI exterior sejam banidos, excetos o que você escolheu.\n\n`+
                 `*Obs*: A ativação do anti-fake bane pessoas com DDI do exterior (que não sejam 55 - Brasil).\n`,
@@ -875,16 +875,16 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function : groupCommand.antifakeCommand
             },
-            antispam: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antispam*  - Liga/desliga o anti-spam.\n\n`+
-                `Ex: *${PREFIX}antispam* 5 15  - Maxímo de mensagens fica 5 mensagens a cada 15 segundos.\n`,
+            antiflood: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}antiflood*  - Liga/desliga o Anti-FLOOD no grupo.\n\n`+
+                `Ex: *${PREFIX}antiflood* 5 15  - Maxímo de mensagens fica 5 mensagens a cada 15 segundos.\n`,
                 msgs: {
-                    error_value_message: "O valor de mensagem é inválido, escolha um valor entre 5-20 mensagens para o Anti-SPAM.",
-                    error_value_interval: "O valor do intervalo é inválido, escolha um valor entre 10-60 segundos para o intervalo do Anti-SPAM.",
-                    reply_on: "✅ O recurso de ANTI-SPAM foi ativado para *{p1}* mensagens a cada *{p2}* segundos.",
-                    reply_off: "✅ O recurso de ANTI-SPAM foi desativado com sucesso"
+                    error_value_message: "O valor de mensagem é inválido, escolha um valor entre 5-20 mensagens para o Anti-FLOOD.",
+                    error_value_interval: "O valor do intervalo é inválido, escolha um valor entre 10-60 segundos para o intervalo do Anti-FLOOD.",
+                    reply_on: "✅ O recurso de ANTI-FLOOD foi ativado para *{p1}* mensagens a cada *{p2}* segundos.",
+                    reply_off: "✅ O recurso de ANTI-FLOOD foi desativado com sucesso"
                 },
-                function : groupCommand.antispamCommand
+                function : groupCommand.antifloodCommand
             },
             apg: {
                 guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}apg* - Apaga a mensagem que foi respondida com esse comando.\n\n`+

@@ -76,7 +76,7 @@ async function filterUserAntifake(client: WASocket, botInfo: Bot, group: Group, 
                 return false
             }
         } else {
-            await groupController.setAntifake(group.id, false, [])
+            await groupController.setAntiFake(group.id, false, [])
         }
     }
 

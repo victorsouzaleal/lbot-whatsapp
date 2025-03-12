@@ -189,7 +189,7 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 |- *${prefix}bemvindo* - Ativa/desativa a mensagem de BEM-VINDO.
 |- *${prefix}antilink* - Ativa/desativa o Anti-LINK.
 |- *${prefix}antifake* - Ativa/desativa o Anti-FAKE.
-|- *${prefix}antispam* - Ativa/desativa o Anti-SPAM.
+|- *${prefix}antiflood* - Ativa/desativa o Anti-FLOOD.
 |
 |--〖⌨️ *ADMINISTRATIVO*〗
 |
@@ -295,7 +295,7 @@ export const adminMenu = (botInfo : Bot)=>{
 |- *${prefix}bcmdglobal* !comando1 !comando2 - Bloqueia os comandos escolhidos globalmente.
 |- *${prefix}dcmdglobal* !comando1 !comando2 - Desbloqueia os comandos escolhidos globalmente.
 |
-|--〖👤 *ANTI-SPAM COMANDOS*〗
+|--〖👤 *TAXA DE COMANDOS POR MINUTO*〗
 |
 |- *${prefix}taxacomandos* qtd-comandos - Ativa/desativa a taxa de comandos por minuto.
 |

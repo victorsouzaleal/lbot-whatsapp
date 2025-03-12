@@ -1,7 +1,7 @@
 import { downloadMediaMessage, WASocket, S_WHATSAPP_NET } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
-import { CounterUser, Group } from "../interfaces/group.interface.js";
+import { Group, ParticipantCounter } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
 import { buildText, messageErrorCommandUsage } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
@@ -27,8 +27,8 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += (group.antilink) ? commandsData.group.grupo.msgs.reply_item_antilink_on : commandsData.group.grupo.msgs.reply_item_antilink_off
         //Anti-Fake
         replyText += (group.antifake.status) ? buildText(commandsData.group.grupo.msgs.reply_item_antifake_on, group.antifake.allowed.toString()) : commandsData.group.grupo.msgs.reply_item_antifake_off
-        //Anti-Spam
-        replyText += (group.antispam.status) ? buildText(commandsData.group.grupo.msgs.reply_item_antispam_on, group.antispam.max_messages, group.antispam.interval) : commandsData.group.grupo.msgs.reply_item_antispam_off
+        //Anti-Flood
+        replyText += (group.antiflood.status) ? buildText(commandsData.group.grupo.msgs.reply_item_antiflood_on, group.antiflood.max_messages, group.antiflood.interval) : commandsData.group.grupo.msgs.reply_item_antiflood_off
         //Contador
         replyText += (group.counter.status) ? buildText(commandsData.group.grupo.msgs.reply_item_counter_on, group.counter.started) : commandsData.group.grupo.msgs.reply_item_counter_off
 
@@ -392,7 +392,7 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
     if (!isBotGroupAdmin) throw new Error(generalMessages.permission.bot_group_admin)
     
     const replyText = group.antilink ? commandsData.group.antilink.msgs.reply_off : commandsData.group.antilink.msgs.reply_on
-    await groupController.setAntilink(group.id, !group.antilink)
+    await groupController.setAntiLink(group.id, !group.antilink)
     await baileysController.replyText(group.id, replyText, message.wa_message)
 }
 
@@ -405,7 +405,7 @@ export async function autostickerCommand(client: WASocket, botInfo: Bot, message
     if (!message.isGroupAdmin) throw new Error(generalMessages.permission.admin_group_only)
     
     const replyText = group.autosticker ? commandsData.group.autosticker.msgs.reply_off : commandsData.group.autosticker.msgs.reply_on
-    await groupController.setAutosticker(group.id, !group.autosticker)
+    await groupController.setAutoSticker(group.id, !group.autosticker)
     await baileysController.replyText(group.id, replyText, message.wa_message)
 }
 
@@ -434,11 +434,11 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
     
     const allowedDDI = !message.args.length ? ["55"] : message.args
     const replyText = group.antifake.status ? commandsData.group.antifake.msgs.reply_off : commandsData.group.antifake.msgs.reply_on
-    await groupController.setAntifake(group.id, !group.antifake.status, allowedDDI)
+    await groupController.setAntiFake(group.id, !group.antifake.status, allowedDDI)
     await baileysController.replyText(group.id, replyText, message.wa_message)
 }
 
-export async function antispamCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+export async function antifloodCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
@@ -454,11 +454,11 @@ export async function antispamCommand(client: WASocket, botInfo: Bot, message: M
     if(message.args.length == 2) [maxMessage, interval] = message.args
     else if (message.args.length == 1) [maxMessage] = message.args
 
-    if(!Number(interval) || Number(interval) < 10 || Number(interval) > 60) throw new Error(commandsData.group.antispam.msgs.error_value_interval)
-    if(!Number(maxMessage) || Number(maxMessage) < 5 || Number(maxMessage) > 20) throw new Error(commandsData.group.antispam.msgs.error_value_message)
+    if(!Number(interval) || Number(interval) < 10 || Number(interval) > 60) throw new Error(commandsData.group.antiflood.msgs.error_value_interval)
+    if(!Number(maxMessage) || Number(maxMessage) < 5 || Number(maxMessage) > 20) throw new Error(commandsData.group.antiflood.msgs.error_value_message)
     
-    const replyText = group.antispam.status ? commandsData.group.antispam.msgs.reply_off : buildText(commandsData.group.antispam.msgs.reply_on, maxMessage, interval)
-    await groupController.setAntiSpam(group.id, !group.antispam.status, Number(maxMessage), Number(interval))
+    const replyText = group.antiflood.status ? commandsData.group.antiflood.msgs.reply_off : buildText(commandsData.group.antiflood.msgs.reply_on, maxMessage, interval)
+    await groupController.setAntiFlood(group.id, !group.antiflood.status, Number(maxMessage), Number(interval))
     await baileysController.replyText(group.id, replyText, message.wa_message)
 }
 
@@ -549,7 +549,7 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
     let userActivity = await groupController.getParticipantActivity(group.id, targetUserId)
 
     if(!userActivity){
-        if(group.participants.includes(targetUserId)) userActivity = await groupController.registerParticipantActivity(group.id, targetUserId) as CounterUser
+        if(group.participants.includes(targetUserId)) userActivity = await groupController.registerParticipantActivity(group.id, targetUserId) as ParticipantCounter
         else throw new Error(commandsData.group.atividade.msgs.error_not_member)
     } else {
         if(!group.participants.includes(targetUserId)) throw new Error(commandsData.group.atividade.msgs.error_not_member)

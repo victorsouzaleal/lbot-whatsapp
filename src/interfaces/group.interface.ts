@@ -17,7 +17,7 @@ export interface Group {
         allowed : string[]
     },
     antilink: boolean
-    antispam: {
+    antiflood: {
         status: boolean
         max_messages: number
         interval: number
@@ -31,14 +31,14 @@ export interface Group {
     blacklist : string[]
 }
 
-export interface ParticipantAntiSpam {
+export interface ParticipantAntiFlood {
     group_id: string,
     user_id: string,
     expire: number,
-    qty: number
+    msgs: number
 }
 
-export interface CounterUser {
+export interface ParticipantCounter {
     group_id : string,
     user_id : string,
     msgs : number,

@@ -31,8 +31,8 @@ export default function getGeneralMessages (botInfo? : Bot){
             antifake_ban_message : "🤖✅ Entendido, +{p1} será banido.\n\n"+
             "Motivo : ANTI-FAKE\n"+
             "Quem baniu : {p2}",
-            antispam_ban_messages : "🤖✅ Entendido, +{p1} será banido.\n\n"+
-            "Motivo : ANTI-SPAM\n"+
+            antiflood_ban_messages : "🤖✅ Entendido, +{p1} será banido.\n\n"+
+            "Motivo : ANTI-FLOOD\n"+
             "Quem baniu : {p2}",
             queue_commands: "⏳ O bot está atendendo muitas pessoas ao mesmo tempo, tenha paciência!\n\n"+
             "Atualmente existem *{p1}* comandos na fila de espera.",

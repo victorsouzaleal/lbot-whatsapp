@@ -114,7 +114,7 @@ export class GroupController {
     }
 
     // ***** ANTI-LINK *****
-    public setAntilink(groupId: string, status = true) {
+    public setAntiLink(groupId: string, status = true) {
         return this.groupService.setAntilink(groupId, status)
     }
 
@@ -123,12 +123,12 @@ export class GroupController {
     }
 
     // ***** AUTO-STICKER *****
-    public setAutosticker(groupId: string, status = true) {
+    public setAutoSticker(groupId: string, status = true) {
         return this.groupService.setAutosticker(groupId, status)
     }
 
     // ***** ANTI-FAKE *****
-    public setAntifake(groupId: string, status = true, allowed : string[]) {
+    public setAntiFake(groupId: string, status = true, allowed : string[]) {
         return this.groupService.setAntifake(groupId, status, allowed)
     }
 
@@ -141,13 +141,13 @@ export class GroupController {
         return this.groupService.setMuted(groupId, status)
     }
 
-    // ***** ANTI-SPAM *****
-    public setAntiSpam(groupId: string, status = true, maxMessages = 10, interval = 10) {
-        return this.groupService.setAntiSpam(groupId, status, maxMessages, interval)
+    // ***** ANTI-FLOOD *****
+    public setAntiFlood(groupId: string, status = true, maxMessages = 10, interval = 10) {
+        return this.groupService.setAntiFlood(groupId, status, maxMessages, interval)
     }
 
-    public isSpamMessage(group: Group, userId: string){
-        return this.groupService.isSpamMessage(group, userId)
+    public isFlood(group: Group, userId: string){
+        return this.groupService.isFlood(group, userId)
     }
 
     // ***** LISTA-NEGRA *****

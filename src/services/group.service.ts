@@ -1,5 +1,5 @@
 import Datastore from "@seald-io/nedb";
-import { CounterUser, Group, ParticipantAntiSpam } from "../interfaces/group.interface.js";
+import { ParticipantCounter, Group, ParticipantAntiFlood } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
@@ -11,7 +11,7 @@ import getGeneralMessages from "../lib/general-messages.js";
 
 const db = {
     groups : new Datastore({filename : './storage/groups.db', autoload: true}),
-    group_antispam : new Datastore({filename : './storage/group.antispam.db', autoload: true}),
+    group_antiflood : new Datastore({filename : './storage/group.antiflood.db', autoload: true}),
     group_counter : new Datastore({filename : './storage/group.counter.db', autoload: true})
 }
 
@@ -39,7 +39,7 @@ export class GroupService {
             welcome : { status: false, msg: '' },
             antifake : { status: false, allowed: [] },
             antilink : false,
-            antispam : { status: false, max_messages: 10, interval: 10},
+            antiflood : { status: false, max_messages: 10, interval: 10},
             autosticker : false,
             counter : { status: false, started: '' },
             block_cmds : [],
@@ -232,67 +232,67 @@ export class GroupService {
         return db.groups.updateAsync({id: groupId}, { $set: { autosticker: status } })
     }
 
-    // ***** ANTI-SPAM *****
-    public async setAntiSpam(groupId: string, status: boolean, maxMessages: number, interval: number){
-        if(!status) await this.removeGroupAntiSpam(groupId)
-        return db.groups.updateAsync({id : groupId}, { $set:{ 'antispam.status' : status, 'antispam.max_messages' : maxMessages, 'antispam.interval' : interval } })
+    // ***** ANTI-FLOOD *****
+    public async setAntiFlood(groupId: string, status: boolean, maxMessages: number, interval: number){
+        if(!status) await this.removeGroupAntiFlood(groupId)
+        return db.groups.updateAsync({id : groupId}, { $set:{ 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
     }
 
-    public async isSpamMessage(group: Group, userId: string){
+    public async isFlood(group: Group, userId: string){
         const currentTimestamp = Math.round(moment.now()/1000)
-        const participantAntiSpam = await this.getParticipantAntiSpam(group.id, userId)
-        let isSpam = false
+        const participantAntiFlood = await this.getParticipantAntiFlood(group.id, userId)
+        let isFlood = false
 
-        if(participantAntiSpam){
-            const hasExpiredMessages = await this.hasExpiredMessages(group, participantAntiSpam, currentTimestamp)
+        if(participantAntiFlood){
+            const hasExpiredMessages = await this.hasExpiredMessages(group, participantAntiFlood, currentTimestamp)
 
-            if(!hasExpiredMessages && participantAntiSpam.qty >= group.antispam.max_messages) {
-                if(group.admins.includes(userId)) isSpam = false
-                else isSpam = true
+            if(!hasExpiredMessages && participantAntiFlood.msgs >= group.antiflood.max_messages) {
+                if(group.admins.includes(userId)) isFlood = false
+                else isFlood = true
             } else {
-                isSpam = false
+                isFlood = false
             }
         } else {
-            await this.registerParticipantAntiSpam(group, userId)
+            await this.registerParticipantAntiFlood(group, userId)
         }
     
-        return isSpam
+        return isFlood
     }
 
-    private removeGroupAntiSpam(groupId: string){
-        return db.group_antispam.removeAsync({group_id: groupId}, {multi: true})
+    private removeGroupAntiFlood(groupId: string){
+        return db.group_antiflood.removeAsync({group_id: groupId}, {multi: true})
     }
 
-    private async registerParticipantAntiSpam(group: Group, userId: string){
-        const isRegistered = (await this.getParticipantAntiSpam(group.id, userId)) ? true : false
+    private async registerParticipantAntiFlood(group: Group, userId: string){
+        const isRegistered = (await this.getParticipantAntiFlood(group.id, userId)) ? true : false
 
         if(isRegistered) return 
 
         const timestamp = Math.round(moment.now()/1000)
 
-        const participantAntiSpam : ParticipantAntiSpam = {
+        const participantAntiFlood : ParticipantAntiFlood = {
             user_id: userId,
             group_id: group.id,
-            expire: timestamp + group.antispam.interval,
-            qty: 1
+            expire: timestamp + group.antiflood.interval,
+            msgs: 1
         }
 
-        return db.group_antispam.insertAsync(participantAntiSpam)
+        return db.group_antiflood.insertAsync(participantAntiFlood)
     }
 
-    private async getParticipantAntiSpam(groupId: string, userId: string){
-        const doc : unknown = await db.group_antispam.findOneAsync({group_id: groupId, user_id: userId})
-        const participantAntiSpam = doc as ParticipantAntiSpam | null
-        return participantAntiSpam
+    private async getParticipantAntiFlood(groupId: string, userId: string){
+        const doc : unknown = await db.group_antiflood.findOneAsync({group_id: groupId, user_id: userId})
+        const participantAntiFlood = doc as ParticipantAntiFlood | null
+        return participantAntiFlood
     }
 
-    private async hasExpiredMessages(group: Group, participantAntiSpam: ParticipantAntiSpam, currentTimestamp: number){
-        if(group && currentTimestamp > participantAntiSpam.expire){
-            const expireTimestamp = currentTimestamp + group?.antispam.interval
-            await db.group_antispam.updateAsync({group_id: participantAntiSpam.group_id, user_id: participantAntiSpam.user_id}, { $set : { expire: expireTimestamp, qty: 1 } })
+    private async hasExpiredMessages(group: Group, participantAntiFlood: ParticipantAntiFlood, currentTimestamp: number){
+        if(group && currentTimestamp > participantAntiFlood.expire){
+            const expireTimestamp = currentTimestamp + group?.antiflood.interval
+            await db.group_antiflood.updateAsync({group_id: participantAntiFlood.group_id, user_id: participantAntiFlood.user_id}, { $set : { expire: expireTimestamp, msgs: 1 } })
             return true
         } else {
-            await db.group_antispam.updateAsync({group_id: participantAntiSpam.group_id, user_id: participantAntiSpam.user_id}, { $inc : { qty: 1 } })
+            await db.group_antiflood.updateAsync({group_id: participantAntiFlood.group_id, user_id: participantAntiFlood.user_id}, { $inc : { msgs: 1 } })
             return false
         }
     }
@@ -397,7 +397,7 @@ export class GroupService {
 
     public async getParticipantActivity(groupId: string, userId: string){
         const doc : unknown = await db.group_counter.findOneAsync({group_id: groupId, user_id: userId})
-        const counter = doc as CounterUser | null
+        const counter = doc as ParticipantCounter | null
         return counter
     }
 
@@ -411,7 +411,7 @@ export class GroupService {
 
         if(isRegistered) return
 
-        const counterUser : CounterUser = {
+        const participantCounter : ParticipantCounter = {
             group_id : groupId,
             user_id: userId,
             msgs: 0,
@@ -423,7 +423,7 @@ export class GroupService {
             other: 0
         }
 
-        return db.group_counter.insertAsync(counterUser)
+        return db.group_counter.insertAsync(participantCounter)
     }
 
     public async registerAllParticipantsActivity(groupId: string, participants: string[]){
@@ -434,7 +434,7 @@ export class GroupService {
 
     public async getAllParticipantsActivity(groupId: string){
         const doc : unknown = await db.group_counter.findAsync({group_id : groupId})
-        const counters = doc as CounterUser[]
+        const counters = doc as ParticipantCounter[]
         return counters
     }
 
@@ -468,8 +468,8 @@ export class GroupService {
 
     public async getParticipantActivityLowerThan(group: Group, num : number){
         let doc: unknown = await db.group_counter.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1})
-        const inactives = doc as CounterUser[]
-        let inactivesOnGroup : CounterUser[] = []
+        const inactives = doc as ParticipantCounter[]
+        let inactivesOnGroup : ParticipantCounter[] = []
         inactives.forEach((inactive) => {
             if (group.participants.includes(inactive.user_id)) inactivesOnGroup.push(inactive)
         })
@@ -478,8 +478,8 @@ export class GroupService {
 
     public async getParticipantsActivityRanking(group: Group, qty: number){
         const doc : unknown = await db.group_counter.findAsync({group_id : group.id}).sort({msgs: -1})
-        const participantsLeaderbord = doc as CounterUser[]
-        const participantsOnGroup : CounterUser[] = []
+        const participantsLeaderbord = doc as ParticipantCounter[]
+        const participantsOnGroup : ParticipantCounter[] = []
         const qty_leaderboard = (qty > participantsLeaderbord.length) ? participantsLeaderbord.length : qty
         for (let i = 0; i < qty_leaderboard; i++) {
             if (group.participants.includes(participantsLeaderbord[i].user_id)) participantsOnGroup.push(participantsLeaderbord[i])
