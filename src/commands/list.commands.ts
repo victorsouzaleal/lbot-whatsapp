@@ -918,18 +918,35 @@ export default function getCommands (botInfo?: Bot){
                 `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
                 msgs: {
                     error_counter: "Este comando só funciona quando o contador está ativado.",
-                    error_not_registered: "Esse membro ainda não enviou nenhuma mensagem desde que o contador foi ativado.",
-                    reply: "👤📊 *Atividade do membro*\n\n"+
-                    "📱 *Total de mensagens* : {p1}\n"+
+                    error_not_member: "Não é possível obter a atividade de quem não está no grupo.",
+                    reply: "📊 *ATIVIDADE DO MEMBRO*:\n\n"+
+                    "👤 *Nome*: {p1}\n"+
+                    "📲 *Número*: +{p2}\n"+
+                    "🧮 *Total de mensagens* : {p3}\n"+
                     "═════════════════\n"+
-                    "🔤 Textos enviados : {p2}\n"+
-                    "📸 Imagens enviadas : {p3}\n"+
-                    "🎥 Videos enviados : {p4}\n"+
-                    "🖼️ Figurinhas enviadas : {p5}\n"+
-                    "🎧 Aúdios enviados : {p6}\n"+
-                    "🧩 Outros : {p7}\n"
+                    "🔤 Textos enviados : {p4}\n"+
+                    "📸 Imagens enviadas : {p5}\n"+
+                    "🎥 Videos enviados : {p6}\n"+
+                    "🖼️ Figurinhas enviadas : {p7}\n"+
+                    "🎧 Aúdios enviados : {p8}\n"+
+                    "🧩 Outros : {p9}\n"
                 },
                 function : groupCommand.atividadeCommand
+            },
+            inativos: {
+                guide: GUIDE_TITLE +`Ex: *${PREFIX}inativos* 5 - Marca todos os membros com menos de 5 mensagens.\n\n`+
+                `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
+                msgs: {
+                    error_value_invalid: "A quantidade mínima de mensagens não é um número válido.",
+                    error_value_limit: "A quantidade mínima de mensagens deve ser maior ou igual a 1.",
+                    error_counter: "Este comando só funciona quando o contador está ativado.",
+                    error_no_inactives: "Não existem membros inativos neste grupo.",
+                    reply_title: "💤 *MEMBROS INATIVOS*:\n\n"+
+                    "👤 *Quantidade de inativos*: {p1}\n\n"+
+                    'Marcando todos que tem menos de *{p2}* mensagens:\n\n',
+                    reply_item: "@{p1} - *{p2}* Msgs\n"
+                },
+                function : groupCommand.inativosCommand
             },
             bcmd: {
                 guide: GUIDE_TITLE +`Ex: *${PREFIX}bcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+

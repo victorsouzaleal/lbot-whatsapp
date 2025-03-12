@@ -406,6 +406,12 @@ export class GroupService {
         return db.counter_groups.insertAsync(counterUser)
     }
 
+    async registerAllParticipantsActivity(groupId: string, participants: string[]){
+        participants.forEach(async (participant) =>{
+            await this.setParticipantActivity(groupId, participant)
+        })
+    }
+
     async getAllParticipantsActivity(groupId: string){
         const doc : unknown = await db.counter_groups.findAsync({group_id : groupId})
         const counters = doc as CounterUser[]

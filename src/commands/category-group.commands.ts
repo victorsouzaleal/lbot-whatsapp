@@ -1,7 +1,7 @@
 import { downloadMediaMessage, WASocket, S_WHATSAPP_NET } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
-import { Group } from "../interfaces/group.interface.js";
+import { CounterUser, Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
 import { buildText, messageErrorCommandUsage } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
@@ -523,6 +523,7 @@ export async function contadorCommand(client: WASocket, botInfo: Bot, message: M
     const commandsData = getCommands(botInfo)
 
     if(!message.isGroupAdmin) throw new Error(generalMessages.permission.admin_group_only)
+    if(!group.counter.status) await groupController.registerAllParticipantsActivity(group.id, group.participants)
 
     const replyText = group.counter.status ? commandsData.group.contador.msgs.reply_off : commandsData.group.contador.msgs.reply_on
     await groupController.setCounter(group.id, !group.counter.status)
@@ -532,6 +533,7 @@ export async function contadorCommand(client: WASocket, botInfo: Bot, message: M
 export async function atividadeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const baileysController = new BaileysController(client)
     const groupController = new GroupController()
+    const userController = new UserController()
     const generalMessages = getGeneralMessages(botInfo)
     const commandsData = getCommands(botInfo)
 
@@ -544,12 +546,49 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
     else if (message.mentioned.length === 1) targetUserId = message.mentioned[0]
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const userActivity = await groupController.getParticipantActivity(group.id, targetUserId)
+    let userActivity = await groupController.getParticipantActivity(group.id, targetUserId)
 
-    if(!userActivity) throw new Error(commandsData.group.atividade.msgs.error_not_registered)
+    if(!userActivity){
+        if(group.participants.includes(targetUserId)) userActivity = await groupController.registerParticipantActivity(group.id, targetUserId) as CounterUser
+        else throw new Error(commandsData.group.atividade.msgs.error_not_member)
+    } else {
+        if(!group.participants.includes(targetUserId)) throw new Error(commandsData.group.atividade.msgs.error_not_member)
+    }
 
-    const replyText = buildText(commandsData.group.atividade.msgs.reply, userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
+    const userData = await userController.getUser(targetUserId)
+    const replyText = buildText(commandsData.group.atividade.msgs.reply, userData?.name || '---', targetUserId.replace(S_WHATSAPP_NET, ''), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function inativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const groupController = new GroupController()
+    const generalMessages = getGeneralMessages(botInfo)
+    const commandsData = getCommands(botInfo)
+
+    if(!message.isGroupAdmin) throw new Error(generalMessages.permission.admin_group_only)
+    if(!group.counter.status) throw new Error(commandsData.group.inativos.msgs.error_counter)
+    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const qtyMessage = Number(message.text_command)
+
+    if(!qtyMessage) throw new Error(commandsData.group.inativos.msgs.error_value_invalid)
+    if(qtyMessage < 1) throw new Error(commandsData.group.inativos.msgs.error_value_limit)
+
+    await groupController.registerAllParticipantsActivity(group.id, group.participants)
+    let inactiveUsers = await groupController.getParticipantsActivityLowerThan(group, qtyMessage)
+
+    if(!inactiveUsers.length) throw new Error(commandsData.group.inativos.msgs.error_no_inactives)
+
+    let mentionedUsers = []
+    let replyText = buildText(commandsData.group.inativos.msgs.reply_title, inactiveUsers.length, qtyMessage)
+
+    for(let user of inactiveUsers){
+        replyText += buildText(commandsData.group.inativos.msgs.reply_item, user.user_id.replace(S_WHATSAPP_NET, ''), user.msgs)
+        mentionedUsers.push(user.user_id)
+    }
+
+    await baileysController.replyWithMentions(group.id, replyText, mentionedUsers, message.wa_message)
 }
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){

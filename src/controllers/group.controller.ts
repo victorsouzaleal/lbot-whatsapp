@@ -193,6 +193,10 @@ export class GroupController {
         return this.groupService.setParticipantActivity(groupId, userId)
     }
 
+    registerAllParticipantsActivity(groupId: string, participants: string[]){
+        return this.groupService.registerAllParticipantsActivity(groupId, participants)
+    }
+
     getParticipantActivity(groupId: string, userId: string) {
         return this.groupService.getParticipantActivity(groupId, userId)
     }

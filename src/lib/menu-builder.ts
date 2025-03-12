@@ -31,7 +31,8 @@ export const stickerMenu = (botInfo : Bot)=>{
 |----〖🖼️ *FIGURINHAS*〗
 |
 |- *${prefix}s* - Transfoma uma IMAGEM/VIDEO em *sticker*.
-|- *${prefix}s* 1 - Transfoma uma IMAGEM em *sticker circular*.
+|- *${prefix}s* 1 - Transfoma uma IMAGEM em *sticker* (circular).
+|- *${prefix}s* 2 - Transfoma uma IMAGEM em *sticker* (tamanho original).
 |- *${prefix}snome* pack, autor - Renomeia o sticker.
 |- *${prefix}simg* - Transforma um STICKER NÃO ANIMADO em *foto*.
 |- *${prefix}ssf* - Transforma uma IMAGEM em *sticker sem fundo*.
@@ -165,14 +166,15 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 |
 |--〖🎚️ *CONTADOR/ATIVIDADE*〗
 |
-|- *${prefix}contador* - Liga/desliga o contador de atividade (Mensagens).
+|- *${prefix}contador* - Liga/desliga o contador de atividade.
 |- *${prefix}atividade* @marcarmembro - Mostra a atividade do membro.
 |- *${prefix}topativos* - Marca os 10 membros mais ativos.
+|- *${prefix}inativos* numero - Marca os membros com menos de um determinado número de mensagens.
 |
 |--〖🚫 *BLOQUEIO DE COMANDOS*〗
 |
-|- *${prefix}bcmd* [comando1 comando2 etc] - Bloqueia os comandos escolhidos no grupo.
-|- *${prefix}dcmd* [comando1 comando2 etc] - Desbloqueia os comandos escolhidos no grupo.
+|- *${prefix}bcmd* !comando1 !comando2  - Bloqueia os comandos escolhidos no grupo.
+|- *${prefix}dcmd* !comando1 !comando2  - Desbloqueia os comandos escolhidos no grupo.
 |
 |--〖🗒️ *LISTA NEGRA*〗
 |
@@ -290,8 +292,8 @@ export const adminMenu = (botInfo : Bot)=>{
 |
 |--〖🚫 *BLOQUEIO DE COMANDOS*〗 
 |
-|- *${prefix}bcmdglobal* comando1 comando2 - Bloqueia os comandos escolhidos globalmente.
-|- *${prefix}dcmdglobal* comando1 comando2 - Desbloqueia os comandos escolhidos globalmente.
+|- *${prefix}bcmdglobal* !comando1 !comando2 - Bloqueia os comandos escolhidos globalmente.
+|- *${prefix}dcmdglobal* !comando1 !comando2 - Desbloqueia os comandos escolhidos globalmente.
 |
 |--〖👤 *ANTI-SPAM COMANDOS*〗
 |

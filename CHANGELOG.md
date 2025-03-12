@@ -4,14 +4,14 @@
 
 - O bot foi totalmente reescrito para Typescript.
 - O bot agora utiliza a [**biblioteca-lbot**](https://www.npmjs.com/package/@victorsouzaleal/biblioteca-lbot) para obter dados externos para os comandos.
-- Não há mais checagem de contador de grupos toda vez que o bot é iniciado para melhorar a performance principalmente com quem tem muitos grupos.
+- O recurso de grupo **Contador** agora não checa toda vez que o bot é inicializado, ele apenas registra na contagem quando um membro enviar mensagem no grupo e quando for solicitado algum comando que necessite disso, isso vai melhorar o tempo de carregamento para quem tem muitos grupos com a contagem ligada.
 - A fila de eventos em espera enquanto o bot inicializa foi melhorada e é armazenada em cache.
 - Melhor tratamento de erro nos comandos para o usuário saber o que houve de errado.
 - Simplificação de criação de comandos.
 - Adicionado suporte a múltiplos administradores do bot. (EM PROGRESSO)
 - As mensagens do bot agora são adicionadas a um cache temporário por 5 minutos caso alguma mensagem precise ser reenviada.
 - O bot não alerta mais sobre a falta de chaves API na inicialização e .env não é mais criado automaticamente, sendo necessário o próprio usuário criar o arquivo e inserir as chaves de API de acordo com o tutorial.
-- Criado um arquivo de database próprio para o Anti-SPAM de comandos e o status se o usuário está limitado agora é registrado na database de Usuário. Isso ajudará a evitar o problema de corrupção/dessincronia do bot.json ao ficar atualizando a todo momento. (PARA FAZER)
+- Criado um arquivo de database próprio para a taxa limite de comandos e o status se o usuário está limitado agora é registrado na database de usuário. Isso ajudará a evitar o problema de corrupção/dessincronia do bot.json ao ficar atualizando a todo momento. (PARA FAZER)
 - Criado um arquivo de database próprio para o Anti-SPAM em grupos. Isso ajudará a evitar problemas em grupos muito grandes. (PARA FAZER)
 - Melhorias em comandos e remoção de comandos que não estão mais funcionando.
 
@@ -19,6 +19,7 @@
 ### COMANDOS 
 
 - Melhoria nos comandos de DOWNLOAD dando mais informações sobre a mídia baixada e agora permite downloads de no máximo **6 MINUTOS**.
+- Comando **!s** agora possibilita fazer sticker sem redimensionar a imagem original usando o comando **!s 2**.
 - Comando **!status** foi renomeado para **!grupo** e agora exibe mais informações sobre o grupo inclusive quantos comandos foram feitos e quais recursos estão ativos/desativados.
 - Comando **!regras** foi removido e foi integrado ao **!grupo**
 - Comando **!info** agora exibe o contatos de todos que estão registrados como administrador do bot.
@@ -40,6 +41,7 @@
 - Comando **!enquete** foi removido, enquetes podem ser criadas fácilmente pelo próprio aplicativo do WhatsApp.
 - Todos os comandos de marcação **!mm**, **!mt** e **!adms** agora usam marcação silenciosa para evitar mostrar uma lista muito grande de pessoas marcadas.
 - Comando **!topativos** como padrão agora exibe o ranking dos 10 membros com mais mensagens no grupo.
-- Os comandos **!imarcar** e **ibanir** foram removidos, não eram usados com o propósito certo e podiam acabar gerando banimento acidental.
+- O comando **ibanir** foi removido,  o comando tinha um grande risco de gerar banimento em massa se a pessoa usasse errado.
+- O comando **imarcar** foi renomeado para **!inativos**
 
 
