@@ -4,7 +4,6 @@
 
 - O bot foi totalmente reescrito para Typescript.
 - O bot agora utiliza a [**biblioteca-lbot**](https://www.npmjs.com/package/@victorsouzaleal/biblioteca-lbot) para obter dados externos para os comandos.
-- Não é mais necessário o uso do YARN, como padrão usará NPM.
 - Não há mais checagem de contador de grupos toda vez que o bot é iniciado para melhorar a performance principalmente com quem tem muitos grupos.
 - A fila de eventos em espera enquanto o bot inicializa foi melhorada e é armazenada em cache.
 - Melhor tratamento de erro nos comandos para o usuário saber o que houve de errado.
