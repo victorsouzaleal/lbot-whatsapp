@@ -9,12 +9,12 @@ import { GroupController } from '../controllers/group.controller.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){
     try{
-        if(!messages.messages[0].message) return
+        if (!messages.messages[0].message) return
 
         const contentType = getContentType(messages.messages[0].message)
 
-        if(!contentType) return
-        if(messages.messages[0].key.fromMe) new MessageController().storeMessage(messages.messages[0], messageCache)
+        if (!contentType) return
+        if (messages.messages[0].key.fromMe) new MessageController().storeMessage(messages.messages[0], messageCache)
 
         switch(messages.type){
             case 'notify':
@@ -26,9 +26,9 @@ export async function messageReceived (client: WASocket, messages : {messages: W
                 const group = (isGroupMsg && idChat) ? await groupController.getGroup(idChat) : null
                 let message = new MessageController().formatWAMessage(messages.messages[0], group, botInfo.host_number, admins)
 
-                if(message){
+                if (message){
                     await userController.registerUser(message.sender, message.pushname)
-                    if(!isGroupMsg) await handlePrivateMessage(client, botInfo, message)
+                    if (!isGroupMsg) await handlePrivateMessage(client, botInfo, message)
                     else await handleGroupMessage(client, group, botInfo, message)
                 }
 

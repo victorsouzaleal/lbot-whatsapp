@@ -4,15 +4,16 @@ import * as stickerCommand from './category-sticker.commands.js'
 import * as downloadCommand from './category-download.commands.js'
 import * as funCommand from './category-fun.commands.js'
 import * as groupCommand from './category-group.commands.js'
+import * as adminCommand from './category-admin.commands.js'
 import { Bot } from "../interfaces/bot.interface.js"
 
 export default function getCommands (botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name 
-    const GUIDE_TITLE = `❔ USO DO COMANDO ❔\n\n`
+   
     return {
         info: { // ************* INFO *************
             menu: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}menu* - Exibe o menu de comandos gerais.\n`,
+                guide: `Ex: *${PREFIX}menu* - Exibe o menu de comandos gerais.\n`,
                 msgs: {
                     reply: "Olá, *{p1}*\n"+
                     "Tipo de Usuário : *{p2}*\n"+
@@ -23,7 +24,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             reportar: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}reportar* mensagem - Reporta uma mensagem para a administração do Bot.\n`,
+                guide: `Ex: *${PREFIX}reportar* mensagem - Reporta uma mensagem para a administração do Bot.\n`,
                 msgs: {
                     reply: `✅ Obrigado, seu problema foi reportado com sucesso e será analisado pelo dono.`,
                     error: 'Não foi possível enviar a mensagem para o dono, pois ele ainda não está cadastrado.',
@@ -35,7 +36,7 @@ export default function getCommands (botInfo?: Bot){
                 function: infoCommand.reportarCommand
             },
             meusdados: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}meusdados* - Exibe seus dados gerais como comandos, mensagens, tipo de usuário, etc.\n`,
+                guide: `Ex: *${PREFIX}meusdados* - Exibe seus dados gerais como comandos, mensagens, tipo de usuário, etc.\n`,
                 msgs: {
                     reply: "[🤖*SEUS DADOS DE USO*🤖]\n\n"+
                     "Tipo de usuário : *{p1}*\n"+
@@ -51,7 +52,7 @@ export default function getCommands (botInfo?: Bot){
                 function: infoCommand.meusdadosCommand
             },
             info: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}info* - Exibe as informações do bot, dono, etc.\n`,
+                guide: `Ex: *${PREFIX}info* - Exibe as informações do bot, dono, etc.\n`,
                 msgs: {
                     reply: "*Nome do bot* : {p1}\n"+
                     "*Online desde* : {p2}\n"+
@@ -68,7 +69,7 @@ export default function getCommands (botInfo?: Bot){
 
         utility: { // ************* UTILITY *************
             animes:{
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}animes* - Exibe os ultimos lançamentos de episódios de anime.\n`,
+                guide: `Ex: *${PREFIX}animes* - Exibe os ultimos lançamentos de episódios de anime.\n`,
                 msgs: {
                     reply_title: '🇯🇵 LANÇAMENTO DE ANIMES 🇯🇵 \n\n',
                     reply_item: '- Nome: {p1} \n'+
@@ -78,7 +79,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.animesCommand
             },
             mangas:{
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}mangas* - Exibe os ultimos lançamentos de capitulos de mangá.\n`,
+                guide: `Ex: *${PREFIX}mangas* - Exibe os ultimos lançamentos de capitulos de mangá.\n`,
                 msgs: {
                     reply_title: '🇯🇵 LANÇAMENTO DE MANGÁS 🇯🇵 \n\n',
                     reply_item: '- Nome: {p1} \n'+
@@ -88,7 +89,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.mangasCommand
             },
             brasileirao:{
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}brasileirao* - Exibe a tabela e a rodada atual do Brasileirão Serie A.\n`+
+                guide: `Ex: *${PREFIX}brasileirao* - Exibe a tabela e a rodada atual do Brasileirão Serie A.\n`+
                 `Ex: *${PREFIX}brasileirao* B - Exibe a tabela e a rodada atual do Brasileirão Serie B.\n`,
                 msgs: {
                     error: '[❗] A série digitada não é suportada, atualmente são suportados apenas A e B.',
@@ -104,7 +105,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.brasileiraoCommand
             },
             encurtar : {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}encurtar* link - Encurta o link digitado.\n`,
+                guide: `Ex: *${PREFIX}encurtar* link - Encurta o link digitado.\n`,
                 msgs: {
                     reply: "✂️ ENCURTADOR DE LINKS ✂️\n\n"+
                     "*Link :* {p1}\n"
@@ -112,7 +113,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.encurtarCommand
             },
             upimg: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}upimg* - Faz upload da imagem e retorna o link.\n`,
+                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}upimg* - Faz upload da imagem e retorna o link.\n`,
                 msgs: {
                     reply: "🖼️ UPLOAD DE IMAGEM 🖼️\n\n"+
                     "*Link :* {p1}\n"
@@ -120,7 +121,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.upimgCommand
             },
             filmes: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}filmes* - Exibe as tendências atuais de filmes.\n`,
+                guide: `Ex: *${PREFIX}filmes* - Exibe as tendências atuais de filmes.\n`,
                 msgs: {
                     reply: "🎬 TÊNDENCIAS DE FILMES 🎬\n\n"+
                     "{p1}\n"
@@ -128,7 +129,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.filmesCommand
             },
             series: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}series* - Exibe as tendências atuais de séries.\n`,
+                guide: `Ex: *${PREFIX}series* - Exibe as tendências atuais de séries.\n`,
                 msgs: {
                     reply: "📺 TÊNDENCIAS DE SÉRIES 📺\n\n"+
                     "{p1}\n"
@@ -137,7 +138,7 @@ export default function getCommands (botInfo?: Bot){
             },
             /*
             ia : {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
+                guide: `Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
                 msgs: {
                     reply: "🤖 Resposta da IA :\n\n"+
                     "{p1}"
@@ -145,14 +146,14 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.iaCommand
             },
             criarimg: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}criarimg* texto - Criar uma imagem de acordo com o texto usando IA.\n`,
+                guide: `Ex: *${PREFIX}criarimg* texto - Criar uma imagem de acordo com o texto usando IA.\n`,
                 msgs: {
                     wait: '[AGUARDE] 📸 Sua imagem está sendo gerada pela IA, pode levar entre 20-40s.',
                 },
                 function : infoCommand.menuCommand
             },*/
             tabela: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}tabela* - Exibe a tabela de letras para criação de nicks.\n`,
+                guide: `Ex: *${PREFIX}tabela* - Exibe a tabela de letras para criação de nicks.\n`,
                 msgs: {
                     reply: "🤖 Tabela de Nicks :\n\n"+
                     "{p1}"
@@ -160,7 +161,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.tabelaCommand
             },
             rbg: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}rbg* - Retira o fundo da imagem.\n\n`,
+                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}rbg* - Retira o fundo da imagem.\n\n`,
                 msgs: {
                     error_message: "Houve um erro ao obter os dados da mensagem.",
                     error_only_image : "Este comando só funciona com IMAGENS.",
@@ -169,7 +170,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.rbgCommand
             },
             ouvir: {
-                guide: GUIDE_TITLE +`Ex: Responda um áudio com *${PREFIX}ouvir* para transformar em texto.\n`,
+                guide: `Ex: Responda um áudio com *${PREFIX}ouvir* para transformar em texto.\n`,
                 msgs: {
                     error_audio_limit: "Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
                     error_key: "A chave de API do Deepgram ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
@@ -179,7 +180,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.ouvirCommand
             },
             audio: {
-                guide: GUIDE_TITLE +`Responda um aúdio com um desses comandos :\n\n`+
+                guide: `Responda um aúdio com um desses comandos :\n\n`+
                 `Ex: *${PREFIX}audio* grave - Torna audio mais grave e lento\n\n`+
                 `Ex: *${PREFIX}audio* agudo - Torna o audio mais agudo e rapido\n\n`+
                 `Ex: *${PREFIX}audio* estourar - Deixa o audio estourado\n\n`+
@@ -193,7 +194,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.audioCommand
             },
             traduz: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}traduz* pt texto - Traduz o texto que foi digitado para *Português*.\n\n`+
+                guide: `Ex: *${PREFIX}traduz* pt texto - Traduz o texto que foi digitado para *Português*.\n\n`+
                 `Ex: *${PREFIX}traduz* en texto - Traduz o texto que foi digitado para *Inglês*.\n\n`+
                 `Ex: Responda um *texto* com *${PREFIX}traduz* pt - Traduz o resto respondido para *Português*.\n\n`+
                 `Ex: Responda um *texto* com *${PREFIX}traduz* en - Traduz o resto respondido para *Inglês*.\n\n`+
@@ -221,7 +222,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.traduzCommand
             },
             voz: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}voz* pt texto - Manda um audio falando o texto digitado com a voz do Google em Português-Brasil.\n\n`+
+                guide: `Ex: *${PREFIX}voz* pt texto - Manda um audio falando o texto digitado com a voz do Google em Português-Brasil.\n\n`+
                 `Ex: Responda um texto com *${PREFIX}voz* pt - Manda um audio falando o texto respondido com a voz do Google em Português-Brasil.\n\n`+
                 `Idiomas suportados : \n`+
                 `- 🇧🇷 Português (pt)\n`+
@@ -248,7 +249,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.vozCommand
             },
             letra: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}letra* nome-musica - Exibe a letra da música que você digitou.\n`,
+                guide: `Ex: *${PREFIX}letra* nome-musica - Exibe a letra da música que você digitou.\n`,
                 msgs: {
                     reply: "🎼 LETRA DE MÚSICA 🎼\n\n"+
                     "Música : *{p1}*\n"+
@@ -258,7 +259,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.letraCommand
             },
             noticias: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}noticias* - Exibe as notícias atuais.\n`,
+                guide: `Ex: *${PREFIX}noticias* - Exibe as notícias atuais.\n`,
                 msgs: {
                     reply_title: "〘🗞️ ULTIMAS NOTÍCIAS 〙\n\n",
                     reply_item: "➥ 📰 *{p1}* \n"+
@@ -269,7 +270,7 @@ export default function getCommands (botInfo?: Bot){
             },
             /*
             rastreio: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}rastreio* PBXXXXXXXXXXX - Exibe o rastreio da encomenda dos correios que você digitou.\n`,
+                guide: `Ex: *${PREFIX}rastreio* PBXXXXXXXXXXX - Exibe o rastreio da encomenda dos correios que você digitou.\n`,
                 msgs: {
                     error: 'Código de rastreio deve ter 13 digitos.',
                     reply_title: "📦📦*RASTREIO*📦📦\n\n",
@@ -281,7 +282,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.rastreioCommand
             },*/
             calc: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}calc* 8x8 - Exibe o resultado do cálculo.\n\n`+
+                guide: `Ex: *${PREFIX}calc* 8x8 - Exibe o resultado do cálculo.\n\n`+
                 `Ex: *${PREFIX}calc* 1mm em 1km - Exibe o resultado do conversão de medidas.\n`,
                 msgs: {
                     reply: "🧮 O resultado é *{p1}* "
@@ -289,7 +290,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.calcCommand
             },
             pesquisa: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}pesquisa* tema - Faz uma pesquisa com o tema que você digitar.\n`,
+                guide: `Ex: *${PREFIX}pesquisa* tema - Faz uma pesquisa com o tema que você digitar.\n`,
                 msgs: {
                     reply_title: "🔎 Resultados da pesquisa de : *{p1}*🔎\n\n",
                     reply_item: "🔎 {p1}\n"+
@@ -298,7 +299,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.pesquisaCommand
             },
             moeda: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}moeda* real 20 - Converte 20 reais para outras moedas\n\n`+
+                guide: `Ex: *${PREFIX}moeda* real 20 - Converte 20 reais para outras moedas\n\n`+
                 `Ex: *${PREFIX}moeda* dolar 20 - Converte 20 dólares para outras moedas.\n\n`+
                 `Ex: *${PREFIX}moeda* euro 20 - Converte 20 euros para outras moedas.\n`,
                 msgs: {
@@ -311,7 +312,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.moedaCommand
             },
             clima: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}clima* Rio de Janeiro - Mostra o clima atual e dos próximos dias para o Rio de Janeiro.\n`,
+                guide: `Ex: *${PREFIX}clima* Rio de Janeiro - Mostra o clima atual e dos próximos dias para o Rio de Janeiro.\n`,
                 msgs: {
                     reply: "☀️ CLIMA ATUAL ☀️\n\n"+
                     "Nome : {p1}\n"+
@@ -336,7 +337,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.climaCommand
             },
             ddd: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ddd* 21 - Exibe qual estado e região do DDD 21.\n\n`+
+                guide: `Ex: *${PREFIX}ddd* 21 - Exibe qual estado e região do DDD 21.\n\n`+
                 `Ex: Responda com *${PREFIX}ddd* - Exibe qual estado e região do membro respondido.\n`,
                 msgs: {
                     error: "Esse comando só é aceito com números brasileiros.",
@@ -345,7 +346,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.dddCommand
             },
             qualanime: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma imagem com *${PREFIX}qualanime* - Procura o anime pela imagem.\n\n`+
+                guide: `Ex: Envie/responda uma imagem com *${PREFIX}qualanime* - Procura o anime pela imagem.\n\n`+
                 `*Obs*: Este comando funciona apenas com *IMAGENS* e deve ser uma *CENA VÁLIDA DE ANIME*, *NÃO* podendo ser imagens com *baixa qualidade*, *wallpappers*, *imagens editadas/recortadas*.\n`,
                 msgs: {
                     wait: "⏳ Estou processando a imagem e pesquisando o anime.",
@@ -361,7 +362,7 @@ export default function getCommands (botInfo?: Bot){
                 function : utilityCommand.qualanimeCommand
             },
             qualmusica: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda um audio/video com *${PREFIX}qualmusica* - Procura a música tocada no audio/video.\n\n`+
+                guide: `Ex: Envie/responda um audio/video com *${PREFIX}qualmusica* - Procura a música tocada no audio/video.\n\n`+
                 `*Obs*: Este comando funciona apenas com *AUDIO/VIDEO*.\n`,
                 msgs: {
                     error_message: "Houve um erro ao obter os dados da mensagem.",
@@ -381,7 +382,7 @@ export default function getCommands (botInfo?: Bot){
         
         sticker: { // ************* STICKER *************
             s: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma *IMAGEM/VIDEO* com *${PREFIX}s* - Transforma em sticker.\n`+
+                guide: `Ex: Envie/responda uma *IMAGEM/VIDEO* com *${PREFIX}s* - Transforma em sticker.\n`+
                 `Ex: Envie/responda uma *IMAGEM* com *${PREFIX}s 1* - Transforma em sticker circular.\n`+
                 `Ex: Envie/responda uma *IMAGEM* com *${PREFIX}s 2* - Transforma em sticker sem perder a proporção.\n`,
                 msgs: {
@@ -391,7 +392,7 @@ export default function getCommands (botInfo?: Bot){
                 function : stickerCommand.sCommand
             },
             simg: {
-                guide: GUIDE_TITLE +`Ex: Responda um sticker com *${PREFIX}simg* - Transforma o sticker em imagem.\n\n`+
+                guide: `Ex: Responda um sticker com *${PREFIX}simg* - Transforma o sticker em imagem.\n\n`+
                 `*Obs*: Este comando funciona apenas com *STICKERS NÃO ANIMADOS*.\n`,
                 msgs: {
                     error_sticker: `Este comando pode ser usado apenas respondendo stickers.`
@@ -399,7 +400,7 @@ export default function getCommands (botInfo?: Bot){
                 function : stickerCommand.simgCommand
             },
             ssf: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}ssf* - Retira o fundo da imagem e transforma em sticker.\n\n`+
+                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}ssf* - Retira o fundo da imagem e transforma em sticker.\n\n`+
                 `*Obs*: Este comando funciona apenas com *IMAGENS*.\n`,
                 msgs: {
                     wait: `[AGUARDE] 📸 O fundo da imagem está sendo removido e o sticker será enviado em breve.`,
@@ -409,7 +410,7 @@ export default function getCommands (botInfo?: Bot){
                 function : stickerCommand.ssfCommand
             },
             emojimix: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}emojimix* 💩+😀 - Junta os dois emojis e transforma em sticker.\n\n`+
+                guide: `Ex: *${PREFIX}emojimix* 💩+😀 - Junta os dois emojis e transforma em sticker.\n\n`+
                 `*Obs*: Nem todos os emojis são compátiveis, então vá tentando fazer combinações.\n`,
                 msgs: {
                     error: ''
@@ -417,7 +418,7 @@ export default function getCommands (botInfo?: Bot){
                 function : stickerCommand.emojimixCommand
             },
             snome: {
-                guide: GUIDE_TITLE +`Ex: Responda um *STICKER* com *${PREFIX}snome* pack, autor - Renomeia o nome do pack e do autor do sticker.`,
+                guide: `Ex: Responda um *STICKER* com *${PREFIX}snome* pack, autor - Renomeia o nome do pack e do autor do sticker.`,
                 msgs: {
                     error_message: "Houve um erro ao obter os dados da mensagem."
                 },
@@ -427,14 +428,14 @@ export default function getCommands (botInfo?: Bot){
         
         fun: { // ************* FUN *************
             mascote: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}mascote* - Exibe o inigualável e onipotente WhatsApp Jr.\n`,
+                guide: `Ex: *${PREFIX}mascote* - Exibe o inigualável e onipotente WhatsApp Jr.\n`,
                 msgs: {
                     reply: 'WhatsApp Jr.'
                 },
                 function : funCommand.mascoteCommand
             },
             simi: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}simi* frase  - Envia um texto para o SimSimi responder.\n`,
+                guide: `Ex: *${PREFIX}simi* frase  - Envia um texto para o SimSimi responder.\n`,
                 msgs: {
                     reply: `{p1} - 🐤 *SIMI* : \n\n`+
                     `{p2}`,
@@ -442,7 +443,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.simiCommand
             },
             viadometro: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}viadometro* @membro - Mede o nível de viadagem do membro mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}viadometro* @membro - Mede o nível de viadagem do membro mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}viadometro* - Mede o nível de viadagem do membro respondido.\n`,
                 msgs: {
                     answers: [' 0%\n\n - ESSE É MACHO ',
@@ -458,7 +459,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.viadometroCommand
             },
             detector: {
-                guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}detector* - Exibe o resultado da máquina da verdade.\n`,
+                guide: `Ex: Responder com *${PREFIX}detector* - Exibe o resultado da máquina da verdade.\n`,
                 msgs: {
                     wait: "⏳ Calibrando a máquina da verdade",
                     error_message: "Houve um erro ao obter os dados da mensagem."
@@ -466,7 +467,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.detectorCommand
             },
             roletarussa: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}roletarussa* - Bane um membro aleatório do grupo.\n\n`+
+                guide: `Ex: *${PREFIX}roletarussa* - Bane um membro aleatório do grupo.\n\n`+
                 `*Obs*: Comando apenas para administradores, pode banir qualquer um exceto o dono do grupo e o BOT.\n`,
                 msgs: {
                     error: "Não existem membros válidos para participarem da roleta.",
@@ -476,7 +477,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.roletarussaCommand
             },
             casal: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}casal* - Escolhe 2 pessoas aleatórias do grupo para formar um casal.\n`,
+                guide: `Ex: *${PREFIX}casal* - Escolhe 2 pessoas aleatórias do grupo para formar um casal.\n`,
                 msgs: {
                     error: "Este comando precisa de no mínimo 2 membros no grupo.",
                     reply: "👩‍❤️‍👨 Está rolando um clima entre @{p1} e @{p2}"
@@ -484,7 +485,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.casalCommand
             },
             caracoroa: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}caracoroa* cara - Escolhe cara e joga a moeda.\n\n`+
+                guide: `Ex: *${PREFIX}caracoroa* cara - Escolhe cara e joga a moeda.\n\n`+
                 `Ex: *${PREFIX}caracoroa* coroa - Escolhe coroa e joga a moeda.\n`,
                 msgs: {
                     wait: "🕹️ Lançando a moeda 🪙",
@@ -496,7 +497,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.caracoroaCommand
             },
             ppt: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ppt* pedra - Escolhe pedra, para jogar pedra, papel ou tesoura.\n\n`+
+                guide: `Ex: *${PREFIX}ppt* pedra - Escolhe pedra, para jogar pedra, papel ou tesoura.\n\n`+
                 `Ex: *${PREFIX}ppt* papel - Escolhe papel, para jogar pedra, papel ou tesoura.\n\n`+
                 `Ex: *${PREFIX}ppt* tesoura - Escolhe tesoura, para jogar pedra, papel ou tesoura.\n`,
                 msgs: {
@@ -511,7 +512,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.pptCommand
             },
             gadometro: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}gadometro* @membro - Mede o nível de gadisse do membro mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}gadometro* @membro - Mede o nível de gadisse do membro mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}gadometro* - Mede o nível de gadisse do membro respondido.\n`,
                 msgs: {
                     answers : [' 0%\n\n - ESSE NÃO É GADO ',
@@ -527,7 +528,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.gadometroCommand
             },
             bafometro: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bafometro* @membro - Mede o nível de alcool do membro mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}bafometro* @membro - Mede o nível de alcool do membro mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}bafometro* - Mede o nível de alcool do membro respondido.\n`,
                 msgs: {
                     answers : [' 0%\n\n - ESTÁ SÓBRIO ',
@@ -543,7 +544,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.bafometroCommand
             },
             top5: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}top5* tema - Exibe uma ranking de 5 membros aleatórios com o tema que você escolher.\n`,
+                guide: `Ex: *${PREFIX}top5* tema - Exibe uma ranking de 5 membros aleatórios com o tema que você escolher.\n`,
                 msgs: {
                     error_members: "O grupo deve ter no mínimo 5 membros para usar este comando.",
                     reply_title: "╔══✪〘🏆 TOP 5 {p1} 🏆 〙\n╠\n",
@@ -552,7 +553,7 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.top5Command
             },
             par: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}par* @membro1 @membro2 - Mede o nível de compatibilidade dos 2 membros mencionados.\n`,
+                guide: `Ex: *${PREFIX}par* @membro1 @membro2 - Mede o nível de compatibilidade dos 2 membros mencionados.\n`,
                 msgs: {
                     answers: [' *0%*\n - NÃO COMBINAM ',
                     '❤️ *20%* \n - HMMM TALVEZ ',
@@ -566,14 +567,14 @@ export default function getCommands (botInfo?: Bot){
                 function : funCommand.parCommand
             },
             chance: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}chance de ficar rico* - Calcula sua chance de um tema aleatório a sua escolha.\n`,
+                guide: `Ex: *${PREFIX}chance de ficar rico* - Calcula sua chance de um tema aleatório a sua escolha.\n`,
                 msgs: {
                     reply: "🧩 *CHANCE* - Você tem *{p1}%* de chance {p2}"
                 },
                 function : funCommand.chanceCommand
             }, 
             frase: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}fch* - Exibe uma frase aleatória montada com as cartas do jogo Cartas contra a Humanidade.\n`,
+                guide: `Ex: *${PREFIX}fch* - Exibe uma frase aleatória montada com as cartas do jogo Cartas contra a Humanidade.\n`,
                 msgs: {
                     reply: "🙊💬 *FRASES DO WHATSAPP JR.*\n\n - {p1}",
                 },
@@ -583,7 +584,7 @@ export default function getCommands (botInfo?: Bot){
         
         download: { // ************* DOWNLOAD *************
             play: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}play* musica - Faz download de uma música do Youtube e envia como audio.\n`,
+                guide: `Ex: *${PREFIX}play* musica - Faz download de uma música do Youtube e envia como audio.\n`,
                 msgs: {
                     wait: "[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\n"+
                     "Titulo: *{p1}*\n"+
@@ -594,7 +595,7 @@ export default function getCommands (botInfo?: Bot){
                 function : downloadCommand.playCommand
             },
             yt: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}yt* titulo - Faz download de um video do Youtube com o titulo digitado e envia.\n`,
+                guide: `Ex: *${PREFIX}yt* titulo - Faz download de um video do Youtube com o titulo digitado e envia.\n`,
                 msgs: {
                     wait: "[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n\n"+
                     "Titulo: *{p1}*\n"+
@@ -605,7 +606,7 @@ export default function getCommands (botInfo?: Bot){
                 function : downloadCommand.ytCommand
             },
             fb: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}fb* link - Faz download de um video do Facebook pelo link digitado e envia.\n`,
+                guide: `Ex: *${PREFIX}fb* link - Faz download de um video do Facebook pelo link digitado e envia.\n`,
                 msgs: {
                     wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                     "Titulo: *{p1}*\n"+
@@ -615,7 +616,7 @@ export default function getCommands (botInfo?: Bot){
                 function : downloadCommand.fbCommand
             },
             ig: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ig* link - Faz download de videos/fotos do Instagram pelo link digitado e envia.\n`,
+                guide: `Ex: *${PREFIX}ig* link - Faz download de videos/fotos do Instagram pelo link digitado e envia.\n`,
                 msgs: {
                     wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                     "Autor: *{p1}* (@{p2})\n"+
@@ -625,7 +626,7 @@ export default function getCommands (botInfo?: Bot){
                 function : downloadCommand.igCommand
             },
             x: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}x* link - Faz download de um video/imagem do X pelo link digitado e envia.\n`,
+                guide: `Ex: *${PREFIX}x* link - Faz download de um video/imagem do X pelo link digitado e envia.\n`,
                 msgs: {
                     wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                     "Post: {p1}",
@@ -633,7 +634,7 @@ export default function getCommands (botInfo?: Bot){
                 function : downloadCommand.xCommand
             },
             tk: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}tk* link - Faz download de um video do Tiktok pelo link digitado e envia.\n`,
+                guide: `Ex: *${PREFIX}tk* link - Faz download de um video do Tiktok pelo link digitado e envia.\n`,
                 msgs: {
                     wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                     "Perfil: *@{p1}*\n"+
@@ -642,7 +643,7 @@ export default function getCommands (botInfo?: Bot){
                 function : downloadCommand.tkCommand
             },
             img: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}img* tema - Envia uma imagem com o tema que você digitar.\n`,
+                guide: `Ex: *${PREFIX}img* tema - Envia uma imagem com o tema que você digitar.\n`,
                 msgs: {
                     error: 'Não foi possível obter nenhuma imagem, tente novamente com outra pesquisa.',
                 },
@@ -652,7 +653,7 @@ export default function getCommands (botInfo?: Bot){
         
         group: { // ************* GROUP *************
             grupo: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}grupo* - Exibe os dados atuais do grupo.\n`,
+                guide: `Ex: *${PREFIX}grupo* - Exibe os dados atuais do grupo.\n`,
                 msgs: {
                     reply_title: "👥 *DADOS GERAIS DO GRUPO* \n\n"+
                     "*Nome*: {p1}\n"+
@@ -686,14 +687,14 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.grupoCommand
             },
             fotogrupo: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}fotogrupo* - Altera a foto do grupo.\n\n`,
+                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}fotogrupo* - Altera a foto do grupo.\n\n`,
                 msgs: {
                     reply: "🤖✅ A foto do GRUPO foi alterada com sucesso.",
                 },
                 function : groupCommand.fotogrupoCommand
             },
             addlista: {
-                guide: GUIDE_TITLE +`Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
+                guide: `Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
                 `Ex: Marque alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi marcado a lista negra e bane em seguida.\n\n`+
                 `Ex: *${PREFIX}addlista* +55219xxxx-xxxx - Adiciona o número digitado a lista negra do grupo e bane em seguida.\n.`,
                 msgs: {
@@ -705,7 +706,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.addlistaCommand
             },
             rmlista: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}rmlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
+                guide: `Ex: *${PREFIX}rmlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
                 msgs: {
                     reply: "✅ O número desse usuário foi removido da lista negra.",
                     error_not_listed: "Este usuário não está na lista negra.",
@@ -713,7 +714,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.rmlistaCommand
             },
             listanegra: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}listanegra* - Exibe a lista negra do grupo.\n`,
+                guide: `Ex: *${PREFIX}listanegra* - Exibe a lista negra do grupo.\n`,
                 msgs: {
                     error_empty_list: "Não existem usuários na lista negra deste grupo.",
                     reply_title: "❌ LISTA NEGRA DO GRUPO\n\n"+
@@ -724,7 +725,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.listanegraCommand
             },
             add: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}add* 5521xxxxxxxxx - Digite o numero com o código do país para adicionar a pessoa.\n\n`+
+                guide: `Ex: *${PREFIX}add* 5521xxxxxxxxx - Digite o numero com o código do país para adicionar a pessoa.\n\n`+
                 `Ex: *${PREFIX}add* 5521xxxxxxxxx, 5521xxxxxxxxx - Digite os numeros com o código do país (adiciona mais de uma pessoa no grupo).\n`,
                 msgs: {
                     reply: '✅ O número +{p1} foi adicionado ao grupo com sucesso.',
@@ -735,7 +736,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.addCommand
             },
             ban: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ban* @membro - Para banir um membro marcando ele.\n\n`+
+                guide: `Ex: *${PREFIX}ban* @membro - Para banir um membro marcando ele.\n\n`+
                 `Ex: Responder alguém com *${PREFIX}ban* - Bane o membro que você respondeu.\n`,
                 msgs: {
                     reply_title: '🚷 BANIMENTO DE MEMBROS\n\n',
@@ -746,7 +747,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.banCommand
             },
             promover: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}promover* @membro - Promove o membro mencionado a *ADMINISTRADOR*.\n\n`+
+                guide: `Ex: *${PREFIX}promover* @membro - Promove o membro mencionado a *ADMINISTRADOR*.\n\n`+
                 `Ex: Responder com *${PREFIX}promover* - Promove o usuário respondido a *ADMINISTRADOR*.\n`,
                 msgs: {
                     error: "[❗] O BOT não pode ser promovido por ele mesmo.",
@@ -757,7 +758,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.promoverCommand
             },
             rebaixar: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}rebaixar* @admin - Rebaixa o administrador mencionado a *MEMBRO*.\n\n`+
+                guide: `Ex: *${PREFIX}rebaixar* @admin - Rebaixa o administrador mencionado a *MEMBRO*.\n\n`+
                 `Ex: Responder com *${PREFIX}rebaixar* - Rebaixa o administrador respondido a *MEMBRO*.\n`,
                 msgs: {
                     error: "[❗] O BOT não pode ser rebaixado por ele mesmo.",
@@ -769,7 +770,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.rebaixarCommand
             },
             mt: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}mt* - Marca todos os *MEMBROS/ADMIN* do grupo.\n\n`+
+                guide: `Ex: *${PREFIX}mt* - Marca todos os *MEMBROS/ADMIN* do grupo.\n\n`+
                 `Ex: *${PREFIX}mt* mensagem - Marca todos os *MEMBROS/ADMIN* do grupo com uma mensagem.\n`,
                 msgs: {
                     reply: "🤖❕ Marquei todos os *{p1}* membros/admins.",
@@ -779,7 +780,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.mtCommand
             },
             mm: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}mm* - Marca todos os *MEMBROS* do grupo.\n\n`+
+                guide: `Ex: *${PREFIX}mm* - Marca todos os *MEMBROS* do grupo.\n\n`+
                 `Ex: *${PREFIX}mm* mensagem - Marca todos os *MEMBROS* do grupo com uma mensagem.\n`,
                 msgs: {
                     reply: "🤖❕ Marquei todos os *{p1}* membros.",
@@ -790,7 +791,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.mmCommand
             },
             adms: {
-                guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}adms* - Marca todos os *ADMINISTRADORES* em uma postagem.\n\n`+
+                guide: `Ex: Responder com *${PREFIX}adms* - Marca todos os *ADMINISTRADORES* em uma postagem.\n\n`+
                 `Ex: *${PREFIX}adms* - Marca os *ADMINISTRADORES* do grupo.\n`,
                 msgs: {
                     reply: "🤖❕ Marquei todos os *{p1}* admins.",
@@ -800,7 +801,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.admsCommand
             },
             dono: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}dono* - Exibe quem é dono do grupo.\n`,
+                guide: `Ex: *${PREFIX}dono* - Exibe quem é dono do grupo.\n`,
                 msgs: {
                     reply: "🤖 O dono do grupo é : +{p1}",
                     error: "Não foi possível exibir o dono do grupo, o dono teve o número banido ou cancelado."
@@ -808,7 +809,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.donoCommand
             },
             mutar: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}mutar* - Liga/desliga a execução de comandos dos membros.\n`,
+                guide: `Ex: *${PREFIX}mutar* - Liga/desliga a execução de comandos dos membros.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de MUTAR GRUPO foi ativado com sucesso",
                     reply_off: "✅ O recurso de MUTAR GRUPO foi desativado com sucesso"
@@ -816,7 +817,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.mutarCommand
             },
             link: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}link* - Exibe o link do grupo.\n`,
+                guide: `Ex: *${PREFIX}link* - Exibe o link do grupo.\n`,
                 msgs: {
                     reply: "👥 Grupo: *{p1}*\n\n"+
                     "*Link do grupo*: {p2}"
@@ -824,7 +825,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.linkCommand
             },
             rlink: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}rlink* - Redefine o link do grupo.\n`,
+                guide: `Ex: *${PREFIX}rlink* - Redefine o link do grupo.\n`,
                 msgs: {
                     error: "Houve um erro na redefinição de link",
                     reply: "✅ Link do grupo foi redefinido com sucesso."
@@ -832,7 +833,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.rlinkCommand
             },
             restrito: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}restrito* - Abre/fecha o grupo apenas para administradores conversarem.\n`,
+                guide: `Ex: *${PREFIX}restrito* - Abre/fecha o grupo apenas para administradores conversarem.\n`,
                 msgs: {
                     reply_on: "✅ O grupo foi restrito apenas para ADMINISTRADORES poderem conversar.",
                     reply_off: '✅ O grupo foi liberado para todos os MEMBROS poderem conversar.'
@@ -840,7 +841,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.restritoCommand
             },
             antilink: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antilink* - Liga/desliga o Anti-LINK no grupo e apaga a mensagem de quem postar qualquer tipo de link.\n`,
+                guide: `Ex: *${PREFIX}antilink* - Liga/desliga o Anti-LINK no grupo e apaga a mensagem de quem postar qualquer tipo de link.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de ANTI-LINK foi ativado com sucesso",
                     reply_off: "✅ O recurso de ANTI-LINK foi desativado com sucesso"
@@ -848,7 +849,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.antilinkCommand
             },
             autosticker: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}autosticker* - Liga/desliga a criação automatica de stickers sem precisar de comandos.\n`,
+                guide: `Ex: *${PREFIX}autosticker* - Liga/desliga a criação automatica de stickers sem precisar de comandos.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de AUTO-STICKER foi ativado com sucesso",
                     reply_off: "✅ O recurso de AUTO-STICKER foi desativado com sucesso"
@@ -856,7 +857,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.autostickerCommand
             },
             bemvindo: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bemvindo*  - Liga/desliga a mensagem de bem-vindo para novos membros.\n\n`+
+                guide: `Ex: *${PREFIX}bemvindo*  - Liga/desliga a mensagem de bem-vindo para novos membros.\n\n`+
                 `Ex: *${PREFIX}bemvindo* mensagem - Liga a mensagem de bem-vindo com uma mensagem da sua escolha.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de BOAS VINDAS foi ativado com sucesso",
@@ -865,7 +866,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.bemvindoCommand
             },
             antifake: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antifake* - Liga/desliga o Anti-FAKE no grupo.\n`+
+                guide: `Ex: *${PREFIX}antifake* - Liga/desliga o Anti-FAKE no grupo.\n`+
                 `Ex: *${PREFIX}antifake* DDI - Configura o anti-fake para que todos números com o DDI exterior seja banido, exceto o que você escolheu.\n`+
                 `Ex: *${PREFIX}antifake* DDI1 DDI2 DDI3 - Configura o anti-fake para que todos números com DDI exterior sejam banidos, excetos o que você escolheu.\n\n`+
                 `*Obs*: A ativação do anti-fake bane pessoas com DDI do exterior (que não sejam 55 - Brasil).\n`,
@@ -876,7 +877,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.antifakeCommand
             },
             antiflood: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}antiflood*  - Liga/desliga o Anti-FLOOD no grupo.\n\n`+
+                guide: `Ex: *${PREFIX}antiflood*  - Liga/desliga o Anti-FLOOD no grupo.\n\n`+
                 `Ex: *${PREFIX}antiflood* 5 15  - Maxímo de mensagens fica 5 mensagens a cada 15 segundos.\n`,
                 msgs: {
                     error_value_message: "O valor de mensagem é inválido, escolha um valor entre 5-20 mensagens para o Anti-FLOOD.",
@@ -887,12 +888,12 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.antifloodCommand
             },
             apg: {
-                guide: GUIDE_TITLE +`Ex: Responder com *${PREFIX}apg* - Apaga a mensagem que foi respondida com esse comando.\n\n`+
+                guide: `Ex: Responder com *${PREFIX}apg* - Apaga a mensagem que foi respondida com esse comando.\n\n`+
                 `*Obs* : O bot precisa ser administrador.\n`,
                 function : groupCommand.apgCommand
             },
             topativos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}topativos* - Marca os 10 membros com mais mensagens do grupo.\n`+
+                guide: `Ex: *${PREFIX}topativos* - Marca os 10 membros com mais mensagens do grupo.\n`+
                 `Ex: *${PREFIX}topativos* 15 - Marca os 15 membros com mais mensagens do grupo.\n\n`+
                 `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
                 msgs: {
@@ -905,7 +906,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.topativosCommand
             },
             contador: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}contador* - Liga/desliga a contagem de mensagens no grupo.\n`,
+                guide: `Ex: *${PREFIX}contador* - Liga/desliga a contagem de mensagens no grupo.\n`,
                 msgs: {
                     reply_on: "✅ O recurso de CONTADOR foi ligado com sucesso",
                     reply_off: "✅ O recurso de CONTADOR foi desligado com sucesso",
@@ -913,7 +914,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.contadorCommand
             }, 
             atividade: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}atividade* @membro - Mostra a atividade do membro mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}atividade* @membro - Mostra a atividade do membro mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}atividade* - Mostra a atividade do membro que você respondeu.\n\n`+
                 `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
                 msgs: {
@@ -934,7 +935,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.atividadeCommand
             },
             inativos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}inativos* 5 - Marca todos os membros com menos de 5 mensagens.\n\n`+
+                guide: `Ex: *${PREFIX}inativos* 5 - Marca todos os membros com menos de 5 mensagens.\n\n`+
                 `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
                 msgs: {
                     error_value_invalid: "A quantidade mínima de mensagens não é um número válido.",
@@ -949,7 +950,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.inativosCommand
             },
             bcmd: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
+                guide: `Ex: *${PREFIX}bcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
                 `Ex: *${PREFIX}bcmd* sticker - Bloqueia todos os comandos da categoria STICKER.\n\n`+
                 `Ex: *${PREFIX}bcmd* utilidade - Bloqueia todos os comandos da categoria UTILIDADE.\n\n`+
                 `Ex: *${PREFIX}bcmd* download - Bloqueia todos os comandos da categoria DOWNLOAD.\n\n`+
@@ -965,7 +966,7 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.bcmdCommand
             },
             dcmd: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}dcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
+                guide: `Ex: *${PREFIX}dcmd* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia no grupo os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
                 `Ex: *${PREFIX}dcmd* todos - Desbloqueia todos os comandos.\n\n`+
                 `Ex: *${PREFIX}dcmd* sticker - Desbloqueia todos os comandos da categoria STICKER.\n\n`+
                 `Ex: *${PREFIX}dcmd* utilidade - Desbloqueia todos os comandos da categoria UTILIDADE.\n\n`+
@@ -982,8 +983,22 @@ export default function getCommands (botInfo?: Bot){
         },
         
         admin: { // ************* ADMIN *************
+            api: {
+                guide: 'Esse comando é usado apenas para configurar as chave de API de certos serviços.\n\n'+
+                `Configurar *DEEPGRAM*\nEx: ${PREFIX}api deepgram *secret_key*\n\n`+
+                `Configurar *ACRCLOUD*\nEx: ${PREFIX}api acrcloud *host*  *access_key*  *secret_key*\n`,
+                msgs: {
+                    reply_deepgram_success: `✅ Sua API do Deepgram foi configurada com sucesso, teste o comando ${PREFIX}ouvir para verificar se funcionou e se caso não funcione tente configurar novamente.`,                        
+                    reply_deepgram_error: 'Houve um erro ao configurar a chave do Deepgram, verifique se digitou o comando corretamente.\n\n'+
+                    `Ex: ${PREFIX}api deepgram *secret_key*`,                        
+                    reply_acrcloud_success: `✅ Sua API do ACRCloud foi configurada com sucesso, teste o comando ${PREFIX}qualmusica para verificar se funcionou e se caso não funcione tente configurar novamente.`,                        
+                    reply_acrcloud_error: 'Houve um erro ao configurar a chave do ACRCloud, verifique se inseriu os valores corretamente.\n\n'+
+                    `Ex: ${PREFIX}api acrcloud *host*  *access_key*  *secret_key*`,                       
+                },
+                function: adminCommand.apiCommand
+            },
             sair: {
-                guide: GUIDE_TITLE +`Ex: Digite *${PREFIX}sair* em um grupo - Faz o bot sair do grupo atual.\n`+
+                guide: `Ex: Digite *${PREFIX}sair* em um grupo - Faz o bot sair do grupo atual.\n`+
                 `Ex: *${PREFIX}sair* 1 - Faz o bot sair do grupo selecionado.\n\n`+
                 `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
                 msgs: {
@@ -993,7 +1008,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             pvliberado: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}pvliberado* - Liga/desliga os comandos em MENSAGENS PRIVADAS.\n`,
+                guide: `Ex: *${PREFIX}pvliberado* - Liga/desliga os comandos em MENSAGENS PRIVADAS.\n`,
                 msgs: {
                     reply_off: "✅ Os comandos em MENSAGENS PRIVADAS foram desativados com sucesso.",
                     reply_on: "✅ Os comandos em MENSAGENS PRIVADAS foram ativados com sucesso."
@@ -1001,7 +1016,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             bcmdglobal: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
+                guide: `Ex: *${PREFIX}bcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
                 `Ex: *${PREFIX}bcmdglobal* figurinhas - Bloqueia todos os comandos da categoria FIGURINHAS.\n\n`+
                 `Ex: *${PREFIX}bcmdglobal* utilidades - Bloqueia todos os comandos da categoria UTILIDADES.\n\n`+
                 `Ex: *${PREFIX}bcmdglobal* downloads - Bloqueia todos os comandos da categoria DOWNLOADS.\n\n`+
@@ -1017,7 +1032,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             dcmdglobal: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}dcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
+                guide: `Ex: *${PREFIX}dcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
                 `Ex: *${PREFIX}dcmdglobal* todos - Desbloqueia todos os comandos.\n\n`+
                 `Ex: *${PREFIX}dcmdglobal* figurinhas - Desbloqueia todos os comandos da categoria FIGURINHAS.\n\n`+
                 `Ex: *${PREFIX}dcmdglobal* utilidades - Desbloqueia todos os comandos da categoria UTILIDADES.\n\n`+
@@ -1032,14 +1047,14 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             sairgrupos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}sairgrupos* - Sai de todos os grupos.\n`,
+                guide: `Ex: *${PREFIX}sairgrupos* - Sai de todos os grupos.\n`,
                 msgs: {
                     reply: "🤖✅ Saí de todos os grupos com sucesso, total de grupos : {p1}"
                 },
                 function : infoCommand.menuCommand
             },
             infobot: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}infobot* - Exibe as informações completas do bot, inclusive as configurações atuais.\n`,
+                guide: `Ex: *${PREFIX}infobot* - Exibe as informações completas do bot, inclusive as configurações atuais.\n`,
                 msgs: {
                     reply_title:"*Administrador do Bot* : {p1}\n"+
                     "*Nome do bot* : {p2}\n"+
@@ -1073,7 +1088,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             entrargrupo: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}entrargrupo* link - Entra em um grupo por link de convite.\n`,
+                guide: `Ex: *${PREFIX}entrargrupo* link - Entra em um grupo por link de convite.\n`,
                 msgs: {
                     error_link_invalid: "[❗] Isso não é um link válido 👊🤬",
                     error_group : "[❗] Houve um erro para entrar nesse grupo, verifique se o link está correto.",
@@ -1083,7 +1098,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             bcgrupos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bcgrupos* mensagem - Envia uma mensagem para todos os *GRUPOS*.\n`,
+                guide: `Ex: *${PREFIX}bcgrupos* mensagem - Envia uma mensagem para todos os *GRUPOS*.\n`,
                 msgs: {
                     message: `[🤖${BOT_NAME}® - Mensagem para os grupos]\n\n`+
                     "{p1}",
@@ -1094,35 +1109,35 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             fotobot: {
-                guide: GUIDE_TITLE +`Ex: Envie/responda uma *imagem* com *${PREFIX}fotobot* - Altera a foto do BOT.\n`,
+                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}fotobot* - Altera a foto do BOT.\n`,
                 msgs: {
                     reply: "🤖✅ A foto do BOT foi alterada com sucesso."
                 },
                 function : infoCommand.menuCommand
             },
             nomebot: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}nomebot* Teste123 - Muda o nome do *BOT* para *Teste123* e atualiza os menus com o novo nome.\n`,
+                guide: `Ex: *${PREFIX}nomebot* Teste123 - Muda o nome do *BOT* para *Teste123* e atualiza os menus com o novo nome.\n`,
                 msgs: {
                     reply: "✅ O nome do bot foi alterado com sucesso.",
                 },
                 function : infoCommand.menuCommand
             },
             nomesticker: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}nomesticker* Teste123 - Muda o nome do *PACOTE DE STICKERS* para *Teste123* e atualiza os novos stickers com o novo nome.\n`,
+                guide: `Ex: *${PREFIX}nomesticker* Teste123 - Muda o nome do *PACOTE DE STICKERS* para *Teste123* e atualiza os novos stickers com o novo nome.\n`,
                 msgs: {
                     reply: "✅ O nome do pacote de figurinhas foi alterado com sucesso.",
                 },
                 function : infoCommand.menuCommand
             },
             nomeadm: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}nomeadm* Teste123 - Muda o nome do *ADMINISTRADOR* para *Teste123* e atualiza os menus com o novo nome.\n`,
+                guide: `Ex: *${PREFIX}nomeadm* Teste123 - Muda o nome do *ADMINISTRADOR* para *Teste123* e atualiza os menus com o novo nome.\n`,
                 msgs: {
                     reply: "✅ O nome do administrador foi alterado com sucesso.",
                 },
                 function : infoCommand.menuCommand
             },
             prefixo: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}prefixo* .  - Muda o prefixo dos *COMANDOS* para *.* e atualiza os menus e comandos com o novo prefixo.\n\n`+
+                guide: `Ex: *${PREFIX}prefixo* .  - Muda o prefixo dos *COMANDOS* para *.* e atualiza os menus e comandos com o novo prefixo.\n\n`+
                 `Suporta os seguintes prefixos : *!*  *#*  *.*  ***\n`,
                 msgs: {
                     reply: "✅ O prefixo dos comandos foi alterado com sucesso.",
@@ -1131,7 +1146,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             autostickerpv: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}autostickerpv* - Liga/desliga a criação automatica de stickers sem precisar de comandos no privado.\n`,
+                guide: `Ex: *${PREFIX}autostickerpv* - Liga/desliga a criação automatica de stickers sem precisar de comandos no privado.\n`,
                 msgs: {
                     reply_off: "✅ O AUTO-STICKER em mensagens privadas foi desativado com sucesso",
                     reply_on: "✅ O AUTO-STICKER em mensagens privadas foi ativado com sucesso",
@@ -1139,7 +1154,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             listablock: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}listablock* - Exibe a lista de usuários bloqueados pelo bot.\n`,
+                guide: `Ex: *${PREFIX}listablock* - Exibe a lista de usuários bloqueados pelo bot.\n`,
                 msgs: {
                     reply_title: "🤖 Esse é o total de pessoas bloqueadas \nTotal : {p1}\n",
                     error: "[❗] O bot não tem pessoas bloqueadas.",
@@ -1148,7 +1163,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             bloquear: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}bloquear* @membro - Para o bot bloquear o membro mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}bloquear* @membro - Para o bot bloquear o membro mencionado.\n\n`+
                 `Ex: *${PREFIX}bloquear* +55 (xx) xxxxx-xxxx - Para o bot bloquear o número digitado.\n\n`+
                 `Ex: Responder alguém com *${PREFIX}bloquear* - Para o bot bloquear o membro que você respondeu.\n`,
                 msgs: {
@@ -1159,7 +1174,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             taxacomandos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+                guide: `Ex: *${PREFIX}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
                 `*Obs*: Digite *${PREFIX}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
                 msgs: {
                     error_msg_number_invalid: "[❗] A quantidade máxima de mensagens por minuto está inválida",
@@ -1170,7 +1185,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             desbloquear: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}desbloquear* @membro - Para o bot desbloquear o membro mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}desbloquear* @membro - Para o bot desbloquear o membro mencionado.\n\n`+
                 `Ex: *${PREFIX}desbloquear* +55 (xx) xxxxx-xxxx - Para o bot desbloquear o número digitado.\n\n`+
                 `Ex: Responder alguém com *${PREFIX}desbloquear* - Para o bot desbloquear o membro que você respondeu.\n`,
                 msgs: {
@@ -1180,7 +1195,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             estado: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}estado* online - Muda o status do bot para ONLINE.\n\n`+
+                guide: `Ex: *${PREFIX}estado* online - Muda o status do bot para ONLINE.\n\n`+
                 `Ex: *${PREFIX}estado* offline - Muda o status do bot para OFFLINE.\n\n`+
                 `Ex: *${PREFIX}estado* manutencao - Muda o status do bot para MANUTENCÃO.\n`,
                 msgs: {
@@ -1189,11 +1204,11 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             admin: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}admin* - Exibe o menu de administração do bot.\n`,
+                guide: `Ex: *${PREFIX}admin* - Exibe o menu de administração do bot.\n`,
                 function : infoCommand.menuCommand
             },
             grupos: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
+                guide: `Ex: *${PREFIX}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
                 msgs: {
                     reply_title: "🤖 GRUPOS ATUAIS ({p1})\n",
                     reply_item: "----------------------------\n"+
@@ -1207,7 +1222,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             linkgrupo: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}linkgrupo* 1 - Exibe o link do grupo selecionado.\n\n`+
+                guide: `Ex: *${PREFIX}linkgrupo* 1 - Exibe o link do grupo selecionado.\n\n`+
                 `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
                 msgs: {
                     reply: `🤖✅ O link para este grupo atualmente é : {p1}`,
@@ -1217,7 +1232,7 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             usuario: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}usuario* @usuario - Mostra os dados gerais do usuário mencionado.\n\n`+
+                guide: `Ex: *${PREFIX}usuario* @usuario - Mostra os dados gerais do usuário mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}usuario* - Mostra os dados gerais do usuário respondido.\n\n`+
                 `Ex: *${PREFIX}usuario* 55219xxxxxxxx - Mostra os dados gerais do usuário com esse número.\n`,
                 msgs: {
@@ -1231,14 +1246,14 @@ export default function getCommands (botInfo?: Bot){
                 function : infoCommand.menuCommand
             },
             desligar: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}desligar* - Desliga o bot.\n`,
+                guide: `Ex: *${PREFIX}desligar* - Desliga o bot.\n`,
                 msgs: {
                     reply: "🤖✅ Entendido, o BOT será desligado"
                 },
                 function : infoCommand.menuCommand
             },
             ping: {
-                guide: GUIDE_TITLE +`Ex: *${PREFIX}ping* - Exibe as informações do sistema do BOT e o tempo de resposta dele.\n`,
+                guide: `Ex: *${PREFIX}ping* - Exibe as informações do sistema do BOT e o tempo de resposta dele.\n`,
                 msgs: {
                     reply: "🖥️ INFORMAÇÃO GERAL 🖥️\n\n"+
                     "*OS*: {p1}\n"+

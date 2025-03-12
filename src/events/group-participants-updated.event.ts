@@ -12,32 +12,32 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
         const isBotUpdate = event.participants[0] == botInfo.host_number
         const group = await groupController.getGroup(event.id)
 
-        if(!group) return
+        if (!group) return
 
         if (event.action === 'add') {
             //Filtro de LISTA-NEGRA
-            if(!await filterUserBlacklist(client, botInfo, group, event.participants[0])) return
+            if (!await filterUserBlacklist(client, botInfo, group, event.participants[0])) return
 
             //Filtro de ANTI-FAKE
-            if(!await filterUserAntifake(client, botInfo, group, event.participants[0])) return
+            if (!await filterUserAntifake(client, botInfo, group, event.participants[0])) return
             
             //Mensagem de boas vindas
             await sendWelcome(client, group, botInfo, event.participants[0])
             //Inclusão no banco de dados
             await groupController.addParticipant(event.id, event.participants[0])
-        } else if(event.action === "remove"){
-            if(isBotUpdate){
+        } else if (event.action === "remove"){
+            if (isBotUpdate){
                 //Se o bot for removido do grupo, remova o contador e o grupo do banco de dados. 
-                if(group?.counter.status) await groupController.removeGroupCounter(event.id)
+                if (group?.counter.status) await groupController.removeGroupCounter(event.id)
                 await groupController.removeGroup(event.id)
             } else {
                 //Se um participante for removido, somente remova ele do banco de dados do grupo.
                 await groupController.removeParticipant(event.id, event.participants[0])
             }
-        } else if(event.action === "promote"){
+        } else if (event.action === "promote"){
             //Se um participante for promovido
             await groupController.addAdmin(event.id, event.participants[0])
-        } else if(event.action === "demote"){
+        } else if (event.action === "demote"){
             //Se um participant for rebaixado
             await groupController.removeAdmin(event.id, event.participants[0])
         }
@@ -62,13 +62,13 @@ async function filterUserBlacklist(client: WASocket, botInfo: Bot, group: Group,
 }
 
 async function filterUserAntifake(client: WASocket, botInfo: Bot, group: Group, userId: string){
-    if(group.antifake.status){
+    if (group.antifake.status){
         const groupAdmins = group.admins
         const isBotAdmin = botInfo.host_number ? groupAdmins.includes(botInfo.host_number) : false
         const groupController = new GroupController()
-        if(isBotAdmin){
+        if (isBotAdmin){
             const isFake = groupController.isNumberFake(group, userId)
-            if(isFake){
+            if (isFake){
                 const baileysController = new BaileysController(client)
                 const generalMessages = getGeneralMessages(botInfo)
                 await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.antifake_ban_message, userId.replace("@s.whatsapp.net", ""), botInfo.name), [userId])

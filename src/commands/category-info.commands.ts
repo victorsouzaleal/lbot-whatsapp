@@ -24,7 +24,7 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 
     let reply = buildText(commandsData.info.info.msgs.reply, botInfo.name.trim(), startedDate, botInfo.executed_cmds, contactAdminsText, currentVersion)
     baileysController.getProfilePicUrl(botInfo.host_number).then(async(url)=>{
-        if(url) await baileysController.replyFileFromUrl(message.chat_id, "imageMessage", url, reply, message.wa_message)
+        if (url) await baileysController.replyFileFromUrl(message.chat_id, "imageMessage", url, reply, message.wa_message)
         else await baileysController.replyText(message.chat_id, reply, message.wa_message)
     }).catch(async()=> {
         await baileysController.replyText(message.chat_id, reply, message.wa_message)
@@ -34,12 +34,12 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 export async function reportarCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
 
-    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const commandsData = getCommands(botInfo)
     const admins = await new UserController().getAdmins()
 
-    if(!admins.length) throw new Error(commandsData.info.reportar.msgs.error)
+    if (!admins.length) throw new Error(commandsData.info.reportar.msgs.error)
 
     admins.forEach(async (admin) => {
         let replyAdmin = buildText(commandsData.info.reportar.msgs.reply_admin, message.pushname, message.sender.replace("@s.whatsapp.net",""), message.text_command)
@@ -53,13 +53,13 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     let userData = await new UserController().getUser(message.sender)
-    if(!userData) throw new Error(commandsData.info.meusdados.msgs.error_not_found)
+    if (!userData) throw new Error(commandsData.info.meusdados.msgs.error_not_found)
     let userName = userData.name || ''
     let userType = userData.admin ? '💻 Admin'  : '👤 Comum'
     let replyMessage = buildText(commandsData.info.meusdados.msgs.reply, userType, userName, userData.commands)
 
-    if(message.isGroupMsg && group){
-        if(group.counter.status){
+    if (message.isGroupMsg && group){
+        if (group.counter.status){
             const groupController = new GroupController()
             let userActivity = await groupController.getParticipantActivity(group.id, message.sender)
             replyMessage = buildText(commandsData.info.meusdados.msgs.reply_group, userType, userName, userData.commands, userActivity?.msgs)
@@ -74,14 +74,14 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
     const commandsData = getCommands(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
-    if(!userData) throw new Error(commandsData.info.menu.msgs.error_user_not_found)
+    if (!userData) throw new Error(commandsData.info.menu.msgs.error_user_not_found)
 
     const userType = userData.admin ? '💻 Admin'  : '👤 Comum'
     let response : string | undefined
     response = buildText(commandsData.info.menu.msgs.reply, userData.name, userType, userData.commands)
     response += `═════════════════\n`
 
-    if(!message.args.length){
+    if (!message.args.length){
         response += menu.mainMenu(botInfo)
     } else {
         const commandText = message.text_command.trim()
@@ -99,13 +99,13 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
                 response += menu.downloadMenu(botInfo)
                 break
             case "4":
-                if(!message.isGroupMsg) throw new Error(getGeneralMessages(botInfo).permission.group)
+                if (!message.isGroupMsg) throw new Error(getGeneralMessages(botInfo).permission.group)
 
-                if(message.isGroupAdmin) response += menu.groupAdminMenu(botInfo)
+                if (message.isGroupAdmin) response += menu.groupAdminMenu(botInfo)
                 else response += menu.groupMenu(botInfo)
                 break
             case "5":
-                if(message.isGroupMsg) response += menu.funGroupMenu(botInfo)
+                if (message.isGroupMsg) response += menu.funGroupMenu(botInfo)
                 else response += menu.funMenu(botInfo)
                 break
             default:

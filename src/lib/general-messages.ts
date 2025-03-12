@@ -11,12 +11,13 @@ export default function getGeneralMessages (botInfo? : Bot){
             new_user: "[ 🤖 Boas Vindas ao {p1} 🤖]\n\n"+
             `👋 Olá {p2}, vi que você é um usuário novo para abrir o menu de comandos digite *${prefix}menu*`,
             new_group: "Saudações *{p1}* , se tiverem alguma dúvida só digitar "+`*${prefix}menu*`,
+            guide_header_text: '❔ USO DO COMANDO ❔\n\n',
             error_command_usage: "Parece que você usou o comando *{p1}* incorretamente ou não sabe como utilizá-lo.\n\nDigite: *{p2} guia* para ver o guia e aprender sobre este comando.",
-            error_command: "[❗] Não foi possível realizar o comando *{p1}*, cheque o motivo do erro abaixo.\n\n"+
+            error_command: "❗ Não foi possível realizar o comando *{p1}*, cheque o motivo do erro abaixo.\n\n"+
             "*Erro* : {p2}\n",
-            taxacomandos_limited_message : "[❗] Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
-            group_blocked_command: "[❗] O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
-            globally_blocked_command: "[❗] O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",
+            taxacomandos_limited_message : "Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
+            group_blocked_command: "O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
+            globally_blocked_command: "O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",
             detected_link: "🤖 Ei @{p1}, o ANTI-LINK está ativado e um possível link foi detectado na sua mensagem, ela foi apagada por segurança.",
             group_welcome_message: "👋 Olá, @{p1}\n"+
             "Seja bem vindo(a) ao grupo *{p2}*\n\n"+
@@ -48,7 +49,7 @@ export default function getGeneralMessages (botInfo? : Bot){
                 bot_group_admin: 'Esse comando só pode ser realizado se o BOT for administrador do grupo.',
                 ban_admin : 'O BOT não tem permissão para banir um administrador.',
                 admin_group_only : 'Apenas administradores do grupo podem usar este comando.',
-                admin_bot_only: 'Apenas o administrador do BOT pode usar este comando.',
+                admin_bot_only: 'Apenas administradores do BOT podem usar este comando.',
                 owner_group_only: 'Apenas o dono do GRUPO pode usar este comando.',
             }
         }

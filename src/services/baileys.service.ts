@@ -22,9 +22,9 @@ export class BaileysService{
         let deletedMessage
         let chatId = message.key.remoteJid
 
-        if(!chatId) return
+        if (!chatId) return
 
-        if(deleteQuoted){
+        if (deleteQuoted){
             deletedMessage = {
                 remoteJid: message.key.remoteJid,
                 fromMe: message.key.participant === message?.message?.extendedTextMessage?.contextInfo?.participant,
@@ -98,12 +98,12 @@ export class BaileysService{
     }
 
     async sendFileFromUrl(chatId: string, type: MessageTypes, url: string, caption: string, mimetype?: MimeTypes){
-        if(type === "imageMessage") {
+        if (type === "imageMessage") {
             return this.client.sendMessage(chatId, {image: {url}, caption})
-        }else if(type === 'videoMessage'){
+        }else if (type === 'videoMessage'){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
             return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb})
-        } else if(type === 'audioMessage'){
+        } else if (type === 'audioMessage'){
             return this.client.sendMessage(chatId, {audio: {url}, mimetype})
         }
     }
@@ -114,7 +114,7 @@ export class BaileysService{
     }
 
     async replyFile (chatId: string, type: MessageTypes, url: string, caption: string, quoted: WAMessage, mimetype? : MimeTypes){ 
-        if(type == "imageMessage"){
+        if (type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('file', url)
@@ -125,7 +125,7 @@ export class BaileysService{
     }
 
     async replyFileFromUrl (chatId: string, type: MessageTypes, url: string, caption: string, quoted: WAMessage, mimetype?: MimeTypes){ 
-        if(type == "imageMessage"){
+        if (type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
         } else if (type == "videoMessage"){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
@@ -136,10 +136,10 @@ export class BaileysService{
     }
 
     async replyFileFromBuffer (chatId: string, type: MessageTypes, buffer: Buffer, caption: string, quoted: WAMessage, mimetype? : MimeTypes){ 
-        if(type == "videoMessage"){
+        if (type == "videoMessage"){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('buffer', buffer)
             return this.client.sendMessage(chatId, {video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted})
-        } else if(type == "imageMessage"){
+        } else if (type == "imageMessage"){
             return this.client.sendMessage(chatId, {image: buffer, caption}, {quoted})
         } else if (type == "audioMessage"){
             return this.client.sendMessage(chatId, {audio: buffer, mimetype}, {quoted})

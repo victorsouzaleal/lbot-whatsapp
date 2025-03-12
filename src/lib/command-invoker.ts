@@ -20,10 +20,10 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
         switch (categoryCommand) {
             case 'info':
                 //Categoria INFO
-                if(isGuide) {
+                if (isGuide) {
                     await sendCommandGuide(client, botInfo, message, categoryCommand)
                 } else {
-                    if(Object.keys(commandsData.info).includes(commandWithoutPrefix)){
+                    if (Object.keys(commandsData.info).includes(commandWithoutPrefix)){
                         const commandsInfo = commandsData.info as Commands
                         await commandsInfo[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
                         showCommandConsole(message.isGroupMsg, "INFO", message.command, "#8ac46e", message.t, message.pushname, group?.name)
@@ -32,10 +32,10 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'utility':
                 //Categoria UTILIDADE
-                if(isGuide){
+                if (isGuide){
                     await sendCommandGuide(client, botInfo, message, categoryCommand)
                 } else {
-                    if(Object.keys(commandsData.utility).includes(commandWithoutPrefix)){
+                    if (Object.keys(commandsData.utility).includes(commandWithoutPrefix)){
                         const commandsUtility = commandsData.utility as Commands
                         await commandsUtility[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
                         showCommandConsole(message.isGroupMsg, "UTILIDADE", message.command, "#de9a07", message.t, message.pushname, group?.name)
@@ -44,10 +44,10 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'sticker':
                 //Categoria STICKER
-                if(isGuide){
+                if (isGuide){
                     await sendCommandGuide(client, botInfo, message, categoryCommand)
                 } else {
-                    if(Object.keys(commandsData.sticker).includes(commandWithoutPrefix)){
+                    if (Object.keys(commandsData.sticker).includes(commandWithoutPrefix)){
                         const commandsSticker = commandsData.sticker as Commands
                         await commandsSticker[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
                         showCommandConsole(message.isGroupMsg, "STICKER", message.command, "#ae45d1", message.t, message.pushname, group?.name)
@@ -56,10 +56,10 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'download':
                 //Categoria DOWNLOAD
-                if(isGuide){
+                if (isGuide){
                     await sendCommandGuide(client, botInfo, message, categoryCommand)
                 } else {
-                    if(Object.keys(commandsData.download).includes(commandWithoutPrefix)){
+                    if (Object.keys(commandsData.download).includes(commandWithoutPrefix)){
                         const commandsDownload = commandsData.download as Commands
                         await commandsDownload[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
                         showCommandConsole(message.isGroupMsg, "DOWNLOAD", message.command, "#2195cf", message.t, message.pushname, group?.name)
@@ -68,10 +68,10 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'fun':
                 //Categoria DIVERSÃO
-                if(isGuide){
+                if (isGuide){
                     await sendCommandGuide(client, botInfo, message, categoryCommand)
                 } else {
-                    if(Object.keys(commandsData.fun).includes(commandWithoutPrefix)){
+                    if (Object.keys(commandsData.fun).includes(commandWithoutPrefix)){
                         const commandsFun = commandsData.fun as Commands
                         await commandsFun[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
                         showCommandConsole(message.isGroupMsg, "DIVERSÃO", message.command, "#22e3dd", message.t, message.pushname, group?.name)
@@ -80,12 +80,12 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'group':
                 //Categoria GRUPO
-                if(!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
+                if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
 
-                if(isGuide){
+                if (isGuide){
                     await sendCommandGuide(client, botInfo, message, categoryCommand)
                 } else {
-                    if(Object.keys(commandsData.group).includes(commandWithoutPrefix)){
+                    if (Object.keys(commandsData.group).includes(commandWithoutPrefix)){
                         const commandsGroup = commandsData.group as Commands
                         await commandsGroup[commandWithoutPrefix].function(client, botInfo, message, group)
                         showCommandConsole(message.isGroupMsg, "GRUPO", message.command, "#e0e031", message.t, message.pushname, group?.name)
@@ -94,11 +94,21 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
             case 'admin':
                 //Categoria ADMIN
-                showCommandConsole(message.isGroupMsg, "ADMINISTRAÇÃO", message.command, "#d1d1d1", message.t, message.pushname, group?.name)
+                if (!message.isBotAdmin) throw new Error(generalMessages.permission.admin_bot_only)
+
+                if (isGuide){
+                    await sendCommandGuide(client, botInfo, message, categoryCommand)
+                } else {
+                    if (Object.keys(commandsData.admin).includes(commandWithoutPrefix)){
+                        const commandsAdmin = commandsData.admin as Commands
+                        await commandsAdmin[commandWithoutPrefix].function(client, botInfo, message, group || undefined)
+                        showCommandConsole(message.isGroupMsg, "ADMINISTRAÇÃO", message.command, "#d1d1d1", message.t, message.pushname, group?.name)
+                    }         
+                }
                 break
             default:
                 //Outros - Autosticker
-                if((message.isGroupMsg && group?.autosticker) || (!message.isGroupMsg && botInfo.autosticker)){
+                if ((message.isGroupMsg && group?.autosticker) || (!message.isGroupMsg && botInfo.autosticker)){
                     await autoSticker(client, botInfo, message, group || undefined)
                     showCommandConsole(message.isGroupMsg, "STICKER", "AUTO-STICKER", "#ae45d1", message.t, message.pushname, group?.name)
                 }

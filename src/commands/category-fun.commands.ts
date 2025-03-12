@@ -19,7 +19,7 @@ export async function simiCommand(client: WASocket, botInfo: Bot, message: Messa
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
-    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const simiResult = await generalLibrary.simSimi(message.text_command)
     const replyText = buildText(commandsData.fun.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
@@ -32,8 +32,8 @@ export async function viadometroCommand(client: WASocket, botInfo: Bot, message:
     const generalMessages = getGeneralMessages(botInfo)
 
     if (!message.isGroupMsg) throw new Error(generalMessages.permission.group)
-    if(!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
-    if(message.mentioned.length > 1) throw new Error(commandsData.fun.viadometro.msgs.error_mention)
+    if (!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (message.mentioned.length > 1) throw new Error(commandsData.fun.viadometro.msgs.error_mention)
 
     const answers = commandsData.fun.viadometro.msgs.answers
     const randomIndex = Math.floor(Math.random() * answers.length)
@@ -48,11 +48,11 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
     const generalMessages = getGeneralMessages(botInfo)
 
     if (!message.isGroupMsg) throw new Error(generalMessages.permission.group)
-    if(!message.isQuoted) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.isQuoted) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const quotedMessage = message.quotedMessage?.wa_message
 
-    if(!quotedMessage) throw new Error(commandsData.fun.detector.msgs.error_message)
+    if (!quotedMessage) throw new Error(commandsData.fun.detector.msgs.error_message)
 
     const truthMachineResult = generalLibrary.truthMachine()
     const waitReply = commandsData.fun.detector.msgs.wait
@@ -71,9 +71,9 @@ export async function roletarussaCommand(client: WASocket, botInfo: Bot, message
     
     let eligibleParticipants = group.participants
     eligibleParticipants.splice(eligibleParticipants.indexOf(botInfo.host_number), 1)
-    if(group.owner && group.owner != botInfo.host_number) eligibleParticipants.splice(eligibleParticipants.indexOf(group.owner),1)
+    if (group.owner && group.owner != botInfo.host_number) eligibleParticipants.splice(eligibleParticipants.indexOf(group.owner),1)
 
-    if(!eligibleParticipants.length) throw new Error(commandsData.fun.roletarussa.msgs.error)
+    if (!eligibleParticipants.length) throw new Error(commandsData.fun.roletarussa.msgs.error)
 
     let randomIndex = Math.floor(Math.random() * eligibleParticipants.length)
     let chosenParticipant = eligibleParticipants[randomIndex]
@@ -93,7 +93,7 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
     
     let currentParticipants = group.participants
 
-    if(currentParticipants && currentParticipants.length < 2) throw new Error(commandsData.fun.casal.msgs.error)
+    if (currentParticipants && currentParticipants.length < 2) throw new Error(commandsData.fun.casal.msgs.error)
     
     let randomIndex = Math.floor(Math.random() * currentParticipants.length)
     let chosenParticipant1 = currentParticipants[randomIndex]
@@ -111,7 +111,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     const validChoices = ['cara', 'coroa']
     const userChoice = message.text_command.toLowerCase()
 
-    if(!message.args.length || !validChoices.includes(userChoice)) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length || !validChoices.includes(userChoice)) throw new Error(messageErrorCommandUsage(botInfo, message))
     
     const flipCoinInfo = generalLibrary.flipCoin()
     const waitText = commandsData.fun.caracoroa.msgs.wait
@@ -120,7 +120,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     const isUserVictory = flipCoinInfo.result == userChoice
     let replyText : string
 
-    if(isUserVictory) replyText = buildText(commandsData.fun.caracoroa.msgs.reply_victory, uppercaseFirst(flipCoinInfo.result))
+    if (isUserVictory) replyText = buildText(commandsData.fun.caracoroa.msgs.reply_victory, uppercaseFirst(flipCoinInfo.result))
     else replyText = buildText(commandsData.fun.caracoroa.msgs.reply_defeat, uppercaseFirst(flipCoinInfo.result))
     
     await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', flipCoinInfo.image, replyText, message.wa_message)
@@ -134,34 +134,34 @@ export async function pptCommand(client: WASocket, botInfo: Bot, message: Messag
     const userChoice = message.text_command.toLocaleLowerCase()
     const randomIndex = Math.floor(Math.random() * validChoices.length)
 
-    if(!message.args.length || !validChoices.includes(userChoice)) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length || !validChoices.includes(userChoice)) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     let botChoice = validChoices[randomIndex]
     let botIconChoice : string
     let userIconChoice : string
     let isUserVictory : boolean | undefined
     
-    if(botChoice == "pedra"){
+    if (botChoice == "pedra"){
         botIconChoice = "✊"
-        if(userChoice == "pedra") userIconChoice = "✊";
+        if (userChoice == "pedra") userIconChoice = "✊";
         else if (userChoice == "tesoura") isUserVictory = false, userIconChoice = "✌️";
         else isUserVictory = true, userIconChoice = "✋";
-    } else if(botChoice == "papel"){
+    } else if (botChoice == "papel"){
         botIconChoice = "✋"
-        if(userChoice == "pedra") isUserVictory = false, userIconChoice = "✊";
+        if (userChoice == "pedra") isUserVictory = false, userIconChoice = "✊";
         else if (userChoice == "tesoura") isUserVictory = true, userIconChoice = "✌️";
         else userIconChoice = "✋";
     } else  {
         botIconChoice = "✌️"
-        if(userChoice == "pedra") isUserVictory = true, userIconChoice = "✊";
-        else if(userChoice == "tesoura") userIconChoice = "✌️";
+        if (userChoice == "pedra") isUserVictory = true, userIconChoice = "✊";
+        else if (userChoice == "tesoura") userIconChoice = "✌️";
         else isUserVictory = false, userIconChoice = "✋";
     }
 
     let replyText : string
 
-    if(isUserVictory === true) replyText = buildText(commandsData.fun.ppt.msgs.reply_victory, userIconChoice, botIconChoice)
-    else if(isUserVictory === false) replyText = buildText(commandsData.fun.ppt.msgs.reply_defeat, userIconChoice, botIconChoice)
+    if (isUserVictory === true) replyText = buildText(commandsData.fun.ppt.msgs.reply_victory, userIconChoice, botIconChoice)
+    else if (isUserVictory === false) replyText = buildText(commandsData.fun.ppt.msgs.reply_defeat, userIconChoice, botIconChoice)
     else replyText = buildText(commandsData.fun.ppt.msgs.reply_draw, userIconChoice, botIconChoice)
     
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
@@ -173,8 +173,8 @@ export async function gadometroCommand(client: WASocket, botInfo: Bot, message: 
     const generalMessages = getGeneralMessages(botInfo)
    
     if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
-    if(!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
-    if(message.mentioned.length > 1) throw new Error(commandsData.fun.gadometro.msgs.error_mention)
+    if (!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (message.mentioned.length > 1) throw new Error(commandsData.fun.gadometro.msgs.error_mention)
     
     const answers = commandsData.fun.gadometro.msgs.answers 
     const randomIndex = Math.floor(Math.random() * answers.length)
@@ -189,8 +189,8 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
     const generalMessages = getGeneralMessages(botInfo)
    
     if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
-    if(!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
-    if(message.mentioned.length > 1) throw new Error(commandsData.fun.bafometro.msgs.error_mention)
+    if (!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (message.mentioned.length > 1) throw new Error(commandsData.fun.bafometro.msgs.error_mention)
 
     const answers = commandsData.fun.bafometro.msgs.answers
     const randomIndex = Math.floor(Math.random() * answers.length)
@@ -205,12 +205,12 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
     const generalMessages = getGeneralMessages(botInfo)
 
     if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
-    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
     
     let rankingTheme = message.text_command
     let currentParticipants = group.participants
 
-    if(currentParticipants.length < 5) throw new Error(commandsData.fun.top5.msgs.error_members)
+    if (currentParticipants.length < 5) throw new Error(commandsData.fun.top5.msgs.error_members)
 
     let replyText = buildText(commandsData.fun.top5.msgs.reply_title, rankingTheme)
     let mentionList = []
@@ -261,7 +261,7 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
-    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const randomNumber = Math.floor(Math.random() * 100)
     const replyText = buildText(commandsData.fun.chance.msgs.reply, randomNumber, message.text_command)

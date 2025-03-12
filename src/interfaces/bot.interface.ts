@@ -8,6 +8,7 @@ export interface Bot {
     executed_cmds: number,
     autosticker: boolean,
     block_cmds: string[],
+    pv_allowed: boolean,
     command_rate:{
         status: boolean,
         max_cmds_minute: number,
@@ -22,5 +23,15 @@ export interface Bot {
             expiration : number
         }[]
     },
-    pv_allowed: boolean
+    api_keys: {
+        deepgram: {
+            secret_key: string | null
+        },
+        acrcloud: {
+            host: string | null,
+            access_key: string | null,
+            secret_key: string | null
+        }
+    }
+    
 }

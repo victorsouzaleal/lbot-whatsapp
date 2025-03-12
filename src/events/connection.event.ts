@@ -31,16 +31,16 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
         let needReconnect = false
         const errorCode = (new Boom(lastDisconnect?.error)).output.statusCode
 
-        if(lastDisconnect?.error?.message == "admin_command"){
+        if (lastDisconnect?.error?.message == "admin_command"){
             showConsoleError(new Error(generalMessages.disconnected.command), 'CONNECTION')
-        } else if(lastDisconnect?.error?.message == "fatal_error"){
+        } else if (lastDisconnect?.error?.message == "fatal_error"){
             showConsoleError(new Error(generalMessages.disconnected.fatal_error), 'CONNECTION')
         } else {
             needReconnect = true
-            if(errorCode == DisconnectReason?.loggedOut){
+            if (errorCode == DisconnectReason?.loggedOut){
                 fs.rmSync("session", {recursive: true, force: true})
                 showConsoleError(new Error(generalMessages.disconnected.logout), 'CONNECTION')
-            } else if(errorCode == DisconnectReason?.restartRequired){
+            } else if (errorCode == DisconnectReason?.restartRequired){
                 showConsoleError(new Error(generalMessages.disconnected.restart), 'CONNECTION')
             } else {
                 showConsoleError(new Error(buildText(generalMessages.disconnected.bad_connection, errorCode.toString(), lastDisconnect?.error?.message)), 'CONNECTION')
@@ -56,7 +56,7 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
  async function checkAdminNumber(){
     const admins = await new UserController().getAdmins()
     
-    if(!admins.length){
+    if (!admins.length){
         console.log("[ADMIN]", colorText("O número do ADMIN ainda não foi configurado, digite !admin para cadastrar seu número como administrador.", "#d63e3e"))
     } else {
         console.log("[ADMIN]", colorText("✓ Número do ADMIN configurado."))

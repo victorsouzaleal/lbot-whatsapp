@@ -7,66 +7,75 @@ export class BotController {
         this.botService = new BotService()
     }
 
-    startBot(hostNumber : string){
+    public startBot(hostNumber : string){
         return this.botService.startBot(hostNumber)
     }
 
-    getBot(){
+    public getBot(){
         return this.botService.getBot()
     }
 
-    setName(name: string){
+    public setName(name: string){
         return this.botService.setNameBot(name)
     }
 
-    setAuthorSticker(name: string){
+    public setAuthorSticker(name: string){
         return this.botService.setAuthorSticker(name)
     }
 
-    setPackSticker(name: string){
+    public setPackSticker(name: string){
         return this.botService.setPackSticker(name)
     }
 
-    setPrefix(prefix: string){
+    public setPrefix(prefix: string){
         return this.botService.setPrefix(prefix)
     }
 
-    incrementExecutedCommands(){
+    public incrementExecutedCommands(){
         return this.botService.incrementExecutedCommands()
     }
 
     // Recursos do BOT
 
     // Auto-Sticker Privado
-    setAutosticker(status: boolean){
+    public setAutosticker(status: boolean){
         return this.botService.setAutosticker(status)
     }
 
     // PV liberado
-    setPvAllowed(status: boolean){
+    public setPvAllowed(status: boolean){
         return this.botService.setPvAllowed(status)
     }
 
     // Taxa de comandos
-    setCommandRate(status = true, maxCommandsMinute = 5, blockTime = 60){
+    public setCommandRate(status = true, maxCommandsMinute = 5, blockTime = 60){
         return this.botService.setCommandRate(status, maxCommandsMinute, blockTime)
     }
 
-    isCommandLimitedByRate(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
+    public isCommandLimitedByRate(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
         return this.botService.isCommandLimitedByRate(userId, isAdminBot, isAdminGroup)
     }
 
     // Bloquear/Desbloquear comandos globalmente
-    blockCommandsGlobally(commands: string[]){
+    public blockCommandsGlobally(commands: string[]){
         return this.botService.blockCommandsGlobally(commands)
     }
 
-    unblockCommandsGlobally(commands: string[]){
+    public unblockCommandsGlobally(commands: string[]){
         return this.botService.unblockCommandsGlobally(commands)
     }
 
-    isCommandBlockedGlobally(command: string){
+    public isCommandBlockedGlobally(command: string){
         return this.botService.isCommandBlockedGlobally(command)
+    }
+    
+    // Configurar API
+    public setDeepgramApiKey(secret_key: string){
+        return this.botService.setDeepgramApiKey(secret_key)
+    }
+
+    public setAcrcloudApiKey(host: string, access_key: string, secret_key: string){
+        return this.botService.setAcrcloudApiKey(host, access_key, secret_key)
     }
 
 }

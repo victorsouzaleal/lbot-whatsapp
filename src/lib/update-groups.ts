@@ -12,7 +12,7 @@ export async function updateGroupsOnStart(client: WASocket){
         let allGroups = await baileysController.getAllGroups()
         let botInfo = new BotController().getBot()
         //Se não houver grupos retorne
-        if(allGroups.length){
+        if (allGroups.length){
             let groupController = new GroupController()
             //Cadastro de grupos
             await groupController.registerGroups(allGroups)
@@ -42,10 +42,10 @@ async function filterGroupsBlacklist(client: WASocket, groups: GroupMetadata[]){
         const participants = getGroupParticipantsByMetadata(group)
         const groupAdmins = getGroupAdminsByMetadata(group)
         const isBotAdmin = botInfo.host_number ? groupAdmins.includes(botInfo.host_number) : false
-        if(isBotAdmin){
+        if (isBotAdmin){
             for (let participant of participants){
                 const isUserBlacklisted = await groupController.isBlackListed(group.id, participant)
-                if(isUserBlacklisted){
+                if (isUserBlacklisted){
                     const generalMessages = getGeneralMessages(botInfo)
                     const baileysController = new BaileysController(client)
                     await baileysController.removeParticipant(group.id, participant)

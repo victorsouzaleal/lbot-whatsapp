@@ -13,7 +13,7 @@ import { Message } from "../interfaces/message.interface.js"
 export function commandExist(botInfo: Bot, command: string, category? : CategoryCommand){
     const commandsData = getCommands(botInfo)
     let commands
-    if(!category){
+    if (!category){
         commands = [
             ...Object.keys(commandsData.utility),
             ...Object.keys(commandsData.fun),
@@ -35,17 +35,18 @@ export function getCommandCategory(command: string, prefix: string){
     let foundCategory : CategoryCommand | null = null 
     for (let category of categories){
         const commandsCategory = Object.keys(commandsData[category as CategoryCommand])
-        if(commandsCategory.includes(command.replace(prefix, ''))) foundCategory = category as CategoryCommand
+        if (commandsCategory.includes(command.replace(prefix, ''))) foundCategory = category as CategoryCommand
     }
     return foundCategory
 }
 
 export function getCommandGuide(botInfo: Bot, command: string, category : CategoryCommand){
     const commandsData = getCommands(botInfo)
+    const {guide_header_text} = getGeneralMessages(botInfo)
     const {prefix} = botInfo
     command = command.replace(prefix, '')
     const commandsCategory  = commandsData[category] as Commands
-    return commandsCategory[command].guide || ''
+    return guide_header_text + commandsCategory[command].guide
 }
 
 
@@ -109,10 +110,10 @@ export function getResponseTime(timestamp: number){
 export function showCommandConsole(isGroup : boolean, categoryName: string, command: string, hexColor: string, messageTimestamp: number, pushName: string, groupName?: string){
     let formattedMessageTimestamp = timestampToDate(messageTimestamp * 1000)
     let responseTimeSeconds = getResponseTime(messageTimestamp)
-    if(!pushName) pushName = "DESCONHECIDO"
-    if(!groupName) groupName = "DESCONHECIDO"
+    if (!pushName) pushName = "DESCONHECIDO"
+    if (!groupName) groupName = "DESCONHECIDO"
 
-    if(isGroup){
+    if (isGroup){
       console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[GRUPO - ${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), 'em', colorText(groupName), `(${colorText(`${responseTimeSeconds}s`)})`)
     } else {
       console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[PRIVADO - ${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), `(${colorText(`${responseTimeSeconds}s`)})`)

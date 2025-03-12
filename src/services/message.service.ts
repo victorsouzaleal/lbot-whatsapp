@@ -9,7 +9,7 @@ export class MessageService{
     constructor(){}
 
     storeMessageCache(message : proto.IWebMessageInfo, messageCache: NodeCache){
-        if(message.key.remoteJid && message.key.id && message.message){
+        if (message.key.remoteJid && message.key.id && message.message){
             messageCache.set(message.key.id,{
                 message : message.message
             })
@@ -37,13 +37,13 @@ export class MessageService{
     }
     
     formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){
-        if(!m.message) return
+        if (!m.message) return
         
         const type = getContentType(m.message)
 
-        if(!type) return 
-        if(!this.isAllowedType(type)) return 
-        if(!m.message[type]) return
+        if (!type) return 
+        if (!this.isAllowedType(type)) return 
+        if (!m.message[type]) return
 
         const contextInfo : proto.IContextInfo | undefined  = (typeof m.message[type] != "string" && m.message[type] && "contextInfo" in m.message[type]) ? m.message[type].contextInfo as proto.IContextInfo: undefined
         const isQuoted = (contextInfo?.quotedMessage) ? true : false
@@ -58,7 +58,7 @@ export class MessageService{
         const chat_id = m.key.remoteJid
         const isGroupAdmin = (sender && group) ? group.admins.includes(sender) : false
 
-        if(!message_id || !t || !sender || !chat_id ) return 
+        if (!message_id || !t || !sender || !chat_id ) return 
 
         let formattedMessage : Message = {
             message_id,
@@ -83,13 +83,13 @@ export class MessageService{
             wa_message: m,
         }
 
-        if(formattedMessage.isMedia){
+        if (formattedMessage.isMedia){
             const mimetype = (typeof m.message[type] != "string" && m.message[type] && "mimetype" in m.message[type]) ? m.message[type].mimetype as string | null : undefined
             const url = (typeof m.message[type] != "string" && m.message[type] && "url" in m.message[type]) ? m.message[type].url as string | null : undefined
             const seconds = (typeof m.message[type] != "string" && m.message[type] && "seconds" in m.message[type]) ? m.message[type].seconds as number | null : undefined
             const file_length = (typeof m.message[type] != "string" && m.message[type] && "fileLength" in m.message[type]) ? m.message[type].fileLength as number | Long | null : undefined
 
-            if(!mimetype || !url || !file_length) return
+            if (!mimetype || !url || !file_length) return
 
             formattedMessage.media = {
                 mimetype,
@@ -100,12 +100,12 @@ export class MessageService{
         }
 
 
-        if(formattedMessage.isQuoted){
+        if (formattedMessage.isQuoted){
             const quotedMessage = contextInfo?.quotedMessage
-            if(!quotedMessage) return
+            if (!quotedMessage) return
             const typeQuoted = getContentType(quotedMessage)
             const senderQuoted = contextInfo.participant || contextInfo.remoteJid
-            if(!typeQuoted || !senderQuoted ) return
+            if (!typeQuoted || !senderQuoted ) return
             const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
 
             formattedMessage.quotedMessage = {
@@ -117,13 +117,13 @@ export class MessageService{
                 wa_message: generateWAMessageFromContent(formattedMessage.chat_id, quotedMessage, {userJid: senderQuoted})
             }
 
-            if(formattedMessage.quotedMessage?.isMedia){
+            if (formattedMessage.quotedMessage?.isMedia){
                 const urlQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "url" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].url as string | null : undefined
                 const mimetypeQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "mimetype" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].mimetype as string | null : undefined
                 const fileLengthQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "fileLength" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].fileLength as number| Long | null : undefined
                 const secondsQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "seconds" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].seconds as number| null : undefined
                 
-                if(!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) return
+                if (!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) return
 
                 formattedMessage.quotedMessage.media = {
                     url: urlQuoted,
