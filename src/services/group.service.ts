@@ -386,7 +386,7 @@ export class GroupService {
         return (userCounter != null)
     }
 
-    async setParticipantActivity(groupId: string, userId: string){
+    async registerParticipantActivity(groupId: string, userId: string){
         const isRegistered = await this.isParticipantActivityRegistered(groupId, userId)
 
         if(isRegistered) return
@@ -408,7 +408,7 @@ export class GroupService {
 
     async registerAllParticipantsActivity(groupId: string, participants: string[]){
         participants.forEach(async (participant) =>{
-            await this.setParticipantActivity(groupId, participant)
+            await this.registerParticipantActivity(groupId, participant)
         })
     }
 

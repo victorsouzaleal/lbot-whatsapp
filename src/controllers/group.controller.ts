@@ -190,7 +190,7 @@ export class GroupController {
     }
 
     registerParticipantActivity(groupId: string, userId: string){
-        return this.groupService.setParticipantActivity(groupId, userId)
+        return this.groupService.registerParticipantActivity(groupId, userId)
     }
 
     registerAllParticipantsActivity(groupId: string, participants: string[]){
