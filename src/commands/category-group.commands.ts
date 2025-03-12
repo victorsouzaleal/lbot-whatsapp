@@ -487,7 +487,7 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
     if(Number(message.text_command)) qtyRanking = Number(message.text_command)
     if(qtyRanking < 1 || qtyRanking > 50) throw new Error(commandsData.group.topativos.msgs.error_value_limit)
     
-    const usersRanking = await groupController.getParticipantsActivityLeadership(group, qtyRanking)
+    const usersRanking = await groupController.getParticipantsActivityRanking(group, qtyRanking)
     let mentionedUsers = []
     let replyText = buildText(commandsData.group.topativos.msgs.reply_title, qtyRanking)
 

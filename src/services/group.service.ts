@@ -1,5 +1,5 @@
 import Datastore from "@seald-io/nedb";
-import { AntiSpamMessage, CounterUser, Group } from "../interfaces/group.interface.js";
+import { CounterUser, Group, ParticipantAntiSpam } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
@@ -11,14 +11,15 @@ import getGeneralMessages from "../lib/general-messages.js";
 
 const db = {
     groups : new Datastore({filename : './storage/groups.db', autoload: true}),
-    counter_groups : new Datastore({filename : './storage/counter-groups.db', autoload: true})
+    group_antispam : new Datastore({filename : './storage/group.antispam.db', autoload: true}),
+    group_counter : new Datastore({filename : './storage/group.counter.db', autoload: true})
 }
 
 export class GroupService {
     constructor(){}
     
     // *********************** Register/Remove/Update groups ***********************
-    async registerGroup(group : GroupMetadata){
+    public async registerGroup(group : GroupMetadata){
         const isRegistered = await this.isRegistered(group.id)
 
         if(isRegistered) return
@@ -38,7 +39,7 @@ export class GroupService {
             welcome : { status: false, msg: '' },
             antifake : { status: false, allowed: [] },
             antilink : false,
-            antispam : { status: false, max_messages: 10, interval: 10, messages: [] },
+            antispam : { status: false, max_messages: 10, interval: 10},
             autosticker : false,
             counter : { status: false, started: '' },
             block_cmds : [],
@@ -48,11 +49,11 @@ export class GroupService {
         return db.groups.insertAsync(groupData)
     }
 
-    async registerGroups(groups: GroupMetadata[]) {
+    public async registerGroups(groups: GroupMetadata[]) {
         for (let group of groups) await this.registerGroup(group)
     }
 
-    updateGroup(group : GroupMetadata){
+    public updateGroup(group : GroupMetadata){
         const participants = getGroupParticipantsByMetadata(group)
         const admins = getGroupAdminsByMetadata(group)
         return db.groups.updateAsync({ id : group.id }, { $set: {
@@ -65,11 +66,11 @@ export class GroupService {
         }})
     }
 
-    async updateGroups(groups: GroupMetadata[]){
+    public async updateGroups(groups: GroupMetadata[]){
         for (let group of groups) await this.updateGroup(group)
     }
 
-    updatePartialGroup(group: Partial<GroupMetadata>) {
+    public updatePartialGroup(group: Partial<GroupMetadata>) {
         if(group.id){
             if (group.desc) return this.setDescription(group.id, group.desc)
             if (group.subject) return this.setName(group.id, group.subject)
@@ -77,81 +78,81 @@ export class GroupService {
         }
     }
 
-    async getGroup(groupId : string){
+    public async getGroup(groupId : string){
         const doc : unknown = await db.groups.findOneAsync({id: groupId})
         return doc as Group | null
     }
 
-    async removeGroup(groupId: string){
+    public async removeGroup(groupId: string){
         return db.groups.removeAsync({id: groupId}, {multi: true})
     }
 
-    async getAllGroups(){
+    public async getAllGroups(){
         const doc : unknown = await db.groups.findAsync({})
         return doc as Group[]
     }
 
-    async isRegistered(groupId: string) {
+    public async isRegistered(groupId: string) {
         const group = await this.getGroup(groupId)
         return (group != null)
     }
 
-    async isRestricted(groupId: string) {
+    public async isRestricted(groupId: string) {
         const group = await this.getGroup(groupId)
         return group?.restricted
     }
 
-    setName(groupId: string, name: string){
+    public setName(groupId: string, name: string){
         return db.groups.updateAsync({id: groupId}, { $set : { name } })
     }
 
-    setRestricted(groupId: string, restricted: boolean){
+    public setRestricted(groupId: string, restricted: boolean){
         return db.groups.updateAsync({id: groupId}, { $set: { restricted } })
     }
 
-    setDescription(groupId: string, description?: string){
+    public setDescription(groupId: string, description?: string){
         return db.groups.updateAsync({id: groupId}, { $set: { description } })
     }
 
-    incrementGroupCommands(groupId: string){
+    public incrementGroupCommands(groupId: string){
         return db.groups.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
     } 
 
     // *********************** Add/Update/Remove participants and admins. ***********************
-    async getParticipants(groupId: string){
+    public async getParticipants(groupId: string){
         const doc : unknown = await db.groups.findOneAsync({id: groupId})
         const group = doc as Group | null
         return group?.participants ?? []
     }
 
-    async isParticipant(groupId: string, userId: string){
+    public async isParticipant(groupId: string, userId: string){
         const participants = await this.getParticipants(groupId)
         return participants.includes(userId)
     }
 
-    async getAdmins(groupId: string){
+    public async getAdmins(groupId: string){
         const doc : unknown = await db.groups.findOneAsync({id: groupId})
         const group = doc as Group | null
         return group?.admins ?? []
     }
 
-    async isAdmin(groupId: string, userId: string){
+    public async isAdmin(groupId: string, userId: string){
         const admins = await this.getAdmins(groupId)
         return admins.includes(userId)
     }
 
-    async getOwner(groupId: string){
+    public async getOwner(groupId: string){
         const doc : unknown = await db.groups.findOneAsync({id: groupId})
         const group = doc as Group | null
         return group?.owner
     }
 
-    async addParticipant(groupId: string, userId: string){
+    public async addParticipant(groupId: string, userId: string){
         const isParticipant = await this.isParticipant(groupId, userId)
         if(!isParticipant) return db.groups.updateAsync({id : groupId}, { $push: { participants: userId } })
     }
 
-    async removeParticipant(groupId: string, userId: string){
+    public async removeParticipant(groupId: string, userId: string){
         const isParticipant = await this.isParticipant(groupId, userId)
         if(isParticipant) {
             await db.groups.updateAsync({id : groupId}, { $pull: { participants : userId } })
@@ -159,35 +160,36 @@ export class GroupService {
         }  
     }
 
-    async addAdmin(groupId: string, userId: string){
+    public async addAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
         if(!isAdmin) return db.groups.updateAsync({id : groupId}, { $push: { admins: userId} })
     }
 
-    async removeAdmin(groupId: string, userId: string){
+    public async removeAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
         if(isAdmin) return db.groups.updateAsync({id : groupId}, { $pull: { admins : userId } })
     }
 
-    // *********************** Turn ON/OFF Group features ***********************
-    // ***** Welcome *****
-    setWelcome(groupId: string, status: boolean, msg: string){
+    // *********************** RECURSOS DO GRUPO ***********************
+
+    // ***** BEM-VINDO *****
+    public setWelcome(groupId: string, status: boolean, msg: string){
         return db.groups.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
     }
 
-    getWelcomeMessage(group: Group, botInfo: Bot, userId: string){
+    public getWelcomeMessage(group: Group, botInfo: Bot, userId: string){
         const generalMessages = getGeneralMessages(botInfo)
         const custom_message = (group.welcome.msg != "") ? group.welcome.msg + "\n\n" : ""
         const message_welcome = buildText(generalMessages.group_welcome_message, userId.replace("@s.whatsapp.net", ""), group.name, custom_message)
         return message_welcome
     }
 
-    // ***** Antifake *****
-    setAntifake(groupId: string, status: boolean, allowed: string[]){
+    // ***** ANTI-FAKE *****
+    public setAntifake(groupId: string, status: boolean, allowed: string[]){
         return db.groups.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})
     }
 
-    isNumberFake(group: Group, userId: string){
+    public isNumberFake(group: Group, userId: string){
         const allowedPrefixes = group.antifake.allowed
         for(let numberPrefix of allowedPrefixes){
             if(userId.startsWith(numberPrefix)) return false
@@ -195,17 +197,17 @@ export class GroupService {
         return true
     }
 
-    // ***** Mute *****
-    setMuted(groupId: string, status: boolean){
+    // ***** MUTAR GRUPO *****
+    public setMuted(groupId: string, status: boolean){
         return db.groups.updateAsync({id: groupId}, {$set: { muted : status}})
     }
 
-    // ***** Antilink *****
-    setAntilink(groupId: string, status: boolean){
+    // ***** ANTI-LINK *****
+    public setAntilink(groupId: string, status: boolean){
         return db.groups.updateAsync({id : groupId}, { $set: { antilink: status } })
     }
 
-    async isMessageWithLink(message: Message, group: Group, botInfo : Bot){
+    public async isMessageWithLink(message: Message, group: Group, botInfo : Bot){
         const { body, caption, isGroupAdmin} = message
         const userText = body || caption
         const { id, admins } = group
@@ -225,80 +227,98 @@ export class GroupService {
         return false
     }
 
-    // ***** Autosticker *****
-    setAutosticker(groupId: string, status: boolean){
+    // ***** AUTO-STICKER *****
+    public setAutosticker(groupId: string, status: boolean){
         return db.groups.updateAsync({id: groupId}, { $set: { autosticker: status } })
     }
 
-    // ***** Anti-Spam *****
-    setAntiSpam(groupId: string, status: boolean, maxMessages: number, interval: number){
+    // ***** ANTI-SPAM *****
+    public async setAntiSpam(groupId: string, status: boolean, maxMessages: number, interval: number){
+        if(!status) await this.removeGroupAntiSpam(groupId)
         return db.groups.updateAsync({id : groupId}, { $set:{ 'antispam.status' : status, 'antispam.max_messages' : maxMessages, 'antispam.interval' : interval } })
     }
 
-    setMessagesAntiSpam(groupId: string, antiSpamMessages : AntiSpamMessage[]){
-        return db.groups.updateAsync({id : groupId}, { $set: {'antispam.messages': antiSpamMessages} })
-    }
+    public async isSpamMessage(group: Group, userId: string){
+        const currentTimestamp = Math.round(moment.now()/1000)
+        const participantAntiSpam = await this.getParticipantAntiSpam(group.id, userId)
+        let isSpam = false
 
-    async isSpamMessage(group: Group, userId: string){
-        let timestamp = Math.round(moment.now()/1000), resposta = false
+        if(participantAntiSpam){
+            const hasExpiredMessages = await this.hasExpiredMessages(group, participantAntiSpam, currentTimestamp)
 
-        //VERIFICA SE ALGUM MEMBRO JA PASSOU DO TEMPO DE TER AS MENSAGENS RESETADAS
-        for (let i = 0; i < group.antispam.messages.length; i++) {
-            if (timestamp >= group.antispam.messages[i].expire) group.antispam.messages.splice(i, 1)
-        }
-
-        //PESQUISA O INDICE DO USUARIO
-        let userIndex = group.antispam.messages.findIndex(user => user.id == userId)
-
-        //SE O USUARIO JÁ ESTIVER NA LISTA
-        if (userIndex != -1) {
-            //INCREMENTA A CONTAGEM
-            group.antispam.messages[userIndex].qty++
-            let max_messages = group.antispam.max_messages
-            if (group.antispam.messages[userIndex].qty >= max_messages) {
-                group.antispam.messages.splice(userIndex, 1)
-                resposta = true
+            if(!hasExpiredMessages && participantAntiSpam.qty >= group.antispam.max_messages) {
+                if(group.admins.includes(userId)) isSpam = false
+                else isSpam = true
             } else {
-                resposta = false
+                isSpam = false
             }
         } else {
-            //ADICIONA O USUARIO NA LISTA
-            const messageAntiSpam : AntiSpamMessage = {
-                id : userId,
-                expire : timestamp + group.antispam.interval,
-                qty: 1
-            }
-            group.antispam.messages.push(messageAntiSpam)
-            resposta = false
+            await this.registerParticipantAntiSpam(group, userId)
         }
-
-        //ATUALIZAÇÃO E RETORNO
-        await this.setMessagesAntiSpam(group.id, group.antispam.messages)
-        return resposta
+    
+        return isSpam
     }
 
-    // ***** Blacklist *****
-    async getBlackList(groupId: string){
+    private removeGroupAntiSpam(groupId: string){
+        return db.group_antispam.removeAsync({group_id: groupId}, {multi: true})
+    }
+
+    private async registerParticipantAntiSpam(group: Group, userId: string){
+        const isRegistered = (await this.getParticipantAntiSpam(group.id, userId)) ? true : false
+
+        if(isRegistered) return 
+
+        const timestamp = Math.round(moment.now()/1000)
+
+        const participantAntiSpam : ParticipantAntiSpam = {
+            user_id: userId,
+            group_id: group.id,
+            expire: timestamp + group.antispam.interval,
+            qty: 1
+        }
+
+        return db.group_antispam.insertAsync(participantAntiSpam)
+    }
+
+    private async getParticipantAntiSpam(groupId: string, userId: string){
+        const doc : unknown = await db.group_antispam.findOneAsync({group_id: groupId, user_id: userId})
+        const participantAntiSpam = doc as ParticipantAntiSpam | null
+        return participantAntiSpam
+    }
+
+    private async hasExpiredMessages(group: Group, participantAntiSpam: ParticipantAntiSpam, currentTimestamp: number){
+        if(group && currentTimestamp > participantAntiSpam.expire){
+            const expireTimestamp = currentTimestamp + group?.antispam.interval
+            await db.group_antispam.updateAsync({group_id: participantAntiSpam.group_id, user_id: participantAntiSpam.user_id}, { $set : { expire: expireTimestamp, qty: 1 } })
+            return true
+        } else {
+            await db.group_antispam.updateAsync({group_id: participantAntiSpam.group_id, user_id: participantAntiSpam.user_id}, { $inc : { qty: 1 } })
+            return false
+        }
+    }
+
+    // ***** LISTA-NEGRA *****
+    public async getBlackList(groupId: string){
         const doc : unknown = await db.groups.findOneAsync({id : groupId})
         const group = doc as Group | null
         return group?.blacklist || []
     }
 
-    addBlackList(groupId: string, userId: string){
+    public addBlackList(groupId: string, userId: string){
         return db.groups.updateAsync({id: groupId}, { $push: { blacklist: userId } })
     }
 
-    removeBlackList(groupId: string, userId: string){
+    public removeBlackList(groupId: string, userId: string){
         return db.groups.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
     }
 
-    async isBlackListed(groupId: string, userId: string){
+    public async isBlackListed(groupId: string, userId: string){
         const list = await this.getBlackList(groupId)
         return list.includes(userId)
     }
 
-    // ***** Block/Unblock commands *****
-    async blockCommands(group: Group, commands : string[], botInfo: Bot){
+    // ***** BLOQUEAR/DESBLOQUEAR COMANDOS *****
+    public async blockCommands(group: Group, commands : string[], botInfo: Bot){
         const { prefix } = botInfo
         const commandsData = getCommands(botInfo)
         let blockedCommands : string[] = []
@@ -330,7 +350,7 @@ export class GroupService {
         return blockResponse
     }
 
-    async unblockCommand(group: Group, commands: string[], botInfo: Bot){
+    public async unblockCommand(group: Group, commands: string[], botInfo: Bot){
         const commandsData = getCommands(botInfo)
         const { prefix } = botInfo
         let unblockedCommands : string[] = []
@@ -360,33 +380,33 @@ export class GroupService {
         return unblockResponse
     }
 
-    isBlockedCommand(group: Group, command: string, botInfo: Bot) {
+    public isBlockedCommand(group: Group, command: string, botInfo: Bot) {
         const {prefix} = botInfo
         return group.block_cmds.includes(command.replace(prefix, ''))
     }
 
     // ***** Activity/Counter *****
-    setCounter(groupId: string, status: boolean){
+    public setCounter(groupId: string, status: boolean){
         const dateNow = (status) ? timestampToDate(moment.now()) : ''
         return db.groups.updateAsync({id: groupId}, { $set:{ "counter.status" : status, "counter.started" : dateNow } })
     }
 
-    removerGroupCounter(groupId: string){
-        return db.counter_groups.removeAsync({group_id: groupId}, {multi: true})
+    public removerGroupCounter(groupId: string){
+        return db.group_counter.removeAsync({group_id: groupId}, {multi: true})
     }
 
-    async getParticipantActivity(groupId: string, userId: string){
-        const doc : unknown = await db.counter_groups.findOneAsync({group_id: groupId, user_id: userId})
+    public async getParticipantActivity(groupId: string, userId: string){
+        const doc : unknown = await db.group_counter.findOneAsync({group_id: groupId, user_id: userId})
         const counter = doc as CounterUser | null
         return counter
     }
 
-    async isParticipantActivityRegistered(groupId: string, userId: string){
+    private async isParticipantActivityRegistered(groupId: string, userId: string){
         const userCounter = await this.getParticipantActivity(groupId, userId)
         return (userCounter != null)
     }
 
-    async registerParticipantActivity(groupId: string, userId: string){
+    public async registerParticipantActivity(groupId: string, userId: string){
         const isRegistered = await this.isParticipantActivityRegistered(groupId, userId)
 
         if(isRegistered) return
@@ -403,22 +423,22 @@ export class GroupService {
             other: 0
         }
 
-        return db.counter_groups.insertAsync(counterUser)
+        return db.group_counter.insertAsync(counterUser)
     }
 
-    async registerAllParticipantsActivity(groupId: string, participants: string[]){
+    public async registerAllParticipantsActivity(groupId: string, participants: string[]){
         participants.forEach(async (participant) =>{
             await this.registerParticipantActivity(groupId, participant)
         })
     }
 
-    async getAllParticipantsActivity(groupId: string){
-        const doc : unknown = await db.counter_groups.findAsync({group_id : groupId})
+    public async getAllParticipantsActivity(groupId: string){
+        const doc : unknown = await db.group_counter.findAsync({group_id : groupId})
         const counters = doc as CounterUser[]
         return counters
     }
 
-    incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes){
+    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes){
         let incrementedUser : {msgs: number, text?: number, image?: number, video?: number, sticker?: number,  audio?: number, other?: number} = { msgs: 1 }
 
         switch (type) {
@@ -443,11 +463,11 @@ export class GroupService {
                 break
         }
 
-        return db.counter_groups.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
+        return db.group_counter.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
     }  
 
-    async getParticipantActivityLowerThan(group: Group, num : number){
-        let doc: unknown = await db.counter_groups.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1})
+    public async getParticipantActivityLowerThan(group: Group, num : number){
+        let doc: unknown = await db.group_counter.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1})
         const inactives = doc as CounterUser[]
         let inactivesOnGroup : CounterUser[] = []
         inactives.forEach((inactive) => {
@@ -456,8 +476,8 @@ export class GroupService {
         return inactivesOnGroup
     }
 
-    async getParticipantsActivityLeaderboard(group: Group, qty: number){
-        const doc : unknown = await db.counter_groups.findAsync({group_id : group.id}).sort({msgs: -1})
+    public async getParticipantsActivityRanking(group: Group, qty: number){
+        const doc : unknown = await db.group_counter.findAsync({group_id : group.id}).sort({msgs: -1})
         const participantsLeaderbord = doc as CounterUser[]
         const participantsOnGroup : CounterUser[] = []
         const qty_leaderboard = (qty > participantsLeaderbord.length) ? participantsLeaderbord.length : qty

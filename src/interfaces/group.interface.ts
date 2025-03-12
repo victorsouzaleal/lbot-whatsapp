@@ -21,7 +21,6 @@ export interface Group {
         status: boolean
         max_messages: number
         interval: number
-        messages : AntiSpamMessage []
     },
     autosticker: boolean
     counter: {
@@ -32,8 +31,9 @@ export interface Group {
     blacklist : string[]
 }
 
-export interface AntiSpamMessage {
-    id: string,
+export interface ParticipantAntiSpam {
+    group_id: string,
+    user_id: string,
     expire: number,
     qty: number
 }
