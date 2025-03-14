@@ -180,10 +180,10 @@ async function updateUserName(userController: UserController, message: Message){
 
 async function isUserLimitedByCommandRate(botController: BotController, baileysController: BaileysController, botInfo: Bot, message: Message){
     if (botInfo.command_rate.status){
-        const isSpam = botController.isCommandLimitedByRate(message.sender, message.isBotAdmin, message.isGroupAdmin)
-        if (isSpam){
+        const isLimited = await botController.hasExceededCommandRate(botInfo, message.sender, message.isBotAdmin)
+        if (isLimited){
             const generalMessages = getGeneralMessages(botInfo)
-            await baileysController.replyText(message.chat_id, buildText(generalMessages.taxacomandos_limited_message, botInfo.command_rate.block_time), message.wa_message)
+            await baileysController.replyText(message.chat_id, buildText(generalMessages.command_rate_limited_message, botInfo.command_rate.block_time), message.wa_message)
             return true
         }
     }
@@ -223,7 +223,7 @@ async function isDetectedByAntiLink(baileysController: BaileysController, groupC
 
 async function isDetectedByAntiFlood(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
-    const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender)
+    const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender, message.isGroupAdmin)
     if (isDetectedByAntiFlood){
         await baileysController.removeParticipant(message.chat_id, message.sender)
         await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, message.sender.replace("@s.whatsapp.net", ""), botInfo.name), [message.sender])

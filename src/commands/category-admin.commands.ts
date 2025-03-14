@@ -212,4 +212,30 @@ export async function comandospvCommand(client: WASocket, botInfo: Bot, message:
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 
+export async function taxacomandosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+    const commandsData = getCommands(botInfo)
+    let replyText : string
+
+    if(!botInfo.command_rate.status){
+        if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+        let max_commands_minute = Number(message.args[0])
+        let block_time = Number(message.args[1])
+    
+        if(!block_time) block_time = 60
+        if(!max_commands_minute || max_commands_minute < 3) throw new Error(commandsData.admin.taxacomandos.msgs.error_max_commands_invalid)
+        if(!block_time || block_time < 10) throw new Error(commandsData.admin.taxacomandos.msgs.error_block_time_invalid)
+
+        replyText = buildText(commandsData.admin.taxacomandos.msgs.reply_on, max_commands_minute, block_time)
+        await botController.setCommandRate(true, max_commands_minute, block_time)
+    } else {
+        replyText = commandsData.admin.taxacomandos.msgs.reply_off
+        await botController.setCommandRate(false)
+    }
+
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
 

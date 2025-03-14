@@ -11,8 +11,8 @@ import getGeneralMessages from "../lib/general-messages.js";
 
 const db = {
     groups : new Datastore({filename : './storage/groups.db', autoload: true}),
-    group_antiflood : new Datastore({filename : './storage/group.antiflood.db', autoload: true}),
-    group_counter : new Datastore({filename : './storage/group.counter.db', autoload: true})
+    group_antiflood : new Datastore({filename : './storage/antiflood.groups.db', autoload: true}),
+    group_counter : new Datastore({filename : './storage/counter.groups.db', autoload: true})
 }
 
 export class GroupService {
@@ -238,17 +238,18 @@ export class GroupService {
         return db.groups.updateAsync({id : groupId}, { $set:{ 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
     }
 
-    public async isFlood(group: Group, userId: string){
+    public async isFlood(group: Group, userId: string, isGroupAdmin: boolean){
         const currentTimestamp = Math.round(moment.now()/1000)
         const participantAntiFlood = await this.getParticipantAntiFlood(group.id, userId)
         let isFlood = false
+
+        if(isGroupAdmin) return false
 
         if (participantAntiFlood){
             const hasExpiredMessages = await this.hasExpiredMessages(group, participantAntiFlood, currentTimestamp)
 
             if (!hasExpiredMessages && participantAntiFlood.msgs >= group.antiflood.max_messages) {
-                if (group.admins.includes(userId)) isFlood = false
-                else isFlood = true
+                isFlood = true
             } else {
                 isFlood = false
             }

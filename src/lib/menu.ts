@@ -304,14 +304,14 @@ export const adminMenu = (botInfo : Bot)=>{
 ┃
 ┣━━ ✦ 🎚️ *CONTROLE/LIMITAR* ✦
 ┃
-┣► *${prefix}taxacomandos* qtd-comandos - Ativa/desativa a taxa de comandos por minuto.
+┣► *${prefix}taxacomandos* numero - Ativa/desativa a taxa de comandos por minuto.
 ┣► *${prefix}comandospv* - Ativa/desativa os comandos em mensagens privadas.
 ┣► *${prefix}autostickerpv* - Ativa/desativa a criação automática de stickers no privado.
 ┃
 ┣━━ ✦ 👨‍👩‍👧‍👦 *GRUPOS* ✦
 ┃
 ┣► *${prefix}vergrupos* - Mostra os grupos atuais junto com opções para sair e exibir o link dos grupos.
-┣► *${prefix}entrargrupo* link-grupo - O bot tentará entrar no grupo pelo link inserido.
+┣► *${prefix}entrargrupo* link - O bot tentará entrar no grupo pelo link inserido.
 ┃
 ┃
 ┗━━✦❘༻ _*by @Victorsouzaleal*_ ༺❘`

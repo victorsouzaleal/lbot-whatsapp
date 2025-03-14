@@ -1,10 +1,15 @@
-import { Bot } from "../interfaces/bot.interface.js"
+import { Bot, UserCommandRate } from "../interfaces/bot.interface.js"
 import { CategoryCommand } from "../interfaces/command.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
 import { buildText, commandExist } from "../lib/util.js"
 import getCommands from "../commands/list.commands.js"
+import Datastore from "@seald-io/nedb";
+
+const db = {
+    command_rate: new Datastore<UserCommandRate>({filename : './storage/command-rate.bot.db', autoload: true})
+}
 
 export class BotService {
     private pathJSON = path.resolve("storage/bot.json")
@@ -37,8 +42,6 @@ export class BotService {
                 status: false,
                 max_cmds_minute: 5,
                 block_time: 60,
-                users: [],
-                limited_users: []
             },
             api_keys:{
                 deepgram: {
@@ -113,7 +116,8 @@ export class BotService {
     }
 
     // Taxa de comandos
-    public setCommandRate(status: boolean, maxCommandsMinute: number, blockTime: number){
+    public async setCommandRate(status: boolean, maxCommandsMinute: number, blockTime: number){
+        if(!status) await this.removeCommandRate()
         let bot = this.getBot()
         bot.command_rate.status = status
         bot.command_rate.max_cmds_minute = maxCommandsMinute
@@ -121,60 +125,87 @@ export class BotService {
         return this.updateBot(bot)
     }
 
-    public setDeepgramApiKey(secret_key: string){
-        let bot = this.getBot()
-        bot.api_keys.deepgram.secret_key = secret_key
-        return this.updateBot(bot)
-    }
+    public async hasExceededCommandRate(botInfo: Bot, userId: string, isBotAdmin: boolean){
+        const currentTimestamp = Math.round(moment.now()/1000)
+        const userCommandRate = await this.getUserCommandRate(userId)
+        let hasExceeded = false
 
-    public setAcrcloudApiKey(host: string, access_key: string, secret_key: string){
-        let bot = this.getBot()
-        bot.api_keys.acrcloud.host = host
-        bot.api_keys.acrcloud.access_key = access_key
-        bot.api_keys.acrcloud.secret_key = secret_key
-        return this.updateBot(bot)
-    }
+        if(isBotAdmin) return false
 
-    public isCommandLimitedByRate(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
-        let bot = this.getBot()
-        const currentTimestamp =  Math.round(moment.now()/1000)
-        let isLimitedByRate = false
-
-        //VERIFICA OS USUARIOS LIMITADOS QUE JÁ ESTÃO EXPIRADOS E REMOVE ELES DA LISTA
-        for (let i = 0; i < bot.command_rate.limited_users.length; i++){
-            if (bot.command_rate.limited_users[i].expiration <= currentTimestamp) bot.command_rate.limited_users.splice(i,1)
-        }
-
-        //VERIFICA OS USUARIOS QUE JÁ ESTÃO COM COMANDO EXPIRADOS NO ULTIMO MINUTO
-        for (let i = 0; i < bot.command_rate.users.length; i++){
-            if (bot.command_rate.users[i].expiration <= currentTimestamp) bot.command_rate.users.splice(i,1)
-        }
-
-        //SE NÃO FOR UM USUARIO ADMIN E NÃO FOR ADMINISTRADOR DO GRUPO , FAÇA A CONTAGEM.
-        if (!isAdminBot && !isAdminGroup){
-            //VERIFICA SE O USUARIO ESTÁ LIMITADO
-            let limitedUserIndex = bot.command_rate.limited_users.findIndex(usuario => usuario.id_user == userId)
-            //SE O USUÁRIO NÃO ESTIVER LIMITADO
-            if (limitedUserIndex === -1){
-                //OBTEM O INDICE DO USUARIO NA LISTA DE USUARIOS
-                let userIndex = bot.command_rate.users.findIndex(user=> user.id_user == userId)
-                //VERIFICA SE O USUARIO ESTÁ NA LISTA DE USUARIOS
-                if (userIndex !== -1){
-                    bot.command_rate.users[userIndex].cmds++ //ADICIONA A CONTAGEM DE COMANDOS ATUAIS
-                    if (bot.command_rate.users[userIndex].cmds >= bot.command_rate.max_cmds_minute){ //SE ATINGIR A QUANTIDADE MAXIMA DE COMANDOS POR MINUTO
-                        //ADICIONA A LISTA DE USUARIOS LIMITADOS
-                        bot.command_rate.limited_users.push({id_user: userId, expiration: currentTimestamp + bot.command_rate.block_time})
-                        bot.command_rate.users.splice(userIndex, 1)
-                        isLimitedByRate = true
-                    }
-                } else {//SE NÃO EXISTIR NA LISTA
-                    bot.command_rate.users.push({id_user: userId, cmds: 1, expiration: currentTimestamp+60})
+        if (userCommandRate){
+            if (userCommandRate.limited){
+                const hasExpiredLimited = await this.hasExpiredLimited(userCommandRate, botInfo, currentTimestamp)
+                if (hasExpiredLimited) hasExceeded = false
+                else hasExceeded = true
+            } else {
+                const hasExpiredMessages = await this.hasExpiredCommands(userCommandRate, currentTimestamp)
+                if (!hasExpiredMessages && userCommandRate.cmds >= botInfo.command_rate.max_cmds_minute) {
+                    hasExceeded = true
+                    await this.setLimitUserCommandRate(userCommandRate.user_id, true, botInfo, currentTimestamp)
+                } else {
+                    hasExceeded = false
                 }
             }
+        } else {
+            await this.registerUserCommandRate(userId)
+        }
+    
+        return hasExceeded
+    }
+
+    private removeCommandRate(){
+        return db.command_rate.removeAsync({}, {multi: true})
+    }
+
+    private async registerUserCommandRate(userId: string){
+        const isRegistered = (await this.getUserCommandRate(userId)) ? true : false
+
+        if (isRegistered) return 
+
+        const timestamp = Math.round(moment.now()/1000)
+
+        const userCommandRate : UserCommandRate = {
+            user_id: userId,
+            limited: false,
+            expire_limited: 0,
+            cmds: 1,
+            expire_cmds: timestamp + 60
         }
 
-        this.updateBot(bot)
-        return isLimitedByRate
+        return db.command_rate.insertAsync(userCommandRate)
+    }
+
+    private async getUserCommandRate(userId: string){
+        const userCommandRate = await db.command_rate.findOneAsync({user_id: userId}) as UserCommandRate | null
+        return userCommandRate
+    }
+
+    private async hasExpiredCommands(userCommandRate: UserCommandRate, currentTimestamp: number){
+        if (currentTimestamp > userCommandRate.expire_cmds){
+            const expireTimestamp = currentTimestamp + 60
+            await db.command_rate.updateAsync({user_id: userCommandRate.user_id}, { $set : { expire_cmds: expireTimestamp, cmds: 1 } })
+            return true
+        } else {
+            await db.command_rate.updateAsync({user_id: userCommandRate.user_id}, { $inc : { cmds: 1 } })
+            return false
+        }
+    }
+
+    private async hasExpiredLimited(userCommandRate: UserCommandRate, botInfo: Bot, currentTimestamp: number){
+        if (currentTimestamp > userCommandRate.expire_limited){
+            await this.setLimitUserCommandRate(userCommandRate.user_id, false, botInfo, currentTimestamp)
+            return true
+        } else {
+            return false
+        }
+    }
+
+    private setLimitUserCommandRate(userId: string, isLimited: boolean, botInfo: Bot, currentTimestamp: number){
+        if(isLimited){
+            return db.command_rate.updateAsync({user_id: userId}, { $set : { limited: isLimited, expire_limited: currentTimestamp + botInfo.command_rate.block_time} })
+        } else {
+            return db.command_rate.updateAsync({user_id: userId}, { $set : { limited: isLimited, expire_limited: 0, cmds: 1, expire_cmds: currentTimestamp + 60} })
+        }
     }
 
     // Bloquear/Desbloquear comandos
@@ -236,5 +267,20 @@ export class BotService {
         let botInfo = this.getBot()
         const {prefix} = botInfo
         return botInfo.block_cmds.includes(command.replace(prefix, ''))
+    }
+
+    // Configuração de API
+    public setDeepgramApiKey(secret_key: string){
+        let bot = this.getBot()
+        bot.api_keys.deepgram.secret_key = secret_key
+        return this.updateBot(bot)
+    }
+
+    public setAcrcloudApiKey(host: string, access_key: string, secret_key: string){
+        let bot = this.getBot()
+        bot.api_keys.acrcloud.host = host
+        bot.api_keys.acrcloud.access_key = access_key
+        bot.api_keys.acrcloud.secret_key = secret_key
+        return this.updateBot(bot)
     }
 }

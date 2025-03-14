@@ -1,3 +1,4 @@
+import { Bot } from "../interfaces/bot.interface.js"
 import { BotService } from "../services/bot.service.js"
 
 export class BotController {
@@ -52,8 +53,8 @@ export class BotController {
         return this.botService.setCommandRate(status, maxCommandsMinute, blockTime)
     }
 
-    public isCommandLimitedByRate(userId: string, isAdminBot: boolean, isAdminGroup: boolean){
-        return this.botService.isCommandLimitedByRate(userId, isAdminBot, isAdminGroup)
+    public hasExceededCommandRate(botInfo: Bot, userId: string, isBotAdmin: boolean){
+        return this.botService.hasExceededCommandRate(botInfo, userId, isBotAdmin)
     }
 
     // Bloquear/Desbloquear comandos globalmente

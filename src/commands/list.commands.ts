@@ -57,17 +57,17 @@ export default function getCommands (botInfo?: Bot){
                     reply_title:"*Nome do bot* : {p1}\n"+
                     "*Online desde* : {p2}\n"+
                     "*Versão* : {p3}\n"+
+                    "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n"+
                     "*Comandos executados* : *{p4}*\n"+
-                    "*Contato do administradores* :\n{p5}"+
-                    "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n\n",
+                    "*Contato do administradores* :\n{p5}\n",
                     reply_title_resources: '🤖 *RECURSOS DO BOT*\n\n', 
                     reply_item_autosticker_on : "*Auto-Sticker PV* : ✅\n",
                     reply_item_autosticker_off : "*Auto-Sticker PV* : ❌\n",
                     reply_item_commandspv_on : "*Comandos PV* : ✅\n",
                     reply_item_commandspv_off : "*Comandos PV* : ❌\n",
                     reply_item_commandsrate_on: "*Taxa de comandos* : ✅\n"+
-                    "- *{p1}* cmds/minuto por usuário\n"+
-                    "- Bloqueio : *{p2}* s\n",
+                    "- *{p1}* cmds/minuto\n"+
+                    "- Bloqueio : *{p2}s*\n",
                     reply_item_commandsrate_off: "*Taxa de comandos* : ❌\n",
                     reply_item_blockcmds_on : "*Bloqueio de comandos* : ✅\n"+
                     "- Bloqueados: *{p1}*\n",
@@ -1110,15 +1110,19 @@ export default function getCommands (botInfo?: Bot){
                 function : adminCommand.comandospvCommand
             },
             taxacomandos: {
-                guide: `Ex: *${PREFIX}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+                guide: `Ex: *${PREFIX}taxacomandos* 5 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, com 60 segundos de bloqueio.\n`+
+                `Ex: *${PREFIX}taxacomandos* 10 80 - Ativa a taxa limite de comandos para 10 comandos a cada minuto por usuário, com 80 segundos de bloqueio.\n\n`+
                 `*Obs*: Digite *${PREFIX}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
                 msgs: {
-                    error_msg_number_invalid: "[❗] A quantidade máxima de mensagens por minuto está inválida",
-                    error_time_invalid: "[❗] O tempo de bloqueio de mensagens está inválido",
-                    reply_on: "✅ O Limitador de comandos por minuto foi ativado com sucesso",
-                    reply_off: "✅ O Limitador de comandos por minuto foi desativado com sucesso",
+                    error_max_commands_invalid: "A quantidade máxima de comandos por minuto está inválida, precisa ser um número e ser maior que 3.",
+                    error_block_time_invalid: "O tempo de bloqueio de mensagens está inválido, precisa ser um número e maior que 10.",
+                    reply_on: "✅ A taxa de comandos por minuto foi ativada com sucesso.\n\n"+
+                    'Configuração atual: \n'+
+                    'Comandos por minuto : *{p1}*\n'+
+                    'Tempo de bloqueio : *{p2}s*\n',
+                    reply_off: "✅ A taxa de comandos por minuto foi desativada com sucesso.",
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.taxacomandosCommand
             },
             bcmdglobal: {
                 guide: `Ex: *${PREFIX}bcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+

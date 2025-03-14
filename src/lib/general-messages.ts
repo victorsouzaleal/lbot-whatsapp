@@ -15,7 +15,7 @@ export default function getGeneralMessages (botInfo? : Bot){
             error_command_usage: "Parece que você usou o comando *{p1}* incorretamente ou não sabe como utilizá-lo.\n\nDigite: *{p2} guia* para ver o guia e aprender sobre este comando.",
             error_command: "❗ Não foi possível realizar o comando *{p1}*, cheque o motivo do erro abaixo.\n\n"+
             "*Erro* : {p2}\n",
-            taxacomandos_limited_message : "Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
+            command_rate_limited_message : "Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
             group_blocked_command: "O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
             globally_blocked_command: "O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",
             detected_link: "🤖 Ei @{p1}, o ANTI-LINK está ativado e um possível link foi detectado na sua mensagem, ela foi apagada por segurança.",

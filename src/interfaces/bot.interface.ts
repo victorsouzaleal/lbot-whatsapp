@@ -13,15 +13,6 @@ export interface Bot {
         status: boolean,
         max_cmds_minute: number,
         block_time: number,
-        users: {
-            id_user : string,
-            cmds : number,
-            expiration : number
-        }[],
-        limited_users: {
-            id_user : string,
-            expiration : number
-        }[]
     },
     api_keys: {
         deepgram: {
@@ -33,5 +24,12 @@ export interface Bot {
             secret_key: string | null
         }
     }
-    
+}
+
+export interface UserCommandRate {
+    user_id : string,
+    limited: boolean,
+    expire_limited: number,
+    cmds : number,
+    expire_cmds : number
 }

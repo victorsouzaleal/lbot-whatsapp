@@ -146,8 +146,8 @@ export class GroupController {
         return this.groupService.setAntiFlood(groupId, status, maxMessages, interval)
     }
 
-    public isFlood(group: Group, userId: string){
-        return this.groupService.isFlood(group, userId)
+    public isFlood(group: Group, userId: string, isGroupAdmin: boolean){
+        return this.groupService.isFlood(group, userId, isGroupAdmin)
     }
 
     // ***** LISTA-NEGRA *****
