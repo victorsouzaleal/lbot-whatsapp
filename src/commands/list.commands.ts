@@ -17,7 +17,7 @@ export default function getCommands (botInfo?: Bot){
                 msgs: {
                     reply: "Olá, *{p1}*\n"+
                     "Tipo de Usuário : *{p2}*\n"+
-                    "Comandos feitos : *{p3}*\n",
+                    "Comandos feitos : *{p3}*\n\n",
                     error_user_not_found: "Usuário não foi encontrado no banco de dados.",
                     error_invalid_option: "A opção selecionada não existe no menu.",
                 },
@@ -52,19 +52,30 @@ export default function getCommands (botInfo?: Bot){
                 function: infoCommand.meusdadosCommand
             },
             info: {
-                guide: `Ex: *${PREFIX}info* - Exibe as informações do bot, dono, etc.\n`,
+                guide: `Ex: *${PREFIX}info* - Exibe as informações completas do bot, inclusive as configurações atuais.\n`,
                 msgs: {
-                    reply: "*Nome do bot* : {p1}\n"+
+                    reply_title:"*Nome do bot* : {p1}\n"+
                     "*Online desde* : {p2}\n"+
-                    "*Comandos executados* : {p3}\n"+
-                    "*Contato do administradores* : \n"+
-                    "{p4}"+
-                    "*Versão atual* : {p5}\n"+
-                    "*Criador* : victorsouzaleal\n"+
-                    "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n"
+                    "*Versão* : {p3}\n"+
+                    "*Comandos executados* : *{p4}*\n"+
+                    "*Contato do administradores* :\n{p5}"+
+                    "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n\n",
+                    reply_title_resources: '🤖 *RECURSOS DO BOT*\n\n', 
+                    reply_item_autosticker_on : "*Auto-Sticker PV* : ✅\n",
+                    reply_item_autosticker_off : "*Auto-Sticker PV* : ❌\n",
+                    reply_item_commandspv_on : "*Comandos PV* : ✅\n",
+                    reply_item_commandspv_off : "*Comandos PV* : ❌\n",
+                    reply_item_commandsrate_on: "*Taxa de comandos* : ✅\n"+
+                    "- *{p1}* cmds/minuto por usuário\n"+
+                    "- Bloqueio : *{p2}* s\n",
+                    reply_item_commandsrate_off: "*Taxa de comandos* : ❌\n",
+                    reply_item_blockcmds_on : "*Bloqueio de comandos* : ✅\n"+
+                    "- Bloqueados: *{p1}*\n",
+                    reply_item_blockcmds_off : "*Bloqueio de comandos* : ❌\n",
+                    reply_item_blocked_count: "*Usuários bloqueados* : *{p1}*\n",
                 },
-                function: infoCommand.infoCommand
-            }
+                function : infoCommand.infoCommand
+            },
         },
 
         utility: { // ************* UTILITY *************
@@ -706,7 +717,10 @@ export default function getCommands (botInfo?: Bot){
                 function : groupCommand.addlistaCommand
             },
             rmlista: {
-                guide: `Ex: *${PREFIX}rmlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
+                guide: `Ex: Digite *${PREFIX}rmlista 1* - Remove o usuário selecionado da lista negra.\n\n`+
+                `*Obs*: Para ver o ID dos usuários é necessário checar no comando *${PREFIX}listanegra*\n\n`+
+                `Você também pode remover da lista negra da seguinte forma: \n\n`+
+                `Ex: *${PREFIX}rmlista* +55219xxxx-xxxx - Remove o número digitado da lista negra do grupo.\n`,
                 msgs: {
                     reply: "✅ O número desse usuário foi removido da lista negra.",
                     error_not_listed: "Este usuário não está na lista negra.",
@@ -718,15 +732,17 @@ export default function getCommands (botInfo?: Bot){
                 msgs: {
                     error_empty_list: "Não existem usuários na lista negra deste grupo.",
                     reply_title: "❌ LISTA NEGRA DO GRUPO\n\n"+
-                    "Quantidade de usuários na lista : *{p1}*\n\n",
-                    reply_item_with_username: "{p1} - +{p2} ({p3})\n",
-                    reply_item_no_username: "{p1} - +{p2} (DESCONHECIDO)\n"
+                    "Quantidade de usuários na lista : *{p1}*\n",
+                    reply_item: '━━━━━━━━━━━━━━━━━━\n'+
+                    '*ID* : {p1}\n'+
+                    '*Nome*: {p2}\n'+
+                    '*Contato*: +{p3}\n\n'
                 },
                 function : groupCommand.listanegraCommand
             },
             add: {
-                guide: `Ex: *${PREFIX}add* 5521xxxxxxxxx - Digite o numero com o código do país para adicionar a pessoa.\n\n`+
-                `Ex: *${PREFIX}add* 5521xxxxxxxxx, 5521xxxxxxxxx - Digite os numeros com o código do país (adiciona mais de uma pessoa no grupo).\n`,
+                guide: `Ex: *${PREFIX}add* +55219xxxx-xxxx - Digite o numero com o código do país para adicionar a pessoa.\n\n`+
+                `Ex: *${PREFIX}add* +55219xxxx-xxxx, +55119xxxx-xxxx - Digite os numeros com o código do país (adiciona mais de uma pessoa no grupo).\n`,
                 msgs: {
                     reply: '✅ O número +{p1} foi adicionado ao grupo com sucesso.',
                     error_add: "O número +{p1} não pode ser adicionado. Provavelmente está com privacidade ativada, já está no grupo ou o grupo não aceita mais membros.",
@@ -983,6 +999,10 @@ export default function getCommands (botInfo?: Bot){
         },
         
         admin: { // ************* ADMIN *************
+            admin: {
+                guide: `Ex: *${PREFIX}admin* - Exibe o menu de administração do bot.\n`,
+                function : adminCommand.adminCommand
+            },
             api: {
                 guide: 'Esse comando é usado apenas para configurar as chave de API de certos serviços.\n\n'+
                 `Configurar *DEEPGRAM*\nEx: ${PREFIX}api deepgram *secret_key*\n\n`+
@@ -997,21 +1017,106 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function: adminCommand.apiCommand
             },
+            vergrupos: {
+                guide: `Ex: *${PREFIX}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
+                msgs: {
+                    reply_title: "👥 *GRUPOS ATUAIS* ({p1})\n\n"+
+                    "*ATENÇÃO*: Se quiser sair de *TODOS* os grupos digite !sairgrupos\n\n",
+                    reply_item: "----------------------------\n"+
+                    "N° Grupo: *{p1}*\n"+
+                    "Nome: *{p2}*\n"+
+                    "Participantes: *{p3}*\n"+
+                    "Admins: *{p4}*\n"+
+                    "Bot é admin? *{p5}*\n"+
+                    `*Link*: {p6}\n\n`+
+                    `*Deseja sair do grupo?* Use ${PREFIX}sair {p7}\n\n`
+                },
+                function : adminCommand.vergruposCommand
+            },
             sair: {
-                guide: `Ex: Digite *${PREFIX}sair* em um grupo - Faz o bot sair do grupo atual.\n`+
-                `Ex: *${PREFIX}sair* 1 - Faz o bot sair do grupo selecionado.\n\n`+
+                guide: `Ex: Digite *${PREFIX}sair 1* - Faz o bot sair do grupo selecionado.\n\n`+
                 `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
                 msgs: {
-                    reply: "🤖✅ O bot saiu com sucesso do grupo escolhido.",
-                    error: `[❗] Não foi possível sair deste grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${PREFIX}grupos*`,
+                    reply: `🤖 Você solicitou para sair do grupo *{p1}* (Opção n° *{p2}*)\n\n`+
+                    '✅ Saí com sucesso do grupo selecionado.',
+                    error: `Não foi possível sair deste grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${PREFIX}grupos*`,
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.sairCommand
             },
-            pvliberado: {
-                guide: `Ex: *${PREFIX}pvliberado* - Liga/desliga os comandos em MENSAGENS PRIVADAS.\n`,
+            sairgrupos: {
+                guide: `Ex: *${PREFIX}sairgrupos* - Sai de todos os grupos.\n`,
+                msgs: {
+                    reply: `🤖 Você solicitou para sair de todos os grupos\n\n`+
+                    '✅ Saí com sucesso de todos os *{p1}* grupos\n\n',
+                },
+                function : adminCommand.sairgruposCommand
+            },
+            linkgrupo: {
+                guide: `Ex: *${PREFIX}linkgrupo* 1 - Exibe o link do grupo selecionado.\n\n`+
+                `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
+                msgs: {
+                    reply_group: '🤖 Entendido, eu enviei o link para você no privado.',
+                    reply_admin: `🤖 Você solicitou o link do grupo *{p1}* (Opção n° *{p2}*)\n\n`+
+                    'O link para este grupo atualmente é : {p3}',
+                    error_bot_not_admin: 'Não foi possível obter o link, o bot não é administrador deste grupo.',
+                    error_not_found: `Não foi possível obter o link do grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${PREFIX}grupos*`,
+                },
+                function : adminCommand.linkgrupoCommand
+            },
+            veradmins: {
+                guide: `Ex: *${PREFIX}veradmins* - Exibe todos os admins do bot.\n`,
+                msgs: {
+                    reply_title: `⭐ *ADMINS DO BOT* ({p1})\n`,
+                    reply_item: '━━━━━━━━━━━━━━━━━━\n'+
+                    '*ID*: {p1}\n'+
+                    '*Nome*: {p2}\n'+
+                    '*Contato*: +{p3}\n'+
+                    `*Tipo*: {p4}\n\n`
+                },
+                function: adminCommand.veradminsCommand
+            },
+            addadmin: {
+                guide: `Ex: Responda alguém com *${PREFIX}addadmin* - Promove o usuário respondido a admin do bot.\n`+
+                `Ex: *${PREFIX}addadmin* @membro - Promove o membro marcado a admin do bot.\n`+
+                `Ex: *${PREFIX}addadmin* +55219xxxx-xxxx - Promove o número digitado a admin do bot.\n`,
+                msgs: {
+                    reply: `✅ O usuário +{p1} ({p2}) foi promovido a *ADMINISTRADOR* do bot.`,
+                    error_user_not_found: 'O usuário ainda não está registrado no bot, faça ele interagir com o bot primeiro.',
+                    error_already_admin: "Este usuário já é *ADMINISTRADOR* do bot.",
+                },
+                function: adminCommand.addadminCommand
+            },
+            rmadmin: {
+                guide: `Ex: Digite *${PREFIX}rmadmin 1* - Rebaixa o administrador selecionado.\n\n`+
+                `*Obs*: Para ver o ID dos administradores é necessário checar no comando *${PREFIX}veradmins*\n\n`+
+                `Você também pode rebaixar adminstradores das seguinte formas: \n\n`+
+                `Ex: *${PREFIX}rmadmin* +55219xxxx-xxxx - Rebaixa o administrador pelo número digitado.\n`+
+                `Ex: Responda com *${PREFIX}rmadmin* - Rebaixa o administrador que for respondido.\n`+
+                `Ex: *${PREFIX}rmadmin* @membro - Rebaixa o administrador que for marcado.\n`,
+                msgs: {
+                    reply: `✅ O usuário +{p1} ({p2}) foi rebaixado a *USUÁRIO* do bot.`,
+                    error_not_admin: "Este usuário não é *ADMINISTRADOR* do bot.",
+                    error_user_not_found: 'O usuário ainda não está registrado no bot, faça ele interagir com o bot primeiro.',
+                    error_demote_owner: "Você não pode rebaixar o *DONO* do bot."
+                },
+                function: adminCommand.rmadminCommand
+            },
+            comandospv: {
+                guide: `Ex: *${PREFIX}comandospv* - Liga/desliga os comandos em MENSAGENS PRIVADAS.\n`,
                 msgs: {
                     reply_off: "✅ Os comandos em MENSAGENS PRIVADAS foram desativados com sucesso.",
                     reply_on: "✅ Os comandos em MENSAGENS PRIVADAS foram ativados com sucesso."
+                },
+                function : adminCommand.comandospvCommand
+            },
+            taxacomandos: {
+                guide: `Ex: *${PREFIX}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
+                `*Obs*: Digite *${PREFIX}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
+                msgs: {
+                    error_msg_number_invalid: "[❗] A quantidade máxima de mensagens por minuto está inválida",
+                    error_time_invalid: "[❗] O tempo de bloqueio de mensagens está inválido",
+                    reply_on: "✅ O Limitador de comandos por minuto foi ativado com sucesso",
+                    reply_off: "✅ O Limitador de comandos por minuto foi desativado com sucesso",
                 },
                 function : infoCommand.menuCommand
             },
@@ -1043,47 +1148,6 @@ export default function getCommands (botInfo?: Bot){
                     reply_title: "[🤖 *Desbloquear Comandos - Global* 🤖]\n\n",
                     reply_item_unblocked: "- Comando *{p1}* foi desbloqueado.\n",
                     reply_item_not_blocked: "- Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
-                },
-                function : infoCommand.menuCommand
-            },
-            sairgrupos: {
-                guide: `Ex: *${PREFIX}sairgrupos* - Sai de todos os grupos.\n`,
-                msgs: {
-                    reply: "🤖✅ Saí de todos os grupos com sucesso, total de grupos : {p1}"
-                },
-                function : infoCommand.menuCommand
-            },
-            infobot: {
-                guide: `Ex: *${PREFIX}infobot* - Exibe as informações completas do bot, inclusive as configurações atuais.\n`,
-                msgs: {
-                    reply_title:"*Administrador do Bot* : {p1}\n"+
-                    "*Nome do bot* : {p2}\n"+
-                    "*Online desde* : {p3}\n"+
-                    "*Versão* : {p4}\n"+
-                    "*GitHub* : https://github.com/victorsouzaleal/lbot-whatsapp\n"+
-                    "-------------------\n",
-                    reply_item_autosticker_on : "*Auto-Sticker privado* : ✅\n"+
-                    "-------------------\n",
-                    reply_item_autosticker_off : "*Auto-Sticker privado* : ❌\n"+
-                    "-------------------\n",
-                    reply_item_pvallowed_on : "*PV Liberado* : ✅\n"+
-                    "-------------------\n",
-                    reply_item_pvallowed_off : "*PV Liberado* : ❌\n"+
-                    "-------------------\n",
-                    reply_item_taxacomandos_on: "*Taxa comandos/minuto* : ✅\n"+
-                    "- *{p1}* Cmds/minuto por usuário\n"+
-                    "- Bloqueio : *{p2}* s\n"+
-                    "-------------------\n",
-                    reply_item_taxacomandos_off: "*Taxa comandos/minuto* : ❌\n"+
-                    "-------------------\n",
-                    reply_item_blockcmds_on : "*Bloqueio de comandos* : ✅\n"+
-                    "- Bloqueados: *{p1}*\n"+
-                    "-------------------\n",
-                    reply_item_blockcmds_off : "*Bloqueio de comandos* : ❌\n"+
-                    "-------------------\n",
-                    reply_footer: "*Pessoas bloqueadas* : *{p1}* pessoas\n"+
-                    "*Comandos executados* : *{p2}*\n"+
-                    "*Contato do Administrador* : wa.me/{p3}\n"
                 },
                 function : infoCommand.menuCommand
             },
@@ -1173,17 +1237,6 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function : infoCommand.menuCommand
             },
-            taxacomandos: {
-                guide: `Ex: *${PREFIX}taxacomandos* 5 60 - Ativa a taxa limite de comandos para 5 comandos a cada minuto por usuário, caso o usuário ultrapasse ele fica 60 segundos impossibilitado de fazer comandos.\n\n`+
-                `*Obs*: Digite *${PREFIX}taxacomandos* novamente para desativar a taxa limite de comandos.\n`,
-                msgs: {
-                    error_msg_number_invalid: "[❗] A quantidade máxima de mensagens por minuto está inválida",
-                    error_time_invalid: "[❗] O tempo de bloqueio de mensagens está inválido",
-                    reply_on: "✅ O Limitador de comandos por minuto foi ativado com sucesso",
-                    reply_off: "✅ O Limitador de comandos por minuto foi desativado com sucesso",
-                },
-                function : infoCommand.menuCommand
-            },
             desbloquear: {
                 guide: `Ex: *${PREFIX}desbloquear* @membro - Para o bot desbloquear o membro mencionado.\n\n`+
                 `Ex: *${PREFIX}desbloquear* +55 (xx) xxxxx-xxxx - Para o bot desbloquear o número digitado.\n\n`+
@@ -1203,35 +1256,7 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function : infoCommand.menuCommand
             },
-            admin: {
-                guide: `Ex: *${PREFIX}admin* - Exibe o menu de administração do bot.\n`,
-                function : infoCommand.menuCommand
-            },
-            grupos: {
-                guide: `Ex: *${PREFIX}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
-                msgs: {
-                    reply_title: "🤖 GRUPOS ATUAIS ({p1})\n",
-                    reply_item: "----------------------------\n"+
-                    "*N° Grupo* : {p1}\n"+
-                    "*Nome* : {p2}\n"+
-                    "*Participantes* : {p3}\n"+
-                    "*Admins* : {p4}\n"+
-                    "*Bot é admin?* {p5}\n"+
-                    `*Link*: {p6}\n`
-                },
-                function : infoCommand.menuCommand
-            },
-            linkgrupo: {
-                guide: `Ex: *${PREFIX}linkgrupo* 1 - Exibe o link do grupo selecionado.\n\n`+
-                `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
-                msgs: {
-                    reply: `🤖✅ O link para este grupo atualmente é : {p1}`,
-                    error_bot_not_admin: '[❗] Não foi possível obter o link desse grupo, o bot não é administrador deste grupo.',
-                    error_not_found: `[❗] Não foi possível obter o link desse grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${PREFIX}grupos*`,
-                },
-                function : infoCommand.menuCommand
-            },
-            usuario: {
+            verusuario: {
                 guide: `Ex: *${PREFIX}usuario* @usuario - Mostra os dados gerais do usuário mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}usuario* - Mostra os dados gerais do usuário respondido.\n\n`+
                 `Ex: *${PREFIX}usuario* 55219xxxxxxxx - Mostra os dados gerais do usuário com esse número.\n`,

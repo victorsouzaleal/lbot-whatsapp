@@ -37,14 +37,14 @@ export class BotController {
 
     // Recursos do BOT
 
-    // Auto-Sticker Privado
+    // Auto-Sticker PV
     public setAutosticker(status: boolean){
         return this.botService.setAutosticker(status)
     }
 
-    // PV liberado
-    public setPvAllowed(status: boolean){
-        return this.botService.setPvAllowed(status)
+    // Comandos no PV
+    public setCommandsPv(status: boolean){
+        return this.botService.setCommandsPv(status)
     }
 
     // Taxa de comandos

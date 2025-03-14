@@ -107,14 +107,9 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     
     const currentBlacklist = await groupController.getBlackList(group.id)
 
-    if (message.args.length == 1 && message.args[0].length <= 3){
-        const userBlackListByIndex = currentBlacklist[parseInt(message.text_command) - 1]
-        if (userBlackListByIndex) targetUserId = userBlackListByIndex
-        else targetUserId = message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
-    } else {
-        targetUserId = message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
-    }
-    
+    if(message.args.length == 1 && message.args[0].length <= 3) targetUserId = currentBlacklist[parseInt(message.text_command) - 1]
+    else targetUserId = message.text_command.replace(/\W+/g, "") + S_WHATSAPP_NET
+
     if (!currentBlacklist.includes(targetUserId)) throw new Error(commandsData.group.rmlista.msgs.error_not_listed)
 
     await groupController.removeBlackList(group.id, targetUserId)
@@ -140,8 +135,7 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
     for(let userId of currentBlacklist){
         const userData = await userController.getUser(userId)
         const userNumberList = currentBlacklist.indexOf(userId) + 1
-        if (!userData) replyText += buildText(commandsData.group.listanegra.msgs.reply_item_no_username, userNumberList, userId.replace(S_WHATSAPP_NET, ''))
-        else replyText += buildText(commandsData.group.listanegra.msgs.reply_item_with_username, userNumberList, userId.replace(S_WHATSAPP_NET, ''), userData.name)
+        replyText += buildText(commandsData.group.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', userId.replace(S_WHATSAPP_NET, ''))
     }
 
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)

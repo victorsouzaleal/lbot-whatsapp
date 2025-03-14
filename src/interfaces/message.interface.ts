@@ -21,6 +21,7 @@ export interface Message {
     isGroupMsg : boolean,
     isGroupAdmin: boolean,
     isBotAdmin : boolean,
+    isBotOwner: boolean,
     isBotMessage: boolean,
     isBroadcast: boolean,
     isMedia: boolean,

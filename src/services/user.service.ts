@@ -1,20 +1,20 @@
 import Datastore from "@seald-io/nedb";
-const db = new Datastore({filename : './storage/users.db', autoload: true})
 import { User } from "../interfaces/user.interface.js";
+const db = new Datastore<User>({filename : './storage/users.db', autoload: true})
 
 export class UserService{
 
-    async getUser (userId : string){
-        const doc : any  = await db.findOneAsync({id: userId})
-        return doc as User | null
+    public async getUser (userId : string){
+        const user  = await db.findOneAsync({id: userId}) as User | null
+        return user
     }
 
-    async getUsers(){
-        const doc : any = await db.findAsync({})
-        return doc as User[]
+    public async getUsers(){
+        const users = await db.findAsync({}) as User[]
+        return users
     }
 
-    async registerUser(userId: string, name?: string|null){
+    public async registerUser(userId: string, name?: string|null){
         const isRegistered = await this.isUserRegistered(userId)
 
         if (isRegistered) return 
@@ -24,34 +24,45 @@ export class UserService{
             name,
             commands: 0,
             receivedWelcome: false,
+            owner: false,
             admin: false
         }
+
         return db.insertAsync(user)
     }
 
-    async isUserRegistered(userId: string){
+    public async isUserRegistered(userId: string){
         const user = await this.getUser(userId)
         return (user != null)
     }
 
-    async setAdmin(userId : string){
-        return db.updateAsync({id : userId}, {$set: {admin : true}})
-    }
-    
-    async getAdmins(){
-        const doc : any = await db.findAsync({admin : true})
-        return doc as User[]
+    public setAdmin(userId : string, admin: boolean){
+        return db.updateAsync({id : userId}, {$set: {admin}})
     }
 
-    setName(userId : string, name : string){
+    public async getAdmins(){
+        const admins = await db.findAsync({admin : true}) as User[]
+        return admins
+    }
+
+    public setOwner(userId : string){
+        return db.updateAsync({id : userId}, {$set: {owner : true, admin: true}})
+    }
+
+    public async getOwner(){
+        const owner = await db.findOneAsync({owner : true}) as User | null
+        return owner
+    }
+
+    public setName(userId : string, name : string){
         return db.updateAsync({id: userId}, {$set:{name}})
     }
 
-    setReceivedWelcome(userId: string, status = true){
+    public setReceivedWelcome(userId: string, status = true){
         return db.updateAsync({id : userId}, {$set : {receivedWelcome : status}})
     }
 
-    increaseUserCommandsCount(userId: string){
+    public increaseUserCommandsCount(userId: string){
         return db.updateAsync({id : userId}, {$inc: {commands: 1}})
     }
 }

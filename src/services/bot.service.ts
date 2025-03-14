@@ -31,7 +31,7 @@ export class BotService {
             prefix: "!",
             executed_cmds: 0,
             autosticker: false,
-            pv_allowed: true, 
+            commands_pv: true, 
             block_cmds: [],    
             command_rate:{
                 status: false,
@@ -97,22 +97,22 @@ export class BotService {
     }
 
 
-    //Bot Features
-    // Autosticker
+    // Recursos do BOT
+    // Auto-Sticker
     public setAutosticker(status: boolean){
         let bot = this.getBot()
         bot.autosticker = status
         return this.updateBot(bot)
     }
 
-    // PV liberado
-    public setPvAllowed(status: boolean){
+    // Comandos no PV
+    public setCommandsPv(status: boolean){
         let bot = this.getBot()
-        bot.pv_allowed = status
+        bot.commands_pv = status
         return this.updateBot(bot)
     }
 
-    // Taxa de comando
+    // Taxa de comandos
     public setCommandRate(status: boolean, maxCommandsMinute: number, blockTime: number){
         let bot = this.getBot()
         bot.command_rate.status = status

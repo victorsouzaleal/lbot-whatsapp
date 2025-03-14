@@ -77,6 +77,7 @@ export class MessageService{
             isGroupMsg,
             isGroupAdmin,
             isBotAdmin : admins.map(admin => admin.id).includes(sender),
+            isBotOwner: admins.find(admin => admin.owner == true)?.id == sender,
             isBotMessage: m.key.fromMe ?? false,
             isBroadcast: m.key.remoteJid == "status@broadcast",
             isMedia: type != "conversation" && type != "extendedTextMessage",

@@ -17,7 +17,7 @@ export async function connectionOpen(client: WASocket){
         dotenv.config()
         botController.startBot(baileysController.getHostNumber())
         console.log("[BOT]", colorText(generalMessages.bot_data))
-        await checkAdminNumber()
+        await checkOwnerRegister()
     } catch(err: any) {
         showConsoleError(err, "CONNECTION")
         client.end(new Error("fatal_error"))
@@ -53,12 +53,11 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
     }
 }
 
- async function checkAdminNumber(){
-    const admins = await new UserController().getAdmins()
-    
-    if (!admins.length){
-        console.log("[ADMIN]", colorText("O número do ADMIN ainda não foi configurado, digite !admin para cadastrar seu número como administrador.", "#d63e3e"))
+ async function checkOwnerRegister(){
+    const owner = await new UserController().getOwner()
+    if (!owner){
+        console.log("[DONO]", colorText("O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono do bot.", "#d63e3e"))
     } else {
-        console.log("[ADMIN]", colorText("✓ Número do ADMIN configurado."))
+        console.log("[DONO]", colorText("✓ Número do DONO configurado."))
     }
 }

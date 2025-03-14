@@ -261,57 +261,59 @@ export const funGroupMenu = (botInfo : Bot) =>{
 
 // ADMIN MENU
 export const adminMenu = (botInfo : Bot)=>{
-    let {prefix} = botInfo
-    return `
-|-----〖⚙️ *ADMINISTRAÇÃO*〗
-|
-|---- Guia ❔: *${prefix}comando* guia
-|
-|--〖🎨 *CUSTOMIZAÇÃO*〗
-|
-|- *${prefix}nomebot* nome - Altera nome do bot e atualiza menus.
-|- *${prefix}nomeautor* nome - Altera nome do autor de sticker.
-|- *${prefix}nomepack* nome - Altera nome do pacote de figurinhas.
-|- *${prefix}prefixo* simbolo - Altera o prefixo dos comandos.
-|- *${prefix}fotobot* - Altera foto do BOT.
-|- *${prefix}estado* online, offline ou manutencao - Altera o estado atual do bot.
-|
-|--〖🛠️ *GERAL*〗
-|
-|- *${prefix}infobot* - Informação completa do BOT.
-|- *${prefix}ping* - Informação do sistema e de tempo de resposta.
-|- *${prefix}bloquear* @usuario  - Bloqueia o usuário mencionado.
-|- *${prefix}desbloquear* @usuario  - Desbloqueia o usuário mencionado.
-|- *${prefix}listablock*  - Lista todos os usuários bloqueados.
-|- *${prefix}bcgrupos* mensagem - Faz um anúncio com uma mensagem somente para os GRUPOS.
-|- *${prefix}desligar* - Desliga o bot.
-|
-|--〖👤 *USUÁRIOS*〗
-|
-|- *${prefix}verdados* @usuario - Mostra os dados do usuario cadastrado no bot.
-|
-|--〖🚫 *BLOQUEIO DE COMANDOS*〗 
-|
-|- *${prefix}bcmdglobal* !comando1 !comando2 - Bloqueia os comandos escolhidos globalmente.
-|- *${prefix}dcmdglobal* !comando1 !comando2 - Desbloqueia os comandos escolhidos globalmente.
-|
-|--〖👤 *TAXA DE COMANDOS POR MINUTO*〗
-|
-|- *${prefix}taxacomandos* qtd-comandos - Ativa/desativa a taxa de comandos por minuto.
-|
-|--〖🎚️ *CONTROLE*〗
-|
-|- *${prefix}pvliberado* - Ativa/desativa os comandos em mensagens privadas.
-|- *${prefix}autostickerpv* - Ativa/desativa a criação automática de stickers no privado.
-|
-|--〖👨‍👩‍👧‍👦 *GRUPOS*〗
-|
-|- *${prefix}grupos* - Mostra os grupos atuais.
-|- *${prefix}linkgrupo* numero - Mostra o link do grupo selecionado.
-|- *${prefix}sair* - Sai do grupo.
-|- *${prefix}sairgrupos* - Sai de todos os grupos.
-|- *${prefix}entrargrupo* link-grupo - BOT entra no grupo.
-|
-╰╼❥ _*by @Victorsouzaleal*_`
+    let {prefix, name} = botInfo
+    return `┏━━━✦❘༻ *🤖 ADMIN - ${name?.trim()}®* ༺❘✦━━━
+┃
+┣━━━━ Guia ❔: *${prefix}comando* guia
+┃
+┣━━━━ ✦ ⚙️ *ADMINISTRAÇÃO* ✦
+┃
+┣━━ ✦ 🛠️ *GERAL* ✦
+┃
+┣► *${prefix}info* - Informação completa do BOT.
+┣► *${prefix}ping* - Informação do sistema e de tempo de resposta.
+┣► *${prefix}bloquear* @usuario  - Bloqueia o usuário mencionado.
+┣► *${prefix}desbloquear* @usuario  - Desbloqueia o usuário mencionado.
+┣► *${prefix}listablock*  - Lista todos os usuários bloqueados.
+┣► *${prefix}bcgrupos* mensagem - Envia mensagem para todos os grupos.
+┣► *${prefix}desligar* - Desliga o bot.
+┃
+┣━━ ✦ 🎨 *CUSTOMIZAÇÃO* ✦
+┃
+┣► *${prefix}nomebot* nome - Altera nome do bot e atualiza menus.
+┣► *${prefix}nomeautor* nome - Altera nome do autor de sticker.
+┣► *${prefix}nomepack* nome - Altera nome do pacote de figurinhas.
+┣► *${prefix}prefixo* simbolo - Altera o prefixo dos comandos.
+┣► *${prefix}fotobot* - Altera foto do BOT.
+┣► *${prefix}estado* online, offline ou manutencao - Altera o estado atual do bot.
+┃
+┣━━ ✦ 👤 *USUÁRIOS* ✦
+┃
+┣► *${prefix}verusuario* @usuario - Mostra os dados do usuario cadastrado no bot.
+┃
+┣━━ ✦ ⭐ *ADMINS* ✦
+┃
+┣► *${prefix}veradmins* - Exibe os admins do bot.
+┣► *${prefix}addadmin* - Promove o usuário a admin do bot.
+┣► *${prefix}rmadmin* - Rebaixa o admin a usuário do bot.
+┃
+┣━ ✦ 🚫 *BLOQUEIO DE COMANDOS* ✦
+┃
+┣► *${prefix}bcmdglobal* !comando1 !comando2 - Bloqueia os comandos escolhidos globalmente.
+┣► *${prefix}dcmdglobal* !comando1 !comando2 - Desbloqueia os comandos escolhidos globalmente.
+┃
+┣━━ ✦ 🎚️ *CONTROLE/LIMITAR* ✦
+┃
+┣► *${prefix}taxacomandos* qtd-comandos - Ativa/desativa a taxa de comandos por minuto.
+┣► *${prefix}comandospv* - Ativa/desativa os comandos em mensagens privadas.
+┣► *${prefix}autostickerpv* - Ativa/desativa a criação automática de stickers no privado.
+┃
+┣━━ ✦ 👨‍👩‍👧‍👦 *GRUPOS* ✦
+┃
+┣► *${prefix}vergrupos* - Mostra os grupos atuais junto com opções para sair e exibir o link dos grupos.
+┣► *${prefix}entrargrupo* link-grupo - O bot tentará entrar no grupo pelo link inserido.
+┃
+┃
+┗━━✦❘༻ _*by @Victorsouzaleal*_ ༺❘`
 }
 

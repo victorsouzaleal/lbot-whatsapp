@@ -3,5 +3,6 @@ export interface User {
     name? : string|null,
     commands: number,
     receivedWelcome: boolean,
+    owner : boolean,
     admin: boolean,
 }

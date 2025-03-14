@@ -114,9 +114,9 @@ export function showCommandConsole(isGroup : boolean, categoryName: string, comm
     if (!groupName) groupName = "DESCONHECIDO"
 
     if (isGroup){
-      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[GRUPO - ${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), 'em', colorText(groupName), `(${colorText(`${responseTimeSeconds}s`)})`)
+      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), 'em', colorText(groupName), `(${colorText(`${responseTimeSeconds}s`)})`)
     } else {
-      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[PRIVADO - ${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), `(${colorText(`${responseTimeSeconds}s`)})`)
+      console.log('\x1b[1;31m~\x1b[1;37m>', colorText(`[${categoryName}]`, hexColor), formattedMessageTimestamp, colorText(command), 'de', colorText(pushName), `(${colorText(`${responseTimeSeconds}s`)})`)
     }
 }
 

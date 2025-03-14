@@ -21,8 +21,8 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
     //Verifica se o usuário está bloqueado, se estiver retorna.
     if (await isUserBlocked(baileysController, sender)) return
 
-    //Verifica se é um registro de admin, se for retorne.
-    if (await isAdminRegister(baileysController, userController, botInfo, message)) return
+    //Verifica se é um registro de dono, se for retorne.
+    if (await isOwnerRegister(baileysController, userController, botInfo, message)) return
 
     //Se o PV do bot não estiver liberado e o usuário não for um admin, retorne.
     if (isIgnoredByPvAllowed(message, botInfo)) return
@@ -79,8 +79,8 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     //Se o Anti-FLOOD estiver ativado, e for detectada como FLOOD, retorne.
     if (await isDetectedByAntiFlood(baileysController, groupController, botInfo, group, message)) return
 
-    //Verifica se é um registro de admin, se for retorne.
-    if (await isAdminRegister(baileysController, userController, botInfo, message)) return
+    //Verifica se é um registro de dono, se for retorne.
+    if (await isOwnerRegister(baileysController, userController, botInfo, message)) return
 
     //Se o contador estiver ativado, verifica se precisa adicionar o participante e incrementa a contagem dele.
     await handleUserCounter(groupController, message, group)
@@ -123,12 +123,12 @@ async function isUserBlocked(baileysController: BaileysController, userId: strin
     return blockedContacts.includes(userId)
 }
 
-async function isAdminRegister(baileysController: BaileysController, userController: UserController, botInfo: Bot, message: Message){
+async function isOwnerRegister(baileysController: BaileysController, userController: UserController, botInfo: Bot, message: Message){
     const admins = await userController.getAdmins()
     const generalMessages = getGeneralMessages(botInfo)
 
     if (!admins.length && message.command == `${botInfo.prefix}admin`){
-        await userController.registerAdmin(message.sender)
+        await userController.registerOwner(message.sender)
         await baileysController.replyText(message.chat_id, generalMessages.admin_registered, message.wa_message)
         return true
     }
@@ -144,7 +144,7 @@ async function handleUserCounter(groupController: GroupController, message: Mess
 }
 
 function isIgnoredByPvAllowed(message: Message, botInfo: Bot){
-    if (!message.isBotAdmin && !botInfo.pv_allowed) return true
+    if (!message.isBotAdmin && !botInfo.commands_pv) return true
     return false
 }
 

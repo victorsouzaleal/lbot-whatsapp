@@ -1,4 +1,4 @@
-import { WASocket } from "baileys";
+import { WASocket, S_WHATSAPP_NET } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
@@ -8,26 +8,45 @@ import getGeneralMessages from "../lib/general-messages.js";
 import getCommands from "./list.commands.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
-import * as menu from "../lib/menu-builder.js";
+import * as menu from "../lib/menu.js";
 
-export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
+export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const baileysController = new BaileysController(client)
+    const userController = new UserController()
     const commandsData = getCommands(botInfo)
-    const admins = await new UserController().getAdmins()
-    let currentVersion = getCurrentBotVersion()
-    let startedDate = timestampToDate(botInfo.started)
-    let contactAdminsText = ''
+    const blockedUsers = await baileysController.getBlockedContacts()
+    const adminsBot = await userController.getAdmins()
+    const adminsBotContacts = adminsBot.map(admin => `- wa.me/${admin.id.replace(S_WHATSAPP_NET, '')}\n`)
 
-    admins.forEach(admin => {
-        contactAdminsText += `- https://wa.me/${admin.id.replace("@s.whatsapp.net", "")}\n`
-    })
+    let version = getCurrentBotVersion()
+    let botStartedAt = timestampToDate(botInfo.started)
+    let replyText = buildText(commandsData.info.info.msgs.reply_title, botInfo.name?.trim(), botStartedAt, version, botInfo.executed_cmds, adminsBotContacts)
 
-    let reply = buildText(commandsData.info.info.msgs.reply, botInfo.name.trim(), startedDate, botInfo.executed_cmds, contactAdminsText, currentVersion)
-    baileysController.getProfilePicUrl(botInfo.host_number).then(async(url)=>{
-        if (url) await baileysController.replyFileFromUrl(message.chat_id, "imageMessage", url, reply, message.wa_message)
-        else await baileysController.replyText(message.chat_id, reply, message.wa_message)
-    }).catch(async()=> {
-        await baileysController.replyText(message.chat_id, reply, message.wa_message)
+    if(message.isBotAdmin){
+        replyText += commandsData.info.info.msgs.reply_title_resources
+        // AUTO-STICKER
+        replyText += (botInfo.autosticker) ? commandsData.info.info.msgs.reply_item_autosticker_on: commandsData.info.info.msgs.reply_item_autosticker_off
+        // PV LIBERADO
+        replyText += (botInfo.commands_pv) ? commandsData.info.info.msgs.reply_item_commandspv_on : commandsData.info.info.msgs.reply_item_commandspv_off
+        // TAXA DE COMANDOS POR MINUTO
+        replyText += (botInfo.command_rate.status) ? buildText(commandsData.info.info.msgs.reply_item_commandsrate_on, botInfo.command_rate.max_cmds_minute, botInfo.command_rate.block_time) : commandsData.info.info.msgs.reply_item_commandsrate_off
+        // BLOQUEIO DE COMANDOS
+        let blockedCommands = []
+
+        for(let commandName of botInfo.block_cmds){
+            blockedCommands.push(botInfo.prefix+commandName)
+        }
+        replyText += (botInfo.block_cmds.length != 0) ? buildText(commandsData.info.info.msgs.reply_item_blockcmds_on, blockedCommands.toString()) : commandsData.info.info.msgs.reply_item_blockcmds_off
+        //USUARIOS BLOQUEADOS
+        replyText += buildText(commandsData.info.info.msgs.reply_item_blocked_count, blockedUsers.length)
+    }
+
+    //RESPOSTA
+    await baileysController.getProfilePicUrl(botInfo.host_number).then(async (pic)=>{
+        if (pic) await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', pic, replyText, message.wa_message)
+        else await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    }).catch(async ()=>{
+        await baileysController.replyText(message.chat_id, replyText, message.wa_message)
     })
 }
 
@@ -51,11 +70,14 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
+    const generalText = getGeneralMessages(botInfo)
     const commandsData = getCommands(botInfo)
-    let userData = await new UserController().getUser(message.sender)
+    const userData = await new UserController().getUser(message.sender)
+
     if (!userData) throw new Error(commandsData.info.meusdados.msgs.error_not_found)
-    let userName = userData.name || ''
-    let userType = userData.admin ? '💻 Admin'  : '👤 Comum'
+
+    const userName = userData.name || '---'
+    const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
     let replyMessage = buildText(commandsData.info.meusdados.msgs.reply, userType, userName, userData.commands)
 
     if (message.isGroupMsg && group){
@@ -72,47 +94,46 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
+    const generalText = getGeneralMessages(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
     if (!userData) throw new Error(commandsData.info.menu.msgs.error_user_not_found)
 
-    const userType = userData.admin ? '💻 Admin'  : '👤 Comum'
-    let response : string | undefined
-    response = buildText(commandsData.info.menu.msgs.reply, userData.name, userType, userData.commands)
-    response += `═════════════════\n`
+    const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
+    let replyText = buildText(commandsData.info.menu.msgs.reply, userData.name, userType, userData.commands)
 
     if (!message.args.length){
-        response += menu.mainMenu(botInfo)
+        replyText += menu.mainMenu(botInfo)
     } else {
         const commandText = message.text_command.trim()
         switch(commandText){
             case "0":
-                response += menu.infoMenu(botInfo)
+                replyText += menu.infoMenu(botInfo)
                 break
             case "1":
-                response += menu.stickerMenu(botInfo)
+                replyText += menu.stickerMenu(botInfo)
                 break
             case "2":
-                response += menu.utilityMenu(botInfo)
+                replyText += menu.utilityMenu(botInfo)
                 break
             case "3":
-                response += menu.downloadMenu(botInfo)
+                replyText += menu.downloadMenu(botInfo)
                 break
             case "4":
                 if (!message.isGroupMsg) throw new Error(getGeneralMessages(botInfo).permission.group)
 
-                if (message.isGroupAdmin) response += menu.groupAdminMenu(botInfo)
-                else response += menu.groupMenu(botInfo)
+                if (message.isGroupAdmin) replyText += menu.groupAdminMenu(botInfo)
+                else replyText += menu.groupMenu(botInfo)
                 break
             case "5":
-                if (message.isGroupMsg) response += menu.funGroupMenu(botInfo)
-                else response += menu.funMenu(botInfo)
+                if (message.isGroupMsg) replyText += menu.funGroupMenu(botInfo)
+                else replyText += menu.funMenu(botInfo)
                 break
             default:
                 throw new Error(commandsData.info.menu.msgs.error_invalid_option)
         }
     }
 
-    await baileysController.sendText(message.chat_id, response)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 

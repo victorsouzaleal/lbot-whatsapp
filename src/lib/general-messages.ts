@@ -37,6 +37,11 @@ export default function getGeneralMessages (botInfo? : Bot){
             "Quem baniu : {p2}",
             queue_commands: "⏳ O bot está atendendo muitas pessoas ao mesmo tempo, tenha paciência!\n\n"+
             "Atualmente existem *{p1}* comandos na fila de espera.",
+            user_types: {
+                owner: '💻 Dono',
+                admin: '⭐ Admin',
+                user: '👤 Usuário',
+            },
             disconnected:{
                 command: "A conexão com o WhatsApp foi encerrada pelo comando do Administrador.",
                 fatal_error: "A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.",
@@ -45,12 +50,13 @@ export default function getGeneralMessages (botInfo? : Bot){
                 bad_connection: "A sua conexão com o WhatsApp foi encerrada, tentando reconectar... Motivo : {p1} - {p2}"
             },
             permission: {
-                group: 'Este comando só pode ser usado em grupos.',
-                bot_group_admin: 'Esse comando só pode ser realizado se o BOT for administrador do grupo.',
-                ban_admin : 'O BOT não tem permissão para banir um administrador.',
-                admin_group_only : 'Apenas administradores do grupo podem usar este comando.',
-                admin_bot_only: 'Apenas administradores do BOT podem usar este comando.',
-                owner_group_only: 'Apenas o dono do GRUPO pode usar este comando.',
+                group: 'Este comando só pode ser usado em *grupos*.',
+                bot_group_admin: 'Esse comando só pode ser realizado se o bot for *administrador do grupo*.',
+                ban_admin : 'O bot não tem permissão para *banir um administrador*.',
+                admin_group_only : 'Apenas *administradores do grupo* podem usar este comando.',
+                admin_bot_only: 'Apenas *administradores do bot* podem usar este comando.',
+                owner_bot_only: 'Apenas o *dono do bot* pode usar este comando.',
+                owner_group_only: 'Apenas o *dono do grupo* pode usar este comando.',
             }
         }
 }
