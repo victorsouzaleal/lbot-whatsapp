@@ -1,6 +1,6 @@
 import {WASocket, ParticipantAction} from 'baileys'
 import { BaileysController } from '../controllers/baileys.controller.js'
-import { buildText, showConsoleError} from '../lib/util.js'
+import { buildText, removeWhatsappSuffix, showConsoleError} from '../lib/util.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
@@ -55,7 +55,7 @@ async function filterUserBlacklist(client: WASocket, botInfo: Bot, group: Group,
     if (isBotAdmin && isUserBlacklisted) {
         const baileysController = new BaileysController(client)
         await baileysController.removeParticipant(group.id, userId)
-        await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.blacklist_ban_message, userId.replace("@s.whatsapp.net", ""), botInfo.name), [userId])
+        await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.blacklist_ban_message, removeWhatsappSuffix(userId), botInfo.name), [userId])
         return false
     }
     return true
@@ -71,7 +71,7 @@ async function filterUserAntifake(client: WASocket, botInfo: Bot, group: Group, 
             if (isFake){
                 const baileysController = new BaileysController(client)
                 const generalMessages = getGeneralMessages(botInfo)
-                await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.antifake_ban_message, userId.replace("@s.whatsapp.net", ""), botInfo.name), [userId])
+                await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.antifake_ban_message, removeWhatsappSuffix(userId), botInfo.name), [userId])
                 await baileysController.removeParticipant(group.id, userId)
                 return false
             }

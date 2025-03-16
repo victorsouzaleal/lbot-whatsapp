@@ -1,7 +1,7 @@
 import { WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
-import { getCommandCategory, getCommandGuide, messageErrorCommand, showCommandConsole } from "./util.js";
+import { getCommandCategory, getCommandGuide, messageErrorCommand, removePrefix, showCommandConsole } from "./util.js";
 import { Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
 import { Commands, CategoryCommand} from "../interfaces/command.interface.js";
@@ -14,7 +14,7 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
     const categoryCommand = getCommandCategory(message.command, botInfo.prefix)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
-    const commandWithoutPrefix = message.command.replace(botInfo.prefix, '')
+    const commandWithoutPrefix = removePrefix(botInfo.prefix, message.command)
 
     try{
         switch (categoryCommand) {

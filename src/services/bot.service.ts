@@ -3,7 +3,7 @@ import { CategoryCommand } from "../interfaces/command.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
-import { buildText, commandExist } from "../lib/util.js"
+import { buildText, commandExist, removePrefix } from "../lib/util.js"
 import getCommands from "../commands/list.commands.js"
 import Datastore from "@seald-io/nedb";
 
@@ -223,10 +223,10 @@ export class BotService {
         
         for(let command of commands){
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')){
-                if (botInfo.block_cmds.includes(command.replace(prefix, ''))){
+                if (botInfo.block_cmds.includes(removePrefix(prefix, command))){
                     blockResponse += buildText(commandsData.admin.bcmdglobal.msgs.reply_item_already_blocked, command)
                 } else {
-                    botInfo.block_cmds.push(command.replace(prefix, ''))
+                    botInfo.block_cmds.push(removePrefix(prefix, command))
                     blockResponse += buildText(commandsData.admin.bcmdglobal.msgs.reply_item_blocked, command)
                 }
             } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info') ){
@@ -257,8 +257,8 @@ export class BotService {
         }
 
         for(let command of commands){
-            if (botInfo.block_cmds.includes(command.replace(prefix, ''))) {
-                let commandIndex = botInfo.block_cmds.findIndex(command_blocked => command_blocked == command.replace(prefix, ''))
+            if (botInfo.block_cmds.includes(removePrefix(prefix, command))) {
+                let commandIndex = botInfo.block_cmds.findIndex(command_blocked => command_blocked == removePrefix(prefix, command))
                 botInfo.block_cmds.splice(commandIndex, 1)
                 unblockResponse += buildText(commandsData.admin.dcmdglobal.msgs.reply_item_unblocked, command)
             } else {
@@ -273,7 +273,7 @@ export class BotService {
     public isCommandBlockedGlobally(command: string){
         let botInfo = this.getBot()
         const {prefix} = botInfo
-        return botInfo.block_cmds.includes(command.replace(prefix, ''))
+        return botInfo.block_cmds.includes(removePrefix(prefix, command))
     }
 
     // Configuração de API

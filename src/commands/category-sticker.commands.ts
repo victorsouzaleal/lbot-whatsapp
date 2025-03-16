@@ -3,8 +3,8 @@ import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
 import { BaileysController } from "../controllers/baileys.controller.js"
-import { buildText, messageErrorCommandUsage} from "../lib/util.js"
-import { audioLibrary, generalLibrary, imageLibrary, stickerLibrary } from "@victorsouzaleal/biblioteca-lbot"
+import { messageErrorCommandUsage} from "../lib/util.js"
+import { imageLibrary, stickerLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getCommands from "./list.commands.js"
 
 
@@ -18,12 +18,11 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     
     let messageData = {
         type : (message.isQuoted) ? message.quotedMessage?.type : message.type,
-        mimetype : (message.isQuoted) ? message.quotedMessage?.media?.mimetype : message.media?.mimetype,
         message: (message.isQuoted) ? message.quotedMessage?.wa_message  : message.wa_message,
         seconds: (message.isQuoted) ? message.quotedMessage?.media?.seconds : message.media?.seconds
     }
 
-    if (!messageData.type || !messageData.mimetype || !messageData.message) throw new Error(commandsData.sticker.s.msgs.error_message)
+    if (!messageData.type || !messageData.message) throw new Error(commandsData.sticker.s.msgs.error_message)
 
     if (messageData.type != "imageMessage" && messageData.type != "videoMessage") throw new Error(messageErrorCommandUsage(botInfo, message))
 
@@ -55,11 +54,10 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
 
     let messageData = {
         type : (message.isQuoted) ? message.quotedMessage?.type : message.type,
-        mimetype : (message.isQuoted) ? message.quotedMessage?.media?.mimetype : message.media?.mimetype,
         message: (message.isQuoted) ? message.quotedMessage?.wa_message : message.wa_message
     }
 
-    if (!messageData.type || !messageData.mimetype || !messageData.message) throw new Error(commandsData.sticker.ssf.msgs.error_message)
+    if (!messageData.type || !messageData.message) throw new Error(commandsData.sticker.ssf.msgs.error_message)
 
     if (messageData.type != "imageMessage") throw new Error(commandsData.sticker.ssf.msgs.error_image)
 
@@ -114,10 +112,8 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function autoSticker(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const baileysController = new BaileysController(client)
-    const commandsData = getCommands(botInfo)
 
     if (message.type != 'imageMessage' && message.type != "videoMessage") return
-
     if (message.type == "videoMessage" && message.media?.seconds && message.media?.seconds > 9) return
 
     let mediaBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})

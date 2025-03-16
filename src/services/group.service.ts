@@ -4,7 +4,7 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
 import { GroupMetadata } from 'baileys'
-import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText } from '../lib/util.js'
+import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText, removeWhatsappSuffix, removePrefix } from '../lib/util.js'
 import moment from 'moment-timezone'
 import getCommands from '../commands/list.commands.js'
 import getGeneralMessages from "../lib/general-messages.js";
@@ -180,7 +180,7 @@ export class GroupService {
     public getWelcomeMessage(group: Group, botInfo: Bot, userId: string){
         const generalMessages = getGeneralMessages(botInfo)
         const custom_message = (group.welcome.msg != "") ? group.welcome.msg + "\n\n" : ""
-        const message_welcome = buildText(generalMessages.group_welcome_message, userId.replace("@s.whatsapp.net", ""), group.name, custom_message)
+        const message_welcome = buildText(generalMessages.group_welcome_message, removeWhatsappSuffix(userId), group.name, custom_message)
         return message_welcome
     }
 
@@ -333,10 +333,10 @@ export class GroupService {
 
         for (let command of commands) {
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
-                if (group.block_cmds.includes(command.replace(prefix, ''))) {
+                if (group.block_cmds.includes(removePrefix(prefix, command))) {
                     blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_already_blocked, command)
                 } else {
-                    blockedCommands.push(command.replace(prefix, ''))
+                    blockedCommands.push(removePrefix(prefix, command))
                     blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_blocked, command)
                 }
             } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info')) {
@@ -368,8 +368,8 @@ export class GroupService {
         }
 
         for (let command of commands) {
-            if (group.block_cmds.includes(command.replace(prefix, ''))) {
-                unblockedCommands.push(command.replace(prefix, ''))
+            if (group.block_cmds.includes(removePrefix(prefix, command))) {
+                unblockedCommands.push(removePrefix(prefix, command))
                 unblockResponse += buildText(commandsData.group.dcmd.msgs.reply_item_unblocked, command)
             } else {
                 unblockResponse += buildText(commandsData.group.dcmd.msgs.reply_item_not_blocked, command)
@@ -383,7 +383,7 @@ export class GroupService {
 
     public isBlockedCommand(group: Group, command: string, botInfo: Bot) {
         const {prefix} = botInfo
-        return group.block_cmds.includes(command.replace(prefix, ''))
+        return group.block_cmds.includes(removePrefix(prefix, command))
     }
 
     // ***** Activity/Counter *****

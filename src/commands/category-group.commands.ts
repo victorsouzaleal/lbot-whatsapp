@@ -1,9 +1,9 @@
-import { downloadMediaMessage, WASocket, S_WHATSAPP_NET } from "baileys";
+import { downloadMediaMessage, WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group, ParticipantCounter } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
-import { buildText, messageErrorCommandUsage } from "../lib/util.js";
+import { buildText, removeWhatsappSuffix, addWhatsappSuffix, messageErrorCommandUsage } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
 import getCommands from "./list.commands.js";
 import { UserController } from "../controllers/user.controller.js";
@@ -78,7 +78,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
 
     if (message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
     else if (message.mentioned.length) targetUserId = message.mentioned[0]
-    else if (message.args.length) targetUserId = message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else if (message.args.length) targetUserId = addWhatsappSuffix(message.text_command)
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     if (targetUserId == botInfo.host_number) throw new Error(commandsData.group.addlista.msgs.error_add_bot)
@@ -108,7 +108,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     const currentBlacklist = await groupController.getBlackList(group.id)
 
     if(message.args.length == 1 && message.args[0].length <= 3) targetUserId = currentBlacklist[parseInt(message.text_command) - 1]
-    else targetUserId = message.text_command.replace(/\W+/g, "") + S_WHATSAPP_NET
+    else targetUserId = addWhatsappSuffix(message.text_command)
 
     if (!currentBlacklist.includes(targetUserId)) throw new Error(commandsData.group.rmlista.msgs.error_not_listed)
 
@@ -135,7 +135,7 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
     for(let userId of currentBlacklist){
         const userData = await userController.getUser(userId)
         const userNumberList = currentBlacklist.indexOf(userId) + 1
-        replyText += buildText(commandsData.group.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', userId.replace(S_WHATSAPP_NET, ''))
+        replyText += buildText(commandsData.group.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', removeWhatsappSuffix(userId))
     }
 
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
@@ -152,17 +152,17 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
     
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let userId = message.text_command.trim().replace(/\W+/g,"") + S_WHATSAPP_NET
+    let userId = addWhatsappSuffix(message.text_command.trim())
 
-    if (!Number(userId.replace(S_WHATSAPP_NET, ''))) throw new Error(commandsData.group.add.msgs.error_input)
+    if (!Number(removeWhatsappSuffix(userId))) throw new Error(commandsData.group.add.msgs.error_input)
 
     let addResponse = await baileysController.addParticipant(group.id, userId).catch((err) => {
-        throw new Error(buildText(commandsData.group.add.msgs.error_invalid_number, `${userId.replace(S_WHATSAPP_NET, '')}`))
+        throw new Error(buildText(commandsData.group.add.msgs.error_invalid_number, removeWhatsappSuffix(userId)))
     })
 
-    if (addResponse.status != "200") throw new Error(buildText(commandsData.group.add.msgs.error_add, `${userId.replace(S_WHATSAPP_NET, '')}`))
+    if (addResponse.status != "200") throw new Error(buildText(commandsData.group.add.msgs.error_add, removeWhatsappSuffix(userId)))
 
-    const replyText = buildText(commandsData.group.add.msgs.reply, `${userId.replace(S_WHATSAPP_NET, '')}`)
+    const replyText = buildText(commandsData.group.add.msgs.reply, removeWhatsappSuffix(userId))
     await baileysController.replyText(group.id, replyText, message.wa_message)
 }
 
@@ -187,12 +187,12 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
         if (group.participants.includes(userId)){
             if (!group.admins.includes(userId)){
                 await baileysController.removeParticipant(group.id, userId)
-                replyText += buildText(commandsData.group.ban.msgs.reply_item_success, userId.replace(S_WHATSAPP_NET, ''))
+                replyText += buildText(commandsData.group.ban.msgs.reply_item_success, removeWhatsappSuffix(userId))
             } else {
-                replyText += buildText(commandsData.group.ban.msgs.reply_item_ban_admin, userId.replace(S_WHATSAPP_NET, ''))
+                replyText += buildText(commandsData.group.ban.msgs.reply_item_ban_admin, removeWhatsappSuffix(userId))
             }
         } else {
-            replyText += buildText(commandsData.group.ban.msgs.reply_item_not_found, userId.replace(S_WHATSAPP_NET, ''))
+            replyText += buildText(commandsData.group.ban.msgs.reply_item_not_found, removeWhatsappSuffix(userId))
         }
     }
 
@@ -218,9 +218,9 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
     for(let userId of targetUsers){
         if (!group.admins.includes(userId)) {
             await baileysController.promoteParticipant(group.id, userId)
-            replyText += buildText(commandsData.group.promover.msgs.reply_item_success, userId.replace(S_WHATSAPP_NET, ''))
+            replyText += buildText(commandsData.group.promover.msgs.reply_item_success, removeWhatsappSuffix(userId))
         } else {
-            replyText += buildText(commandsData.group.promover.msgs.reply_item_error, userId.replace(S_WHATSAPP_NET, ''))
+            replyText += buildText(commandsData.group.promover.msgs.reply_item_error, removeWhatsappSuffix(userId))
         }
     }
 
@@ -245,12 +245,12 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
 
     for(let userId of targetUsers){
         if (userId == botInfo.host_number || userId == group.owner){
-            replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_error, userId.replace(S_WHATSAPP_NET, ''))
+            replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_error, removeWhatsappSuffix(userId))
         } else if (group.admins.includes(userId)) {
-            replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_success, userId.replace(S_WHATSAPP_NET, ''))
+            replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_success, removeWhatsappSuffix(userId))
             await baileysController.demoteParticipant(group.id, userId)
         } else {
-            replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_error_is_member, userId.replace(S_WHATSAPP_NET, ''))
+            replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_error_is_member, removeWhatsappSuffix(userId))
         }
     }
 
@@ -313,7 +313,7 @@ export async function donoCommand(client: WASocket, botInfo: Bot, message: Messa
 
     if (!group.owner) throw new Error(commandsData.group.dono.msgs.error)
     
-    const replyText = buildText(commandsData.group.dono.msgs.reply, group.owner.replace(S_WHATSAPP_NET, ''))
+    const replyText = buildText(commandsData.group.dono.msgs.reply, removeWhatsappSuffix(group.owner))
     await baileysController.replyText(group.id, replyText, message.wa_message)
 }
 
@@ -503,7 +503,7 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
                 icon = ''
         }
 
-        replyText += buildText(commandsData.group.topativos.msgs.reply_item, icon, positionRanking, usersRanking[i].user_id.replace(S_WHATSAPP_NET, ''), usersRanking[i].msgs)
+        replyText += buildText(commandsData.group.topativos.msgs.reply_item, icon, positionRanking, removeWhatsappSuffix(usersRanking[i].user_id), usersRanking[i].msgs)
         mentionedUsers.push(usersRanking[i].user_id)   
     }
 
@@ -550,7 +550,7 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
     }
 
     const userData = await userController.getUser(targetUserId)
-    const replyText = buildText(commandsData.group.atividade.msgs.reply, userData?.name || '---', targetUserId.replace(S_WHATSAPP_NET, ''), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
+    const replyText = buildText(commandsData.group.atividade.msgs.reply, userData?.name || '---', removeWhatsappSuffix(targetUserId), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 
@@ -578,7 +578,7 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
     let replyText = buildText(commandsData.group.inativos.msgs.reply_title, inactiveUsers.length, qtyMessage)
 
     for(let user of inactiveUsers){
-        replyText += buildText(commandsData.group.inativos.msgs.reply_item, user.user_id.replace(S_WHATSAPP_NET, ''), user.msgs)
+        replyText += buildText(commandsData.group.inativos.msgs.reply_item, removeWhatsappSuffix(user.user_id), user.msgs)
         mentionedUsers.push(user.user_id)
     }
 

@@ -6,7 +6,7 @@ import { BaileysController } from "../controllers/baileys.controller.js";
 import { UserController } from "../controllers/user.controller.js";
 import getGeneralMessages from "./general-messages.js";
 import { GroupController } from "../controllers/group.controller.js";
-import { buildText, commandExist } from "./util.js";
+import { buildText, commandExist, removeWhatsappSuffix } from "./util.js";
 import { BotController } from "../controllers/bot.controller.js";
 import { commandInvoker } from "./command-invoker.js";
 
@@ -214,7 +214,7 @@ async function isDetectedByAntiLink(baileysController: BaileysController, groupC
     const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
     if (isDetectedByAntilink){
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, message.sender.replace("@s.whatsapp.net", "")), [message.sender])
+        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, removeWhatsappSuffix(message.sender)), [message.sender])
         await baileysController.deleteMessage(message.wa_message, false)
         return true
     }
@@ -226,7 +226,7 @@ async function isDetectedByAntiFlood(baileysController: BaileysController, group
     const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender, message.isGroupAdmin)
     if (isDetectedByAntiFlood){
         await baileysController.removeParticipant(message.chat_id, message.sender)
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, message.sender.replace("@s.whatsapp.net", ""), botInfo.name), [message.sender])
+        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, removeWhatsappSuffix(message.sender), botInfo.name), [message.sender])
         return true
     }
     return false

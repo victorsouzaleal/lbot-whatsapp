@@ -1,7 +1,7 @@
 import { WASocket, GroupMetadata } from 'baileys'
 import { BotController } from '../controllers/bot.controller.js'
 import { BaileysController } from '../controllers/baileys.controller.js'
-import { buildText, showConsoleError, colorText, getGroupParticipantsByMetadata, getGroupAdminsByMetadata } from './util.js'
+import { buildText, showConsoleError, colorText, getGroupParticipantsByMetadata, getGroupAdminsByMetadata, removeWhatsappSuffix } from './util.js'
 import { GroupController } from '../controllers/group.controller.js'
 import getGeneralMessages from './general-messages.js'
 
@@ -49,7 +49,7 @@ async function filterGroupsBlacklist(client: WASocket, groups: GroupMetadata[]){
                     const generalMessages = getGeneralMessages(botInfo)
                     const baileysController = new BaileysController(client)
                     await baileysController.removeParticipant(group.id, participant)
-                    await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.blacklist_ban_message, participant.replace("@s.whatsapp.net", ""), botInfo.name), [participant])
+                    await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.blacklist_ban_message, removeWhatsappSuffix(participant), botInfo.name), [participant])
                 }
             }
         }

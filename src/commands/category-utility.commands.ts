@@ -134,11 +134,10 @@ export async function rbgCommand(client: WASocket, botInfo: Bot, message: Messag
 
     let messageData = {
         type : (message.isMedia) ? message.type : message.quotedMessage?.type,
-        mimetype : (message.isMedia)? message.media?.mimetype : message.quotedMessage?.media?.mimetype,
         wa_message: (message.isQuoted)? message.quotedMessage?.wa_message : message.wa_message
     }
 
-    if (!messageData.type || !messageData.mimetype || !messageData.wa_message) throw new Error(commandsData.utility.rbg.msgs.error_message)
+    if (!messageData.type || !messageData.wa_message) throw new Error(commandsData.utility.rbg.msgs.error_message)
 
     if (messageData.type != "imageMessage") throw new Error(commandsData.utility.rbg.msgs.error_only_image)
 
@@ -398,7 +397,6 @@ export async function qualanimeCommand(client: WASocket, botInfo: Bot, message: 
 
     const messageData = {
         type: (message.isQuoted)? message.quotedMessage?.type : message.type,
-        mimetype: (message.isQuoted)? message.quotedMessage?.media?.mimetype : message.media?.mimetype,
         message: (message.isQuoted)? message.quotedMessage?.wa_message : message.wa_message
     }
 

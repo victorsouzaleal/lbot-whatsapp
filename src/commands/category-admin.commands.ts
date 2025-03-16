@@ -1,9 +1,9 @@
-import { downloadMediaMessage, WASocket, S_WHATSAPP_NET } from "baileys";
+import { downloadMediaMessage, WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
-import { buildText, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
+import { buildText, removeWhatsappSuffix, addWhatsappSuffix, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
 import getCommands from "./list.commands.js";
 import { UserController } from "../controllers/user.controller.js";
@@ -139,7 +139,7 @@ export async function veradminsCommand(client: WASocket, botInfo: Bot, message: 
     adminsBot.forEach((admin) => {
         const adminNumberList  = adminsBot.indexOf(admin) + 1
         const userType = admin.owner ? generalText.user_types.owner : (admin.admin ? generalText.user_types.admin  : generalText.user_types.user)
-        replyText += buildText(commandsData.admin.veradmins.msgs.reply_item, adminNumberList, admin.name, admin.id.replace(S_WHATSAPP_NET, ''), userType)
+        replyText += buildText(commandsData.admin.veradmins.msgs.reply_item, adminNumberList, admin.name, removeWhatsappSuffix(admin.id), userType)
     })
 
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
@@ -159,7 +159,7 @@ export async function addadminCommand(client: WASocket, botInfo: Bot, message: M
 
     if (message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
     else if (message.mentioned.length) targetUserId = message.mentioned[0]
-    else if (message.args.length) targetUserId = message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else if (message.args.length) targetUserId = addWhatsappSuffix(message.text_command)
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const userData = await userController.getUser(targetUserId)
@@ -168,7 +168,7 @@ export async function addadminCommand(client: WASocket, botInfo: Bot, message: M
     if(currentAdminsId.includes(userData.id)) throw new Error(commandsData.admin.addadmin.msgs.error_already_admin)
 
     await userController.promoteUser(userData.id)
-    const replyText = buildText(commandsData.admin.addadmin.msgs.reply, userData.id.replace(S_WHATSAPP_NET, ''), userData.name)
+    const replyText = buildText(commandsData.admin.addadmin.msgs.reply, removeWhatsappSuffix(userData.id), userData.name)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 
@@ -188,7 +188,7 @@ export async function rmadminCommand(client: WASocket, botInfo: Bot, message: Me
     if (message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
     else if (message.mentioned.length) targetUserId = message.mentioned[0]
     else if (message.args.length == 1 && message.args[0].length <= 3) targetUserId = currentAdmins[parseInt(message.text_command) - 1].id
-    else if (message.args.length) targetUserId = message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else if (message.args.length) targetUserId = addWhatsappSuffix(message.text_command)
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const userData = await userController.getUser(targetUserId)
@@ -198,7 +198,7 @@ export async function rmadminCommand(client: WASocket, botInfo: Bot, message: Me
     if(ownerData?.id == userData.id) throw new Error(commandsData.admin.rmadmin.msgs.error_demote_owner)
 
     await userController.demoteUser(userData.id)
-    const replyText = buildText(commandsData.admin.addadmin.msgs.reply, userData.id.replace(S_WHATSAPP_NET, ''), userData.name)
+    const replyText = buildText(commandsData.admin.addadmin.msgs.reply, removeWhatsappSuffix(userData.id), userData.name)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 
@@ -386,7 +386,7 @@ export async function listablockCommand(client: WASocket, botInfo: Bot, message:
 
     for (let userId of blockedUsers) {
         const userPosition = blockedUsers.indexOf(userId) + 1
-        replyText += buildText(commandsData.admin.listablock.msgs.reply_item, userPosition, userId.replace(S_WHATSAPP_NET, ''))
+        replyText += buildText(commandsData.admin.listablock.msgs.reply_item, userPosition, removeWhatsappSuffix(userId))
     }
 
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
@@ -402,15 +402,15 @@ export async function bloquearCommand(client: WASocket, botInfo: Bot, message: M
 
     if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
     else if(message.mentioned.length) targetUserId = message.mentioned[0]
-    else if (message.args.length) targetUserId =  message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else if (message.args.length) targetUserId =  addWhatsappSuffix(message.text_command)
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     if (adminsId.includes(targetUserId)){
-        throw new Error(buildText(commandsData.admin.bloquear.msgs.error_block_admin_bot, targetUserId.replace(S_WHATSAPP_NET, '')))
+        throw new Error(buildText(commandsData.admin.bloquear.msgs.error_block_admin_bot, removeWhatsappSuffix(targetUserId)))
     } else if (blockedUsers.includes(targetUserId)) {
-        throw new Error(buildText(commandsData.admin.bloquear.msgs.error_already_blocked, targetUserId.replace(S_WHATSAPP_NET, '')))
+        throw new Error(buildText(commandsData.admin.bloquear.msgs.error_already_blocked, removeWhatsappSuffix(targetUserId)))
     } else {
-        const replyText = buildText(commandsData.admin.bloquear.msgs.reply, targetUserId.replace(S_WHATSAPP_NET, ''))
+        const replyText = buildText(commandsData.admin.bloquear.msgs.reply, removeWhatsappSuffix(targetUserId))
         await baileysController.blockContact(targetUserId).catch(() => {
             throw new Error(commandsData.admin.bloquear.msgs.error_block)
         })
@@ -427,13 +427,13 @@ export async function desbloquearCommand(client: WASocket, botInfo: Bot, message
     if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
     else if(message.mentioned.length) targetUserId = message.mentioned[0]
     else if(message.args.length == 1 && message.args[0].length <= 3 && Number(message.args[0])) targetUserId = blockedUsers[Number(message.args[0]) - 1]
-    else if (message.args.length) targetUserId =  message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else if (message.args.length) targetUserId =  addWhatsappSuffix(message.text_command)
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     if (!blockedUsers.includes(targetUserId)) {
-        throw new Error(buildText(commandsData.admin.desbloquear.msgs.error_already_unblocked, targetUserId.replace(S_WHATSAPP_NET, '')))
+        throw new Error(buildText(commandsData.admin.desbloquear.msgs.error_already_unblocked, removeWhatsappSuffix(targetUserId)))
     } else {
-        const replyText = buildText(commandsData.admin.desbloquear.msgs.reply, targetUserId.replace(S_WHATSAPP_NET, ''))
+        const replyText = buildText(commandsData.admin.desbloquear.msgs.reply, removeWhatsappSuffix(targetUserId))
         await baileysController.unblockContact(targetUserId).catch(() => {
             throw new Error(commandsData.admin.desbloquear.msgs.error_unblock)
         })
@@ -461,7 +461,7 @@ export async function verusuarioCommand(client: WASocket, botInfo: Bot, message:
 
     if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage.sender
     else if(message.mentioned.length) targetUserId = message.mentioned[0]
-    else if(message.args.length) targetUserId =  message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else if(message.args.length) targetUserId =  addWhatsappSuffix(message.text_command)
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     let userData = await userController.getUser(targetUserId)
@@ -469,7 +469,7 @@ export async function verusuarioCommand(client: WASocket, botInfo: Bot, message:
     if (!userData) throw new Error(commandsData.admin.verusuario.msgs.error_user_not_found)
 
     const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
-    const replyText = buildText(commandsData.admin.verusuario.msgs.reply, userData.name || '---', userType, userData.id.replace(S_WHATSAPP_NET, ""), userData.commands)
+    const replyText = buildText(commandsData.admin.verusuario.msgs.reply, userData.name || '---', userType, removeWhatsappSuffix(userData.id), userData.commands)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 

@@ -1,9 +1,9 @@
-import { WASocket, S_WHATSAPP_NET } from "baileys";
+import { WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
-import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
+import { buildText, getCurrentBotVersion, removeWhatsappSuffix, addWhatsappSuffix, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
 import getCommands from "./list.commands.js";
 import { UserController } from "../controllers/user.controller.js";
@@ -16,7 +16,7 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
     const commandsData = getCommands(botInfo)
     const blockedUsers = await baileysController.getBlockedContacts()
     const adminsBot = await userController.getAdmins()
-    const adminsBotContacts = adminsBot.map(admin => `- wa.me/${admin.id.replace(S_WHATSAPP_NET, '')}\n`)
+    const adminsBotContacts = adminsBot.map(admin => `- wa.me/${removeWhatsappSuffix(admin.id)}\n`)
 
     let version = getCurrentBotVersion()
     let botStartedAt = timestampToDate(botInfo.started)
@@ -61,7 +61,7 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
     if (!admins.length) throw new Error(commandsData.info.reportar.msgs.error)
 
     admins.forEach(async (admin) => {
-        let replyAdmin = buildText(commandsData.info.reportar.msgs.reply_admin, message.pushname, message.sender.replace("@s.whatsapp.net",""), message.text_command)
+        let replyAdmin = buildText(commandsData.info.reportar.msgs.reply_admin, message.pushname, removeWhatsappSuffix(message.sender), message.text_command)
         await baileysController.sendText(admin.id, replyAdmin)
     })
 

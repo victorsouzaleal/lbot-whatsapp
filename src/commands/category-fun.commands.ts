@@ -3,7 +3,7 @@ import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
 import { BaileysController } from "../controllers/baileys.controller.js"
-import { buildText, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../lib/util.js"
+import { buildText, removeWhatsappSuffix, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../lib/util.js"
 import { generalLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getCommands from "./list.commands.js"
 import getGeneralMessages from "../lib/general-messages.js"
@@ -78,7 +78,7 @@ export async function roletarussaCommand(client: WASocket, botInfo: Bot, message
     let randomIndex = Math.floor(Math.random() * eligibleParticipants.length)
     let chosenParticipant = eligibleParticipants[randomIndex]
     const waitReply = commandsData.fun.roletarussa.msgs.wait
-    const replyText = buildText(commandsData.fun.roletarussa.msgs.reply, chosenParticipant.replace("@s.whatsapp.net", ''))
+    const replyText = buildText(commandsData.fun.roletarussa.msgs.reply, removeWhatsappSuffix(chosenParticipant))
     await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
     await baileysController.sendTextWithMentions(message.chat_id, replyText, [chosenParticipant])
     await baileysController.removeParticipant(message.chat_id, chosenParticipant)    
@@ -100,7 +100,7 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
     currentParticipants.splice(randomIndex, 1)
     randomIndex = Math.floor(Math.random() * currentParticipants.length)
     let chosenParticipant2 = currentParticipants[randomIndex]
-    let replyText = buildText(commandsData.fun.casal.msgs.reply, chosenParticipant1.replace("@s.whatsapp.net", ''), chosenParticipant2.replace("@s.whatsapp.net", ''))
+    let replyText = buildText(commandsData.fun.casal.msgs.reply, removeWhatsappSuffix(chosenParticipant1), removeWhatsappSuffix(chosenParticipant2))
     await baileysController.sendTextWithMentions(message.chat_id, replyText, [chosenParticipant1, chosenParticipant2])
 }
 
@@ -234,7 +234,7 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
 
         let randomIndex = Math.floor(Math.random() * currentParticipants.length)
         let chosenParticipant = currentParticipants[randomIndex]
-        replyText += buildText(commandsData.fun.top5.msgs.reply_item, icon, i, chosenParticipant.replace("@s.whatsapp.net", ''))
+        replyText += buildText(commandsData.fun.top5.msgs.reply_item, icon, i, removeWhatsappSuffix(chosenParticipant))
         mentionList.push(chosenParticipant)
         currentParticipants.splice(currentParticipants.indexOf(chosenParticipant, 1))                
     }
@@ -252,7 +252,7 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
 
     const answers = commandsData.fun.par.msgs.answers
     const randomIndex = Math.floor(Math.random() * answers.length)
-    let replyText = buildText(commandsData.fun.par.msgs.reply, message.mentioned[0].replace("@s.whatsapp.net", ''), message.mentioned[1].replace("@s.whatsapp.net", ''), answers[randomIndex])
+    let replyText = buildText(commandsData.fun.par.msgs.reply, removeWhatsappSuffix(message.mentioned[0]), removeWhatsappSuffix(message.mentioned[1]), answers[randomIndex])
     await baileysController.sendTextWithMentions(message.chat_id, replyText, message.mentioned)
 }
 
