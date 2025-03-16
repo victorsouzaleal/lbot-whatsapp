@@ -973,7 +973,7 @@ export default function getCommands (botInfo?: Bot){
                 `Ex: *${PREFIX}bcmd* diversao - Bloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
                 `*Obs* : Você não pode bloquear comandos de administrador.\n`,
                 msgs: {
-                    reply_title: "🔒 *Bloquear comandos no grupo*\n\n",
+                    reply_title: "🔒 *Bloquear comandos - Grupo*\n\n",
                     reply_item_already_blocked: "Comando *{p1}* já está bloqueado.\n",
                     reply_item_blocked: "Comando *{p1}* bloqueado com sucesso.\n",
                     reply_item_error : "Comando *{p1}* não pode ser bloqueado.\n",
@@ -990,7 +990,7 @@ export default function getCommands (botInfo?: Bot){
                 `Ex: *${PREFIX}dcmd* diversao - Desbloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
                 `*Obs* : Verifique os comandos que estão bloqueados com *${PREFIX}status*.\n`,
                 msgs: {
-                    reply_title: "🔓 *Desbloquear comandos no grupo*\n\n",
+                    reply_title: "🔓 *Desbloquear comandos - Grupo*\n\n",
                     reply_item_unblocked: "Comando *{p1}* foi desbloqueado.\n",
                     reply_item_not_blocked: "Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
                 },
@@ -1124,167 +1124,174 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function : adminCommand.taxacomandosCommand
             },
-            bcmdglobal: {
-                guide: `Ex: *${PREFIX}bcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
-                `Ex: *${PREFIX}bcmdglobal* figurinhas - Bloqueia todos os comandos da categoria FIGURINHAS.\n\n`+
-                `Ex: *${PREFIX}bcmdglobal* utilidades - Bloqueia todos os comandos da categoria UTILIDADES.\n\n`+
-                `Ex: *${PREFIX}bcmdglobal* downloads - Bloqueia todos os comandos da categoria DOWNLOADS.\n\n`+
-                `Ex: *${PREFIX}bcmdglobal* diversao - Bloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
-                `*Obs* : Você não pode bloquear comandos de administrador.\n`,
-                msgs: {
-                    reply_title: "[🤖 *Bloquear comandos - Global* 🤖]\n\n",
-                    reply_item_already_blocked: "- Comando *{p1}* já está bloqueado.\n",
-                    reply_item_blocked: "- Comando *{p1}* bloqueado com sucesso.\n",
-                    reply_item_error: "- Comando *{p1}* não pode ser bloqueado.\n",
-                    reply_item_not_exist: "- Comando *{p1}* não existe.\n",
-                },
-                function : infoCommand.menuCommand
-            },
-            dcmdglobal: {
-                guide: `Ex: *${PREFIX}dcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
-                `Ex: *${PREFIX}dcmdglobal* todos - Desbloqueia todos os comandos.\n\n`+
-                `Ex: *${PREFIX}dcmdglobal* figurinhas - Desbloqueia todos os comandos da categoria FIGURINHAS.\n\n`+
-                `Ex: *${PREFIX}dcmdglobal* utilidades - Desbloqueia todos os comandos da categoria UTILIDADES.\n\n`+
-                `Ex: *${PREFIX}dcmdglobal* downloads - Desbloqueia todos os comandos da categoria DOWNLOADS.\n\n`+
-                `Ex: *${PREFIX}dcmdglobal* diversao - Desbloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
-                `*Obs* : Verifique os comandos que estão bloqueados com ${PREFIX}infocompleta.\n`,
-                msgs: {
-                    reply_title: "[🤖 *Desbloquear Comandos - Global* 🤖]\n\n",
-                    reply_item_unblocked: "- Comando *{p1}* foi desbloqueado.\n",
-                    reply_item_not_blocked: "- Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
-                },
-                function : infoCommand.menuCommand
-            },
-            entrargrupo: {
-                guide: `Ex: *${PREFIX}entrargrupo* link - Entra em um grupo por link de convite.\n`,
-                msgs: {
-                    error_link_invalid: "[❗] Isso não é um link válido 👊🤬",
-                    error_group : "[❗] Houve um erro para entrar nesse grupo, verifique se o link está correto.",
-                    reply_pending: "🤖 Não foi possivel entrar neste momento, o grupo provavelmente está com modo para administrador aceitar solicitação.",
-                    reply: "🤖✅ Entendido, entrarei em breve no grupo."
-                },
-                function : infoCommand.menuCommand
-            },
-            bcgrupos: {
-                guide: `Ex: *${PREFIX}bcgrupos* mensagem - Envia uma mensagem para todos os *GRUPOS*.\n`,
-                msgs: {
-                    message: `[🤖${BOT_NAME}® - Mensagem para os grupos]\n\n`+
-                    "{p1}",
-                    wait: "⏳ Em andamento , estou enviando sua mensagem para {p1} grupos.\n\n"+
-                    "Tempo estimado : *{p2}* segundos",
-                    reply: "🤖✅ Anúncio feito com sucesso."
-                },
-                function : infoCommand.menuCommand
-            },
-            fotobot: {
-                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}fotobot* - Altera a foto do BOT.\n`,
-                msgs: {
-                    reply: "🤖✅ A foto do BOT foi alterada com sucesso."
-                },
-                function : infoCommand.menuCommand
-            },
-            nomebot: {
-                guide: `Ex: *${PREFIX}nomebot* Teste123 - Muda o nome do *BOT* para *Teste123* e atualiza os menus com o novo nome.\n`,
-                msgs: {
-                    reply: "✅ O nome do bot foi alterado com sucesso.",
-                },
-                function : infoCommand.menuCommand
-            },
-            nomesticker: {
-                guide: `Ex: *${PREFIX}nomesticker* Teste123 - Muda o nome do *PACOTE DE STICKERS* para *Teste123* e atualiza os novos stickers com o novo nome.\n`,
-                msgs: {
-                    reply: "✅ O nome do pacote de figurinhas foi alterado com sucesso.",
-                },
-                function : infoCommand.menuCommand
-            },
-            nomeadm: {
-                guide: `Ex: *${PREFIX}nomeadm* Teste123 - Muda o nome do *ADMINISTRADOR* para *Teste123* e atualiza os menus com o novo nome.\n`,
-                msgs: {
-                    reply: "✅ O nome do administrador foi alterado com sucesso.",
-                },
-                function : infoCommand.menuCommand
-            },
-            prefixo: {
-                guide: `Ex: *${PREFIX}prefixo* .  - Muda o prefixo dos *COMANDOS* para *.* e atualiza os menus e comandos com o novo prefixo.\n\n`+
-                `Suporta os seguintes prefixos : *!*  *#*  *.*  ***\n`,
-                msgs: {
-                    reply: "✅ O prefixo dos comandos foi alterado com sucesso.",
-                    error: "[❗] Não suportado como prefixo, são suportados somente : ! # . *"
-                },
-                function : infoCommand.menuCommand
-            },
             autostickerpv: {
                 guide: `Ex: *${PREFIX}autostickerpv* - Liga/desliga a criação automatica de stickers sem precisar de comandos no privado.\n`,
                 msgs: {
                     reply_off: "✅ O AUTO-STICKER em mensagens privadas foi desativado com sucesso",
                     reply_on: "✅ O AUTO-STICKER em mensagens privadas foi ativado com sucesso",
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.autostickerpvCommand
+            },
+            bcmdglobal: {
+                guide: `Ex: *${PREFIX}bcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Bloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play (você pode escolher os comandos a sua necessidade).\n\n`+
+                `Ex: *${PREFIX}bcmdglobal* sticker - Bloqueia todos os comandos da categoria STICKER.\n\n`+
+                `Ex: *${PREFIX}bcmdglobal* utilidade - Bloqueia todos os comandos da categoria UTILIDADE.\n\n`+
+                `Ex: *${PREFIX}bcmdglobal* download - Bloqueia todos os comandos da categoria DOWNLOAD.\n\n`+
+                `Ex: *${PREFIX}bcmdglobal* diversao - Bloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
+                `*Obs* : Você não pode bloquear comandos de administrador.\n`,
+                msgs: {
+                    reply_title: "🔒 *Bloquear comandos - Global*\n\n",
+                    reply_item_already_blocked: "Comando *{p1}* já está bloqueado.\n",
+                    reply_item_blocked: "Comando *{p1}* bloqueado com sucesso.\n",
+                    reply_item_error: "Comando *{p1}* não pode ser bloqueado.\n",
+                    reply_item_not_exist: "Comando *{p1}* não existe.\n",
+                },
+                function : adminCommand.bcmdglobalCommand
+            },
+            dcmdglobal: {
+                guide: `Ex: *${PREFIX}dcmdglobal* ${PREFIX}s ${PREFIX}sgif ${PREFIX}play - Desbloqueia  os comandos ${PREFIX}s, ${PREFIX}sgif e ${PREFIX}play.\n\n`+
+                `Ex: *${PREFIX}dcmdglobal* todos - Desbloqueia todos os comandos.\n\n`+
+                `Ex: *${PREFIX}dcmdglobal* sticker - Desbloqueia todos os comandos da categoria STICKER.\n\n`+
+                `Ex: *${PREFIX}dcmdglobal* utilidade - Desbloqueia todos os comandos da categoria UTILIDADE.\n\n`+
+                `Ex: *${PREFIX}dcmdglobal* download - Desbloqueia todos os comandos da categoria DOWNLOAD.\n\n`+
+                `Ex: *${PREFIX}dcmdglobal* diversao - Desbloqueia todos os comandos da categoria DIVERSÃO.\n\n`+
+                `*Obs* : Verifique os comandos que estão bloqueados com ${PREFIX}infocompleta.\n`,
+                msgs: {
+                    reply_title: "🔓 *Desbloquear Comandos - Global* \n\n",
+                    reply_item_unblocked: "Comando *{p1}* foi desbloqueado.\n",
+                    reply_item_not_blocked: "Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
+                },
+                function : adminCommand.dcmdglobalCommand
+            },
+            entrargrupo: {
+                guide: `Ex: *${PREFIX}entrargrupo* link - Entra em um grupo por link de convite.\n`,
+                msgs: {
+                    error_link_invalid: "Isso não é um link de grupo válido.",
+                    error_group : "Houve um erro ao entrar nesse grupo, verifique se o link está correto.",
+                    reply_pending: "🤖✅  Fiz um pedido para entrar no grupo, porém é necessário um administrador aceitar a entrada.",
+                    reply: "🤖✅ Entrei no grupo pelo link fornecido."
+                },
+                function : adminCommand.entrargrupoCommand
+            },
+            bcgrupos: {
+                guide: `Ex: *${PREFIX}bcgrupos* mensagem - Envia uma mensagem para todos os *GRUPOS*.\n`,
+                msgs: {
+                    message: `🤖*${BOT_NAME}® - Mensagem para os grupos*\n\n`+
+                    "{p1}",
+                    wait: "⏳ Em andamento , estou enviando sua mensagem para {p1} grupos.\n\n"+
+                    "Tempo estimado : *{p2}* segundos",
+                    reply: "✅ Anúncio feito com sucesso."
+                },
+                function : adminCommand.bcgruposCommand
+            },
+            fotobot: {
+                guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}fotobot* - Altera a foto do BOT.\n`,
+                msgs: {
+                    reply: "✅ A foto do bot foi alterada com sucesso.",
+                    error_message: "Houve um erro ao obter os dados da mensagem."
+                },
+                function : adminCommand.fotobotCommand
+            },
+            nomebot: {
+                guide: `Ex: *${PREFIX}nomebot* Teste123 - Muda o nome do *BOT* para *Teste123* e atualiza os menus com o novo nome.\n`,
+                msgs: {
+                    reply: "✅ O nome do bot foi alterado com sucesso.",
+                },
+                function : adminCommand.nomebotCommand
+            },
+            nomepack: {
+                guide: `Ex: *${PREFIX}nomesticker* Teste123 - Muda o nome do *PACOTE DE STICKERS* para *Teste123* e atualiza os novos stickers com o novo nome.\n`,
+                msgs: {
+                    reply: "✅ O nome do pacote de figurinhas foi alterado com sucesso.",
+                },
+                function : adminCommand.nomepackCommand
+            },
+            nomeautor: {
+                guide: `Ex: *${PREFIX}nomeadm* Teste123 - Muda o nome do *ADMINISTRADOR* para *Teste123* e atualiza os menus com o novo nome.\n`,
+                msgs: {
+                    reply: "✅ O nome do autor de figurinhas foi alterado com sucesso.",
+                },
+                function : adminCommand.nomeautorCommand
+            },
+            prefixo: {
+                guide: `Ex: *${PREFIX}prefixo* .  - Muda o prefixo dos *COMANDOS* para *.* e atualiza os menus e comandos com o novo prefixo.\n\n`+
+                `Suporta os seguintes prefixos : *!*  *#*  *.*  ***\n`,
+                msgs: {
+                    reply: "✅ O prefixo dos comandos foi alterado com sucesso.",
+                    error_not_supported: "Esse símbolo não é suportado como prefixo, são suportados somente: ! # . *"
+                },
+                function : adminCommand.prefixoCommand
             },
             listablock: {
                 guide: `Ex: *${PREFIX}listablock* - Exibe a lista de usuários bloqueados pelo bot.\n`,
                 msgs: {
-                    reply_title: "🤖 Esse é o total de pessoas bloqueadas \nTotal : {p1}\n",
-                    error: "[❗] O bot não tem pessoas bloqueadas.",
-                    reply_item: "➸ +{p1}\n",
+                    reply_title: "🤖 *Usuários bloqueados* \n\n"+
+                    "Total: {p1}\n\n",
+                    reply_item: "ID: {p1}\n"+
+                    "Contato: +{p2}\n\n",
+                    error: "O bot não tem usuários bloqueados.",
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.listablockCommand
             },
             bloquear: {
                 guide: `Ex: *${PREFIX}bloquear* @membro - Para o bot bloquear o membro mencionado.\n\n`+
                 `Ex: *${PREFIX}bloquear* +55 (xx) xxxxx-xxxx - Para o bot bloquear o número digitado.\n\n`+
                 `Ex: Responder alguém com *${PREFIX}bloquear* - Para o bot bloquear o membro que você respondeu.\n`,
                 msgs: {
-                    error_block_admin_bot: "[❗] O Usuário +{p1} é ADMIN do bot, não foi possivel bloquear.",
-                    error_already_blocked: "[❗] O Usuário +{p1} já está *bloqueado*.",
-                    reply: "✅ O Usuário +{p1} foi *bloqueado* com sucesso"
+                    error_block_admin_bot: "O usuário +{p1} é *admin* do bot, não foi possivel bloquear.",
+                    error_already_blocked: "O usuário +{p1} já está *bloqueado*.",
+                    error_block: "Houve um erro ao bloquear este usuário, verifique se o número inserido existe e está correto.",
+                    reply: "✅ O usuário +{p1} foi *bloqueado* com sucesso"
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.bloquearCommand
             },
             desbloquear: {
-                guide: `Ex: *${PREFIX}desbloquear* @membro - Para o bot desbloquear o membro mencionado.\n\n`+
+                guide: `Ex: Digite *${PREFIX}desbloquear 1* - Desbloqueia o usuário selecionado da lista negra.\n\n`+
+                `*Obs*: Para ver o ID dos usuários é necessário checar no comando *${PREFIX}listablock*\n\n`+
+                `Você também pode desbloquear usuários das seguintes formas: \n\n`+
+                `Ex: *${PREFIX}desbloquear* @membro - Para o bot desbloquear o membro mencionado.\n\n`+
                 `Ex: *${PREFIX}desbloquear* +55 (xx) xxxxx-xxxx - Para o bot desbloquear o número digitado.\n\n`+
-                `Ex: Responder alguém com *${PREFIX}desbloquear* - Para o bot desbloquear o membro que você respondeu.\n`,
+                `Ex: Responder alguém com *${PREFIX}desbloquear* - Para o bot desbloquear o usuário que você respondeu.\n`,
                 msgs: {
-                    error: "[❗] O Usuário +{p1} já está *desbloqueado*.",
-                    reply: "✅ O Usuário +{p1} foi *desbloqueado* com sucesso"
+                    error_already_unblocked: "O usuário +{p1} já está *desbloqueado* ou nunca foi bloqueado.",
+                    error_unblock: "Houve um erro ao desbloquear este usuário, verifique se o número está correto e que ele realmente está bloqueado.",
+                    reply: "✅ O usuário +{p1} foi *desbloqueado* com sucesso."
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.desbloquearCommand
             },
-            estado: {
-                guide: `Ex: *${PREFIX}estado* online - Muda o status do bot para ONLINE.\n\n`+
-                `Ex: *${PREFIX}estado* offline - Muda o status do bot para OFFLINE.\n\n`+
-                `Ex: *${PREFIX}estado* manutencao - Muda o status do bot para MANUTENCÃO.\n`,
+            recado: {
+                guide: `Ex: *${PREFIX}recado* texto - Muda o texto do recado/status do bot.\n`,
                 msgs: {
-                    reply: "🤖✅ Seu estado foi alterado com sucesso."
+                    reply: '✅ Seu recado/status foi alterado com sucesso para:\n\n'+ 
+                    "{p1}\n"
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.recadoCommand
             },
             verusuario: {
                 guide: `Ex: *${PREFIX}usuario* @usuario - Mostra os dados gerais do usuário mencionado.\n\n`+
                 `Ex: Responder com *${PREFIX}usuario* - Mostra os dados gerais do usuário respondido.\n\n`+
                 `Ex: *${PREFIX}usuario* 55219xxxxxxxx - Mostra os dados gerais do usuário com esse número.\n`,
                 msgs: {
-                    error: "[❗] Este usuário ainda não está registrado",
-                    reply: "[🤖*DADOS DO USUÁRIO*🤖]\n\n"+
-                    "Nome : *{p1}*\n"+
-                    "Tipo de usuário : *{p2}*\n"+
-                    "Número : *{p3}*\n"+
-                    "Total de comandos usados : *{p1}* comandos\n"
+                    error_user_not_found: "Este usuário ainda não está registrado, faça ele interagir com o bot primeiro.",
+                    reply: "👤 *DADOS DO USUÁRIO*\n\n"+
+                    "*Nome*: {p1}\n"+
+                    "*Tipo de usuário*: {p2}\n"+
+                    "*Número*: +{p3}\n"+
+                    "*Total de comandos usados*: *{p4}* comandos\n"
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.verusuarioCommand
             },
             desligar: {
                 guide: `Ex: *${PREFIX}desligar* - Desliga o bot.\n`,
                 msgs: {
-                    reply: "🤖✅ Entendido, o BOT será desligado"
+                    reply: "✅ Entendido, o bot será desligado."
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.desligarCommand
             },
             ping: {
                 guide: `Ex: *${PREFIX}ping* - Exibe as informações do sistema do BOT e o tempo de resposta dele.\n`,
                 msgs: {
-                    reply: "🖥️ INFORMAÇÃO GERAL 🖥️\n\n"+
+                    reply: "🖥️ *INFORMAÇÃO GERAL*\n\n"+
                     "*OS*: {p1}\n"+
                     "*CPU*: {p2}\n"+
                     "*RAM*: {p3}GB/{p4}GB\n"+
@@ -1293,7 +1300,7 @@ export default function getCommands (botInfo?: Bot){
                     "*Grupos cadastrados*: {p7}\n"+
                     "*Online desde*: {p8}"
                 },
-                function : infoCommand.menuCommand
+                function : adminCommand.pingCommand
             }
         }
     }

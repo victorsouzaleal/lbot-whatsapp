@@ -212,12 +212,15 @@ export class BotService {
     public blockCommandsGlobally(commands : string[]){
         let botInfo = this.getBot()
         const commandsData = getCommands(botInfo)
-        const {prefix: prefix} = botInfo
+        const {prefix} = botInfo
         let blockResponse = commandsData.admin.bcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] = ['sticker', 'utility', 'download', 'fun']
 
-        if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix+command)
+        if (commands[0] == 'diversao') commands[0] = 'fun'
+        if (commands[0] == 'utilidade') commands[0] = 'utility'
 
+        if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix+command)
+        
         for(let command of commands){
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')){
                 if (botInfo.block_cmds.includes(command.replace(prefix, ''))){
@@ -244,6 +247,10 @@ export class BotService {
         let unblockResponse = commandsData.admin.dcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
 
+        if (commands[0] == 'todos') commands[0] = 'all'
+        if (commands[0] == 'utilidade') commands[0] = 'utility'
+        if (commands[0] == 'diversao') commands[0] = 'fun'
+        
         if (categories.includes(commands[0])){
             if (commands[0] === 'all') commands = botInfo.block_cmds.map(command => prefix+command)
             else commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix+command)
@@ -251,8 +258,8 @@ export class BotService {
 
         for(let command of commands){
             if (botInfo.block_cmds.includes(command.replace(prefix, ''))) {
-                let commandIndex = botInfo.block_cmds.findIndex(command_blocked => command_blocked == command)
-                botInfo.block_cmds.splice(commandIndex,1)
+                let commandIndex = botInfo.block_cmds.findIndex(command_blocked => command_blocked == command.replace(prefix, ''))
+                botInfo.block_cmds.splice(commandIndex, 1)
                 unblockResponse += buildText(commandsData.admin.dcmdglobal.msgs.reply_item_unblocked, command)
             } else {
                 unblockResponse += buildText(commandsData.admin.dcmdglobal.msgs.reply_item_not_blocked, command)

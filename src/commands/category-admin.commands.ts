@@ -1,15 +1,17 @@
 import { downloadMediaMessage, WASocket, S_WHATSAPP_NET } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
-import { Group, ParticipantCounter } from "../interfaces/group.interface.js";
+import { Group } from "../interfaces/group.interface.js";
 import { BaileysController } from "../controllers/baileys.controller.js";
-import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
+import { buildText, messageErrorCommandUsage, timestampToDate } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
 import getCommands from "./list.commands.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import { BotController } from "../controllers/bot.controller.js";
 import { adminMenu } from "../lib/menu.js";
+import os from 'node:os'
+import moment from "moment";
 
 export async function adminCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const baileysController = new BaileysController(client)
@@ -56,7 +58,6 @@ export async function sairCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!chosenGroupNumber || !currentGroups[indexGroup]) throw new Error(commandsData.admin.sair.msgs.error)
 
     const replyText = buildText(commandsData.admin.sair.msgs.reply, currentGroups[indexGroup].name, chosenGroupNumber)
-
     await baileysController.leaveGroup(currentGroups[indexGroup].id)
 
     if (message.isGroupMsg && currentGroups[indexGroup].id == message.chat_id) await baileysController.sendText(message.sender, replyText)
@@ -70,10 +71,9 @@ export async function vergruposCommand(client: WASocket, botInfo: Bot, message: 
 
     const currentGroups = await groupController.getAllGroups()
     let replyText = buildText(commandsData.admin.vergrupos.msgs.reply_title, currentGroups.length)
-    let groupNumber = 0
 
     for (let group of currentGroups){
-        groupNumber++
+        const groupNumber = currentGroups.indexOf(group) + 1
         const adminsGroup = group.admins
         const isBotGroupAdmin = adminsGroup.includes(botInfo.host_number)
         const linkGroupCommand = isBotGroupAdmin ? `${botInfo.prefix}linkgrupo ${groupNumber}` : '----'
@@ -235,6 +235,267 @@ export async function taxacomandosCommand(client: WASocket, botInfo: Bot, messag
         await botController.setCommandRate(false)
     }
 
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function autostickerpvCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+    const commandsData = getCommands(botInfo)
+    
+    const replyText = botInfo.autosticker ? commandsData.admin.autostickerpv.msgs.reply_off : commandsData.admin.autostickerpv.msgs.reply_on
+    botController.setAutosticker(!botInfo.autosticker)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function bcmdglobalCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const replyText = botController.blockCommandsGlobally(message.args)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function dcmdglobalCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const replyText = botController.unblockCommandsGlobally(message.args)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function entrargrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const commandsData = getCommands(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const linkGroup = message.text_command
+    const isValidLink = linkGroup.match(/(https:\/\/chat.whatsapp.com)/gi)
+
+    if (!isValidLink) throw new Error(commandsData.admin.entrargrupo.msgs.error_link_invalid)
+
+    const linkId = linkGroup.replace(/(https:\/\/chat.whatsapp.com\/)/gi, '')
+    const groupResponse =  await baileysController.joinGroupInviteLink(linkId).catch(() => {
+        throw new Error(commandsData.admin.entrargrupo.msgs.error_group)
+    })
+
+    if(!groupResponse) await baileysController.replyText(message.chat_id, commandsData.admin.entrargrupo.msgs.reply_pending, message.wa_message)
+    await baileysController.replyText(message.chat_id, commandsData.admin.entrargrupo.msgs.reply, message.wa_message)
+}
+
+export async function bcgruposCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const groupController = new GroupController()
+    const commandsData = getCommands(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const currentGroups = await groupController.getAllGroups()
+    const waitReply = buildText(commandsData.admin.bcgrupos.msgs.wait, currentGroups.length, currentGroups.length)
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
+
+    currentGroups.forEach(async (group) => {
+        if(!group.restricted){
+            await new Promise<void>((resolve)=>{
+                setTimeout(async ()=>{
+                    const announceMessage = buildText(commandsData.admin.bcgrupos.msgs.message, message.text_command)
+                    await baileysController.sendText(group.id, announceMessage).catch()
+                    resolve()
+                }, 1000)
+            })
+        }
+    })
+
+    await baileysController.replyText(message.chat_id, commandsData.admin.bcgrupos.msgs.reply, message.wa_message)
+}
+
+export async function fotobotCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const commandsData = getCommands(botInfo)
+
+    if(message.type != 'imageMessage' && message.quotedMessage?.type != 'imageMessage') throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const messageData = (message.isQuoted) ? message.quotedMessage?.wa_message : message.wa_message
+
+    if(!messageData) throw new Error(commandsData.admin.fotobot.msgs.error_message)
+
+    let imageBuffer = await downloadMediaMessage(messageData, "buffer", {})
+    await baileysController.updateProfilePic(botInfo.host_number, imageBuffer)
+    await baileysController.replyText(message.chat_id, commandsData.admin.fotobot.msgs.reply, message.wa_message)
+}
+
+export async function nomebotCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+    const commandsData = getCommands(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    botController.setName(message.text_command)
+    await baileysController.replyText(message.chat_id, commandsData.admin.nomebot.msgs.reply, message.wa_message)
+}
+
+export async function nomepackCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+    const commandsData = getCommands(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    botController.setPackSticker(message.text_command)
+    await baileysController.replyText(message.chat_id, commandsData.admin.nomepack.msgs.reply, message.wa_message)
+}
+
+export async function nomeautorCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+    const commandsData = getCommands(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    botController.setAuthorSticker(message.text_command)
+    await baileysController.replyText(message.chat_id, commandsData.admin.nomeautor.msgs.reply, message.wa_message)
+}
+
+export async function prefixoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const botController = new BotController()
+    const commandsData = getCommands(botInfo)
+    const supportedPrefixes = ["!", "#", ".", "*"]
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!supportedPrefixes.includes(message.text_command)) throw new Error(commandsData.admin.prefixo.msgs.error_not_supported)
+
+    botController.setPrefix(message.text_command)
+    await baileysController.replyText(message.chat_id, commandsData.admin.prefixo.msgs.reply, message.wa_message)
+}
+
+export async function listablockCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const commandsData = getCommands(botInfo)
+    const blockedUsers = await baileysController.getBlockedContacts()
+
+    if (!blockedUsers.length) throw new Error(commandsData.admin.listablock.msgs.error)
+
+    let replyText = buildText(commandsData.admin.listablock.msgs.reply_title, blockedUsers.length)
+
+    for (let userId of blockedUsers) {
+        const userPosition = blockedUsers.indexOf(userId) + 1
+        replyText += buildText(commandsData.admin.listablock.msgs.reply_item, userPosition, userId.replace(S_WHATSAPP_NET, ''))
+    }
+
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function bloquearCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const userController = new UserController()
+    const adminsId = (await userController.getAdmins()).map(admin => admin.id)
+    const blockedUsers = await baileysController.getBlockedContacts()
+    const commandsData = getCommands(botInfo)
+    let targetUserId : string
+
+    if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
+    else if(message.mentioned.length) targetUserId = message.mentioned[0]
+    else if (message.args.length) targetUserId =  message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    if (adminsId.includes(targetUserId)){
+        throw new Error(buildText(commandsData.admin.bloquear.msgs.error_block_admin_bot, targetUserId.replace(S_WHATSAPP_NET, '')))
+    } else if (blockedUsers.includes(targetUserId)) {
+        throw new Error(buildText(commandsData.admin.bloquear.msgs.error_already_blocked, targetUserId.replace(S_WHATSAPP_NET, '')))
+    } else {
+        const replyText = buildText(commandsData.admin.bloquear.msgs.reply, targetUserId.replace(S_WHATSAPP_NET, ''))
+        await baileysController.blockContact(targetUserId).catch(() => {
+            throw new Error(commandsData.admin.bloquear.msgs.error_block)
+        })
+        await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    }
+}
+
+export async function desbloquearCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const blockedUsers = await baileysController.getBlockedContacts()
+    const commandsData = getCommands(botInfo)
+    let targetUserId : string
+
+    if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage?.sender
+    else if(message.mentioned.length) targetUserId = message.mentioned[0]
+    else if(message.args.length == 1 && message.args[0].length <= 3 && Number(message.args[0])) targetUserId = blockedUsers[Number(message.args[0]) - 1]
+    else if (message.args.length) targetUserId =  message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    if (!blockedUsers.includes(targetUserId)) {
+        throw new Error(buildText(commandsData.admin.desbloquear.msgs.error_already_unblocked, targetUserId.replace(S_WHATSAPP_NET, '')))
+    } else {
+        const replyText = buildText(commandsData.admin.desbloquear.msgs.reply, targetUserId.replace(S_WHATSAPP_NET, ''))
+        await baileysController.unblockContact(targetUserId).catch(() => {
+            throw new Error(commandsData.admin.desbloquear.msgs.error_unblock)
+        })
+        await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    }
+}
+
+export async function recadoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const commandsData = getCommands(botInfo)
+    
+    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    await baileysController.updateProfileStatus(message.text_command)
+    const replyText = buildText(commandsData.admin.recado.msgs.reply, message.text_command)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function verusuarioCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const userController = new UserController()
+    const commandsData = getCommands(botInfo)
+    const generalText = getGeneralMessages(botInfo)
+    let targetUserId : string
+
+    if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage.sender
+    else if(message.mentioned.length) targetUserId = message.mentioned[0]
+    else if(message.args.length) targetUserId =  message.text_command.replace(/\W+/g,"") + S_WHATSAPP_NET
+    else throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    let userData = await userController.getUser(targetUserId)
+
+    if (!userData) throw new Error(commandsData.admin.verusuario.msgs.error_user_not_found)
+
+    const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
+    const replyText = buildText(commandsData.admin.verusuario.msgs.reply, userData.name || '---', userType, userData.id.replace(S_WHATSAPP_NET, ""), userData.commands)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+}
+
+export async function desligarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const commandsData = getCommands(botInfo)
+
+    await baileysController.replyText(message.chat_id, commandsData.admin.desligar.msgs.reply, message.wa_message).then(async()=>{
+        baileysController.shutdownBot()
+    })
+}
+
+export async function pingCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const baileysController = new BaileysController(client)
+    const userController = new UserController()
+    const groupController = new GroupController()
+    const commandsData = getCommands(botInfo)
+    const replyTime = ((moment.now()/1000) - message.t).toFixed(2)
+    const ramTotal = (os.totalmem()/1024000000).toFixed(2)
+    const ramUsed = ((os.totalmem() - os.freemem())/1024000000).toFixed(2)
+    const systemName = `${os.type()} ${os.release()}`
+    const cpuName = os.cpus()[0].model
+    const currentGroups = await groupController.getAllGroups()
+    const currentUsers = await userController.getUsers()
+    const botStarted = timestampToDate(botInfo.started)
+    const replyText = buildText(commandsData.admin.ping.msgs.reply, systemName, cpuName, ramUsed, ramTotal, replyTime, currentUsers.length, currentGroups.length, botStarted)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }
 
