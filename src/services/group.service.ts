@@ -10,15 +10,15 @@ import getCommands from '../commands/list.commands.js'
 import getGeneralMessages from "../lib/general-messages.js";
 
 const db = {
-    groups : new Datastore({filename : './storage/groups.db', autoload: true}),
-    group_antiflood : new Datastore({filename : './storage/antiflood.groups.db', autoload: true}),
-    group_counter : new Datastore({filename : './storage/counter.groups.db', autoload: true})
+    groups : new Datastore<Group>({filename : './storage/groups.db', autoload: true}),
+    group_antiflood : new Datastore<ParticipantAntiFlood>({filename : './storage/antiflood.groups.db', autoload: true}),
+    group_counter : new Datastore<ParticipantCounter>({filename : './storage/counter.groups.db', autoload: true})
 }
 
 export class GroupService {
     constructor(){}
     
-    // *********************** Register/Remove/Update groups ***********************
+    // *********************** Registra/Atualiza/Remove grupos ***********************
     public async registerGroup(group : GroupMetadata){
         const isRegistered = await this.isRegistered(group.id)
 
@@ -79,8 +79,8 @@ export class GroupService {
     }
 
     public async getGroup(groupId : string){
-        const doc : unknown = await db.groups.findOneAsync({id: groupId})
-        return doc as Group | null
+        const group = await db.groups.findOneAsync({id: groupId}) as Group | null
+        return group
     }
 
     public async removeGroup(groupId: string){
@@ -88,8 +88,8 @@ export class GroupService {
     }
 
     public async getAllGroups(){
-        const doc : unknown = await db.groups.findAsync({})
-        return doc as Group[]
+        const groups = await db.groups.findAsync({}) as Group[]
+        return groups
     }
 
     public async isRegistered(groupId: string) {
@@ -118,11 +118,10 @@ export class GroupService {
         return db.groups.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
     } 
 
-    // *********************** Add/Update/Remove participants and admins. ***********************
+    // *********************** Adiciona/Atualiza/Remove participantes e admins. ***********************
     public async getParticipants(groupId: string){
-        const doc : unknown = await db.groups.findOneAsync({id: groupId})
-        const group = doc as Group | null
-        return group?.participants ?? []
+        const group = await this.getGroup(groupId)
+        return group?.participants || []
     }
 
     public async isParticipant(groupId: string, userId: string){
@@ -131,9 +130,8 @@ export class GroupService {
     }
 
     public async getAdmins(groupId: string){
-        const doc : unknown = await db.groups.findOneAsync({id: groupId})
-        const group = doc as Group | null
-        return group?.admins ?? []
+        const group = await this.getGroup(groupId)
+        return group?.admins || []
     }
 
     public async isAdmin(groupId: string, userId: string){
@@ -142,8 +140,7 @@ export class GroupService {
     }
 
     public async getOwner(groupId: string){
-        const doc : unknown = await db.groups.findOneAsync({id: groupId})
-        const group = doc as Group | null
+        const group = await this.getGroup(groupId)
         return group?.owner
     }
 
@@ -282,8 +279,7 @@ export class GroupService {
     }
 
     private async getParticipantAntiFlood(groupId: string, userId: string){
-        const doc : unknown = await db.group_antiflood.findOneAsync({group_id: groupId, user_id: userId})
-        const participantAntiFlood = doc as ParticipantAntiFlood | null
+        const participantAntiFlood = await db.group_antiflood.findOneAsync({group_id: groupId, user_id: userId}) as ParticipantAntiFlood | null
         return participantAntiFlood
     }
 
@@ -300,8 +296,7 @@ export class GroupService {
 
     // ***** LISTA-NEGRA *****
     public async getBlackList(groupId: string){
-        const doc : unknown = await db.groups.findOneAsync({id : groupId})
-        const group = doc as Group | null
+        const group = await this.getGroup(groupId)
         return group?.blacklist || []
     }
 
@@ -397,9 +392,8 @@ export class GroupService {
     }
 
     public async getParticipantActivity(groupId: string, userId: string){
-        const doc : unknown = await db.group_counter.findOneAsync({group_id: groupId, user_id: userId})
-        const counter = doc as ParticipantCounter | null
-        return counter
+        const participantCounter = await db.group_counter.findOneAsync({group_id: groupId, user_id: userId}) as ParticipantCounter | null
+        return participantCounter
     }
 
     private async isParticipantActivityRegistered(groupId: string, userId: string){
@@ -434,8 +428,7 @@ export class GroupService {
     }
 
     public async getAllParticipantsActivity(groupId: string){
-        const doc : unknown = await db.group_counter.findAsync({group_id : groupId})
-        const counters = doc as ParticipantCounter[]
+        const counters = await db.group_counter.findAsync({group_id : groupId}) as ParticipantCounter[]
         return counters
     }
 
@@ -468,25 +461,19 @@ export class GroupService {
     }  
 
     public async getParticipantActivityLowerThan(group: Group, num : number){
-        let doc: unknown = await db.group_counter.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1})
-        const inactives = doc as ParticipantCounter[]
-        let inactivesOnGroup : ParticipantCounter[] = []
+        let inactives = await db.group_counter.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1}) as ParticipantCounter[]
         inactives.forEach((inactive) => {
-            if (group.participants.includes(inactive.user_id)) inactivesOnGroup.push(inactive)
+            if (!group.participants.includes(inactive.user_id)) inactives.splice(inactives.indexOf(inactive), 1)
         })
-        return inactivesOnGroup
+        return inactives
     }
 
     public async getParticipantsActivityRanking(group: Group, qty: number){
-        const doc : unknown = await db.group_counter.findAsync({group_id : group.id}).sort({msgs: -1})
-        const participantsLeaderbord = doc as ParticipantCounter[]
-        const participantsOnGroup : ParticipantCounter[] = []
-        const qty_leaderboard = (qty > participantsLeaderbord.length) ? participantsLeaderbord.length : qty
+        let participantsLeaderboard = await db.group_counter.findAsync({group_id : group.id}).sort({msgs: -1}) as ParticipantCounter[]
+        const qty_leaderboard = (qty > participantsLeaderboard.length) ? participantsLeaderboard.length : qty
         for (let i = 0; i < qty_leaderboard; i++) {
-            if (group.participants.includes(participantsLeaderbord[i].user_id)) participantsOnGroup.push(participantsLeaderbord[i])
+            if (!group.participants.includes(participantsLeaderboard[i].user_id)) participantsLeaderboard.splice(i, 1)
         }
-        return participantsOnGroup
+        return participantsLeaderboard
     }
-
-
 }
