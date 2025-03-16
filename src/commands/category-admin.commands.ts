@@ -129,16 +129,16 @@ export async function veradminsCommand(client: WASocket, botInfo: Bot, message: 
     const baileysController = new BaileysController(client)
     const userController = new UserController()
     const commandsData = getCommands(botInfo)
-    const generalText = getGeneralMessages(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
 
-    if(!message.isBotOwner) throw new Error(generalText.permission.owner_bot_only)
+    if(!message.isBotOwner) throw new Error(generalMessages.permission.owner_bot_only)
 
     const adminsBot = await userController.getAdmins()
     let replyText = buildText(commandsData.admin.veradmins.msgs.reply_title, adminsBot.length)
 
     adminsBot.forEach((admin) => {
         const adminNumberList  = adminsBot.indexOf(admin) + 1
-        const userType = admin.owner ? generalText.user_types.owner : (admin.admin ? generalText.user_types.admin  : generalText.user_types.user)
+        const userType = admin.owner ? generalMessages.user_types.owner : (admin.admin ? generalMessages.user_types.admin  : generalMessages.user_types.user)
         replyText += buildText(commandsData.admin.veradmins.msgs.reply_item, adminNumberList, admin.name, removeWhatsappSuffix(admin.id), userType)
     })
 
@@ -149,9 +149,9 @@ export async function addadminCommand(client: WASocket, botInfo: Bot, message: M
     const baileysController = new BaileysController(client)
     const userController = new UserController()
     const commandsData = getCommands(botInfo)
-    const generalText = getGeneralMessages(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
 
-    if(!message.isBotOwner) throw new Error(generalText.permission.owner_bot_only)
+    if(!message.isBotOwner) throw new Error(generalMessages.permission.owner_bot_only)
 
     const currentAdmins = await userController.getAdmins()
     const currentAdminsId = currentAdmins.map(user => user.id)
@@ -176,9 +176,9 @@ export async function rmadminCommand(client: WASocket, botInfo: Bot, message: Me
     const baileysController = new BaileysController(client)
     const userController = new UserController()
     const commandsData = getCommands(botInfo)
-    const generalText = getGeneralMessages(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
 
-    if(!message.isBotOwner) throw new Error(generalText.permission.owner_bot_only)
+    if(!message.isBotOwner) throw new Error(generalMessages.permission.owner_bot_only)
 
     const currentAdmins = await userController.getAdmins()
     const ownerData = await userController.getOwner()
@@ -456,7 +456,7 @@ export async function verusuarioCommand(client: WASocket, botInfo: Bot, message:
     const baileysController = new BaileysController(client)
     const userController = new UserController()
     const commandsData = getCommands(botInfo)
-    const generalText = getGeneralMessages(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     let targetUserId : string
 
     if(message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage.sender
@@ -468,7 +468,7 @@ export async function verusuarioCommand(client: WASocket, botInfo: Bot, message:
 
     if (!userData) throw new Error(commandsData.admin.verusuario.msgs.error_user_not_found)
 
-    const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
+    const userType = userData.owner ? generalMessages.user_types.owner : (userData.admin ? generalMessages.user_types.admin  : generalMessages.user_types.user)
     const replyText = buildText(commandsData.admin.verusuario.msgs.reply, userData.name || '---', userType, removeWhatsappSuffix(userData.id), userData.commands)
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
 }

@@ -70,14 +70,14 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
-    const generalText = getGeneralMessages(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const commandsData = getCommands(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
     if (!userData) throw new Error(commandsData.info.meusdados.msgs.error_not_found)
 
     const userName = userData.name || '---'
-    const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
+    const userType = userData.owner ? generalMessages.user_types.owner : (userData.admin ? generalMessages.user_types.admin  : generalMessages.user_types.user)
     let replyMessage = buildText(commandsData.info.meusdados.msgs.reply, userType, userName, userData.commands)
 
     if (message.isGroupMsg && group){
@@ -94,12 +94,12 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
-    const generalText = getGeneralMessages(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
     if (!userData) throw new Error(commandsData.info.menu.msgs.error_user_not_found)
 
-    const userType = userData.owner ? generalText.user_types.owner : (userData.admin ? generalText.user_types.admin  : generalText.user_types.user)
+    const userType = userData.owner ? generalMessages.user_types.owner : (userData.admin ? generalMessages.user_types.admin  : generalMessages.user_types.user)
     let replyText = buildText(commandsData.info.menu.msgs.reply, userData.name, userType, userData.commands)
 
     if (!message.args.length){
