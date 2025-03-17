@@ -4,6 +4,7 @@ import { Message, MessageTypes } from '../interfaces/message.interface.js'
 import { getContentType, generateWAMessageFromContent, WAMessage } from 'baileys'
 import NodeCache from 'node-cache'
 import { User } from '../interfaces/user.interface.js'
+import { removeBold } from '../lib/util.js'
 
 export class MessageService{
     constructor(){}
@@ -71,7 +72,7 @@ export class MessageService{
             caption : caption || '',
             mentioned: contextInfo?.mentionedJid || [],
             text_command: args?.join(" ").trim() || '',
-            command: command?.toLowerCase().trim() || '',
+            command: removeBold(command?.toLowerCase().trim()) || '',
             args,
             isQuoted,
             isGroupMsg,
