@@ -1055,15 +1055,15 @@ export default function getCommands (botInfo?: Bot){
             },
             api: {
                 guide: 'Esse comando é usado apenas para configurar as chave de API de certos serviços.\n\n'+
-                `Configurar *DEEPGRAM*\nEx: ${PREFIX}api deepgram *secret_key*\n\n`+
-                `Configurar *ACRCLOUD*\nEx: ${PREFIX}api acrcloud *host*  *access_key*  *secret_key*\n`,
+                `Configurar *DEEPGRAM*\nEx: ${PREFIX}api deepgram, *secret_key*\n\n`+
+                `Configurar *ACRCLOUD*\nEx: ${PREFIX}api acrcloud, *host*, *access_key*, *secret_key*\n`,
                 msgs: {
                     reply_deepgram_success: `✅ Sua API do Deepgram foi configurada com sucesso, teste o comando ${PREFIX}ouvir para verificar se funcionou e se caso não funcione tente configurar novamente.`,                        
                     reply_deepgram_error: 'Houve um erro ao configurar a chave do Deepgram, verifique se digitou o comando corretamente.\n\n'+
-                    `Ex: ${PREFIX}api deepgram *secret_key*`,                        
+                    `Ex: ${PREFIX}api deepgram, *secret_key*`,                        
                     reply_acrcloud_success: `✅ Sua API do ACRCloud foi configurada com sucesso, teste o comando ${PREFIX}qualmusica para verificar se funcionou e se caso não funcione tente configurar novamente.`,                        
                     reply_acrcloud_error: 'Houve um erro ao configurar a chave do ACRCloud, verifique se inseriu os valores corretamente.\n\n'+
-                    `Ex: ${PREFIX}api acrcloud *host*  *access_key*  *secret_key*`,                       
+                    `Ex: ${PREFIX}api acrcloud, *host*, *access_key*, *secret_key*`,                       
                 },
                 function: adminCommand.apiCommand
             },

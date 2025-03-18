@@ -23,21 +23,22 @@ export async function apiCommand(client: WASocket, botInfo: Bot, message: Messag
     const commandsData = getCommands(botInfo)
     const botController = new BotController()
     const supportedServices =  ['deepgram', 'acrcloud']
-
-    if (!message.args.length || !supportedServices.includes(message.args[0].toLowerCase())) throw new Error(messageErrorCommandUsage(botInfo, message))
-
-    const [serviceName] = message.args
+    const args = message.text_command.split(',')
+    
+    if (!message.text_command || !supportedServices.includes(args[0].toLowerCase().trim())) throw new Error(messageErrorCommandUsage(botInfo, message))
+    
+    const [serviceName] = args
     let replyText : string 
 
-    if (serviceName == 'deepgram'){
-        if (message.args.length != 2) throw new Error(commandsData.admin.api.msgs.reply_deepgram_error)
-        const [secret_key] = message.args.slice(1)
-        botController.setDeepgramApiKey(secret_key)
+    if (serviceName.trim() == 'deepgram'){
+        if (args.length != 2) throw new Error(commandsData.admin.api.msgs.reply_deepgram_error)
+        const [secret_key] = args.slice(1)
+        botController.setDeepgramApiKey(secret_key.trim())
         replyText = commandsData.admin.api.msgs.reply_deepgram_success
     } else {
-        if (message.args.length != 4) throw new Error(commandsData.admin.api.msgs.reply_acrcloud_error)
-        const [host, access_key, secret_key] = message.args.slice(1)
-        botController.setAcrcloudApiKey(host, access_key, secret_key)
+        if (args.length != 4) throw new Error(commandsData.admin.api.msgs.reply_acrcloud_error)
+        const [host, access_key, secret_key] = args.slice(1)
+        botController.setAcrcloudApiKey(host.trim(), access_key.trim(), secret_key.trim())
         replyText = commandsData.admin.api.msgs.reply_acrcloud_success
     }
     
