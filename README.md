@@ -38,12 +38,12 @@ Faça o download da última versão lançada no seguinte link: https://github.co
 Abra o prompt de comando (terminal) **DENTRO DA PASTA DO PROJETO** e execute os comandos abaixo :
 
 
-#### 1.1 - Instalação do yarn (se estiver no Linux use sudo antes do comando)
+#### Instalação do yarn (se estiver no Linux use sudo antes do comando)
 ```bash
 npm i -g yarn
 ```
 
-#### 1.2 - Instalação das dependências do projeto
+#### Instalação das dependências do projeto
 ```bash
 yarn install
 ```
@@ -57,7 +57,7 @@ Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
 
 ## 2 - 🤖 Uso :
 
-#### 2.1 - Após ter realizado todos os passos anteriores, execute este comando "DENTRO DA PASTA DO PROJETO".
+### Após ter realizado todos os passos anteriores, execute este comando "DENTRO DA PASTA DO PROJETO".
 
 ```bash
 yarn start
@@ -69,7 +69,7 @@ Após a primeira inicialização escaneie o QR Code com o seu celular.
 
 ## 3 - ⌨️ Funcionamento :
 
-#### 3.1 - Seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.<br><br>
+### Seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.<br><br>
 
 **!menu** - Dá acesso ao **menu principal**.<br>
 **!admin** - Dá acesso ao **menu de administrador**.
@@ -80,11 +80,11 @@ Todos os comandos tem um guia ao digitar: **!comando** guia<br><br>
 
 ## 4 - ⚙️ Configuração do bot:
 
-#### 4.1 - Como configurar o DONO:
+### Como configurar o DONO:
 Para usar as funções de **administrador** digite **!admin** pela primeira vez ao iniciar ao bot e ai seu número será cadastrado como dono.<br><br>
 Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeautor**, **!nomepack** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.<br><br>
 
-#### 4.2 - Como obter as chaves API para usar em comandos específicos :
+### Como obter as chaves API para usar em comandos específicos :
 Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API, abaixo tem um guia completo com imagens para obter as chaves.<br>
 
 **Informações detalhadas sobre como obter as chaves do ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](docs/CHAVESAPI.md)
