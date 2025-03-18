@@ -68,7 +68,7 @@ export async function igCommand(client: WASocket, botInfo: Bot, message: Message
 
     for await (let media of igInfo.media){
         if (media.type == "image") await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', media.url, '', message.wa_message)
-        if (media.type == "video") await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', media.url, '', message.wa_message, 'video/mp4')
+        if (media.type == "video") await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', media.url, '', message.wa_message)
     }
 }
 

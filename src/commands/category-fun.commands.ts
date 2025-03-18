@@ -34,11 +34,10 @@ export async function viadometroCommand(client: WASocket, botInfo: Bot, message:
     if (!message.isGroupMsg) throw new Error(generalMessages.permission.group)
     if (!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
     if (message.mentioned.length > 1) throw new Error(commandsData.fun.viadometro.msgs.error_mention)
-
-    const answers = commandsData.fun.viadometro.msgs.answers
-    const randomIndex = Math.floor(Math.random() * answers.length)
+    
+    const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
-    const replyText = buildText(commandsData.fun.viadometro.msgs.reply, answers[randomIndex])
+    const replyText = buildText(commandsData.fun.viadometro.msgs.reply, randomNumber)
     await baileysController.replyText(message.chat_id, replyText, messageToReply)   
 }
 
@@ -56,8 +55,8 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
     const truthMachineResult = generalLibrary.truthMachine()
     const waitReply = commandsData.fun.detector.msgs.wait
-    await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', truthMachineResult.calibration_image, waitReply, quotedMessage)
-    await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', truthMachineResult.result_image, '', quotedMessage)
+    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', truthMachineResult.calibration_url, waitReply, quotedMessage)
+    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', truthMachineResult.result_url, '', quotedMessage)
 }
 
 export async function roletarussaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -107,7 +106,6 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
 export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
-    const generalMessages = getGeneralMessages(botInfo)
     const validChoices = ['cara', 'coroa']
     const userChoice = message.text_command.toLowerCase()
 
@@ -117,13 +115,13 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     const waitText = commandsData.fun.caracoroa.msgs.wait
     await baileysController.replyText(message.chat_id, waitText, message.wa_message)
 
-    const isUserVictory = flipCoinInfo.result == userChoice
+    const isUserVictory = flipCoinInfo.chosen_side == userChoice
     let replyText : string
 
-    if (isUserVictory) replyText = buildText(commandsData.fun.caracoroa.msgs.reply_victory, uppercaseFirst(flipCoinInfo.result))
-    else replyText = buildText(commandsData.fun.caracoroa.msgs.reply_defeat, uppercaseFirst(flipCoinInfo.result))
+    if (isUserVictory) replyText = buildText(commandsData.fun.caracoroa.msgs.reply_victory, uppercaseFirst(flipCoinInfo.chosen_side))
+    else replyText = buildText(commandsData.fun.caracoroa.msgs.reply_defeat, uppercaseFirst(flipCoinInfo.chosen_side))
     
-    await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', flipCoinInfo.image, replyText, message.wa_message)
+    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', flipCoinInfo.image_coin_url, replyText, message.wa_message)
 }
 
 export async function pptCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -176,10 +174,9 @@ export async function gadometroCommand(client: WASocket, botInfo: Bot, message: 
     if (!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
     if (message.mentioned.length > 1) throw new Error(commandsData.fun.gadometro.msgs.error_mention)
     
-    const answers = commandsData.fun.gadometro.msgs.answers 
-    const randomIndex = Math.floor(Math.random() * answers.length)
+    const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
-    const replyText = buildText(commandsData.fun.gadometro.msgs.reply, answers[randomIndex])
+    const replyText = buildText(commandsData.fun.gadometro.msgs.reply, randomNumber)
     await baileysController.replyText(message.chat_id, replyText, messageToReply)   
 }
 
@@ -192,10 +189,9 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
     if (!message.isQuoted && !message.mentioned.length) throw new Error(messageErrorCommandUsage(botInfo, message))
     if (message.mentioned.length > 1) throw new Error(commandsData.fun.bafometro.msgs.error_mention)
 
-    const answers = commandsData.fun.bafometro.msgs.answers
-    const randomIndex = Math.floor(Math.random() * answers.length)
+    const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
-    const replyText = buildText(commandsData.fun.bafometro.msgs.reply, answers[randomIndex])
+    const replyText = buildText(commandsData.fun.bafometro.msgs.reply, randomNumber)
     await baileysController.replyText(message.chat_id, replyText, messageToReply)   
 }
 
@@ -250,9 +246,8 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
     if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
     if (message.mentioned.length !== 2) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const answers = commandsData.fun.par.msgs.answers
-    const randomIndex = Math.floor(Math.random() * answers.length)
-    let replyText = buildText(commandsData.fun.par.msgs.reply, removeWhatsappSuffix(message.mentioned[0]), removeWhatsappSuffix(message.mentioned[1]), answers[randomIndex])
+    const randomNumber = Math.floor(Math.random() * 100)
+    let replyText = buildText(commandsData.fun.par.msgs.reply, removeWhatsappSuffix(message.mentioned[0]), removeWhatsappSuffix(message.mentioned[1]), randomNumber)
     await baileysController.sendTextWithMentions(message.chat_id, replyText, message.mentioned)
 }
 
@@ -272,9 +267,7 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
-    const generalMessages = getGeneralMessages(botInfo)
-
-    const phraseResult = await generalLibrary.cardsAgainstHumanity()
-    const replyText =  buildText(commandsData.fun.frase.msgs.reply, phraseResult)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    const phraseResult = await generalLibrary.funnyRandomPhrases()
+    const replyText =  buildText(commandsData.fun.frase.msgs.reply, phraseResult.text)
+    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message)
 }

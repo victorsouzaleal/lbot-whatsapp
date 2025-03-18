@@ -15,7 +15,7 @@ export async function animesCommand(client: WASocket, botInfo: Bot, message: Mes
     let replyText = commandsData.utility.animes.msgs.reply_title
 
     animes.forEach((anime)=>{
-        replyText += buildText(commandsData.utility.animes.msgs.reply_item, anime.name, anime.episode, anime.url)
+        replyText += buildText(commandsData.utility.animes.msgs.reply_item, anime.name.trim(), anime.episode, anime.url)
     })
 
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
@@ -28,7 +28,7 @@ export async function mangasCommand(client: WASocket, botInfo: Bot, message: Mes
     let replyText = commandsData.utility.mangas.msgs.reply_title
 
     mangas.forEach((manga)=>{
-        replyText += buildText(commandsData.utility.mangas.msgs.reply_item, manga.name, manga.chapter, manga.url)
+        replyText += buildText(commandsData.utility.mangas.msgs.reply_item, manga.name.trim(), manga.chapter, manga.url)
     })
 
     await baileysController.replyText(message.chat_id, replyText, message.wa_message)
@@ -281,7 +281,6 @@ export async function pesquisaCommand(client: WASocket, botInfo: Bot, message: M
     let replyText = buildText(commandsData.utility.pesquisa.msgs.reply_title, message.text_command)
 
     for(let search of webSearchList){
-        replyText += "═════════════════\n"
         replyText += buildText(commandsData.utility.pesquisa.msgs.reply_item, search.title, search.url)
     }
 
@@ -318,6 +317,7 @@ export async function climaCommand(client: WASocket, botInfo: Bot, message: Mess
     let wheatherResult = await generalLibrary.wheatherInfo(message.text_command)
 
     let replyText = buildText(commandsData.utility.clima.msgs.reply,
+        message.text_command,
         wheatherResult.location.name,
         wheatherResult.location.region,
         wheatherResult.location.country,
