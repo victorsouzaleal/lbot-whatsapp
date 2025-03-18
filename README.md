@@ -16,17 +16,16 @@
 
 <br>
 
-<h2 align="center"> 🔄 Última Atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest">AQUI</a> </h2>
+<h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a>  </h2>
 
 <br>
 
 ## 🚨 REQUERIMENTOS :
 - Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
 - Em sistemas **Windows/Linux** :<br>
-        - Ter o [GIT](https://git-scm.com/) instalado <br>
         - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
 - No **Termux** :<br>
-        - Ter o [TERMUX](https://github.com/termux/termux-app/releases/download/v0.118.0/termux-app_v0.118.0+github-debug_universal.apk) instalado no celular
+        - Ter o [TERMUX](https://github.com/termux/termux-app/releases/download/v0.118.1/termux-app_v0.118.1+github-debug_universal.apk) instalado no celular
 
 <br>
 
@@ -39,12 +38,12 @@ Faça o download da última versão lançada no seguinte link: https://github.co
 Abra o prompt de comando (terminal) **DENTRO DA PASTA DO PROJETO** e execute os comandos abaixo :
 
 
-* 1.1 - Instalação do yarn (se estiver no Linux use sudo antes do comando)
+#### 1.1 - Instalação do yarn (se estiver no Linux use sudo antes do comando)
 ```bash
 npm i -g yarn
 ```
 
-* 1.2 - Instalação das dependências do projeto
+#### 1.2 - Instalação das dependências do projeto
 ```bash
 yarn install
 ```
@@ -52,13 +51,13 @@ yarn install
 <br>
 
 ### 📱 Termux :
-Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md)
+Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md) 
 
-<br>
+<br><br>
 
 ## 2 - 🤖 Uso :
 
-**Dentro da pasta do projeto** após ter realizado todos os passos anteriores, execute este comando.
+#### 2.1 - Após ter realizado todos os passos anteriores, execute este comando "DENTRO DA PASTA DO PROJETO".
 
 ```bash
 yarn start
@@ -69,42 +68,32 @@ Após a primeira inicialização escaneie o QR Code com o seu celular.
 <br>
 
 ## 3 - ⌨️ Funcionamento :
-Após todos os passos anteriores feitos, seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.
-<br><br>
-**!menu** - Dá acesso ao MENU PRINCIPAL.
+
+#### 3.1 - Seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.<br>
+
+**!menu** - Dá acesso ao **menu principal**.<br>
+**!admin** - Dá acesso ao **menu de administrador**.
+
 <br>
-**!admin** - Dá acesso ao MENU de ADMINISTRADOR/DONO DO BOT.
-<br><br>
-Todos os comandos agora tem um guia ao digitar **!comando guia**
-<br><br>
+
+Todos os comandos tem um guia ao digitar: **!comando** guia
+
+<br>
 
 ### Pronto! Seu bot já está ONLINE, mas ainda não acabou continue lendo o próximo passo para configuração!!
 
 <br>
 
-## 4 - ⚙️ Configuração do bot e arquivo .env :
+## 4 - ⚙️ Configuração do bot:
 
-### Ao abrir o arquivo .env na raiz do projeto após iniciar o bot pela primeira vez ele vai se parecer com isso : </br>
-        # CONFIGURAÇÃO DE API KEYS PARA COMANDOS
+#### 4.1 - Como configurar o DONO:
+Para usar as funções de **administrador** digite **!admin** pela primeira vez ao iniciar ao bot e ai seu número será cadastrado como dono.<br><br>
+Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeautor**, **!nomepack** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.<br><br>
 
-        # ACRCLOUD - Coloque abaixo suas chaves do ACRCloud (Reconhecimento de Músicas)
-        acr_host=?????
-        acr_access_key=?????
-        acr_access_secret=?????
+#### 4.2 - Como obter as chaves API para usar em comandos específicos :
+Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API, abaixo tem um guia completo com imagens para obter as chaves.<br>
 
-        # DEEPGRAM - Coloque abaixo sua chave do DEEPGRAM (Transcrição de aúdio para texto)
-        dg_secret_key=??????
-
-
-#### Como configurar o ADMINISTRADOR :
-Para usar as funções de **ADMINISTRADOR** digite **!admin** pela primeira vez ao iniciar ao BOT e ai seu número será cadastrado como dono.<br><br>
-Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeadm**, **!nomesticker** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.
-
-<br>
-
-#### Como obter as chaves API para usar em comandos específicos :
-Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API no .env, abaixo tem um guia completo com imagens para obter as chaves.<br><br>
-**Informações detalhadas sobre como obter as chaves do NewsAPI(Notícias), ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](docs/CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](docs/CHAVESAPI.md)
 
 <br>
 
@@ -125,7 +114,6 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 - Tiktok (video) ✅
 - Google (imagem) ✅
 
-
 ### ⚒️ Utilidades Gerais
 - Chat-GPT ✅
 - Criação de imagens IA ✅
@@ -144,7 +132,6 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 - Calculadora ✅
 - Pesquisa Google ✅      
 - Detector Anime ✅     
-- Rastreamento Correios ✅ 
 - Noticias Google ✅ 
 - Tradutor Google ✅
 
@@ -159,19 +146,18 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 ### Termux
 Algumas pessoas podem ter problemas para instalar as depêndencias no Termux, isso pode ser pelo fato da conexão a internet não estar estável o suficiente ou a versão do Termux estar desatualizada, o Termux da Play Store não é atualizada faz anos por isso eu forneço aqui um apk oficial dos desenvolvedores do Termux.
 
-* **Termux APK :** https://github.com/termux/termux-app/releases/download/v0.118.0/termux-app_v0.118.0+github-debug_universal.apk
+* **Termux APK :** https://github.com/termux/termux-app/releases/download/v0.118.1/termux-app_v0.118.1+github-debug_universal.apk
 
 <br>
 
 ## 7 - 👤 Contato
 Caso queira entrar em contato eu tento responder aos emails, ou abra uma issue aqui no GitHub explicando o problema.
 
-* **Email :** victorsouzaleal@gmail.com
+* **Email**: victorsouzaleal@gmail.com
 
 <br>
 
-## 8 - 🙏 Agradecimentos/Contribuições
+## 8 - 🙏 Agradecimentos
 
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
-* [`Samuel/samucacastro`](https://github.com/samucacastro) - Desenvolvimento de API's
 
