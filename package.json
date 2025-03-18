@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node dist/app.js",
     "test": "node dist/app.js",
-    "prestart": "yarn run build && yarn add @victorsouzaleal/biblioteca-lbot baileys --silent",
+    "prestart": "yarn add @victorsouzaleal/biblioteca-lbot baileys --silent",
     "pretest": "yarn run build",
     "build": "tsc"
   },
@@ -31,7 +31,7 @@
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
     "@types/prompt-sync": "^4.2.3",
-    "@victorsouzaleal/biblioteca-lbot": "^2.2.1",
+    "@victorsouzaleal/biblioteca-lbot": "^2.2.3",
     "baileys": "^6.7.16",
     "chalk": "^4.1.0",
     "dotenv": "^16.4.7",

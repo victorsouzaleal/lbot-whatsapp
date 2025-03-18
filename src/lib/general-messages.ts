@@ -5,6 +5,10 @@ export default function getGeneralMessages (botInfo? : Bot){
     return {
             starting: "  _____     ______      ___    _________  \r\n |_   _|   |_   _ \\   .\'   `. |  _   _  | \r\n   | |       | |_) | \/  .-.  \\|_\/ | | \\_| \r\n   | |   _   |  __\'. | |   | |    | |     \r\n  _| |__\/ | _| |__) |\\  `-\'  \/   _| |_    \r\n |________||_______\/  `.___.\'   |_____|   \r\n" + "\n  Iniciando na versão {p1}\n",
             bot_data: "✓ Obteve dados do BOT",
+            no_update_available: 'Não há atualização disponível, seu bot está na versão mais recente.',
+            update_available: 'Uma nova atualização compatível foi encontrada, aguarde o término da atualização...',
+            bot_updated: 'Seu bot foi atualizado e será desligado, inicie novamente usando yarn start.',
+            update_available_manual: 'Há uma atualização disponível, mas ela precisa ser instalada manualmente do zero por não ser compatível com a sua versão.',
             server_started: '✓ Servidor iniciado!',
             groups_loaded: '✓ Todos os grupos foram carregados e atualizados.',
             admin_registered: `✅ Seu número foi cadastrado como DONO, agora você pode utilizar os comandos de ${prefix}admin`,

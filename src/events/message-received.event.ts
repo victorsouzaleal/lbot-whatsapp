@@ -4,7 +4,7 @@ import { MessageController } from '../controllers/message.controller.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import NodeCache from 'node-cache'
 import { UserController } from '../controllers/user.controller.js'
-import { handleGroupMessage, handlePrivateMessage } from '../lib/message.handler.js'
+import { handleGroupMessage, handlePrivateMessage } from '../lib/message-handler.js'
 import { GroupController } from '../controllers/group.controller.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){

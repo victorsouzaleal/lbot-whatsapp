@@ -12,6 +12,7 @@ import { groupParticipantsUpdated } from './events/group-participants-updated.ev
 import { partialGroupUpdate } from './events/group-partial-update.event.js'
 import { updateGroupsOnStart } from './lib/update-groups.js'
 import { executeEventQueue, queueEvent } from './lib/events-queue.js'
+import { botUpdater } from './lib/bot-updater.js'
 
 //Cache de tentativa de envios
 const retryCache = new NodeCache()
@@ -19,7 +20,6 @@ const retryCache = new NodeCache()
 const eventsCache = new NodeCache()
 //Cache de mensagens para serem reenviadas em caso de falha
 const messagesCache = new NodeCache({stdTTL: 5*60, useClones: false})
-
 
 async function connect(){
     const { state, saveCreds } = await useMultiFileAuthState('session')
@@ -91,5 +91,12 @@ async function connect(){
     })
 }
 
+async function init(){
+    //Atualização do bot
+    const hasBotUpdated = await botUpdater()
+
+    if(!hasBotUpdated) await connect()
+}
+
 // Execução principal
-connect()
+init()
