@@ -69,20 +69,14 @@ Após a primeira inicialização escaneie o QR Code com o seu celular.
 
 ## 3 - ⌨️ Funcionamento :
 
-#### 3.1 - Seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.<br>
+#### 3.1 - Seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.<br><br>
 
 **!menu** - Dá acesso ao **menu principal**.<br>
 **!admin** - Dá acesso ao **menu de administrador**.
 
 <br>
 
-Todos os comandos tem um guia ao digitar: **!comando** guia
-
-<br>
-
-### Pronto! Seu bot já está ONLINE, mas ainda não acabou continue lendo o próximo passo para configuração!!
-
-<br>
+Todos os comandos tem um guia ao digitar: **!comando** guia<br><br>
 
 ## 4 - ⚙️ Configuração do bot:
 
