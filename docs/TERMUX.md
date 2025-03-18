@@ -1,32 +1,18 @@
 ## Instalação no TERMUX
 
-A instalação no Termux é um pouco diferente e vai precisar instalar alguns requerimentos antes de iniciar o bot.
+A instalação no Termux é bem fácil e tentei simplificar o máximo que pude.
 
-### 1 - No Termux comece usando este comando para atualizar os pacotes e instalar o GIT.
+### 1 - No Termux comece usando este comando para instalar automaticamente o bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
-pkg update && yes | pkg upgrade && pkg install git -y
+wget -O - https://shorturl.at/prJfc | bash
 ```
 
-### 2 - Após o GIT ser instalado vamos baixar o projeto do Bot e entrar na pasta.
-```bash
-git clone https://github.com/victorsouzaleal/lbot-whatsapp.git && cd lbot-whatsapp
-```
+### 2 - Após o comando acima o bot já deve pedir o QR Code para se conectar.
 
-### 3 - Instale as dependencias com o comando abaixo :
+### BÔNUS - Se fechar o Termux e quiser iniciar o bot novamente, faça o seguinte comando
 ```bash
-sh termux_reqs.sh
+cd LBOT && yarn start
 ```
-
-### 4 - Agora com os passos anteriores feitos agora vamos voltar a instalação normal do bot
-```bash
-yarn install
-```
-
-### 5 - Tudo pronto, agora é só iniciar o bot com o comando abaixo.
-```bash
-yarn start
-```
-
 <br>
 
 ### As demais informações de como configurar e usar os comandos estão no [READ ME](/README.md)
