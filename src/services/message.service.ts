@@ -67,6 +67,7 @@ export class MessageService{
             type : type as MessageTypes,
             t,
             chat_id,
+            expiration : contextInfo?.expiration || null,
             pushname: m.pushName || '',
             body: m.message.conversation || m.message.extendedTextMessage?.text || '',
             caption : caption || '',

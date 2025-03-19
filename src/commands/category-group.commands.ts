@@ -43,7 +43,7 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += buildText(commandsData.group.grupo.msgs.reply_item_blacklist, group.blacklist.length)
     }
 
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -61,7 +61,7 @@ export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: 
     else imageBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
 
     await baileysController.updateProfilePic(group.id, imageBuffer)
-    await baileysController.replyText(group.id, commandsData.group.fotogrupo.msgs.reply, message.wa_message)
+    await baileysController.replyText(group.id, commandsData.group.fotogrupo.msgs.reply, message.wa_message, message.expiration)
 }
 
 export async function addlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -89,7 +89,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     if (currentBlacklist.includes(targetUserId)) throw new Error(commandsData.group.addlista.msgs.error_already_listed)
 
     await groupController.addBlackList(group.id, targetUserId)
-    await baileysController.replyText(message.chat_id, commandsData.group.addlista.msgs.reply, message.wa_message)
+    await baileysController.replyText(message.chat_id, commandsData.group.addlista.msgs.reply, message.wa_message, message.expiration)
     if (group.participants.includes(targetUserId)) await baileysController.removeParticipant(group.id, targetUserId)
 }
 
@@ -113,7 +113,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     if (!currentBlacklist.includes(targetUserId)) throw new Error(commandsData.group.rmlista.msgs.error_not_listed)
 
     await groupController.removeBlackList(group.id, targetUserId)
-    await baileysController.replyText(message.chat_id, commandsData.group.rmlista.msgs.reply, message.wa_message)
+    await baileysController.replyText(message.chat_id, commandsData.group.rmlista.msgs.reply, message.wa_message, message.expiration)
 }
 
 export async function listanegraCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -138,7 +138,7 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
         replyText += buildText(commandsData.group.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', removeWhatsappSuffix(userId))
     }
 
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function addCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -163,7 +163,7 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
     if (addResponse.status != "200") throw new Error(buildText(commandsData.group.add.msgs.error_add, removeWhatsappSuffix(userId)))
 
     const replyText = buildText(commandsData.group.add.msgs.reply, removeWhatsappSuffix(userId))
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function banCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -196,7 +196,7 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
         }
     }
 
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function promoverCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -224,7 +224,7 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
         }
     }
 
-    await baileysController.replyWithMentions(group.id, replyText, targetUsers, message.wa_message)
+    await baileysController.replyWithMentions(group.id, replyText, targetUsers, message.wa_message, message.expiration)
 }
 
 export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -254,7 +254,7 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
         }
     }
 
-    await baileysController.replyWithMentions(message.chat_id, replyText, targetUsers, message.wa_message)
+    await baileysController.replyWithMentions(message.chat_id, replyText, targetUsers, message.wa_message, message.expiration)
 }
 
 export async function mtCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -269,7 +269,7 @@ export async function mtCommand(client: WASocket, botInfo: Bot, message: Message
     if (message.args.length) replyMention = buildText(commandsData.group.mt.msgs.reply_with_message, group.participants.length, message.text_command)
     else replyMention = buildText(commandsData.group.mt.msgs.reply, group.participants.length)
 
-    await baileysController.replyWithMentions(message.chat_id, replyMention, group.participants, message.wa_message)
+    await baileysController.replyWithMentions(message.chat_id, replyMention, group.participants, message.wa_message, message.expiration)
 }
 
 export async function mmCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -291,7 +291,7 @@ export async function mmCommand(client: WASocket, botInfo: Bot, message: Message
     if (message.args.length) replyMention = buildText(commandsData.group.mm.msgs.reply_with_message, groupMembers.length, message.text_command)
     else replyMention = buildText(commandsData.group.mm.msgs.reply, groupMembers.length)
 
-    await baileysController.replyWithMentions(message.chat_id, replyMention, groupMembers, message.wa_message)
+    await baileysController.replyWithMentions(message.chat_id, replyMention, groupMembers, message.wa_message, message.expiration)
 }
 
 export async function admsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -304,7 +304,7 @@ export async function admsCommand(client: WASocket, botInfo: Bot, message: Messa
     else replyMention = buildText(commandsData.group.adms.msgs.reply, group.admins.length)
 
     const messageToReply = (message.isQuoted && message.quotedMessage) ? message.quotedMessage.wa_message : message.wa_message
-    await baileysController.replyWithMentions(message.chat_id, replyMention, group.admins, messageToReply)
+    await baileysController.replyWithMentions(message.chat_id, replyMention, group.admins, messageToReply, message.expiration)
 }
 
 export async function donoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -314,7 +314,7 @@ export async function donoCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!group.owner) throw new Error(commandsData.group.dono.msgs.error)
     
     const replyText = buildText(commandsData.group.dono.msgs.reply, removeWhatsappSuffix(group.owner))
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function mutarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -327,7 +327,7 @@ export async function mutarCommand(client: WASocket, botInfo: Bot, message: Mess
     
     let replyText = group.muted ? commandsData.group.mutar.msgs.reply_off : commandsData.group.mutar.msgs.reply_on
     await groupController.setMuted(group.id, !group.muted)
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function linkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -341,7 +341,7 @@ export async function linkCommand(client: WASocket, botInfo: Bot, message: Messa
 
     let inviteLink = await baileysController.getGroupInviteLink(group.id)
     const replyText = buildText(commandsData.group.link.msgs.reply, group.name, inviteLink)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -358,7 +358,7 @@ export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Mess
     })
 
     const replyText = commandsData.group.rlink.msgs.reply
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function restritoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -372,7 +372,7 @@ export async function restritoCommand(client: WASocket, botInfo: Bot, message: M
     
     await baileysController.updateGroupRestriction(group.id, !group.restricted)
     const replyText = (group.restricted) ? commandsData.group.restrito.msgs.reply_off : commandsData.group.restrito.msgs.reply_on
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function antilinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -387,7 +387,7 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.antilink ? commandsData.group.antilink.msgs.reply_off : commandsData.group.antilink.msgs.reply_on
     await groupController.setAntiLink(group.id, !group.antilink)
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function autostickerCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -400,7 +400,7 @@ export async function autostickerCommand(client: WASocket, botInfo: Bot, message
     
     const replyText = group.autosticker ? commandsData.group.autosticker.msgs.reply_off : commandsData.group.autosticker.msgs.reply_on
     await groupController.setAutoSticker(group.id, !group.autosticker)
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -413,7 +413,7 @@ export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.welcome.status ? commandsData.group.bemvindo.msgs.reply_off : commandsData.group.bemvindo.msgs.reply_on
     await groupController.setWelcome(group.id, !group.welcome.status, message.text_command || undefined)
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function antifakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -429,7 +429,7 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
     const allowedDDI = !message.args.length ? ["55"] : message.args
     const replyText = group.antifake.status ? commandsData.group.antifake.msgs.reply_off : commandsData.group.antifake.msgs.reply_on
     await groupController.setAntiFake(group.id, !group.antifake.status, allowedDDI)
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function antifloodCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -453,7 +453,7 @@ export async function antifloodCommand(client: WASocket, botInfo: Bot, message: 
     
     const replyText = group.antiflood.status ? commandsData.group.antiflood.msgs.reply_off : buildText(commandsData.group.antiflood.msgs.reply_on, maxMessage, interval)
     await groupController.setAntiFlood(group.id, !group.antiflood.status, Number(maxMessage), Number(interval))
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function apgCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -507,7 +507,7 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
         mentionedUsers.push(usersRanking[i].user_id)   
     }
 
-    await baileysController.replyWithMentions(message.chat_id, replyText, mentionedUsers, message.wa_message)
+    await baileysController.replyWithMentions(message.chat_id, replyText, mentionedUsers, message.wa_message, message.expiration)
 }
 
 export async function contadorCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -521,7 +521,7 @@ export async function contadorCommand(client: WASocket, botInfo: Bot, message: M
 
     const replyText = group.counter.status ? commandsData.group.contador.msgs.reply_off : commandsData.group.contador.msgs.reply_on
     await groupController.setCounter(group.id, !group.counter.status)
-    await baileysController.replyText(group.id, replyText, message.wa_message)
+    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
 }
 
 export async function atividadeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -551,7 +551,7 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
 
     const userData = await userController.getUser(targetUserId)
     const replyText = buildText(commandsData.group.atividade.msgs.reply, userData?.name || '---', removeWhatsappSuffix(targetUserId), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function inativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -582,7 +582,7 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
         mentionedUsers.push(user.user_id)
     }
 
-    await baileysController.replyWithMentions(group.id, replyText, mentionedUsers, message.wa_message)
+    await baileysController.replyWithMentions(group.id, replyText, mentionedUsers, message.wa_message, message.expiration)
 }
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -594,7 +594,7 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const replyText = await groupController.blockCommands(group, message.args, botInfo)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -606,7 +606,7 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const replyText = await groupController.unblockCommands(group, message.args, botInfo)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 
 

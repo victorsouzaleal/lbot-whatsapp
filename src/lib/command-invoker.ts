@@ -115,11 +115,11 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
         }
     } catch(err: any){
-        await new BaileysController(client).replyText(message.chat_id, messageErrorCommand(botInfo, message.command, err.message), message.wa_message)
+        await new BaileysController(client).replyText(message.chat_id, messageErrorCommand(botInfo, message.command, err.message), message.wa_message, message.expiration)
     }
 
 }
 
 async function sendCommandGuide(client: WASocket, botInfo: Bot, message : Message, category: CategoryCommand){
-    await new BaileysController(client).replyText(message.chat_id, getCommandGuide(botInfo, message.command, category), message.wa_message)
+    await new BaileysController(client).replyText(message.chat_id, getCommandGuide(botInfo, message.command, category), message.wa_message, message.expiration)
 }

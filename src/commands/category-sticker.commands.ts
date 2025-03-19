@@ -28,7 +28,7 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     
     let mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker.trim(), author: botInfo.author_sticker.trim(), fps: 9, type: stickerType})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer)
+    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
 }
 
 export async function simgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -40,7 +40,7 @@ export async function simgCommand(client: WASocket, botInfo: Bot, message: Messa
 
     let stickerBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
     let imageBuffer = await stickerLibrary.stickerToImage(stickerBuffer)
-    await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, 'image/png')
+    await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, message.expiration, 'image/png')
 }
 
 export async function ssfCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -54,11 +54,11 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
     if (!messageData.type || !messageData.message) throw new Error(commandsData.sticker.ssf.msgs.error_message)
     if (messageData.type != "imageMessage") throw new Error(commandsData.sticker.ssf.msgs.error_image)
 
-    await baileysController.replyText(message.chat_id, commandsData.sticker.ssf.msgs.wait, message.wa_message)
+    await baileysController.replyText(message.chat_id, commandsData.sticker.ssf.msgs.wait, message.wa_message, message.expiration)
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     const imageBuffer = await imageLibrary.removeBackground(mediaBuffer)
     const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer)
+    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
 }
 
 export async function emojimixCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -73,7 +73,7 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
 
     const imageBuffer = await imageLibrary.emojiMix(emoji1.trim(), emoji2.trim())
     const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer)
+    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
 }
 
 export async function snomeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -96,7 +96,7 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
 
     let stickerBuffer = await downloadMediaMessage(messageQuotedData, 'buffer', {})
     let stickerRenamedBuffer = await stickerLibrary.renameSticker(stickerBuffer, pack, author)
-    await baileysController.sendSticker(message.chat_id, stickerRenamedBuffer)
+    await baileysController.sendSticker(message.chat_id, stickerRenamedBuffer, message.expiration)
 }
 
 export async function autoSticker(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -107,6 +107,6 @@ export async function autoSticker(client: WASocket, botInfo: Bot, message: Messa
 
     let mediaBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
     let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer)
+    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
 }
 

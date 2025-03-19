@@ -43,10 +43,10 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 
     //RESPOSTA
     await baileysController.getProfilePicUrl(botInfo.host_number).then(async (pic)=>{
-        if (pic) await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', pic, replyText, message.wa_message)
-        else await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+        if (pic) await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', pic, replyText, message.wa_message, message.expiration)
+        else await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
     }).catch(async ()=>{
-        await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+        await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
     })
 }
 
@@ -65,7 +65,7 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
         await baileysController.sendText(admin.id, replyAdmin)
     })
 
-    await baileysController.replyText(message.chat_id, commandsData.info.reportar.msgs.reply, message.wa_message)
+    await baileysController.replyText(message.chat_id, commandsData.info.reportar.msgs.reply, message.wa_message, message.expiration)
 }
 
 export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
@@ -88,7 +88,7 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
         }   
     }
 
-    await baileysController.replyText(message.chat_id, replyMessage, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyMessage, message.wa_message, message.expiration)
 }
 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
@@ -134,6 +134,6 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
         }
     }
 
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message)
+    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
 }
 

@@ -75,80 +75,76 @@ export class BaileysService{
         return this.client.fetchBlocklist()
     }
 
-    async sendText(chatId: string, text: string){
+    async sendText(chatId: string, text: string, expiration?: number){
         await this.updatePresence(chatId, "composing")
-        return this.client.sendMessage(chatId, {text, linkPreview: null})
+        return this.client.sendMessage(chatId, {text, linkPreview: null}, {ephemeralExpiration: expiration})
     }
 
-    createPoll(chatId: string, pollName: string, pollValues: string[]){
-        return this.client.sendMessage(chatId, {poll : {name: pollName, values: pollValues, selectableCount: 1}})
+    sendLinkWithPreview(chatId: string, text: string, expiration?: number){
+        return this.client.sendMessage(chatId, {text}, {ephemeralExpiration: expiration})
     }
 
-    sendLinkWithPreview(chatId: string, text: string){
-        return this.client.sendMessage(chatId, {text})
-    }
-
-    async sendTextWithMentions(chatId: string, text: string, mentions: string[]) {
+    async sendTextWithMentions(chatId: string, text: string, mentions: string[], expiration?: number) {
         await this.updatePresence(chatId, "composing")
-        return this.client.sendMessage(chatId, {text , mentions})
+        return this.client.sendMessage(chatId, {text , mentions}, {ephemeralExpiration: expiration})
     }
    
-    sendSticker(chatId: string, sticker: Buffer){
-        return this.client.sendMessage(chatId, {sticker})
+    sendSticker(chatId: string, sticker: Buffer, expiration?: number){
+        return this.client.sendMessage(chatId, {sticker}, {ephemeralExpiration: expiration})
     }
 
-    async sendFileFromUrl(chatId: string, type: MessageTypes, url: string, caption: string, mimetype?: MimeTypes){
+    async sendFileFromUrl(chatId: string, type: MessageTypes, url: string, caption: string, expiration?: number, mimetype?: MimeTypes){
         if (type === "imageMessage") {
-            return this.client.sendMessage(chatId, {image: {url}, caption})
+            return this.client.sendMessage(chatId, {image: {url}, caption}, {ephemeralExpiration: expiration})
         }else if (type === 'videoMessage'){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
-            return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb})
+            return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {ephemeralExpiration: expiration})
         } else if (type === 'audioMessage'){
-            return this.client.sendMessage(chatId, {audio: {url}, mimetype})
+            return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {ephemeralExpiration: expiration})
         }
     }
 
-    async replyText (chatId: string, text: string, quoted: WAMessage){ 
+    async replyText (chatId: string, text: string, quoted: WAMessage, expiration?: number){ 
         await this.updatePresence(chatId, "composing")
-        return this.client.sendMessage(chatId, {text, linkPreview: null}, {quoted})
+        return this.client.sendMessage(chatId, {text, linkPreview: null}, {quoted, ephemeralExpiration: expiration})
     }
 
-    async replyFile (chatId: string, type: MessageTypes, url: string, caption: string, quoted: WAMessage, mimetype? : MimeTypes){ 
+    async replyFile (chatId: string, type: MessageTypes, url: string, caption: string, quoted: WAMessage, expiration?: number, mimetype?: MimeTypes){ 
         if (type == "imageMessage"){
-            return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
+            return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted, ephemeralExpiration: expiration})
         } else if (type == "videoMessage"){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('file', url)
-            return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
+            return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted, ephemeralExpiration: expiration})
         } else if (type == "audioMessage"){
-            return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted})
+            return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted, ephemeralExpiration: expiration})
         }
     }
 
-    async replyFileFromUrl (chatId: string, type: MessageTypes, url: string, caption: string, quoted: WAMessage, mimetype?: MimeTypes){ 
+    async replyFileFromUrl (chatId: string, type: MessageTypes, url: string, caption: string, quoted: WAMessage, expiration?: number, mimetype?: MimeTypes){ 
         if (type == "imageMessage"){
-            return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted})
+            return this.client.sendMessage(chatId, {image: {url}, caption}, {quoted, ephemeralExpiration: expiration})
         } else if (type == "videoMessage"){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
-            return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted})
+            return this.client.sendMessage(chatId, {video: {url}, mimetype, caption, jpegThumbnail: base64Thumb}, {quoted, ephemeralExpiration: expiration})
         } else if (type == "audioMessage"){
-            return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted})
+            return this.client.sendMessage(chatId, {audio: {url}, mimetype}, {quoted, ephemeralExpiration: expiration})
         }
     }
 
-    async replyFileFromBuffer (chatId: string, type: MessageTypes, buffer: Buffer, caption: string, quoted: WAMessage, mimetype? : MimeTypes){ 
+    async replyFileFromBuffer (chatId: string, type: MessageTypes, buffer: Buffer, caption: string, quoted: WAMessage, expiration?: number, mimetype? : MimeTypes){ 
         if (type == "videoMessage"){
             const base64Thumb = await convertLibrary.convertVideoToThumbnail('buffer', buffer)
-            return this.client.sendMessage(chatId, {video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted})
+            return this.client.sendMessage(chatId, {video: buffer, caption, mimetype, jpegThumbnail: base64Thumb}, {quoted, ephemeralExpiration: expiration})
         } else if (type == "imageMessage"){
-            return this.client.sendMessage(chatId, {image: buffer, caption}, {quoted})
+            return this.client.sendMessage(chatId, {image: buffer, caption}, {quoted, ephemeralExpiration: expiration})
         } else if (type == "audioMessage"){
-            return this.client.sendMessage(chatId, {audio: buffer, mimetype}, {quoted})
+            return this.client.sendMessage(chatId, {audio: buffer, mimetype}, {quoted, ephemeralExpiration: expiration})
         }
     }
 
-    async replyWithMentions (chatId: string, text: string, mentions: string[], quoted: WAMessage){ 
+    async replyWithMentions (chatId: string, text: string, mentions: string[], quoted: WAMessage, expiration?: number){ 
         await this.updatePresence(chatId, "composing")
-        return this.client.sendMessage(chatId, {text , mentions}, {quoted})
+        return this.client.sendMessage(chatId, {text , mentions}, {quoted, ephemeralExpiration: expiration})
     }
 
     joinGroupInviteLink (linkGroup : string){

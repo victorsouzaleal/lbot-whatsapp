@@ -129,7 +129,7 @@ async function isOwnerRegister(baileysController: BaileysController, userControl
 
     if (!admins.length && message.command == `${botInfo.prefix}admin`){
         await userController.registerOwner(message.sender)
-        await baileysController.replyText(message.chat_id, generalMessages.admin_registered, message.wa_message)
+        await baileysController.replyText(message.chat_id, generalMessages.admin_registered, message.wa_message, message.expiration)
         return true
     }
     
@@ -165,7 +165,7 @@ async function sendPrivateWelcome(userController : UserController, baileysContro
     const generalMessages = getGeneralMessages(botInfo)
     const user = await userController.getUser(message.sender)
     if (user && !user.receivedWelcome){
-        await baileysController.sendText(message.chat_id, buildText(generalMessages.new_user, botInfo.name, message.pushname))
+        await baileysController.sendText(message.chat_id, buildText(generalMessages.new_user, botInfo.name, message.pushname), message.expiration)
         await userController.setReceivedWelcome(user.id, true)
     }
 }
@@ -183,7 +183,7 @@ async function isUserLimitedByCommandRate(botController: BotController, baileysC
         const isLimited = await botController.hasExceededCommandRate(botInfo, message.sender, message.isBotAdmin)
         if (isLimited){
             const generalMessages = getGeneralMessages(botInfo)
-            await baileysController.replyText(message.chat_id, buildText(generalMessages.command_rate_limited_message, botInfo.command_rate.block_time), message.wa_message)
+            await baileysController.replyText(message.chat_id, buildText(generalMessages.command_rate_limited_message, botInfo.command_rate.block_time), message.wa_message, message.expiration)
             return true
         }
     }
@@ -194,7 +194,7 @@ async function isCommandBlockedGlobally(baileysController: BaileysController, bo
     const commandBlocked = botController.isCommandBlockedGlobally(message.command)
     const generalMessages = getGeneralMessages(botInfo)
     if (commandBlocked && !message.isBotAdmin){
-        await baileysController.replyText(message.chat_id, buildText(generalMessages.globally_blocked_command, message.command), message.wa_message)
+        await baileysController.replyText(message.chat_id, buildText(generalMessages.globally_blocked_command, message.command), message.wa_message, message.expiration)
         return true
     }
     return false
@@ -204,7 +204,7 @@ async function isCommandBlockedGroup(baileysController: BaileysController, group
     const commandBlocked = groupController.isBlockedCommand(group, message.command, botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     if (commandBlocked && !isGroupAdmin){
-        await baileysController.replyText(message.chat_id, buildText(generalMessages.group_blocked_command, message.command), message.wa_message)
+        await baileysController.replyText(message.chat_id, buildText(generalMessages.group_blocked_command, message.command), message.wa_message, message.expiration)
         return true
     }
     return false
@@ -214,7 +214,7 @@ async function isDetectedByAntiLink(baileysController: BaileysController, groupC
     const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
     if (isDetectedByAntilink){
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, removeWhatsappSuffix(message.sender)), [message.sender])
+        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, removeWhatsappSuffix(message.sender)), [message.sender], message.expiration)
         await baileysController.deleteMessage(message.wa_message, false)
         return true
     }
@@ -226,7 +226,7 @@ async function isDetectedByAntiFlood(baileysController: BaileysController, group
     const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender, message.isGroupAdmin)
     if (isDetectedByAntiFlood){
         await baileysController.removeParticipant(message.chat_id, message.sender)
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, removeWhatsappSuffix(message.sender), botInfo.name), [message.sender])
+        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, removeWhatsappSuffix(message.sender), botInfo.name), [message.sender], message.expiration)
         return true
     }
     return false

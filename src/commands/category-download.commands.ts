@@ -20,9 +20,9 @@ export async function playCommand(client: WASocket, botInfo: Bot, message: Messa
     if (videoInfo.duration > 360) throw new Error(commandsData.download.play.msgs.error_limit)
 
     const waitReply = buildText(commandsData.download.play.msgs.wait, videoInfo.title, videoInfo.duration_formatted)
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
     const audioBuffer = await convertLibrary.convertMp4ToMp3('url', videoInfo.url)
-    await baileysController.replyFileFromBuffer(message.chat_id, 'audioMessage', audioBuffer, '', message.wa_message, 'audio/mpeg')
+    await baileysController.replyFileFromBuffer(message.chat_id, 'audioMessage', audioBuffer, '', message.wa_message, message.expiration, 'audio/mpeg')
 }
 
 export async function ytCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -37,8 +37,8 @@ export async function ytCommand(client: WASocket, botInfo: Bot, message: Message
     if (videoInfo.duration > 360) throw new Error(commandsData.download.yt.msgs.error_limit)
 
     const waitReply = buildText(commandsData.download.yt.msgs.wait, videoInfo.title, videoInfo.duration_formatted)
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
-    await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', videoInfo.url, '', message.wa_message, 'video/mp4')
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
+    await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', videoInfo.url, '', message.wa_message, message.expiration, 'video/mp4')
 }
 
 export async function fbCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -52,8 +52,8 @@ export async function fbCommand(client: WASocket, botInfo: Bot, message: Message
     if (fbInfo.duration > 360) throw new Error(commandsData.download.fb.msgs.error_limit)
 
     const waitReply = buildText(commandsData.download.fb.msgs.wait, fbInfo.title, format(fbInfo.duration * 1000))
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
-    await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', fbInfo.sd, '', message.wa_message, 'video/mp4')
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
+    await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', fbInfo.sd, '', message.wa_message, message.expiration, 'video/mp4')
 }
 
 export async function igCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -64,11 +64,11 @@ export async function igCommand(client: WASocket, botInfo: Bot, message: Message
 
     const igInfo = await downloadLibrary.instagramMedia(message.text_command)
     const waitReply = buildText(commandsData.download.ig.msgs.wait, igInfo.author_fullname, igInfo.author_username, igInfo.caption, igInfo.likes)
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
 
     for await (let media of igInfo.media){
-        if (media.type == "image") await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', media.url, '', message.wa_message)
-        if (media.type == "video") await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', media.url, '', message.wa_message)
+        if (media.type == "image") await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', media.url, '', message.wa_message, message.expiration)
+        if (media.type == "video") await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', media.url, '', message.wa_message, message.expiration)
     }
 }
 
@@ -81,11 +81,11 @@ export async function xCommand(client: WASocket, botInfo: Bot, message: Message,
     const xInfo = await downloadLibrary.xMedia(message.text_command)
 
     const waitReply = buildText(commandsData.download.x.msgs.wait, xInfo.text)
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
     
     for await(let media of xInfo.media){
-        if (media.type == "image") await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', media.url, '', message.wa_message)
-        if (media.type == "video") await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', media.url, '', message.wa_message, 'video/mp4')
+        if (media.type == "image") await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', media.url, '', message.wa_message, message.expiration)
+        if (media.type == "video") await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', media.url, '', message.wa_message, message.expiration, 'video/mp4')
     }
 }
 
@@ -97,15 +97,15 @@ export async function tkCommand(client: WASocket, botInfo: Bot, message: Message
 
     const tiktok = await downloadLibrary.tiktokMedia(message.text_command)
     const waitReply = buildText(commandsData.download.tk.msgs.wait, tiktok.author_profile, tiktok.description)
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message)
+    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
     
     if (!Array.isArray(tiktok.url)){
-        if (tiktok.type == 'image') await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', tiktok.url, '', message.wa_message)
-        if (tiktok.type == 'video') await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', tiktok.url, '', message.wa_message, 'video/mp4')
+        if (tiktok.type == 'image') await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', tiktok.url, '', message.wa_message, message.expiration)
+        if (tiktok.type == 'video') await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', tiktok.url, '', message.wa_message, message.expiration, 'video/mp4')
     } else {
         for await (const url of tiktok.url) {
-            if (tiktok.type == 'image') await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', url, '', message.wa_message)
-            if (tiktok.type == 'video') await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', url, '', message.wa_message, 'video/mp4')
+            if (tiktok.type == 'image') await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', url, '', message.wa_message, message.expiration)
+            if (tiktok.type == 'video') await baileysController.replyFileFromUrl(message.chat_id, 'videoMessage', url, '', message.wa_message, message.expiration, 'video/mp4')
         }
     }
 }
@@ -126,9 +126,9 @@ export async function imgCommand(client: WASocket, botInfo: Bot, message: Messag
     for (let i = 0; i < maxImageResults; i++){
         let randomIndex = Math.floor(Math.random() * images.length)
         let chosenImage = images[randomIndex].url
-        await baileysController.sendFileFromUrl(message.chat_id, 'imageMessage', chosenImage, '').then(() =>{
+        await baileysController.sendFileFromUrl(message.chat_id, 'imageMessage', chosenImage, '', message.expiration).then(() =>{
             imagesSent++
-        }).catch(()=>{})
+        }).catch()
         images.splice(randomIndex, 1)
 
         if (imagesSent == MAX_SENT) break
