@@ -4,7 +4,7 @@ A instalação no Termux é bem fácil e tentei simplificar o máximo que pude.
 
 ### 1 - No Termux comece usando este comando para instalar automaticamente o bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
-wget -O - https://shorturl.at/prJfc | bash
+pkg install wget -y && wget -O - https://shorturl.at/y4SJf | bash
 ```
 
 ### 2 - Após o comando acima o bot já deve pedir o QR Code para se conectar.
