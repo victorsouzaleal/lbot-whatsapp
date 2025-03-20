@@ -3,19 +3,18 @@ import { Boom } from '@hapi/boom'
 import fs from "fs-extra"
 import dotenv from 'dotenv'
 import { BotController } from '../controllers/bot.controller.js'
-import { BaileysController } from '../controllers/baileys.controller.js'
 import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../lib/util.js'
 import getGeneralMessages from '../lib/general-messages.js'
 import { UserController } from '../controllers/user.controller.js'
+import { getHostNumber } from '../lib/whatsapp.js'
 
 export async function connectionOpen(client: WASocket){
     try{
         const generalMessages = getGeneralMessages()
         const botController = new BotController()
-        const baileysController = new BaileysController(client)
         console.log(buildText(generalMessages.starting, getCurrentBotVersion()))
         dotenv.config()
-        botController.startBot(baileysController.getHostNumber())
+        botController.startBot(getHostNumber(client))
         console.log("[BOT]", colorText(generalMessages.bot_data))
         await checkOwnerRegister()
     } catch(err: any) {

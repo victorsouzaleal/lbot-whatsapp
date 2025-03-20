@@ -2,16 +2,15 @@ import { WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { Message } from "../interfaces/message.interface.js";
-import { BaileysController } from "../controllers/baileys.controller.js";
 import { UserController } from "../controllers/user.controller.js";
 import getGeneralMessages from "./general-messages.js";
 import { GroupController } from "../controllers/group.controller.js";
 import { buildText, commandExist, removeWhatsappSuffix } from "./util.js";
 import { BotController } from "../controllers/bot.controller.js";
 import { commandInvoker } from "./command-invoker.js";
+import { deleteMessage, getBlockedContacts, readMessage, removeParticipant, replyText, sendText, sendTextWithMentions } from "./whatsapp.js";
 
 export async function handlePrivateMessage(client: WASocket, botInfo: Bot, message: Message){
-    const baileysController = new BaileysController(client)
     const userController = new UserController()
     const botController = new BotController()
     const {command, sender} = message
@@ -19,29 +18,29 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
     const isAutosticker = ((message.type === 'videoMessage' || message.type === "imageMessage") && botInfo.autosticker)
 
     //Verifica se o usuário está bloqueado, se estiver retorna.
-    if (await isUserBlocked(baileysController, sender)) return
+    if (await isUserBlocked(client, sender)) return
 
     //Verifica se é um registro de dono, se for retorne.
-    if (await isOwnerRegister(baileysController, userController, botInfo, message)) return
+    if (await isOwnerRegister(client, userController, botInfo, message)) return
 
     //Se o PV do bot não estiver liberado e o usuário não for um admin, retorne.
     if (isIgnoredByPvAllowed(message, botInfo)) return
 
     //Se o usuário não tiver recebido boas vindas no PV, faça-o
-    await sendPrivateWelcome(userController, baileysController, message, botInfo)
+    await sendPrivateWelcome(client, userController, message, botInfo)
 
     //Leia a mensagem do usuário
-    await readMessage(baileysController, message)
+    await readUserMessage(client, message)
 
     //Atualize o nome do usuário
     await updateUserName(userController, message)
 
     if (isCommand || isAutosticker){
         //Se a taxa de comandos estiver ativado e o usuário estiver limitado, retorne.
-        if (await isUserLimitedByCommandRate(botController, baileysController, botInfo, message)) return
+        if (await isUserLimitedByCommandRate(client, botController, botInfo, message)) return
 
         //Se o comando estiver bloqueado globalmente, retorne.
-        if (await isCommandBlockedGlobally(baileysController, botController, botInfo, message)) return
+        if (await isCommandBlockedGlobally(client, botController, botInfo, message)) return
 
         //Incrementa contagem de comandos do usuário
         await userController.increaseUserCommandsCount(sender)
@@ -55,7 +54,6 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
 }
 
 export async function handleGroupMessage(client: WASocket, group: Group|null, botInfo: Bot, message: Message){
-    const baileysController = new BaileysController(client)
     const userController = new UserController()
     const groupController = new GroupController()
     const botController = new BotController()
@@ -68,19 +66,19 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     if (!group) return
 
     //Verifica se o usuário está bloqueado, se estiver retorna.
-    if (await isUserBlocked(baileysController, sender)) return 
+    if (await isUserBlocked(client, sender)) return 
 
     //Se o grupo estiver restrito para admins e o bot não for um admin, retorne.
     if (await isBotLimitedByGroupRestricted(group, botInfo)) return
 
     //Se o antilink estiver ativado, e for detectado um link na mensagem, retorne.
-    if (await isDetectedByAntiLink(baileysController, groupController, botInfo, group, message)) return
+    if (await isDetectedByAntiLink(client, groupController, botInfo, group, message)) return
 
     //Se o Anti-FLOOD estiver ativado, e for detectada como FLOOD, retorne.
-    if (await isDetectedByAntiFlood(baileysController, groupController, botInfo, group, message)) return
+    if (await isDetectedByAntiFlood(client, groupController, botInfo, group, message)) return
 
     //Verifica se é um registro de dono, se for retorne.
-    if (await isOwnerRegister(baileysController, userController, botInfo, message)) return
+    if (await isOwnerRegister(client, userController, botInfo, message)) return
 
     //Se o contador estiver ativado, verifica se precisa adicionar o participante e incrementa a contagem dele.
     await handleUserCounter(groupController, message, group)
@@ -89,20 +87,20 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     if (await isIgnoredByGroupMuted(group, isGroupAdmin)) return
 
     //Leia a mensagem do usuário
-    await readMessage(baileysController, message)
+    await readUserMessage(client, message)
 
     //Atualize o nome do usuário
     await updateUserName(userController, message)
 
     if (isCommand || isAutosticker){
         //Se a taxa de comandos estiver ativa e o usuário estiver limitado, retorne.
-        if (await isUserLimitedByCommandRate(botController, baileysController, botInfo, message)) return
+        if (await isUserLimitedByCommandRate(client, botController, botInfo, message)) return
 
         //Se o comando estiver bloqueado globalmente, retorne.
-        if (await isCommandBlockedGlobally(baileysController, botController, botInfo, message)) return
+        if (await isCommandBlockedGlobally(client, botController, botInfo, message)) return
 
         //Se o comando estiver bloqueado no grupo, retorne.
-        if (await isCommandBlockedGroup(baileysController, groupController, group, isGroupAdmin, botInfo, message)) return
+        if (await isCommandBlockedGroup(client, groupController, group, isGroupAdmin, botInfo, message)) return
 
         //Incrementa contagem de comandos do usuário
         await userController.increaseUserCommandsCount(sender)
@@ -118,18 +116,18 @@ export async function handleGroupMessage(client: WASocket, group: Group|null, bo
     }
 }
 
-async function isUserBlocked(baileysController: BaileysController, userId: string){
-    const blockedContacts = await baileysController.getBlockedContacts()
+async function isUserBlocked(client: WASocket, userId: string){
+    const blockedContacts = await getBlockedContacts(client)
     return blockedContacts.includes(userId)
 }
 
-async function isOwnerRegister(baileysController: BaileysController, userController: UserController, botInfo: Bot, message: Message){
+async function isOwnerRegister(client: WASocket, userController: UserController, botInfo: Bot, message: Message){
     const admins = await userController.getAdmins()
     const generalMessages = getGeneralMessages(botInfo)
 
     if (!admins.length && message.command == `${botInfo.prefix}admin`){
         await userController.registerOwner(message.sender)
-        await baileysController.replyText(message.chat_id, generalMessages.admin_registered, message.wa_message, message.expiration)
+        await replyText(client, message.chat_id, generalMessages.admin_registered, message.wa_message, {expiration: message.expiration})
         return true
     }
     
@@ -161,72 +159,72 @@ async function isBotLimitedByGroupRestricted(group: Group, botInfo: Bot){
     return false
 }
 
-async function sendPrivateWelcome(userController : UserController, baileysController: BaileysController, message: Message, botInfo: Bot){
+async function sendPrivateWelcome(client: WASocket, userController : UserController, message: Message, botInfo: Bot){
     const generalMessages = getGeneralMessages(botInfo)
     const user = await userController.getUser(message.sender)
     if (user && !user.receivedWelcome){
-        await baileysController.sendText(message.chat_id, buildText(generalMessages.new_user, botInfo.name, message.pushname), message.expiration)
+        await sendText(client, message.chat_id, buildText(generalMessages.new_user, botInfo.name, message.pushname), {expiration: message.expiration})
         await userController.setReceivedWelcome(user.id, true)
     }
 }
 
-async function readMessage(baileysController: BaileysController, message: Message){
-    await baileysController.readMessage(message.chat_id, message.sender, message.message_id)
+async function readUserMessage(client: WASocket, message: Message){
+    await readMessage(client, message.chat_id, message.sender, message.message_id)
 }
 
 async function updateUserName(userController: UserController, message: Message){
     if (message.pushname) await userController.setName(message.sender, message.pushname)
 }
 
-async function isUserLimitedByCommandRate(botController: BotController, baileysController: BaileysController, botInfo: Bot, message: Message){
+async function isUserLimitedByCommandRate(client: WASocket, botController: BotController, botInfo: Bot, message: Message){
     if (botInfo.command_rate.status){
         const isLimited = await botController.hasExceededCommandRate(botInfo, message.sender, message.isBotAdmin)
         if (isLimited){
             const generalMessages = getGeneralMessages(botInfo)
-            await baileysController.replyText(message.chat_id, buildText(generalMessages.command_rate_limited_message, botInfo.command_rate.block_time), message.wa_message, message.expiration)
+            await replyText(client, message.chat_id, buildText(generalMessages.command_rate_limited_message, botInfo.command_rate.block_time), message.wa_message, {expiration: message.expiration})
             return true
         }
     }
     return false
 }
 
-async function isCommandBlockedGlobally(baileysController: BaileysController, botController: BotController, botInfo: Bot, message: Message ){
+async function isCommandBlockedGlobally(client: WASocket, botController: BotController, botInfo: Bot, message: Message ){
     const commandBlocked = botController.isCommandBlockedGlobally(message.command)
     const generalMessages = getGeneralMessages(botInfo)
     if (commandBlocked && !message.isBotAdmin){
-        await baileysController.replyText(message.chat_id, buildText(generalMessages.globally_blocked_command, message.command), message.wa_message, message.expiration)
+        await replyText(client, message.chat_id, buildText(generalMessages.globally_blocked_command, message.command), message.wa_message, {expiration: message.expiration})
         return true
     }
     return false
 }
 
-async function isCommandBlockedGroup(baileysController: BaileysController, groupController: GroupController, group: Group, isGroupAdmin: boolean, botInfo: Bot, message: Message){
+async function isCommandBlockedGroup(client: WASocket, groupController: GroupController, group: Group, isGroupAdmin: boolean, botInfo: Bot, message: Message){
     const commandBlocked = groupController.isBlockedCommand(group, message.command, botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     if (commandBlocked && !isGroupAdmin){
-        await baileysController.replyText(message.chat_id, buildText(generalMessages.group_blocked_command, message.command), message.wa_message, message.expiration)
+        await replyText(client, message.chat_id, buildText(generalMessages.group_blocked_command, message.command), message.wa_message, {expiration: message.expiration})
         return true
     }
     return false
 }
 
-async function isDetectedByAntiLink(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
+async function isDetectedByAntiLink(client: WASocket, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
     if (isDetectedByAntilink){
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.detected_link, removeWhatsappSuffix(message.sender)), [message.sender], message.expiration)
-        await baileysController.deleteMessage(message.wa_message, false)
+        await sendTextWithMentions(client, message.chat_id, buildText(generalMessages.detected_link, removeWhatsappSuffix(message.sender)), [message.sender], {expiration: message.expiration})
+        await deleteMessage(client, message.wa_message, false)
         return true
     }
     return false
 }
 
-async function isDetectedByAntiFlood(baileysController: BaileysController, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
+async function isDetectedByAntiFlood(client: WASocket, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
     const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender, message.isGroupAdmin)
     if (isDetectedByAntiFlood){
-        await baileysController.removeParticipant(message.chat_id, message.sender)
-        await baileysController.sendTextWithMentions(message.chat_id, buildText(generalMessages.antiflood_ban_messages, removeWhatsappSuffix(message.sender), botInfo.name), [message.sender], message.expiration)
+        await removeParticipant(client, message.chat_id, message.sender)
+        await sendTextWithMentions(client, message.chat_id, buildText(generalMessages.antiflood_ban_messages, removeWhatsappSuffix(message.sender), botInfo.name), [message.sender], {expiration: message.expiration})
         return true
     }
     return false

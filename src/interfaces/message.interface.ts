@@ -4,13 +4,18 @@ export type MessageTypes = "conversation" | "extendedTextMessage" | "imageMessag
 
 export type MimeTypes = "audio/mpeg"| "audio/mp4" | "audio/mp3" | "image/png" | "image/webp" | "video/mp4" | "document/pdf" | "application/pdf"
 
+export interface MessageOptions {
+    expiration?: number,
+    mimetype?: MimeTypes
+}
+
 export interface Message {
     message_id: string,
     sender: string,
     type: MessageTypes,
     t : number,
     chat_id: string,
-    expiration: number | null
+    expiration?: number,
     pushname : string,
     body: string,
     caption: string,

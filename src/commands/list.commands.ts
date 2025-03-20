@@ -164,8 +164,9 @@ export default function getCommands (botInfo?: Bot){
             ia: {
                 guide: `Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
                 msgs: {
-                    reply: "🤖 Resposta da IA:\n\n"+
-                    "{p1}"
+                    reply: "🤖 *Inteligência Artificial*:\n"+
+                    '────────────────────────\n'+
+                    "*Resposta*: {p1}"
                 },
                 function: utilityCommand.iaCommand
             },
@@ -174,7 +175,7 @@ export default function getCommands (botInfo?: Bot){
                 msgs: {
                     wait: '[AGUARDE] 📸 Sua imagem está sendo gerada pela IA, pode levar entre 20-40s.',
                 },
-                function: infoCommand.menuCommand
+                function: utilityCommand.criarimgCommand
             },*/
             tabela: {
                 guide: `Ex: *${PREFIX}tabela* - Exibe a tabela de caracteres para criação de nicks.\n`,
@@ -298,19 +299,6 @@ export default function getCommands (botInfo?: Bot){
                 },
                 function: utilityCommand.noticiasCommand
             },
-            /*
-            rastreio: {
-                guide: `Ex: *${PREFIX}rastreio* PBXXXXXXXXXXX - Exibe o rastreio da encomenda dos correios que você digitou.\n`,
-                msgs: {
-                    error: 'Código de rastreio deve ter 13 digitos.',
-                    reply_title: "📦📦*RASTREIO*📦📦\n\n",
-                    reply_item: "Status: {p1}\n"+
-                    "Data: {p2}\n"+
-                    "Hora: {p3}\n"+
-                    "{p4}\n"
-                },
-                function: utilityCommand.rastreioCommand
-            },*/
             calc: {
                 guide: `Ex: *${PREFIX}calc* 8x8 - Exibe o resultado do cálculo.\n\n`+
                 `Ex: *${PREFIX}calc* 1mm em 1km - Exibe o resultado do conversão de medidas.\n`,

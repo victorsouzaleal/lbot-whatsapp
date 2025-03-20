@@ -2,7 +2,7 @@ import { downloadMediaMessage, WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group, ParticipantCounter } from "../interfaces/group.interface.js";
-import { BaileysController } from "../controllers/baileys.controller.js";
+import * as Whatsapp from '../lib/whatsapp.js'
 import { buildText, removeWhatsappSuffix, addWhatsappSuffix, messageErrorCommandUsage } from "../lib/util.js";
 import getGeneralMessages from "../lib/general-messages.js";
 import getCommands from "./list.commands.js";
@@ -10,7 +10,6 @@ import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 
 export async function grupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     let replyText = buildText(commandsData.group.grupo.msgs.reply_title, group.name, group.participants.length, group.admins.length, group.description || '---', group.commands_executed)
@@ -43,11 +42,10 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += buildText(commandsData.group.grupo.msgs.reply_item_blacklist, group.blacklist.length)
     }
 
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -60,12 +58,11 @@ export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: 
     if (message.isQuoted && message.quotedMessage) imageBuffer = await downloadMediaMessage(message.quotedMessage?.wa_message, "buffer", {})
     else imageBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
 
-    await baileysController.updateProfilePic(group.id, imageBuffer)
-    await baileysController.replyText(group.id, commandsData.group.fotogrupo.msgs.reply, message.wa_message, message.expiration)
+    await Whatsapp.updateProfilePic(client, group.id, imageBuffer)
+    await Whatsapp.replyText(client, group.id, commandsData.group.fotogrupo.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -89,12 +86,11 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     if (currentBlacklist.includes(targetUserId)) throw new Error(commandsData.group.addlista.msgs.error_already_listed)
 
     await groupController.addBlackList(group.id, targetUserId)
-    await baileysController.replyText(message.chat_id, commandsData.group.addlista.msgs.reply, message.wa_message, message.expiration)
-    if (group.participants.includes(targetUserId)) await baileysController.removeParticipant(group.id, targetUserId)
+    await Whatsapp.replyText(client, message.chat_id, commandsData.group.addlista.msgs.reply, message.wa_message, {expiration: message.expiration})
+    if (group.participants.includes(targetUserId)) await Whatsapp.removeParticipant(client, group.id, targetUserId)
 }
 
 export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -113,11 +109,10 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     if (!currentBlacklist.includes(targetUserId)) throw new Error(commandsData.group.rmlista.msgs.error_not_listed)
 
     await groupController.removeBlackList(group.id, targetUserId)
-    await baileysController.replyText(message.chat_id, commandsData.group.rmlista.msgs.reply, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, commandsData.group.rmlista.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
 export async function listanegraCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const userController = new UserController()
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
@@ -138,11 +133,10 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
         replyText += buildText(commandsData.group.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', removeWhatsappSuffix(userId))
     }
 
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -156,18 +150,17 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
 
     if (!Number(removeWhatsappSuffix(userId))) throw new Error(commandsData.group.add.msgs.error_input)
 
-    let addResponse = await baileysController.addParticipant(group.id, userId).catch((err) => {
+    let addResponse = await Whatsapp.addParticipant(client, group.id, userId).catch((err) => {
         throw new Error(buildText(commandsData.group.add.msgs.error_invalid_number, removeWhatsappSuffix(userId)))
     })
 
     if (addResponse.status != "200") throw new Error(buildText(commandsData.group.add.msgs.error_add, removeWhatsappSuffix(userId)))
 
     const replyText = buildText(commandsData.group.add.msgs.reply, removeWhatsappSuffix(userId))
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function banCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -186,7 +179,7 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
     for(let userId of targetUsers){
         if (group.participants.includes(userId)){
             if (!group.admins.includes(userId)){
-                await baileysController.removeParticipant(group.id, userId)
+                await Whatsapp.removeParticipant(client, group.id, userId)
                 replyText += buildText(commandsData.group.ban.msgs.reply_item_success, removeWhatsappSuffix(userId))
             } else {
                 replyText += buildText(commandsData.group.ban.msgs.reply_item_ban_admin, removeWhatsappSuffix(userId))
@@ -196,11 +189,10 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
         }
     }
 
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function promoverCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -217,18 +209,17 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
 
     for(let userId of targetUsers){
         if (!group.admins.includes(userId)) {
-            await baileysController.promoteParticipant(group.id, userId)
+            await Whatsapp.promoteParticipant(client, group.id, userId)
             replyText += buildText(commandsData.group.promover.msgs.reply_item_success, removeWhatsappSuffix(userId))
         } else {
             replyText += buildText(commandsData.group.promover.msgs.reply_item_error, removeWhatsappSuffix(userId))
         }
     }
 
-    await baileysController.replyWithMentions(group.id, replyText, targetUsers, message.wa_message, message.expiration)
+    await Whatsapp.replyWithMentions(client, group.id, replyText, targetUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -248,17 +239,16 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
             replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_error, removeWhatsappSuffix(userId))
         } else if (group.admins.includes(userId)) {
             replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_success, removeWhatsappSuffix(userId))
-            await baileysController.demoteParticipant(group.id, userId)
+            await Whatsapp.demoteParticipant(client, group.id, userId)
         } else {
             replyText += buildText(commandsData.group.rebaixar.msgs.reply_item_error_is_member, removeWhatsappSuffix(userId))
         }
     }
 
-    await baileysController.replyWithMentions(message.chat_id, replyText, targetUsers, message.wa_message, message.expiration)
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyText, targetUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mtCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -269,11 +259,10 @@ export async function mtCommand(client: WASocket, botInfo: Bot, message: Message
     if (message.args.length) replyMention = buildText(commandsData.group.mt.msgs.reply_with_message, group.participants.length, message.text_command)
     else replyMention = buildText(commandsData.group.mt.msgs.reply, group.participants.length)
 
-    await baileysController.replyWithMentions(message.chat_id, replyMention, group.participants, message.wa_message, message.expiration)
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyMention, group.participants, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mmCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -291,11 +280,10 @@ export async function mmCommand(client: WASocket, botInfo: Bot, message: Message
     if (message.args.length) replyMention = buildText(commandsData.group.mm.msgs.reply_with_message, groupMembers.length, message.text_command)
     else replyMention = buildText(commandsData.group.mm.msgs.reply, groupMembers.length)
 
-    await baileysController.replyWithMentions(message.chat_id, replyMention, groupMembers, message.wa_message, message.expiration)
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyMention, groupMembers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function admsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     let replyMention : string
@@ -304,21 +292,19 @@ export async function admsCommand(client: WASocket, botInfo: Bot, message: Messa
     else replyMention = buildText(commandsData.group.adms.msgs.reply, group.admins.length)
 
     const messageToReply = (message.isQuoted && message.quotedMessage) ? message.quotedMessage.wa_message : message.wa_message
-    await baileysController.replyWithMentions(message.chat_id, replyMention, group.admins, messageToReply, message.expiration)
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyMention, group.admins, messageToReply, {expiration: message.expiration})
 }
 
 export async function donoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     if (!group.owner) throw new Error(commandsData.group.dono.msgs.error)
     
     const replyText = buildText(commandsData.group.dono.msgs.reply, removeWhatsappSuffix(group.owner))
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mutarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -327,11 +313,10 @@ export async function mutarCommand(client: WASocket, botInfo: Bot, message: Mess
     
     let replyText = group.muted ? commandsData.group.mutar.msgs.reply_off : commandsData.group.mutar.msgs.reply_on
     await groupController.setMuted(group.id, !group.muted)
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function linkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -339,13 +324,12 @@ export async function linkCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.isGroupAdmin) throw new Error(generalMessages.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(generalMessages.permission.bot_group_admin)
 
-    let inviteLink = await baileysController.getGroupInviteLink(group.id)
+    let inviteLink = await Whatsapp.getGroupInviteLink(client, group.id)
     const replyText = buildText(commandsData.group.link.msgs.reply, group.name, inviteLink)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -353,16 +337,15 @@ export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Mess
     if (!message.isGroupAdmin) throw new Error(generalMessages.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(generalMessages.permission.bot_group_admin)
 
-    await baileysController.revokeGroupInvite(group.id).catch(() => {
+    await Whatsapp.revokeGroupInvite(client, group.id).catch(() => {
         throw new Error(commandsData.group.rlink.msgs.error)
     })
 
     const replyText = commandsData.group.rlink.msgs.reply
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function restritoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
@@ -370,13 +353,12 @@ export async function restritoCommand(client: WASocket, botInfo: Bot, message: M
     if (!message.isGroupAdmin) throw new Error(generalMessages.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(generalMessages.permission.bot_group_admin)
     
-    await baileysController.updateGroupRestriction(group.id, !group.restricted)
+    await Whatsapp.updateGroupRestriction(client, group.id, !group.restricted)
     const replyText = (group.restricted) ? commandsData.group.restrito.msgs.reply_off : commandsData.group.restrito.msgs.reply_on
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antilinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -387,11 +369,10 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.antilink ? commandsData.group.antilink.msgs.reply_off : commandsData.group.antilink.msgs.reply_on
     await groupController.setAntiLink(group.id, !group.antilink)
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function autostickerCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -400,11 +381,10 @@ export async function autostickerCommand(client: WASocket, botInfo: Bot, message
     
     const replyText = group.autosticker ? commandsData.group.autosticker.msgs.reply_off : commandsData.group.autosticker.msgs.reply_on
     await groupController.setAutoSticker(group.id, !group.autosticker)
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -413,11 +393,10 @@ export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.welcome.status ? commandsData.group.bemvindo.msgs.reply_off : commandsData.group.bemvindo.msgs.reply_on
     await groupController.setWelcome(group.id, !group.welcome.status, message.text_command || undefined)
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antifakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -429,11 +408,10 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
     const allowedDDI = !message.args.length ? ["55"] : message.args
     const replyText = group.antifake.status ? commandsData.group.antifake.msgs.reply_off : commandsData.group.antifake.msgs.reply_on
     await groupController.setAntiFake(group.id, !group.antifake.status, allowedDDI)
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antifloodCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
@@ -453,11 +431,10 @@ export async function antifloodCommand(client: WASocket, botInfo: Bot, message: 
     
     const replyText = group.antiflood.status ? commandsData.group.antiflood.msgs.reply_off : buildText(commandsData.group.antiflood.msgs.reply_on, maxMessage, interval)
     await groupController.setAntiFlood(group.id, !group.antiflood.status, Number(maxMessage), Number(interval))
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function apgCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const generalMessages = getGeneralMessages(botInfo)
     const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
 
@@ -466,11 +443,10 @@ export async function apgCommand(client: WASocket, botInfo: Bot, message: Messag
 
     if (!message.isQuoted || !message.quotedMessage) throw new Error(messageErrorCommandUsage(botInfo, message))
     
-    await baileysController.deleteMessage(message.wa_message, true)
+    await Whatsapp.deleteMessage(client, message.wa_message, true)
 }
 
 export async function topativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const generalMessages = getGeneralMessages(botInfo)
     const commandsData = getCommands(botInfo)
@@ -507,11 +483,10 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
         mentionedUsers.push(usersRanking[i].user_id)   
     }
 
-    await baileysController.replyWithMentions(message.chat_id, replyText, mentionedUsers, message.wa_message, message.expiration)
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function contadorCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const generalMessages = getGeneralMessages(botInfo)
     const commandsData = getCommands(botInfo)
@@ -521,11 +496,10 @@ export async function contadorCommand(client: WASocket, botInfo: Bot, message: M
 
     const replyText = group.counter.status ? commandsData.group.contador.msgs.reply_off : commandsData.group.contador.msgs.reply_on
     await groupController.setCounter(group.id, !group.counter.status)
-    await baileysController.replyText(group.id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function atividadeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const userController = new UserController()
     const generalMessages = getGeneralMessages(botInfo)
@@ -551,11 +525,10 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
 
     const userData = await userController.getUser(targetUserId)
     const replyText = buildText(commandsData.group.atividade.msgs.reply, userData?.name || '---', removeWhatsappSuffix(targetUserId), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function inativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const generalMessages = getGeneralMessages(botInfo)
     const commandsData = getCommands(botInfo)
@@ -582,11 +555,10 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
         mentionedUsers.push(user.user_id)
     }
 
-    await baileysController.replyWithMentions(group.id, replyText, mentionedUsers, message.wa_message, message.expiration)
+    await Whatsapp.replyWithMentions(client, group.id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -594,11 +566,10 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const replyText = await groupController.blockCommands(group, message.args, botInfo)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const baileysController = new BaileysController(client)
     const groupController = new GroupController()
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -606,7 +577,7 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const replyText = await groupController.unblockCommands(group, message.args, botInfo)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 

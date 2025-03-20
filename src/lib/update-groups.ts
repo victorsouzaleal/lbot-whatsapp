@@ -1,15 +1,14 @@
 import { WASocket, GroupMetadata } from 'baileys'
 import { BotController } from '../controllers/bot.controller.js'
-import { BaileysController } from '../controllers/baileys.controller.js'
 import { buildText, showConsoleError, colorText, getGroupParticipantsByMetadata, getGroupAdminsByMetadata, removeWhatsappSuffix } from './util.js'
 import { GroupController } from '../controllers/group.controller.js'
 import getGeneralMessages from './general-messages.js'
+import { getAllGroups, removeParticipant, sendTextWithMentions } from './whatsapp.js'
 
 export async function updateGroupsOnStart(client: WASocket){
     try{
         //Obtendo dados dos grupos
-        let baileysController = new BaileysController(client)
-        let allGroups = await baileysController.getAllGroups()
+        let allGroups = await getAllGroups(client)
         let botInfo = new BotController().getBot()
         //Se não houver grupos retorne
         if (allGroups.length){
@@ -47,9 +46,8 @@ async function filterGroupsBlacklist(client: WASocket, groups: GroupMetadata[]){
                 const isUserBlacklisted = await groupController.isBlackListed(group.id, participant)
                 if (isUserBlacklisted){
                     const generalMessages = getGeneralMessages(botInfo)
-                    const baileysController = new BaileysController(client)
-                    await baileysController.removeParticipant(group.id, participant)
-                    await baileysController.sendTextWithMentions(group.id, buildText(generalMessages.blacklist_ban_message, removeWhatsappSuffix(participant), botInfo.name), [participant])
+                    await removeParticipant(client, group.id, participant)
+                    await sendTextWithMentions(client, group.id, buildText(generalMessages.blacklist_ban_message, removeWhatsappSuffix(participant), botInfo.name), [participant], {expiration: group.ephemeralDuration})
                 }
             }
         }

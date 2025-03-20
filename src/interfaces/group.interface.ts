@@ -7,6 +7,7 @@ export interface Group {
     admins : string[]
     owner?: string
     restricted?: boolean
+    expiration?: number,
     muted: boolean,
     welcome: {
         status: boolean

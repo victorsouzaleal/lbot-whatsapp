@@ -2,32 +2,29 @@ import { WASocket } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
-import { BaileysController } from "../controllers/baileys.controller.js"
+import * as Whatsapp from '../lib/whatsapp.js'
 import { buildText, removeWhatsappSuffix, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../lib/util.js"
 import { generalLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getCommands from "./list.commands.js"
 import getGeneralMessages from "../lib/general-messages.js"
 
 export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const PIC_URL = "https://i.imgur.com/mVwa7q4.png"
-    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', PIC_URL, 'WhatsApp Jr.', message.wa_message, message.expiration)
+    await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', PIC_URL, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
 }
 
 export async function simiCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const simiResult = await generalLibrary.simSimi(message.text_command)
     const replyText = buildText(commandsData.fun.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function viadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -38,11 +35,10 @@ export async function viadometroCommand(client: WASocket, botInfo: Bot, message:
     const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
     const replyText = buildText(commandsData.fun.viadometro.msgs.reply, randomNumber)
-    await baileysController.replyText(message.chat_id, replyText, messageToReply, message.expiration)   
+    await Whatsapp.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
 }
 
 export async function detectorCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -55,12 +51,11 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
     const truthMachineResult = generalLibrary.truthMachine()
     const waitReply = commandsData.fun.detector.msgs.wait
-    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', truthMachineResult.calibration_url, waitReply, quotedMessage, message.expiration)
-    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', truthMachineResult.result_url, '', quotedMessage, message.expiration)
+    await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.calibration_url, waitReply, quotedMessage, {expiration: message.expiration})
+    await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.result_url, '', quotedMessage, {expiration: message.expiration})
 }
 
 export async function roletarussaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -78,13 +73,12 @@ export async function roletarussaCommand(client: WASocket, botInfo: Bot, message
     let chosenParticipant = eligibleParticipants[randomIndex]
     const waitReply = commandsData.fun.roletarussa.msgs.wait
     const replyText = buildText(commandsData.fun.roletarussa.msgs.reply, removeWhatsappSuffix(chosenParticipant))
-    await baileysController.replyText(message.chat_id, waitReply, message.wa_message, message.expiration)
-    await baileysController.sendTextWithMentions(message.chat_id, replyText, [chosenParticipant], message.expiration)
-    await baileysController.removeParticipant(message.chat_id, chosenParticipant) 
+    await Whatsapp.replyText(client, message.chat_id, waitReply, message.wa_message, {expiration: message.expiration})
+    await Whatsapp.sendTextWithMentions(client, message.chat_id, replyText, [chosenParticipant], {expiration: message.expiration})
+    await Whatsapp.removeParticipant(client, message.chat_id, chosenParticipant) 
 }
 
 export async function casalCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
    
@@ -100,11 +94,10 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
     randomIndex = Math.floor(Math.random() * currentParticipants.length)
     let chosenParticipant2 = currentParticipants[randomIndex]
     let replyText = buildText(commandsData.fun.casal.msgs.reply, removeWhatsappSuffix(chosenParticipant1), removeWhatsappSuffix(chosenParticipant2))
-    await baileysController.sendTextWithMentions(message.chat_id, replyText, [chosenParticipant1, chosenParticipant2], message.expiration)
+    await Whatsapp.sendTextWithMentions(client, message.chat_id, replyText, [chosenParticipant1, chosenParticipant2], {expiration: message.expiration})
 }
 
 export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const validChoices = ['cara', 'coroa']
     const userChoice = message.text_command.toLowerCase()
@@ -113,7 +106,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     
     const flipCoinInfo = generalLibrary.flipCoin()
     const waitText = commandsData.fun.caracoroa.msgs.wait
-    await baileysController.replyText(message.chat_id, waitText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
 
     const isUserVictory = flipCoinInfo.chosen_side == userChoice
     let replyText : string
@@ -121,11 +114,10 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     if (isUserVictory) replyText = buildText(commandsData.fun.caracoroa.msgs.reply_victory, uppercaseFirst(flipCoinInfo.chosen_side))
     else replyText = buildText(commandsData.fun.caracoroa.msgs.reply_defeat, uppercaseFirst(flipCoinInfo.chosen_side))
     
-    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', flipCoinInfo.image_coin_url, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', flipCoinInfo.image_coin_url, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function pptCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
     const validChoices = ["pedra", "papel", "tesoura"]
@@ -162,11 +154,10 @@ export async function pptCommand(client: WASocket, botInfo: Bot, message: Messag
     else if (isUserVictory === false) replyText = buildText(commandsData.fun.ppt.msgs.reply_defeat, userIconChoice, botIconChoice)
     else replyText = buildText(commandsData.fun.ppt.msgs.reply_draw, userIconChoice, botIconChoice)
     
-    await baileysController.replyText(message.chat_id, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function gadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
    
@@ -177,11 +168,10 @@ export async function gadometroCommand(client: WASocket, botInfo: Bot, message: 
     const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
     const replyText = buildText(commandsData.fun.gadometro.msgs.reply, randomNumber)
-    await baileysController.replyText(message.chat_id, replyText, messageToReply, message.expiration)   
+    await Whatsapp.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
 }
 
 export async function bafometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
    
@@ -192,11 +182,10 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
     const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
     const replyText = buildText(commandsData.fun.bafometro.msgs.reply, randomNumber)
-    await baileysController.replyText(message.chat_id, replyText, messageToReply, message.expiration)   
+    await Whatsapp.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
 }
 
 export async function top5Command(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -235,11 +224,10 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
         currentParticipants.splice(currentParticipants.indexOf(chosenParticipant, 1))                
     }
 
-    await baileysController.sendTextWithMentions(message.chat_id, replyText, mentionList, message.expiration)
+    await Whatsapp.sendTextWithMentions(client, message.chat_id, replyText, mentionList, {expiration: message.expiration})
 }
 
 export async function parCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -248,11 +236,10 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
 
     const randomNumber = Math.floor(Math.random() * 100)
     let replyText = buildText(commandsData.fun.par.msgs.reply, removeWhatsappSuffix(message.mentioned[0]), removeWhatsappSuffix(message.mentioned[1]), randomNumber)
-    await baileysController.sendTextWithMentions(message.chat_id, replyText, message.mentioned, message.expiration)
+    await Whatsapp.sendTextWithMentions(client, message.chat_id, replyText, message.mentioned, {expiration: message.expiration})
 }
 
 export async function chanceCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const generalMessages = getGeneralMessages(botInfo)
 
@@ -261,13 +248,12 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
     const randomNumber = Math.floor(Math.random() * 100)
     const replyText = buildText(commandsData.fun.chance.msgs.reply, randomNumber, message.text_command)
     const messageToReply = (message.isQuoted && message.quotedMessage) ? message.quotedMessage?.wa_message : message.wa_message
-    await baileysController.replyText(message.chat_id, replyText, messageToReply, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})
 }
 
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     const phraseResult = await generalLibrary.funnyRandomPhrases()
     const replyText =  buildText(commandsData.fun.frase.msgs.reply, phraseResult.text)
-    await baileysController.replyFileFromUrl(message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message, message.expiration)
+    await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message, {expiration: message.expiration})
 }

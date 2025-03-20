@@ -35,6 +35,7 @@ export class GroupService {
             admins,
             owner: group.owner,
             restricted: group.announce,
+            expiration: group.ephemeralDuration,
             muted : false,
             welcome : { status: false, msg: '' },
             antifake : { status: false, allowed: [] },
@@ -62,7 +63,8 @@ export class GroupService {
             participants,
             admins,
             owner: group.owner,
-            restricted: group.announce
+            restricted: group.announce,
+            expiration: group.ephemeralDuration
         }})
     }
 
@@ -75,6 +77,7 @@ export class GroupService {
             if (group.desc) return this.setDescription(group.id, group.desc)
             if (group.subject) return this.setName(group.id, group.subject)
             if (group.announce) return this.setRestricted(group.id, group.announce)
+            if (group.ephemeralDuration) return this.setExpiration(group.id, group.ephemeralDuration)
         }
     }
 
@@ -108,6 +111,10 @@ export class GroupService {
 
     public setRestricted(groupId: string, restricted: boolean){
         return db.groups.updateAsync({id: groupId}, { $set: { restricted } })
+    }
+
+    private setExpiration(groupId: string, expiration: number | undefined){
+        return db.groups.updateAsync({id: groupId}, { $set: { expiration } })
     }
 
     public setDescription(groupId: string, description?: string){

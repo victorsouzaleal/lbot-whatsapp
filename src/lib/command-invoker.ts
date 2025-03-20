@@ -3,11 +3,11 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { getCommandCategory, getCommandGuide, messageErrorCommand, removePrefix, showCommandConsole } from "./util.js";
 import { Group } from "../interfaces/group.interface.js";
-import { BaileysController } from "../controllers/baileys.controller.js";
 import { Commands, CategoryCommand} from "../interfaces/command.interface.js";
 import getCommands from "../commands/list.commands.js";
 import { autoSticker } from "../commands/category-sticker.commands.js";
 import getGeneralMessages from "./general-messages.js";
+import { replyText } from "./whatsapp.js";
 
 export async function commandInvoker(client: WASocket, botInfo: Bot, message: Message, group: Group|null){
     const isGuide = (!message.args.length) ? false : message.args[0] === 'guia'
@@ -115,11 +115,11 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
         }
     } catch(err: any){
-        await new BaileysController(client).replyText(message.chat_id, messageErrorCommand(botInfo, message.command, err.message), message.wa_message, message.expiration)
+        await replyText(client, message.chat_id, messageErrorCommand(botInfo, message.command, err.message), message.wa_message, {expiration: message.expiration})
     }
 
 }
 
 async function sendCommandGuide(client: WASocket, botInfo: Bot, message : Message, category: CategoryCommand){
-    await new BaileysController(client).replyText(message.chat_id, getCommandGuide(botInfo, message.command, category), message.wa_message, message.expiration)
+    await replyText(client, message.chat_id, getCommandGuide(botInfo, message.command, category), message.wa_message, {expiration: message.expiration})
 }

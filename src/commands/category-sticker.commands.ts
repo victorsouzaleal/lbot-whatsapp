@@ -2,14 +2,13 @@ import { downloadMediaMessage, WASocket } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
-import { BaileysController } from "../controllers/baileys.controller.js"
+import * as Whatsapp from '../lib/whatsapp.js'
 import { messageErrorCommandUsage} from "../lib/util.js"
 import { imageLibrary, stickerLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getCommands from "./list.commands.js"
 
 
 export async function sCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     let stickerType : "resize" | "contain" | "circle" =  'resize'
 
@@ -28,11 +27,10 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     
     let mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker.trim(), author: botInfo.author_sticker.trim(), fps: 9, type: stickerType})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
+    await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
 export async function simgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     if (!message.isQuoted) throw new Error(messageErrorCommandUsage(botInfo, message))
@@ -40,11 +38,10 @@ export async function simgCommand(client: WASocket, botInfo: Bot, message: Messa
 
     let stickerBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
     let imageBuffer = await stickerLibrary.stickerToImage(stickerBuffer)
-    await baileysController.replyFileFromBuffer(message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, message.expiration, 'image/png')
+    await Whatsapp.replyFileFromBuffer(client, message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'image/png'})
 }
 
 export async function ssfCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
     let messageData = {
         type : (message.isQuoted) ? message.quotedMessage?.type : message.type,
@@ -54,15 +51,14 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
     if (!messageData.type || !messageData.message) throw new Error(commandsData.sticker.ssf.msgs.error_message)
     if (messageData.type != "imageMessage") throw new Error(commandsData.sticker.ssf.msgs.error_image)
 
-    await baileysController.replyText(message.chat_id, commandsData.sticker.ssf.msgs.wait, message.wa_message, message.expiration)
+    await Whatsapp.replyText(client, message.chat_id, commandsData.sticker.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     const imageBuffer = await imageLibrary.removeBackground(mediaBuffer)
     const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
+    await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
 export async function emojimixCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
@@ -73,11 +69,10 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
 
     const imageBuffer = await imageLibrary.emojiMix(emoji1.trim(), emoji2.trim())
     const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
+    await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
 export async function snomeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
     const commandsData = getCommands(botInfo)
 
     if (!message.isQuoted || message.quotedMessage?.type != "stickerMessage") throw new Error(messageErrorCommandUsage(botInfo, message))
@@ -96,17 +91,15 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
 
     let stickerBuffer = await downloadMediaMessage(messageQuotedData, 'buffer', {})
     let stickerRenamedBuffer = await stickerLibrary.renameSticker(stickerBuffer, pack, author)
-    await baileysController.sendSticker(message.chat_id, stickerRenamedBuffer, message.expiration)
+    await Whatsapp.sendSticker(client, message.chat_id, stickerRenamedBuffer, {expiration: message.expiration})
 }
 
 export async function autoSticker(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const baileysController = new BaileysController(client)
-
     if (message.type != 'imageMessage' && message.type != "videoMessage") return
     if (message.type == "videoMessage" && message.media?.seconds && message.media?.seconds > 9) return
 
     let mediaBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
     let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
-    await baileysController.sendSticker(message.chat_id, stickerBuffer, message.expiration)
+    await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
