@@ -1,7 +1,7 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
-## 3.0.0 - 21/03/2025
+## 3.0.0 - ???
 
 ### GERAL
 - O projeto foi totalmente reescrito para Typescript.
@@ -64,6 +64,7 @@ Colocarei neste arquivos as mudanças significativas em cada versão começando 
 - Comando **!enquete** foi removido.
 - Comando **!regras** foi removido e foi integrado ao **!grupo**
 - Comando **!rastreio** foi removido por não ter mais suporte dos Correios.
+- Comandos **!ia** e **!criarimg** removidos, e serão adicionados novamente se voltarem a funcionar ou eu achar alguma alternativa gratuita.
 - Comando **!bantodos** foi removido.
 - Comando **ibanir** foi removido.
 - Comando **!infobot** foi removido, o comando **!info** vai servir para a função dele.
