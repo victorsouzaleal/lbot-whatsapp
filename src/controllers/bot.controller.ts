@@ -1,5 +1,7 @@
+import { proto } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import { BotService } from "../services/bot.service.js"
+import NodeCache from "node-cache"
 
 export class BotController {
     private botService
@@ -30,6 +32,14 @@ export class BotController {
 
     public setPrefix(prefix: string){
         return this.botService.setPrefix(prefix)
+    }
+
+    public storeMessageOnCache(message : proto.IWebMessageInfo, messageCache : NodeCache){
+        return this.botService.storeMessageOnCache(message, messageCache)
+    }
+
+    public getMessageFromCache(messageId: string, messageCache: NodeCache){
+        return this.botService.getMessageFromCache(messageId, messageCache)
     }
 
     public incrementExecutedCommands(){

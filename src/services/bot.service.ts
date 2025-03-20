@@ -6,6 +6,8 @@ import moment from "moment-timezone"
 import { buildText, commandExist, removePrefix } from "../lib/util.js"
 import getCommands from "../commands/list.commands.js"
 import Datastore from "@seald-io/nedb";
+import { proto } from "baileys"
+import NodeCache from "node-cache"
 
 const db = {
     command_rate: new Datastore<UserCommandRate>({filename : './storage/command-rate.bot.db', autoload: true})
@@ -93,6 +95,17 @@ export class BotService {
         return this.updateBot(bot)
     }
 
+    public storeMessageOnCache(message : proto.IWebMessageInfo, messageCache : NodeCache){
+        if (message.key.remoteJid && message.key.id && message.message){
+            messageCache.set(message.key.id, message.message)
+        }    
+    }
+
+    public getMessageFromCache(messageId: string, messageCache: NodeCache){
+        let message = messageCache.get(messageId) as proto.IMessage | undefined 
+        return message
+    }
+    
     public incrementExecutedCommands(){
         let bot = this.getBot()
         bot.executed_cmds++

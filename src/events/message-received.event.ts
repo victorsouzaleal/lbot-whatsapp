@@ -1,11 +1,12 @@
 import {getContentType, WASocket, WAMessage, MessageUpsertType} from 'baileys'
 import { showConsoleError} from '../lib/util.js'
-import { MessageController } from '../controllers/message.controller.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import NodeCache from 'node-cache'
 import { UserController } from '../controllers/user.controller.js'
 import { handleGroupMessage, handlePrivateMessage } from '../lib/message-handler.js'
 import { GroupController } from '../controllers/group.controller.js'
+import { BotController } from '../controllers/bot.controller.js'
+import { formatWAMessage } from '../lib/format-message.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){
     try{
@@ -14,7 +15,7 @@ export async function messageReceived (client: WASocket, messages : {messages: W
         const contentType = getContentType(messages.messages[0].message)
 
         if (!contentType) return
-        if (messages.messages[0].key.fromMe) new MessageController().storeMessage(messages.messages[0], messageCache)
+        if (messages.messages[0].key.fromMe) new BotController().storeMessageOnCache(messages.messages[0], messageCache)
 
         switch(messages.type){
             case 'notify':
@@ -24,7 +25,7 @@ export async function messageReceived (client: WASocket, messages : {messages: W
                 const idChat = messages.messages[0].key.remoteJid
                 const isGroupMsg = idChat?.includes("@g.us")
                 const group = (isGroupMsg && idChat) ? await groupController.getGroup(idChat) : null
-                let message = new MessageController().formatWAMessage(messages.messages[0], group, botInfo.host_number, admins)
+                let message = formatWAMessage(messages.messages[0], group, botInfo.host_number, admins)
 
                 if (message){
                     await userController.registerUser(message.sender, message.pushname)
