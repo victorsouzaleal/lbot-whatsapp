@@ -81,10 +81,10 @@
     events "^3.3.0"
     ws "^8.17.0"
 
-"@distube/ytdl-core@^4.16.4":
-  version "4.16.4"
-  resolved "https://registry.yarnpkg.com/@distube/ytdl-core/-/ytdl-core-4.16.4.tgz#de5791d1d4bee9e2ffb3480d6f79fae7cbfeb3e3"
-  integrity sha512-r0ZPMMB5rbUSQSez//dYDWjPSAEOm6eeV+9gyR+1vngGYFUi953Z/CoF4epTBS40X8dR32gyH3ERlh7NbnCaRg==
+"@distube/ytdl-core@^4.16.5":
+  version "4.16.5"
+  resolved "https://registry.yarnpkg.com/@distube/ytdl-core/-/ytdl-core-4.16.5.tgz#b5b6d7c43cf54a1309674801b42cb2eef2cb15ac"
+  integrity sha512-sl84k2iNVJSiONR+ZpXJOYKBqx4wnH/VrNClsQbMR7fIveBxLZnd6eBRP8IE6mwyaJTbbc7JEHarGB2i8eNH6A==
   dependencies:
     http-cookie-agent "^6.0.8"
     https-proxy-agent "^7.0.6"
@@ -772,13 +772,13 @@
     "@typescript-eslint/types" "7.18.0"
     eslint-visitor-keys "^3.4.3"
 
-"@victorsouzaleal/biblioteca-lbot@^2.2.4":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@victorsouzaleal/biblioteca-lbot/-/biblioteca-lbot-2.2.4.tgz#691da3a14f916895a77bfb8a22063f5c3ae68866"
-  integrity sha512-peWWc6/3VqHBo2e7cs7PqjUL7cTTf5zbCDeE0SoJJIz7l0MEobTuJlFRMRbGqapACAOc59tEW2Z3ogD5o9gjgw==
+"@victorsouzaleal/biblioteca-lbot@^2.2.6":
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/@victorsouzaleal/biblioteca-lbot/-/biblioteca-lbot-2.2.6.tgz#b8748a5fbfba845823f918f44267fd579c926983"
+  integrity sha512-m/oQqkFA5fYic1ItG7jHWCmYx2Og0h7UllEhuKChBc1BjDWsC710FmjMk7ayGrnnEKsalrU0w5GID/vQDFwd0Q==
   dependencies:
     "@deepgram/sdk" "^3.5.1"
-    "@distube/ytdl-core" "^4.16.4"
+    "@distube/ytdl-core" "^4.16.5"
     "@tobyg74/tiktok-api-dl" "^1.1.9"
     "@victorsouzaleal/brasileirao" "^1.1.1"
     "@victorsouzaleal/googlethis" "^1.8.1"

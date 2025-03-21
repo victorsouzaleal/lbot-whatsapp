@@ -1,6 +1,18 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.0.1 - 21/03/2025
+
+### NOVO
+- Novos comandos **!sorteio** para sortear um número.
+- Novo comando **!sorteiomembro** para sortear um membro do grupo.
+
+### MUDANÇAS
+- O comando **!roletarussa** foi reescrito para ficar mais fiel ao jogo real e agora funciona também em chat privado.
+
+### CORREÇÕES
+- Agora se o atualizador não se conseguir se conectar ao GitHub ele não irá impedir de inicializar o bot.
+
 ## 3.0.0 - 21/03/2025
 
 ### GERAL
