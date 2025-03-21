@@ -1,15 +1,18 @@
 {
   "name": "lbot-whatsapp",
-  "version": "2.10.8",
+  "version": "3.0.0",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
+  "main": "dist/app.js",
   "type": "module",
-  "exports": "./app.js",
   "scripts": {
-    "start": "yarn upgrade @victorsouzaleal/lbot-api-comandos --silent && node app.js",
-    "dev": "node app.js"
+    "start": "node dist/app.js",
+    "test": "node dist/app.js",
+    "prestart": "yarn add @victorsouzaleal/biblioteca-lbot baileys --silent",
+    "pretest": "yarn run build",
+    "build": "tsc"
   },
   "author": "Leal",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "repository": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git",
   "keywords": [
     "whatsapp",
@@ -17,21 +20,27 @@
     "bot",
     "sticker"
   ],
+  "devDependencies": {
+    "@types/format-duration": "^3.0.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.13.1",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.8.1-rc"
+  },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
-    "@victorsouzaleal/lbot-api-comandos": "^1.0.15",
-    "@whiskeysockets/baileys": "^6.7.9",
-    "chalk": "^4.1.2",
-    "dotenv": "^8.6.0",
-    "format-duration-time": "^1.5.4",
-    "fs-extra": "^9.0.1",
-    "jimp": "^0.16.1",
-    "link-preview-js": "^3.0.5",
-    "moment-timezone": "^0.5.31",
+    "@types/prompt-sync": "^4.2.3",
+    "@victorsouzaleal/biblioteca-lbot": "^2.2.4",
+    "baileys": "^6.7.16",
+    "chalk": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "format-duration": "^3.0.2",
+    "fs-extra": "^11.3.0",
+    "instagram-url-direct": "^2.0.2",
+    "moment-timezone": "^0.5.47",
     "node-cache": "^5.1.2",
-    "p-queue": "^8.0.1",
-    "pino": "^8.21.0",
+    "pino": "7.11.0",
     "qrcode-terminal": "^0.12.0"
   }
 }
