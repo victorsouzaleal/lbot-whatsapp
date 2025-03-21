@@ -12,7 +12,7 @@
     "build": "tsc"
   },
   "author": "Leal",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "repository": "git+https://github.com/victorsouzaleal/lbot-whatsapp.git",
   "keywords": [
     "whatsapp",
@@ -31,7 +31,7 @@
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
     "@types/prompt-sync": "^4.2.3",
-    "@victorsouzaleal/biblioteca-lbot": "^2.2.3",
+    "@victorsouzaleal/biblioteca-lbot": "^2.2.4",
     "baileys": "^6.7.16",
     "chalk": "^4.1.0",
     "dotenv": "^16.4.7",
