@@ -8,6 +8,32 @@ import { generalLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getGeneralMessages from "../../lib/general-messages.lib.js"
 import { commandsMisc } from "./commands-list.misc.js"
 
+export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const miscCommands = commandsMisc(botInfo)
+
+    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const chosenNumber = Number(message.text_command)
+
+    if(!chosenNumber || chosenNumber <= 1) throw new Error(miscCommands.sorteio.msgs.error_invalid_value)
+    
+    const randomNumber = Math.floor(Math.random() * chosenNumber) + 1
+    const replyText = buildText(miscCommands.sorteio.msgs.reply, randomNumber)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const miscCommands = commandsMisc(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
+
+    if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
+
+    const currentParticipants = group.participants
+    const randomParticipant = currentParticipants[Math.floor(Math.random() * currentParticipants.length)]
+    const replyText = buildText(miscCommands.sorteiomembro.msgs.reply, Whatsapp.removeWhatsappSuffix(randomParticipant))
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyText, [randomParticipant], message.wa_message, {expiration: message.expiration})
+}
+
 export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
     const PIC_URL = "https://i.imgur.com/mVwa7q4.png"

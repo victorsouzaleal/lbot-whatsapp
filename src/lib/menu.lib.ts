@@ -209,6 +209,10 @@ export const miscMenu = (botInfo : Bot) =>{
 ┣► *${prefix}ppt* opção - Joga pedra, papel e tesoura
 ┣► *${prefix}caracoroa* - Joga cara ou coroa
  ▎
+ ┣━━ ✦ 🎲 *SORTEIO* ✦
+ ▎
+┣► *${prefix}sorteio* numero - Sorteia um número até esse valor.
+ ▎
 ┣━━ ✦ 🧩 *ENTRETENIMENTO* ✦
  ▎
 ┣► *${prefix}mascote* - Onipotente e onipresente WhatsApp Jr
@@ -230,6 +234,11 @@ export const miscGroupMenu = (botInfo : Bot) =>{
  ▎
 ┣► *${prefix}ppt* opcão - Joga pedra, papel e tesoura
 ┣► *${prefix}caracoroa* - Joga cara ou coroa
+ ▎
+┣━━ ✦ 🎲 *SORTEIO* ✦
+ ▎
+┣► *${prefix}sorteio* numero - Sorteia um número até esse valor.
+┣► *${prefix}sorteiomembro* - Sorteia um membro do grupo.
  ▎
 ┣━━ ✦ 🧩 *ENTRETENIMENTO* ✦
  ▎

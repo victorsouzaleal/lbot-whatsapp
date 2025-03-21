@@ -4,6 +4,25 @@ import * as miscFunctions from './commands-functions.misc.js'
 export function commandsMisc(botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name
     const misc = {
+        sorteio: {
+            guide: `Ex: *${PREFIX}sorteio* 100 - Sorteia um número aleatório de 1 a 100.\n`,
+            msgs: {
+                reply: `🎲 *Sorteio (Número)*: \n`+
+                '────────────────────────\n'+
+                `O número sorteado foi *{p1}*`,
+                error_invalid_value: 'O valor do número inserido é inválido, escolha um número maior que 1.'
+            },
+            function: miscFunctions.sorteioCommand
+        },
+        sorteiomembro: {
+            guide: `Ex: *${PREFIX}sorteiomembro* - Sorteia um membro aleatório do grupo.\n`,
+            msgs: {
+                reply: `🎲 *Sorteio (Membro)*: \n`+
+                '────────────────────────\n'+
+                `O membro sorteado foi @{p1}`,
+            },
+            function: miscFunctions.sorteiomembroCommand
+        },
         mascote: {
             guide: `Ex: *${PREFIX}mascote* - Exibe o inigualável e onipotente WhatsApp Jr.\n`,
             msgs: {
