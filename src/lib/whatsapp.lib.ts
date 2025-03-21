@@ -1,6 +1,6 @@
-import { GroupMetadata, WAMessage, WAPresence, WASocket } from "baileys"
-import { randomDelay } from "./util.js"
-import { MessageOptions, MessageTypes, MimeTypes } from "../interfaces/message.interface.js"
+import { GroupMetadata, WAMessage, WAPresence, WASocket, S_WHATSAPP_NET } from "baileys"
+import { randomDelay } from "./util.lib.js"
+import { MessageOptions, MessageTypes } from "../interfaces/message.interface.js"
 import { convertLibrary } from "@victorsouzaleal/biblioteca-lbot"
 
 async function updatePresence(client: WASocket, chatId: string, presence: WAPresence){
@@ -9,6 +9,40 @@ async function updatePresence(client: WASocket, chatId: string, presence: WAPres
     await client.sendPresenceUpdate(presence, chatId)
     await randomDelay(300, 1000)
     await client.sendPresenceUpdate('paused', chatId)
+}
+
+export function addWhatsappSuffix(userNumber : string){
+    const userId = userNumber.replace(/\W+/g,"") + S_WHATSAPP_NET
+    return userId
+}
+
+export function removeWhatsappSuffix(userId: string){
+    const userNumber = userId.replace(S_WHATSAPP_NET, '')
+    return userNumber
+}
+
+export function removePrefix(prefix: string, command: string){
+    const commandWithoutPrefix = command.replace(prefix, '')
+    return commandWithoutPrefix
+}
+
+export function getGroupParticipantsByMetadata(group : GroupMetadata){ 
+    const {participants} = group
+    let groupParticipants : string[] = []
+    participants.forEach((participant)=>{
+        groupParticipants.push(participant.id)
+    })
+    return groupParticipants
+}
+
+export function getGroupAdminsByMetadata(group: GroupMetadata){ 
+    const {participants} = group
+    const admins = participants.filter(user => (user.admin != null))
+    let groupAdmins : string[] = []
+    admins.forEach((admin)=>{
+        groupAdmins.push(admin.id)
+    })
+    return groupAdmins
 }
 
 export function deleteMessage(client: WASocket, message : WAMessage, deleteQuoted : boolean){

@@ -2,85 +2,9 @@ import moment from "moment-timezone"
 import chalk from 'chalk'
 import path from 'node:path'
 import fs from 'fs-extra'
-import { GroupMetadata, S_WHATSAPP_NET } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
-import {CategoryCommand, Commands } from "../interfaces/command.interface.js"
-import getCommands from "../commands/list.commands.js"
-import getGeneralMessages from "./general-messages.js"
+import getGeneralMessages from "./general-messages.lib.js"
 import { Message } from "../interfaces/message.interface.js"
-
-export function commandExist(botInfo: Bot, command: string, category? : CategoryCommand){
-    const commandsData = getCommands(botInfo)
-    let commands
-    if (!category){
-        commands = [
-            ...Object.keys(commandsData.utility),
-            ...Object.keys(commandsData.fun),
-            ...Object.keys(commandsData.info),
-            ...Object.keys(commandsData.group),
-            ...Object.keys(commandsData.admin),
-            ...Object.keys(commandsData.sticker),
-            ...Object.keys(commandsData.download),
-        ].map(command => botInfo.prefix+command)
-    } else {
-        commands = Object.keys(commandsData[category]).map(command => botInfo.prefix+command)
-    }
-    return commands.includes(command)
-}
-
-export function getCommandCategory(command: string, prefix: string){
-    const commandsData = getCommands()
-    const categories = Object.keys(commandsData)
-    let foundCategory : CategoryCommand | null = null 
-    for (let category of categories){
-        const commandsCategory = Object.keys(commandsData[category as CategoryCommand])
-        if (commandsCategory.includes(removePrefix(prefix, command))) foundCategory = category as CategoryCommand
-    }
-    return foundCategory
-}
-
-export function getCommandGuide(botInfo: Bot, command: string, category : CategoryCommand){
-    const commandsData = getCommands(botInfo)
-    const {guide_header_text} = getGeneralMessages(botInfo)
-    const {prefix} = botInfo
-    command = removePrefix(prefix, command)
-    const commandsCategory  = commandsData[category] as Commands
-    return guide_header_text + commandsCategory[command].guide
-}
-
-export function addWhatsappSuffix(userNumber : string){
-    const userId = userNumber.replace(/\W+/g,"") + S_WHATSAPP_NET
-    return userId
-}
-
-export function removeWhatsappSuffix(userId: string){
-    const userNumber = userId.replace(S_WHATSAPP_NET, '')
-    return userNumber
-}
-
-export function removePrefix(prefix: string, command: string){
-    const commandWithoutPrefix = command.replace(prefix, '')
-    return commandWithoutPrefix
-}
-
-export function getGroupParticipantsByMetadata(group : GroupMetadata){ 
-    const {participants} = group
-    let groupParticipants : string[] = []
-    participants.forEach((participant)=>{
-        groupParticipants.push(participant.id)
-    })
-    return groupParticipants
-}
-
-export function getGroupAdminsByMetadata(group: GroupMetadata){ 
-    const {participants} = group
-    const admins = participants.filter(user => (user.admin != null))
-    let groupAdmins : string[] = []
-    admins.forEach((admin)=>{
-        groupAdmins.push(admin.id)
-    })
-    return groupAdmins
-}
 
 export function messageErrorCommandUsage(botInfo: Bot, message: Message){
     const generalMessages = getGeneralMessages(botInfo)

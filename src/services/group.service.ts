@@ -4,10 +4,12 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
 import { GroupMetadata } from 'baileys'
-import { getGroupParticipantsByMetadata, getGroupAdminsByMetadata, timestampToDate, commandExist, buildText, removeWhatsappSuffix, removePrefix } from '../lib/util.js'
+import { timestampToDate, buildText } from '../lib/util.lib.js'
 import moment from 'moment-timezone'
-import getCommands from '../commands/list.commands.js'
-import getGeneralMessages from "../lib/general-messages.js";
+import getGeneralMessages from "../lib/general-messages.lib.js";
+import { commandsGroup } from "../commands/group/commands-list.group.js";
+import { commandExist, getCommandsByCategory } from "../commands/commands.util.js";
+import { getGroupAdminsByMetadata, getGroupParticipantsByMetadata, removePrefix, removeWhatsappSuffix } from "../lib/whatsapp.lib.js";
 
 const db = {
     groups : new Datastore<Group>({filename : './storage/groups.db', autoload: true}),
@@ -323,28 +325,28 @@ export class GroupService {
     // ***** BLOQUEAR/DESBLOQUEAR COMANDOS *****
     public async blockCommands(group: Group, commands : string[], botInfo: Bot){
         const { prefix } = botInfo
-        const commandsData = getCommands(botInfo)
+        const groupCommands = commandsGroup(botInfo)
         let blockedCommands : string[] = []
-        let blockResponse = commandsData.group.bcmd.msgs.reply_title
-        let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'fun']
+        let blockResponse = groupCommands.bcmd.msgs.reply_title
+        let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'misc']
 
-        if (commands[0] == 'diversao') commands[0] = 'fun'
+        if (commands[0] == 'variado') commands[0] = 'misc'
         if (commands[0] == 'utilidade') commands[0] = 'utility'
 
-        if (categories.includes(commands[0] as CategoryCommand)) commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix + command)
+        if (categories.includes(commands[0] as CategoryCommand)) commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
 
         for (let command of commands) {
-            if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'fun') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
+            if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'misc') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
                 if (group.block_cmds.includes(removePrefix(prefix, command))) {
-                    blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_already_blocked, command)
+                    blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_already_blocked, command)
                 } else {
                     blockedCommands.push(removePrefix(prefix, command))
-                    blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_blocked, command)
+                    blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_blocked, command)
                 }
             } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info')) {
-                blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_error, command)
+                blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_error, command)
             } else {
-                blockResponse += buildText(commandsData.group.bcmd.msgs.reply_item_not_exist, command)
+                blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_not_exist, command)
             }
         }
 
@@ -354,27 +356,27 @@ export class GroupService {
     }
 
     public async unblockCommand(group: Group, commands: string[], botInfo: Bot){
-        const commandsData = getCommands(botInfo)
+        const groupCommands = commandsGroup(botInfo)
         const { prefix } = botInfo
         let unblockedCommands : string[] = []
-        let unblockResponse = commandsData.group.dcmd.msgs.reply_title
-        let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'fun']
+        let unblockResponse = groupCommands.dcmd.msgs.reply_title
+        let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
 
         if (commands[0] == 'todos') commands[0] = 'all'
         if (commands[0] == 'utilidade') commands[0] = 'utility'
-        if (commands[0] == 'diversao') commands[0] = 'fun'
+        if (commands[0] == 'variado') commands[0] = 'misc'
 
         if (categories.includes(commands[0])) {
             if (commands[0] === 'all') commands = group.block_cmds.map(command => prefix + command)
-            else commands = Object.keys(commandsData[commands[0] as CategoryCommand]).map(command => prefix + command)
+            else commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
         }
 
         for (let command of commands) {
             if (group.block_cmds.includes(removePrefix(prefix, command))) {
                 unblockedCommands.push(removePrefix(prefix, command))
-                unblockResponse += buildText(commandsData.group.dcmd.msgs.reply_item_unblocked, command)
+                unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_unblocked, command)
             } else {
-                unblockResponse += buildText(commandsData.group.dcmd.msgs.reply_item_not_blocked, command)
+                unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_not_blocked, command)
             }
         }
 

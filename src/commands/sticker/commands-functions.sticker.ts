@@ -1,15 +1,14 @@
 import { downloadMediaMessage, WASocket } from "baileys"
-import { Bot } from "../interfaces/bot.interface.js"
-import { Group } from "../interfaces/group.interface.js"
-import { Message } from "../interfaces/message.interface.js"
-import * as Whatsapp from '../lib/whatsapp.js'
-import { messageErrorCommandUsage} from "../lib/util.js"
+import { Bot } from "../../interfaces/bot.interface.js"
+import { Group } from "../../interfaces/group.interface.js"
+import { Message } from "../../interfaces/message.interface.js"
+import * as Whatsapp from '../../lib/whatsapp.lib.js'
+import { messageErrorCommandUsage} from "../../lib/util.lib.js"
 import { imageLibrary, stickerLibrary } from "@victorsouzaleal/biblioteca-lbot"
-import getCommands from "./list.commands.js"
-
+import { commandsSticker } from "./commands-list.sticker.js"
 
 export async function sCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const commandsData = getCommands(botInfo)
+    const stickerCommands = commandsSticker(botInfo)
     let stickerType : "resize" | "contain" | "circle" =  'resize'
 
     if (message.args[0] === '1') stickerType = 'circle'
@@ -21,9 +20,9 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
         seconds: (message.isQuoted) ? message.quotedMessage?.media?.seconds : message.media?.seconds
     }
 
-    if (!messageData.type || !messageData.message) throw new Error(commandsData.sticker.s.msgs.error_message)
+    if (!messageData.type || !messageData.message) throw new Error(stickerCommands.s.msgs.error_message)
     if (messageData.type != "imageMessage" && messageData.type != "videoMessage") throw new Error(messageErrorCommandUsage(botInfo, message))
-    if (messageData.type == "videoMessage" && messageData.seconds && messageData.seconds  > 9) throw new Error(commandsData.sticker.s.msgs.error_limit)
+    if (messageData.type == "videoMessage" && messageData.seconds && messageData.seconds  > 9) throw new Error(stickerCommands.s.msgs.error_limit)
     
     let mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker.trim(), author: botInfo.author_sticker.trim(), fps: 9, type: stickerType})
@@ -31,10 +30,10 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
 }
 
 export async function simgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const commandsData = getCommands(botInfo)
+    const stickerCommands = commandsSticker(botInfo)
 
     if (!message.isQuoted) throw new Error(messageErrorCommandUsage(botInfo, message))
-    if (message.quotedMessage?.type != "stickerMessage") throw new Error(commandsData.sticker.simg.msgs.error_sticker)
+    if (message.quotedMessage?.type != "stickerMessage") throw new Error(stickerCommands.simg.msgs.error_sticker)
 
     let stickerBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
     let imageBuffer = await stickerLibrary.stickerToImage(stickerBuffer)
@@ -42,16 +41,16 @@ export async function simgCommand(client: WASocket, botInfo: Bot, message: Messa
 }
 
 export async function ssfCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const commandsData = getCommands(botInfo)
+    const stickerCommands = commandsSticker(botInfo)
     let messageData = {
         type : (message.isQuoted) ? message.quotedMessage?.type : message.type,
         message: (message.isQuoted) ? message.quotedMessage?.wa_message : message.wa_message
     }
 
-    if (!messageData.type || !messageData.message) throw new Error(commandsData.sticker.ssf.msgs.error_message)
-    if (messageData.type != "imageMessage") throw new Error(commandsData.sticker.ssf.msgs.error_image)
+    if (!messageData.type || !messageData.message) throw new Error(stickerCommands.ssf.msgs.error_message)
+    if (messageData.type != "imageMessage") throw new Error(stickerCommands.ssf.msgs.error_image)
 
-    await Whatsapp.replyText(client, message.chat_id, commandsData.sticker.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
+    await Whatsapp.replyText(client, message.chat_id, stickerCommands.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     const imageBuffer = await imageLibrary.removeBackground(mediaBuffer)
     const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
@@ -59,7 +58,7 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
 }
 
 export async function emojimixCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const commandsData = getCommands(botInfo)
+    const stickerCommands = commandsSticker(botInfo)
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
@@ -73,7 +72,7 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
 }
 
 export async function snomeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const commandsData = getCommands(botInfo)
+    const stickerCommands = commandsSticker(botInfo)
 
     if (!message.isQuoted || message.quotedMessage?.type != "stickerMessage") throw new Error(messageErrorCommandUsage(botInfo, message))
 
@@ -83,7 +82,7 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
 
     let messageQuotedData = message.quotedMessage.wa_message
 
-    if (!messageQuotedData.message?.stickerMessage) throw new Error(commandsData.sticker.snome.msgs.error_message)
+    if (!messageQuotedData.message?.stickerMessage) throw new Error(stickerCommands.snome.msgs.error_message)
     
     messageQuotedData.message.stickerMessage.url = (messageQuotedData.message.stickerMessage.url == "https://web.whatsapp.net") 
         ? `https://mmg.whatsapp.net${messageQuotedData.message.stickerMessage.directPath}` 

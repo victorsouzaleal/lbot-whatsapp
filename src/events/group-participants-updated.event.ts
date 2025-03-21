@@ -1,10 +1,10 @@
 import {WASocket, ParticipantAction} from 'baileys'
-import { buildText, removeWhatsappSuffix, showConsoleError} from '../lib/util.js'
+import { buildText, showConsoleError} from '../lib/util.lib.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getGeneralMessages from '../lib/general-messages.js'
-import { removeParticipant, sendTextWithMentions } from '../lib/whatsapp.js'
+import getGeneralMessages from '../lib/general-messages.lib.js'
+import { removeParticipant, removeWhatsappSuffix, sendTextWithMentions } from '../lib/whatsapp.lib.js'
 
 export async function groupParticipantsUpdated (client: WASocket, event: {id: string, author: string, participants: string[], action: ParticipantAction}, botInfo: Bot){
     try{

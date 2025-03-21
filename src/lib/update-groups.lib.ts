@@ -1,9 +1,9 @@
 import { WASocket, GroupMetadata } from 'baileys'
 import { BotController } from '../controllers/bot.controller.js'
-import { buildText, showConsoleError, colorText, getGroupParticipantsByMetadata, getGroupAdminsByMetadata, removeWhatsappSuffix } from './util.js'
+import { buildText, showConsoleError, colorText } from './util.lib.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getGeneralMessages from './general-messages.js'
-import { getAllGroups, removeParticipant, sendTextWithMentions } from './whatsapp.js'
+import getGeneralMessages from './general-messages.lib.js'
+import { getAllGroups, getGroupAdminsByMetadata, getGroupParticipantsByMetadata, removeParticipant, removeWhatsappSuffix, sendTextWithMentions } from './whatsapp.lib.js'
 
 export async function updateGroupsOnStart(client: WASocket){
     try{

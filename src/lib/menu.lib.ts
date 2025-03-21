@@ -14,7 +14,7 @@ export const mainMenu  = (botInfo : Bot)=> {
 ┣► *${prefix}menu* 2  ⚒️ Utilidades
 ┣► *${prefix}menu* 3  📥 Downloads
 ┣► *${prefix}menu* 4  👨‍👩‍👧‍👦 Grupo
-┣► *${prefix}menu* 5  🕹️ Diversão/Jogos
+┣► *${prefix}menu* 5  🧩 Variado
  ▎
 ┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }
@@ -197,8 +197,8 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 ┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }
 
-// MENU - DIVERSÃO
-export const funMenu = (botInfo : Bot) =>{
+// MENU - VARIADO
+export const miscMenu = (botInfo : Bot) =>{
     let {name, prefix} = botInfo
     return `┏━━━ ✦ *🤖 ${name?.trim()}* ✦
  ▎
@@ -209,7 +209,7 @@ export const funMenu = (botInfo : Bot) =>{
 ┣► *${prefix}ppt* opção - Joga pedra, papel e tesoura
 ┣► *${prefix}caracoroa* - Joga cara ou coroa
  ▎
-┣━━ ✦ 🧩 *DIVERSÃO* ✦
+┣━━ ✦ 🧩 *ENTRETENIMENTO* ✦
  ▎
 ┣► *${prefix}mascote* - Onipotente e onipresente WhatsApp Jr
 ┣► *${prefix}frase* - Frase dúvidosa do WhatsApp Jr
@@ -219,8 +219,8 @@ export const funMenu = (botInfo : Bot) =>{
 ┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }
 
-// MENU - DIVERSÃO (GRUPO)
-export const funGroupMenu = (botInfo : Bot) =>{
+// MENU - VARIADO (GRUPO)
+export const miscGroupMenu = (botInfo : Bot) =>{
     let {name, prefix} = botInfo
     return `┏━━━ ✦ *🤖 ${name?.trim()}* ✦
  ▎
@@ -231,7 +231,7 @@ export const funGroupMenu = (botInfo : Bot) =>{
 ┣► *${prefix}ppt* opcão - Joga pedra, papel e tesoura
 ┣► *${prefix}caracoroa* - Joga cara ou coroa
  ▎
-┣━━ ✦ 🧩 *DIVERSÃO* ✦
+┣━━ ✦ 🧩 *ENTRETENIMENTO* ✦
  ▎
 ┣► *${prefix}mascote* - Onipotente e onipresente WhatsApp Jr
 ┣► *${prefix}frase* - Frase dúvidosa do WhatsApp Jr

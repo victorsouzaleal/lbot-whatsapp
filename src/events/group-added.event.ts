@@ -1,9 +1,9 @@
 import {WASocket, GroupMetadata} from 'baileys'
-import { buildText, showConsoleError } from '../lib/util.js'
+import { buildText, showConsoleError } from '../lib/util.lib.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getGeneralMessages from '../lib/general-messages.js'
-import { sendText } from '../lib/whatsapp.js'
+import getGeneralMessages from '../lib/general-messages.lib.js'
+import { sendText } from '../lib/whatsapp.lib.js'
 
 export async function addedOnGroup (client: WASocket, groupMetadata: GroupMetadata[], botInfo: Bot){
     try{

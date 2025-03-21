@@ -1,4 +1,4 @@
-import { GroupMetadata, WASocket, ParticipantAction } from "baileys"
+import { GroupMetadata } from "baileys"
 import { GroupService } from "../services/group.service.js"
 import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"

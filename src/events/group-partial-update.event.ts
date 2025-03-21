@@ -1,5 +1,5 @@
 import { GroupMetadata } from 'baileys'
-import { showConsoleError} from '../lib/util.js'
+import { showConsoleError} from '../lib/util.lib.js'
 import { GroupController } from '../controllers/group.controller.js'
 
 export async function partialGroupUpdate (groupData : Partial<GroupMetadata>){

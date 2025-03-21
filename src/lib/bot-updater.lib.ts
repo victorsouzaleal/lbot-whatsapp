@@ -1,6 +1,6 @@
 import { miscLibrary } from "@victorsouzaleal/biblioteca-lbot";
-import { colorText, getCurrentBotVersion } from "./util.js";
-import getGeneralMessages from "./general-messages.js";
+import { colorText, getCurrentBotVersion } from "./util.lib.js";
+import getGeneralMessages from "./general-messages.lib.js";
 import { BotController } from "../controllers/bot.controller.js";
 
 export async function botUpdater(){

@@ -1,12 +1,13 @@
 import {getContentType, WASocket, WAMessage, MessageUpsertType} from 'baileys'
-import { showConsoleError} from '../lib/util.js'
+import { showConsoleError} from '../lib/util.lib.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import NodeCache from 'node-cache'
 import { UserController } from '../controllers/user.controller.js'
-import { handleGroupMessage, handlePrivateMessage } from '../lib/message-handler.js'
+import { handleGroupMessage, handlePrivateMessage } from '../lib/message-handler.lib.js'
 import { GroupController } from '../controllers/group.controller.js'
 import { BotController } from '../controllers/bot.controller.js'
-import { formatWAMessage } from '../lib/format-message.js'
+import { formatWAMessage } from '../lib/message-formatter.lib.js'
+import { commandInvoker } from '../commands/commands.invoker.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){
     try{
@@ -29,10 +30,15 @@ export async function messageReceived (client: WASocket, messages : {messages: W
 
                 if (message){
                     await userController.registerUser(message.sender, message.pushname)
-                    if (!isGroupMsg) await handlePrivateMessage(client, botInfo, message)
-                    else await handleGroupMessage(client, group, botInfo, message)
+                    let callCommand : boolean
+                    if (!isGroupMsg) {
+                        callCommand = await handlePrivateMessage(client, botInfo, message)
+                        if(callCommand) await commandInvoker(client, botInfo, message, null)
+                    } else {
+                        callCommand = await handleGroupMessage(client, group, botInfo, message)
+                        if(callCommand) await commandInvoker(client, botInfo, message, group)
+                    }
                 }
-
                 break
         }
     } catch(err: any){

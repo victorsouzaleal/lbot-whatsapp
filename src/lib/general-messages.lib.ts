@@ -18,6 +18,7 @@ export default function getGeneralMessages (botInfo? : Bot){
             new_group: "Saudações *{p1}* , se tiverem alguma dúvida só digitar "+`*${prefix}menu*`,
             guide_header_text: '❔ USO DO COMANDO ❔\n'+
             '────────────────────────\n',
+            no_guide_found: 'Não foi encontrado um guia para este comando.',
             error_command_usage: "Parece que você usou o comando *{p1}* incorretamente ou não sabe como utilizá-lo.\n\nDigite: *{p2} guia* para ver o guia e aprender sobre este comando.",
             error_command: "❗ Não foi possível realizar o comando *{p1}*.\n"+
             '────────────────────────\n'+

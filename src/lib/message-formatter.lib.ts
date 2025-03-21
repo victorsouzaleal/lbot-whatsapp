@@ -2,7 +2,7 @@ import { generateWAMessageFromContent, getContentType, proto, WAMessage } from "
 import { Message, MessageTypes } from "../interfaces/message.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { User } from "../interfaces/user.interface.js"
-import { removeBold } from "./util.js"
+import { removeBold } from "./util.lib.js"
 
 
 export function formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){

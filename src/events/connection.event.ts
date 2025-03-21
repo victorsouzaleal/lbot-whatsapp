@@ -3,10 +3,10 @@ import { Boom } from '@hapi/boom'
 import fs from "fs-extra"
 import dotenv from 'dotenv'
 import { BotController } from '../controllers/bot.controller.js'
-import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../lib/util.js'
-import getGeneralMessages from '../lib/general-messages.js'
+import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../lib/util.lib.js'
+import getGeneralMessages from '../lib/general-messages.lib.js'
 import { UserController } from '../controllers/user.controller.js'
-import { getHostNumber } from '../lib/whatsapp.js'
+import { getHostNumber } from '../lib/whatsapp.lib.js'
 
 export async function connectionOpen(client: WASocket){
     try{

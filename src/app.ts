@@ -10,9 +10,9 @@ import { messageReceived } from './events/message-received.event.js'
 import { addedOnGroup } from './events/group-added.event.js'
 import { groupParticipantsUpdated } from './events/group-participants-updated.event.js'
 import { partialGroupUpdate } from './events/group-partial-update.event.js'
-import { updateGroupsOnStart } from './lib/update-groups.js'
-import { executeEventQueue, queueEvent } from './lib/events-queue.js'
-import { botUpdater } from './lib/bot-updater.js'
+import { updateGroupsOnStart } from './lib/update-groups.lib.js'
+import { executeEventQueue, queueEvent } from './lib/events-queue.lib.js'
+import { botUpdater } from './lib/bot-updater.lib.js'
 
 //Cache de tentativa de envios
 const retryCache = new NodeCache()
