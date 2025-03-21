@@ -26,11 +26,11 @@
 
 <br>
 
-#### 1.4 - Agora clique em "Create Project" e depois preencha os dados como mostrado abaixo:
+#### 1.4 - Agora clique em "Create Project" , preencha os dados como mostrado abaixo e aperte em "Confirm"
 
 <br>
 
-<img src="https://i.imgur.com/530RtLA.png"/>
+<img src="https://i.imgur.com/gJSkUp5.png"/>
 
 <br>
 
