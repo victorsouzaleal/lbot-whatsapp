@@ -2,6 +2,7 @@ import { miscLibrary } from "@victorsouzaleal/biblioteca-lbot";
 import { colorText, getCurrentBotVersion } from "./util.lib.js";
 import getGeneralMessages from "./general-messages.lib.js";
 import { BotController } from "../controllers/bot.controller.js";
+import fs from 'fs-extra'
 
 export async function botUpdater(){
     const generalMessages = getGeneralMessages(new BotController().getBot())
@@ -16,6 +17,7 @@ export async function botUpdater(){
             console.log("[ATUALIZAÇÃO]", colorText(generalMessages.update_available_manual, '#d63e3e'))
         } else {
             console.log("[ATUALIZAÇÃO]", colorText(generalMessages.update_available, '#e0e031'))
+            fs.removeSync('./dist')
             await miscLibrary.makeUpdate('./')
             console.log("[ATUALIZAÇÃO]", colorText(generalMessages.bot_updated))
             hasBotUpdated = true
