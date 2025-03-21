@@ -4,6 +4,25 @@ import * as miscFunctions from './commands-functions.misc.js'
 export function commandsMisc(botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name
     const misc = {
+        sorteio: {
+            guide: `Ex: *${PREFIX}sorteio* 100 - Sorteia um número aleatório de 1 a 100.\n`,
+            msgs: {
+                reply: `🎲 *Sorteio (Número)*: \n`+
+                '────────────────────────\n'+
+                `O número sorteado foi *{p1}*`,
+                error_invalid_value: 'O valor do número inserido é inválido, escolha um número maior que 1.'
+            },
+            function: miscFunctions.sorteioCommand
+        },
+        sorteiomembro: {
+            guide: `Ex: *${PREFIX}sorteiomembro* - Sorteia um membro aleatório do grupo.\n`,
+            msgs: {
+                reply: `🎲 *Sorteio (Membro)*: \n`+
+                '────────────────────────\n'+
+                `O membro sorteado foi @{p1}`,
+            },
+            function: miscFunctions.sorteiomembroCommand
+        },
         mascote: {
             guide: `Ex: *${PREFIX}mascote* - Exibe o inigualável e onipotente WhatsApp Jr.\n`,
             msgs: {
@@ -41,14 +60,14 @@ export function commandsMisc(botInfo?: Bot){
             function: miscFunctions.detectorCommand
         },
         roletarussa: {
-            guide: `Ex: *${PREFIX}roletarussa* - Bane um membro aleatório do grupo.\n\n`+
-            `*Obs*: Comando apenas para administradores, pode banir qualquer um exceto o dono do grupo e o BOT.\n`,
+            guide: `Ex: *${PREFIX}roletarussa* - Teste sua sorte na roleta russa.\n\n`,
             msgs: {
-                error: "Não existem membros válidos para participarem da roleta.",
-                wait: "🎲 Sorteando uma vítima 🎲",
-                reply: '🔫 *Roleta russa*\n'+
+                reply_alive: '🔫 *Roleta russa*\n'+
                 '────────────────────────\n'+
-                "🫵 Você foi o escolhido @{p1}, até a próxima."
+                "😁 A arma não disparou, você sobreviveu a roleta russa.",
+                reply_dead: '🔫 *Roleta russa*\n'+
+                '────────────────────────\n'+
+                "💀 A arma disparou, você morreu.",
             },
             function: miscFunctions.roletarussaCommand
         },

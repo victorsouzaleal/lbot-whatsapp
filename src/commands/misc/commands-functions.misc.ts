@@ -8,6 +8,32 @@ import { generalLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getGeneralMessages from "../../lib/general-messages.lib.js"
 import { commandsMisc } from "./commands-list.misc.js"
 
+export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const miscCommands = commandsMisc(botInfo)
+
+    if(!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const chosenNumber = Number(message.text_command)
+
+    if(!chosenNumber || chosenNumber <= 1) throw new Error(miscCommands.sorteio.msgs.error_invalid_value)
+    
+    const randomNumber = Math.floor(Math.random() * chosenNumber) + 1
+    const replyText = buildText(miscCommands.sorteio.msgs.reply, randomNumber)
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const miscCommands = commandsMisc(botInfo)
+    const generalMessages = getGeneralMessages(botInfo)
+
+    if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
+
+    const currentParticipants = group.participants
+    const randomParticipant = currentParticipants[Math.floor(Math.random() * currentParticipants.length)]
+    const replyText = buildText(miscCommands.sorteiomembro.msgs.reply, Whatsapp.removeWhatsappSuffix(randomParticipant))
+    await Whatsapp.replyWithMentions(client, message.chat_id, replyText, [randomParticipant], message.wa_message, {expiration: message.expiration})
+}
+
 export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
     const PIC_URL = "https://i.imgur.com/mVwa7q4.png"
@@ -57,25 +83,15 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function roletarussaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
-    const generalMessages = getGeneralMessages(botInfo)
+    const bulletPosition = Math.floor(Math.random() * 6) + 1
+    const currentPosition = Math.floor(Math.random() * 6) + 1
+    const hasShooted  = (bulletPosition == currentPosition)
+    let replyText : string
 
-    if (!message.isGroupMsg || !group) throw new Error(generalMessages.permission.group)
-    if (!message.isGroupAdmin) throw new Error (generalMessages.permission.admin_group_only)
-    if (!group.admins.includes(botInfo.host_number)) throw new Error(generalMessages.permission.bot_group_admin)
-    
-    let eligibleParticipants = group.participants
-    eligibleParticipants.splice(eligibleParticipants.indexOf(botInfo.host_number), 1)
-    if (group.owner && group.owner != botInfo.host_number) eligibleParticipants.splice(eligibleParticipants.indexOf(group.owner),1)
+    if(hasShooted) replyText = miscCommands.roletarussa.msgs.reply_dead
+    else replyText = miscCommands.roletarussa.msgs.reply_alive
 
-    if (!eligibleParticipants.length) throw new Error(miscCommands.roletarussa.msgs.error)
-
-    let randomIndex = Math.floor(Math.random() * eligibleParticipants.length)
-    let chosenParticipant = eligibleParticipants[randomIndex]
-    const waitReply = miscCommands.roletarussa.msgs.wait
-    const replyText = buildText(miscCommands.roletarussa.msgs.reply, Whatsapp.removeWhatsappSuffix(chosenParticipant))
-    await Whatsapp.replyText(client, message.chat_id, waitReply, message.wa_message, {expiration: message.expiration})
-    await Whatsapp.sendTextWithMentions(client, message.chat_id, replyText, [chosenParticipant], {expiration: message.expiration})
-    await Whatsapp.removeParticipant(client, message.chat_id, chosenParticipant) 
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function casalCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
