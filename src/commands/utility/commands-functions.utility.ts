@@ -156,13 +156,14 @@ export async function letraCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function ouvirCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
+    const secret_key = botInfo.api_keys.deepgram.secret_key
 
-    if (!process.env.dg_secret_key?.trim()) throw new Error(utilityCommands.ouvir.msgs.error_key)
+    if (!secret_key) throw new Error(utilityCommands.ouvir.msgs.error_key)
     if (!message.isQuoted || message.quotedMessage?.type != 'audioMessage') throw new Error(messageErrorCommandUsage(botInfo, message))
     if (message.quotedMessage?.media?.seconds && message.quotedMessage?.media?.seconds > 90) throw new Error(utilityCommands.ouvir.msgs.error_audio_limit)
 
     let audioBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    let replyText = await audioLibrary.audioTranscription(audioBuffer, {deepgram_secret_key : process.env.dg_secret_key?.trim()})
+    let replyText = await audioLibrary.audioTranscription(audioBuffer, {deepgram_secret_key : secret_key})
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.ouvir.msgs.reply, replyText), message.quotedMessage.wa_message, {expiration: message.expiration})
 }
 
@@ -345,11 +346,11 @@ export async function dddCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    const acr_host = process.env.acr_host
-    const acr_access_key = process.env.acr_access_key
-    const acr_access_secret = process.env.acr_access_secret
+    const host = botInfo.api_keys.acrcloud.host
+    const access_key = botInfo.api_keys.acrcloud.access_key
+    const secret_key = botInfo.api_keys.acrcloud.secret_key
 
-    if (!acr_host || !acr_access_key || !acr_access_secret) throw new Error(utilityCommands.qualmusica.msgs.error_key)
+    if (!host || !access_key || !secret_key) throw new Error(utilityCommands.qualmusica.msgs.error_key)
 
     let messageType = message.isQuoted ? message.quotedMessage?.type : message.type
 
@@ -362,7 +363,7 @@ export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message:
     let messageMediaBuffer = await downloadMediaMessage(messageData, "buffer", {})
 
     await Whatsapp.replyText(client, message.chat_id, utilityCommands.qualmusica.msgs.wait, message.wa_message, {expiration: message.expiration})
-    const musicResult = await audioLibrary.musicRecognition(messageMediaBuffer, {acr_host, acr_access_key, acr_access_secret})
+    const musicResult = await audioLibrary.musicRecognition(messageMediaBuffer, {acr_host: host, acr_access_key: access_key, acr_access_secret: secret_key})
     const replyText = buildText(utilityCommands.qualmusica.msgs.reply, musicResult.title, musicResult.producer, musicResult.duration, musicResult.release_date, musicResult.album, musicResult.artists)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
