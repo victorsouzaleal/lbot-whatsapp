@@ -1,7 +1,7 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
-## 3.0.0 - ???
+## 3.0.0 - 21/03/2025
 
 ### GERAL
 - O projeto foi totalmente reescrito para Typescript.
@@ -19,14 +19,15 @@ Colocarei neste arquivos as mudanças significativas em cada versão começando 
 - Melhoria na fila de eventos em espera enquanto o bot inicializa.
 - Melhoria no tratamento de erro nos comandos para o usuário saber o que houve de errado.
 - Melhoria no armazenamento de mensagens do bot.
-- Melhorias em geral em comandos
+- Melhorias em geral em comandos.
+- A categoria de comando **DIVERSÃO** foi renomeada para **VARIADO**
 
 
 ### COMANDOS 
 
 #### Mudanças
-- Melhoria nos comandos de DOWNLOAD dando mais informações sobre a mídia baixada e agora permite downloads de no máximo **6 MINUTOS**.
-- Melhorias nos comandos de DIVERSÃO, alguns comandos foram reescritos.
+- Melhoria nos comandos da categoria DOWNLOAD dando mais informações sobre a mídia baixada e agora permite downloads de no máximo **6 MINUTOS**.
+- Melhorias nos comandos da categoria VARIADO, alguns comandos foram reescritos.
 - Comando **!s** agora possibilita fazer sticker sem redimensionar a imagem original usando o comando **!s 2**.
 - Comando **!status** foi renomeado para **!grupo** e agora exibe mais informações sobre o grupo inclusive quantos comandos foram feitos e quais recursos estão ativos/desativados.
 - Comando **!info** agora exibe o contatos de todos que estão registrados como administrador do bot.

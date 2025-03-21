@@ -38,7 +38,7 @@
 - Noticias Google
 - Tradutor Google
 
-### 👾 Diversão
+### 👾 Variado
 - Pedra, papel e tesoura
 - Cara e coroa
 - SimSimi
