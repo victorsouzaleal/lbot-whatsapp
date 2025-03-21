@@ -60,14 +60,14 @@ export function commandsMisc(botInfo?: Bot){
             function: miscFunctions.detectorCommand
         },
         roletarussa: {
-            guide: `Ex: *${PREFIX}roletarussa* - Bane um membro aleatório do grupo.\n\n`+
-            `*Obs*: Comando apenas para administradores, pode banir qualquer um exceto o dono do grupo e o BOT.\n`,
+            guide: `Ex: *${PREFIX}roletarussa* - Teste sua sorte na roleta russa.\n\n`,
             msgs: {
-                error: "Não existem membros válidos para participarem da roleta.",
-                wait: "🎲 Sorteando uma vítima 🎲",
-                reply: '🔫 *Roleta russa*\n'+
+                reply_alive: '🔫 *Roleta russa*\n'+
                 '────────────────────────\n'+
-                "🫵 Você foi o escolhido @{p1}, até a próxima."
+                "😁 A arma não disparou, você sobreviveu a roleta russa.",
+                reply_dead: '🔫 *Roleta russa*\n'+
+                '────────────────────────\n'+
+                "💀 A arma disparou, você morreu.",
             },
             function: miscFunctions.roletarussaCommand
         },

@@ -208,6 +208,7 @@ export const miscMenu = (botInfo : Bot) =>{
  ▎
 ┣► *${prefix}ppt* opção - Joga pedra, papel e tesoura
 ┣► *${prefix}caracoroa* - Joga cara ou coroa
+┣► *${prefix}roletarussa* - Joga roleta russa
  ▎
  ┣━━ ✦ 🎲 *SORTEIO* ✦
  ▎
@@ -234,6 +235,7 @@ export const miscGroupMenu = (botInfo : Bot) =>{
  ▎
 ┣► *${prefix}ppt* opcão - Joga pedra, papel e tesoura
 ┣► *${prefix}caracoroa* - Joga cara ou coroa
+┣► *${prefix}roletarussa* - Joga roleta russa
  ▎
 ┣━━ ✦ 🎲 *SORTEIO* ✦
  ▎
@@ -253,7 +255,6 @@ export const miscGroupMenu = (botInfo : Bot) =>{
 ┣► *${prefix}bafometro* - Nível de álcool
 ┣► *${prefix}top5* tema - Ranking de top 5
 ┣► *${prefix}par* @pessoa1 @pessoa2 - Nível de compatibilidade
-┣► *${prefix}roletarussa* - Expulsa um membro aleatório do grupo
  ▎
 ┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }
