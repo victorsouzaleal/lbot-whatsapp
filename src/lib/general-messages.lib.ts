@@ -7,6 +7,7 @@ export default function getGeneralMessages (botInfo? : Bot){
             bot_data: "✓ Obteve dados do BOT",
             no_update_available: 'Não há atualização disponível, seu bot está na versão mais recente.',
             update_available: 'Uma nova atualização compatível foi encontrada, aguarde o término da atualização...',
+            error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
             bot_updated: 'Seu bot foi atualizado e será desligado, inicie novamente usando yarn start.',
             update_available_manual: 'Há uma atualização disponível, mas ela precisa ser instalada manualmente do zero por não ser compatível com a sua versão.',
             server_started: '✓ Servidor iniciado!',
