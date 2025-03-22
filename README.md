@@ -1,10 +1,7 @@
 <p align="center">
 <img src="https://img95.pixhost.to/images/1083/472612217_8876.jpg" width="350" height="350"/>
 </p>
-<h1 align="center">🤖 LBot - Robô para WhatsApp 🤖</h1>
-<p align="center">
-<a href="https://www.codefactor.io/repository/github/victorsouzaleal/lbot-whatsapp"><img src="https://img.shields.io/codefactor/grade/github/victorsouzaleal/lbot-whatsapp?label=qualidade&color=#79C83D" alt="CodeFactor" /></a>
-</p>
+<h1 align="center">🤖 LBot - Robô para WhatsApp</h1>
 <p align="center">
 <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fvictorsouzaleal%2Flbot-whatsapp&count_bg=%234dc61f&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visualizacoes&edge_flat=false"/></a>
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouzaleal/lbot-whatsapp?label=vers%C3%A3o&color=#79C83D"/></a>
@@ -21,12 +18,8 @@
 <br>
 
 ## 🚨 REQUERIMENTOS :
-- Um número de celular conectado ao WhatsApp para ler o QR Code e conectar o bot.
-- Em sistemas **Windows/Linux** :<br>
-        - Ter o [GIT](https://git-scm.com/) instalado <br>
-        - Ter o [NODE VERSÃO LTS](https://nodejs.org/en/) instalado
-- No **Termux** :<br>
-        - Ter o [TERMUX](https://github.com/termux/termux-app/releases/download/v0.118.1/termux-app_v0.118.1+github-debug_universal.apk) instalado no celular
+- Um **número de celular conectado ao WhatsApp** para ler o QR Code e conectar o bot. <br>
+- Um **computador com sistema Windows/Linux** ou um **smartphone Android** para executar a aplicação.<br>
 
 <br>
 
@@ -34,65 +27,82 @@
 
 ### 🖥️ Windows/Linux :
 
-Faça o download da última versão lançada no seguinte link: https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest , extraia o zip e entre na pasta do bot para os passos seguintes.
+Antes da instalação você tem que instalar os programas abaixo, no Windows é só instalar pelo link indicado e no Linux você tem que pesquisar qual é o comando para instalar na sua distribuição.
+- Git 64-bit - [DOWNLOAD](https://git-scm.com/downloads/win)<br>
+- Node.js LTS - [DOWNLOAD](https://nodejs.org/en/)<br><br>
 
-Abra o prompt de comando (terminal) **DENTRO DA PASTA DO PROJETO** e execute os comandos abaixo :
 
+Faça o download do **.zip** da [ultima versão lançada](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)<br>
 
-#### Instalação do yarn (se estiver no Linux use sudo antes do comando)
+Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** para executar o comando abaixo:
+
 ```bash
-npm i -g yarn
+npm i -g yarn && yarn install
 ```
+<br>
 
-#### Instalação das dependências do projeto
+**OBS**: Caso o comando retorne erro no **Linux** você vai precisar se elevar a superusuário utilizando **sudo** antes do comando.<br><br>
+
+Quando o comando terminar você pode iniciar o bot com o comando abaixo:
 ```bash
-yarn install
+yarn start
 ```
+<br>
+
+Se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**.
 
 <br>
 
 ### 📱 Termux :
-Para ver o guia de instalação no TERMUX :  [Clique AQUI](docs/TERMUX.md) 
+
+A instalação no Termux é bem fácil e tentei simplificar o máximo que pude.<br>
+
+
+Abra o **Termux** comece usando este comando para instalar automaticamente o bot, isso pode demorar algum tempo até instalar tudo.
+```bash
+pkg install wget -y && wget -O - bit.ly/lbot-whatsapp | bash
+```
+<br>
+
+Se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**.<br><br>
+
+Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
+```bash
+cd LBOT && yarn start
+```
+
 
 <br><br>
 
 ## 2 - 🤖 Uso :
 
-### Após ter realizado todos os passos anteriores, execute este comando "DENTRO DA PASTA DO PROJETO".
-
-```bash
-yarn start
-```
-
-Após a primeira inicialização escaneie o QR Code com o seu celular.
+Seu bot já deve estar iniciando normalmente após o passo anterior, use os comandos abaixo para visualizar os comandos disponíveis.
 
 <br>
-
-## 3 - ⌨️ Funcionamento :
-
-### Seu bot já deve estar iniciando normalmente, use os comandos abaixo para visualizar os comandos disponíveis.<br><br>
 
 **!menu** - Dá acesso ao **menu principal**.<br>
 **!admin** - Dá acesso ao **menu de administrador**.
 
 <br>
 
-Todos os comandos tem um guia ao digitar: **!comando** guia<br><br>
+Todos os comandos tem um guia ao digitar: **!comando** guia
 
-## 4 - ⚙️ Configuração do bot:
+<br>
+
+## 3 - ⚙️ Configuração do bot:
 
 ### Como configurar o DONO:
 Para usar as funções de **administrador** digite **!admin** pela primeira vez ao iniciar ao bot e ai seu número será cadastrado como dono.<br><br>
 Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeautor**, **!nomepack** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.<br><br>
 
-### Como obter as chaves API para usar em comandos específicos :
+### Como obter as chaves API para uso em comandos específicos :
 Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API, abaixo tem um guia completo com imagens para obter as chaves.<br>
 
-**Informações detalhadas sobre como obter as chaves do ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique AQUI](docs/CHAVESAPI.md)
+**Informações detalhadas sobre como obter as chaves do ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique Aqui](docs/CHAVESAPI.md)
 
 <br>
 
-## 5 - 🛠️ Recursos/Comandos :
+## 4 - 🛠️ Recursos/Comandos :
 
 ### 🖼️ Figurinhas
 - Foto para sticker
@@ -133,27 +143,20 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 
 <br>
 
-### 👉 E muito mais... [Clique AQUI](docs/COMANDOS.md)
+### 👉 E muito mais... [Clique Aqui](docs/COMANDOS.md)
 
 <br>
 
-## 6 - 💻 Solução de problemas
-
-### Termux
-Algumas pessoas podem ter problemas para instalar as depêndencias no Termux, isso pode ser pelo fato da conexão a internet não estar estável o suficiente ou a versão do Termux estar desatualizada, o Termux da Play Store não é atualizada faz anos por isso eu forneço aqui um apk oficial dos desenvolvedores do Termux.
-
-* **Termux APK :** https://github.com/termux/termux-app/releases/download/v0.118.1/termux-app_v0.118.1+github-debug_universal.apk
-
-<br>
-
-## 7 - 👤 Contato
-Caso queira entrar em contato eu tento responder aos emails, ou abra uma issue aqui no GitHub explicando o problema.
+## 5 - 👤 Contato
+Caso tenha algum problema ou queira ajudar de alguma forma com o projeto. Estou também procurando alguem que possa oferecer um número de WhatsApp
+para eu deixar o bot rodando para o público.
 
 * **Email**: victorsouzaleal@gmail.com
+* **WhatsApp (NÃO É O BOT, É MEU CONTATO PESSOAL PELO AMOR DE DEUS)**: https://wa.me/5521995612287
 
 <br>
 
-## 8 - 🙏 Agradecimentos
+## 6 - 🙏 Agradecimentos
 
-* [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Biblioteca Baileys.
-
+* A minha mãe e o meu pai que me fizeram com muito amor
+* [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Por disponibilizar a biblioteca Baileys e dar suporte no Discord principalmente a nós brasileiros.
