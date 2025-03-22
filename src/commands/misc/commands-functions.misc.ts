@@ -40,6 +40,7 @@ export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Me
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', PIC_URL, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
 }
 
+/*
 export async function simiCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
 
@@ -48,7 +49,7 @@ export async function simiCommand(client: WASocket, botInfo: Bot, message: Messa
     const simiResult = await miscLibrary.simSimi(message.text_command)
     const replyText = buildText(miscCommands.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
-}
+}*/
 
 export async function viadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)

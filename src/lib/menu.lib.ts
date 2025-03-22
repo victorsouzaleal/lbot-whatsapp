@@ -218,7 +218,6 @@ export const miscMenu = (botInfo : Bot) =>{
  ▎
 ┣► *${prefix}mascote* - Onipotente e onipresente WhatsApp Jr
 ┣► *${prefix}frase* - Frase dúvidosa do WhatsApp Jr
-┣► *${prefix}simi* texto - Converse com SimSimi
 ┣► *${prefix}chance* texto - Chance de algo acontecer
  ▎
 ┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
@@ -246,7 +245,6 @@ export const miscGroupMenu = (botInfo : Bot) =>{
  ▎
 ┣► *${prefix}mascote* - Onipotente e onipresente WhatsApp Jr
 ┣► *${prefix}frase* - Frase dúvidosa do WhatsApp Jr
-┣► *${prefix}simi* texto - Converse com SimSimi
 ┣► *${prefix}viadometro* - Nível de viadagem
 ┣► *${prefix}detector* - Detector de mentira
 ┣► *${prefix}casal* - Escolhe um casal

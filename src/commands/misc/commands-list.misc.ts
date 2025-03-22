@@ -30,6 +30,7 @@ export function commandsMisc(botInfo?: Bot){
             },
             function: miscFunctions.mascoteCommand
         },
+        /*
         simi: {
             guide: `Ex: *${PREFIX}simi* frase  - Envia um texto para o SimSimi responder.\n`,
             msgs: {
@@ -38,7 +39,7 @@ export function commandsMisc(botInfo?: Bot){
                 `{p1}: {p2}`,
             },
             function: miscFunctions.simiCommand
-        },
+        },*/
         viadometro: {
             guide: `Ex: *${PREFIX}viadometro* @membro - Mede o nível de viadagem do membro mencionado.\n\n`+
             `Ex: Responder com *${PREFIX}viadometro* - Mede o nível de viadagem do membro respondido.\n`,

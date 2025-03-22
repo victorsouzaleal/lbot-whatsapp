@@ -18,8 +18,6 @@
 
 
 ### ⚒️ Utilidades Gerais
-- Pergunte a IA
-- Criação de imagens IA
 - Brasileirão A/B
 - Têndencias de Filmes/Séries
 - Encurtar Links
@@ -41,7 +39,6 @@
 ### 👾 Variado
 - Pedra, papel e tesoura
 - Cara e coroa
-- SimSimi
 - Viadômetro
 - Detector de mentira
 - Casal
