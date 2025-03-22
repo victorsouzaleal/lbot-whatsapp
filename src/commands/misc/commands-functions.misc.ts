@@ -4,7 +4,7 @@ import { Group } from "../../interfaces/group.interface.js"
 import { Message } from "../../interfaces/message.interface.js"
 import * as Whatsapp from '../../lib/whatsapp.lib.js'
 import { buildText, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../../lib/util.lib.js"
-import { generalLibrary } from "@victorsouzaleal/biblioteca-lbot"
+import { miscLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import getGeneralMessages from "../../lib/general-messages.lib.js"
 import { commandsMisc } from "./commands-list.misc.js"
 
@@ -45,7 +45,7 @@ export async function simiCommand(client: WASocket, botInfo: Bot, message: Messa
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const simiResult = await generalLibrary.simSimi(message.text_command)
+    const simiResult = await miscLibrary.simSimi(message.text_command)
     const replyText = buildText(miscCommands.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
@@ -75,7 +75,7 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
     if (!quotedMessage) throw new Error(miscCommands.detector.msgs.error_message)
 
-    const truthMachineResult = generalLibrary.truthMachine()
+    const truthMachineResult = miscLibrary.truthMachine()
     const waitReply = miscCommands.detector.msgs.wait
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.calibration_url, waitReply, quotedMessage, {expiration: message.expiration})
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.result_url, '', quotedMessage, {expiration: message.expiration})
@@ -120,7 +120,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
 
     if (!message.args.length || !validChoices.includes(userChoice)) throw new Error(messageErrorCommandUsage(botInfo, message))
     
-    const flipCoinInfo = generalLibrary.flipCoin()
+    const flipCoinInfo = miscLibrary.flipCoin()
     const waitText = miscCommands.caracoroa.msgs.wait
     await Whatsapp.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
 
@@ -269,7 +269,7 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
-    const phraseResult = await generalLibrary.funnyRandomPhrases()
+    const phraseResult = await miscLibrary.funnyRandomPhrases()
     const replyText =  buildText(miscCommands.frase.msgs.reply, phraseResult.text)
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message, {expiration: message.expiration})
 }
