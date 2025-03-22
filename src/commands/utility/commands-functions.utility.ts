@@ -7,6 +7,31 @@ import { buildText, messageErrorCommandUsage} from "../../lib/util.lib.js"
 import { audioLibrary, utilityLibrary, imageLibrary } from "@victorsouzaleal/biblioteca-lbot"
 import { commandsUtility } from "./commands-list.utility.js"
 
+
+export async function steamverdeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const utilityCommands = commandsUtility(botInfo)
+    const LIMIT_RESULTS = 20
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    let gamesList = await utilityLibrary.searchGame(message.text_command.trim())
+
+    if(!gamesList.length) throw new Error(utilityCommands.steamverde.msgs.error_not_found)
+         
+    gamesList = gamesList.length > LIMIT_RESULTS ? gamesList.splice(0, LIMIT_RESULTS) : gamesList
+    let replyText = utilityCommands.steamverde.msgs.reply_title
+
+    gamesList.forEach((game)=> {
+        let gamesUrl = game.uris.map((uri) => {
+            if (uri.includes('magnet')) return buildText(utilityCommands.steamverde.msgs.link_torrent, uri.split("&dn")[0])
+            else return buildText(utilityCommands.steamverde.msgs.link_direct, uri)
+        })
+        replyText += buildText(utilityCommands.steamverde.msgs.reply_item, game.title, game.uploader, game.uploadDate, game.fileSize, gamesUrl.join("\n- "))
+    })
+
+    await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
 export async function animesCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
     const animes = await utilityLibrary.animeReleases()

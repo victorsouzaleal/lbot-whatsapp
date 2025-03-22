@@ -5,6 +5,22 @@ export function commandsUtility(botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name
     // *********************************** COMANDOS - UTILIDADE ***********************************
     const utility = {
+        steamverde: {
+            guide: `Ex: *${PREFIX}steamverde GTA* - Exibe os downloads disponíveis do jogo GTA.\n`,
+            msgs: {
+                reply_title: '🏴‍☠️ *STEAM VERDE*\n'+
+                '────────────────────────\n',
+                reply_item: '*{p1}*\n'+
+                '*Enviado por*: {p2}\n'+
+                '*Data do envio*: {p3}\n'+
+                '*Tamanho*: {p4}\n'+
+                '*Links*: \n- {p5}\n\n',
+                link_torrent: '*Torrent*: {p1}',
+                link_direct: '*Link direto*: {p1}',
+                error_not_found: 'Nenhum jogo foi encontrado, tente pesquisar novamente com outros termos.'
+            },
+            function: utilityFunctions.steamverdeCommand
+        },
         animes:{
             guide: `Ex: *${PREFIX}animes* - Exibe os ultimos lançamentos de episódios de anime.\n`,
             msgs: {

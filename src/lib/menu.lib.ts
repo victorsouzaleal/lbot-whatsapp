@@ -86,6 +86,7 @@ export const utilityMenu = (botInfo : Bot)=>{
  ▎
 ┣━━ ✦ 🔎 *CONSULTAS/TEXTO* ✦
  ▎
+┣► *${prefix}steamverde* jogo - Pesquisa de jogos "alternativos"
 ┣► *${prefix}brasileirao* - Tabela do Brasileirão
 ┣► *${prefix}animes* - Últimos lançamentos de animes
 ┣► *${prefix}mangas* - Últimos lançamentos de mangás
