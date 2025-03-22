@@ -1,4 +1,3 @@
-import Datastore from "@seald-io/nedb";
 import { ParticipantCounter, Group, ParticipantAntiFlood } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
@@ -10,11 +9,13 @@ import getGeneralMessages from "../lib/general-messages.lib.js";
 import { commandsGroup } from "../commands/group/commands-list.group.js";
 import { commandExist, getCommandsByCategory } from "../commands/commands.util.js";
 import { getGroupAdminsByMetadata, getGroupParticipantsByMetadata, removePrefix, removeWhatsappSuffix } from "../lib/whatsapp.lib.js";
+import DataStore from "@seald-io/nedb";
+
 
 const db = {
-    groups : new Datastore<Group>({filename : './storage/groups.db', autoload: true}),
-    group_antiflood : new Datastore<ParticipantAntiFlood>({filename : './storage/antiflood.groups.db', autoload: true}),
-    group_counter : new Datastore<ParticipantCounter>({filename : './storage/counter.groups.db', autoload: true})
+    groups : new DataStore<Group>({filename : './storage/groups.db', autoload: true}),
+    group_antiflood : new DataStore<ParticipantAntiFlood>({filename : './storage/antiflood.groups.db', autoload: true}),
+    group_counter : new DataStore<ParticipantCounter>({filename : './storage/counter.groups.db', autoload: true})
 }
 
 export class GroupService {

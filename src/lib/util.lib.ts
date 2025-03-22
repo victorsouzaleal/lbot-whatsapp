@@ -5,6 +5,9 @@ import fs from 'fs-extra'
 import { Bot } from "../interfaces/bot.interface.js"
 import getGeneralMessages from "./general-messages.lib.js"
 import { Message } from "../interfaces/message.interface.js"
+import { FileExtensions } from "../interfaces/api.interface.js"
+import { tmpdir } from "node:os"
+import crypto from 'node:crypto'
 
 export function messageErrorCommandUsage(botInfo: Bot, message: Message){
     const generalMessages = getGeneralMessages(botInfo)
@@ -33,6 +36,10 @@ export function buildText(text : string, ...params : any[]){
 
 export function timestampToDate(timestamp : number){
     return moment(timestamp).format('DD/MM HH:mm:ss')
+}
+
+export function formatSeconds(seconds : number){
+  return moment(seconds * 1000).format('mm:ss')
 }
 
 export function currentDate(){
@@ -65,10 +72,6 @@ export function removeBold(text: string){
     return text.replace(/\*/gm, "").trim()
 }
 
-export function getRandomFilename(extension : '.mp4' | '.mp3' | '.jpg' | '.png'){
-    return `${Math.floor(Math.random() * 10000)}${extension}`
-}
-
 export function randomDelay(ms_min : number, ms_max : number){
    return new Promise <void> ((resolve, reject)=>{
       let randomDelayMs = Math.floor(Math.random() * (ms_max - ms_min + 1)) + ms_min
@@ -81,3 +84,16 @@ export function randomDelay(ms_min : number, ms_max : number){
 export function showConsoleError(err: any, error_type : string){
   console.error(colorText(`[${error_type}]`,"#d63e3e"), err)
 }
+
+export function getRandomFilename(ext: FileExtensions){
+  return `${Math.floor(Math.random() * 10000)}.${ext}`
+}
+
+export function getTempPath(ext: FileExtensions){
+  if(!fs.existsSync(path.join(tmpdir(), 'lbot-whatsapp'))){
+    fs.mkdirSync(path.join(tmpdir(), 'lbot-whatsapp'))
+  }
+  
+  return path.join(tmpdir(), 'lbot-whatsapp', `${crypto.randomBytes(20).toString('hex')}.${ext}`)
+}
+

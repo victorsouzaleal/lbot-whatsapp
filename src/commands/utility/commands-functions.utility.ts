@@ -4,7 +4,9 @@ import { Group } from "../../interfaces/group.interface.js"
 import { Message } from "../../interfaces/message.interface.js"
 import * as Whatsapp from '../../lib/whatsapp.lib.js'
 import { buildText, messageErrorCommandUsage} from "../../lib/util.lib.js"
-import { audioLibrary, generalLibrary, imageLibrary } from "@victorsouzaleal/biblioteca-lbot"
+import * as imageAPI from '../../api/image.api.js'
+import * as audioAPI from '../../api/audio.api.js'
+import * as utilityAPI from '../../api/utility.api.js'
 import { commandsUtility } from "./commands-list.utility.js"
 
 
@@ -14,7 +16,7 @@ export async function steamverdeCommand(client: WASocket, botInfo: Bot, message:
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let gamesList = await generalLibrary.searchGame(message.text_command.trim())
+    let gamesList = await utilityAPI.searchGame(message.text_command.trim())
 
     if(!gamesList.length) throw new Error(utilityCommands.steamverde.msgs.error_not_found)
          
@@ -34,7 +36,7 @@ export async function steamverdeCommand(client: WASocket, botInfo: Bot, message:
 
 export async function animesCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    const animes = await generalLibrary.animeReleases()
+    const animes = await utilityAPI.animeReleases()
     let replyText = utilityCommands.animes.msgs.reply_title
 
     animes.forEach((anime)=>{
@@ -46,7 +48,7 @@ export async function animesCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function mangasCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    const mangas = await generalLibrary.mangaReleases()
+    const mangas = await utilityAPI.mangaReleases()
     let replyText = utilityCommands.mangas.msgs.reply_title
 
     mangas.forEach((manga)=>{
@@ -69,7 +71,7 @@ export async function brasileiraoCommand(client: WASocket, botInfo: Bot, message
         serieSelected = message.text_command.toUpperCase() as "A" | "B"
     }
 
-    const {tabela: table, rodadas: rounds} = await generalLibrary.brasileiraoTable(serieSelected)
+    const {tabela: table, rodadas: rounds} = await utilityAPI.brasileiraoTable(serieSelected)
 
     if (!rounds) return
 
@@ -111,7 +113,7 @@ export async function encurtarCommand(client: WASocket, botInfo: Bot, message: M
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const url = await generalLibrary.shortenUrl(message.text_command)
+    const url = await utilityAPI.shortenUrl(message.text_command)
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.encurtar.msgs.reply, url), message.wa_message, {expiration: message.expiration})
 }
 
@@ -127,19 +129,19 @@ export async function upimgCommand(client: WASocket, botInfo: Bot, message: Mess
         imageBuffer = await downloadMediaMessage(message.wa_message, 'buffer', {})
     }
 
-    let imageUrl = await imageLibrary.uploadImage(imageBuffer)
+    let imageUrl = await imageAPI.uploadImage(imageBuffer)
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.upimg.msgs.reply, imageUrl), message.wa_message, {expiration: message.expiration})
 }
 
 export async function filmesCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    let movieTrendings = await generalLibrary.moviedbTrendings("movie")
+    let movieTrendings = await utilityAPI.moviedbTrendings("movie")
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.filmes.msgs.reply, movieTrendings), message.wa_message, {expiration: message.expiration})
 }
 
 export async function seriesCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    let movieTrendings = await generalLibrary.moviedbTrendings("tv")
+    let movieTrendings = await utilityAPI.moviedbTrendings("tv")
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.series.msgs.reply, movieTrendings), message.wa_message, {expiration: message.expiration})
 }
 
@@ -159,13 +161,13 @@ export async function rbgCommand(client: WASocket, botInfo: Bot, message: Messag
 
     await Whatsapp.replyText(client, message.chat_id, utilityCommands.rbg.msgs.wait, message.wa_message, {expiration: message.expiration})
     let imageBuffer = await downloadMediaMessage(messageData.wa_message, "buffer", {})
-    let replyImageBuffer = await imageLibrary.removeBackground(imageBuffer)
+    let replyImageBuffer = await imageAPI.removeBackground(imageBuffer)
     await Whatsapp.replyFileFromBuffer(client, message.chat_id, 'imageMessage', replyImageBuffer, '', message.wa_message, {expiration: message.expiration})
 }
 
 export async function tabelaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    const replyText = await generalLibrary.symbolsASCI()
+    const replyText = await utilityAPI.symbolsASCI()
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.tabela.msgs.reply, replyText), message.wa_message, {expiration: message.expiration})
 }
 
@@ -174,7 +176,7 @@ export async function letraCommand(client: WASocket, botInfo: Bot, message: Mess
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const musicLyrics = await generalLibrary.musicLyrics(message.text_command)
+    const musicLyrics = await utilityAPI.musicLyrics(message.text_command)
     const replyText = buildText(utilityCommands.letra.msgs.reply, musicLyrics.title, musicLyrics.artist, musicLyrics.lyrics)
     await Whatsapp.replyFile(client, message.chat_id, 'imageMessage', musicLyrics.image, replyText, message.wa_message, {expiration: message.expiration})
 }
@@ -188,7 +190,7 @@ export async function ouvirCommand(client: WASocket, botInfo: Bot, message: Mess
     if (message.quotedMessage?.media?.seconds && message.quotedMessage?.media?.seconds > 90) throw new Error(utilityCommands.ouvir.msgs.error_audio_limit)
 
     let audioBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    let replyText = await audioLibrary.audioTranscription(audioBuffer, {deepgram_secret_key : secret_key})
+    let replyText = await audioAPI.audioTranscription(audioBuffer, {deepgram_secret_key : secret_key})
     await Whatsapp.replyText(client, message.chat_id, buildText(utilityCommands.ouvir.msgs.reply, replyText), message.quotedMessage.wa_message, {expiration: message.expiration})
 }
 
@@ -199,7 +201,7 @@ export async function audioCommand(client: WASocket, botInfo: Bot, message: Mess
 
     const effectSelected = message.text_command.trim().toLowerCase() as 'estourar'|'x2'| 'reverso'| 'grave' | 'agudo' |'volume'
     const audioBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    const replyAudioBuffer = await audioLibrary.audioModified(audioBuffer, effectSelected)
+    const replyAudioBuffer = await audioAPI.audioModified(audioBuffer, effectSelected)
     await Whatsapp.replyFileFromBuffer(client, message.chat_id, 'audioMessage', replyAudioBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
 }
 
@@ -226,7 +228,7 @@ export async function traduzCommand(client: WASocket, botInfo: Bot, message: Mes
         return
     }
 
-    const replyTranslation = await generalLibrary.translationGoogle(textTranslation as string, languageTranslation as "pt" | "es" | "en" | "ja" | "it" | "ru" | "ko")
+    const replyTranslation = await utilityAPI.translationGoogle(textTranslation as string, languageTranslation as "pt" | "es" | "en" | "ja" | "it" | "ru" | "ko")
     const replyText = buildText(utilityCommands.traduz.msgs.reply, textTranslation as string, replyTranslation)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
@@ -251,14 +253,14 @@ export async function vozCommand(client: WASocket, botInfo: Bot, message: Messag
     if (!textVoice) throw new Error(utilityCommands.voz.msgs.error_text)
     if (textVoice.length > 500) throw new Error(utilityCommands.voz.msgs.error_text_long)
 
-    const replyAudioBuffer = await audioLibrary.textToVoice(languageVoice as "pt" | "es" | "en" | "ja" | "it" | "ru" | "ko" | "sv", textVoice)
+    const replyAudioBuffer = await audioAPI.textToVoice(languageVoice as "pt" | "es" | "en" | "ja" | "it" | "ru" | "ko" | "sv", textVoice)
     await Whatsapp.replyFileFromBuffer(client, message.chat_id, 'audioMessage', replyAudioBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
 }
 
 export async function noticiasCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
 
-    const newsList = await generalLibrary.newsGoogle()
+    const newsList = await utilityAPI.newsGoogle()
     let replyText = utilityCommands.noticias.msgs.reply_title
 
     for(let news of newsList){
@@ -273,7 +275,7 @@ export async function calcCommand(client: WASocket, botInfo: Bot, message: Messa
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
     
-    const calcResult = await generalLibrary.calcExpression(message.text_command)
+    const calcResult = await utilityAPI.calcExpression(message.text_command)
     const replyText = buildText(utilityCommands.calc.msgs.reply, calcResult)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
@@ -283,7 +285,7 @@ export async function pesquisaCommand(client: WASocket, botInfo: Bot, message: M
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let webSearchList = await generalLibrary.webSearchGoogle(message.text_command)
+    let webSearchList = await utilityAPI.webSearchGoogle(message.text_command)
     let replyText = buildText(utilityCommands.pesquisa.msgs.reply_title, message.text_command)
 
     for(let search of webSearchList){
@@ -303,7 +305,7 @@ export async function moedaCommand(client: WASocket, botInfo: Bot, message: Mess
 
     if (!supportedCurrencies.includes(currencySelected)) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let convertData = await generalLibrary.convertCurrency(currencySelected as "dolar" | "euro" | "real" | "iene", parseInt(valueSelected))
+    let convertData = await utilityAPI.convertCurrency(currencySelected as "dolar" | "euro" | "real" | "iene", parseInt(valueSelected))
     let replyText = buildText(utilityCommands.moeda.msgs.reply_title, convertData.currency, convertData.value)
 
     for(let convert of  convertData.convertion){
@@ -318,7 +320,7 @@ export async function climaCommand(client: WASocket, botInfo: Bot, message: Mess
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let wheatherResult = await generalLibrary.wheatherInfo(message.text_command)
+    let wheatherResult = await utilityAPI.wheatherInfo(message.text_command)
 
     let replyText = buildText(utilityCommands.clima.msgs.reply,
         message.text_command,
@@ -364,7 +366,7 @@ export async function dddCommand(client: WASocket, botInfo: Bot, message: Messag
     
     if (!dddSelected) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let dddResult = await generalLibrary.infoDDD(dddSelected)
+    let dddResult = await utilityAPI.infoDDD(dddSelected)
     const replyText = buildText(utilityCommands.ddd.msgs.reply, dddResult.state, dddResult.region)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
@@ -388,7 +390,7 @@ export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message:
     let messageMediaBuffer = await downloadMediaMessage(messageData, "buffer", {})
 
     await Whatsapp.replyText(client, message.chat_id, utilityCommands.qualmusica.msgs.wait, message.wa_message, {expiration: message.expiration})
-    const musicResult = await audioLibrary.musicRecognition(messageMediaBuffer, {acr_host: host, acr_access_key: access_key, acr_access_secret: secret_key})
+    const musicResult = await audioAPI.musicRecognition(messageMediaBuffer, {acr_host: host, acr_access_key: access_key, acr_access_secret: secret_key})
     const replyText = buildText(utilityCommands.qualmusica.msgs.reply, musicResult.title, musicResult.producer, musicResult.duration, musicResult.release_date, musicResult.album, musicResult.artists)
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
@@ -406,7 +408,7 @@ export async function qualanimeCommand(client: WASocket, botInfo: Bot, message: 
 
     await Whatsapp.replyText(client, message.chat_id, utilityCommands.qualanime.msgs.wait, message.wa_message, {expiration: message.expiration})
     const imageBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
-    const animeInfo = await imageLibrary.animeRecognition(imageBuffer)
+    const animeInfo = await imageAPI.animeRecognition(imageBuffer)
 
     if (animeInfo.similarity < 87) throw new Error(utilityCommands.qualanime.msgs.error_similarity)
 

@@ -121,8 +121,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 - Google (imagem)
 
 ### ⚒️ Utilidades Gerais
-- Pergunte a IA 
-- Criação de imagens com IA
+- Pesquisa na Steam verde
 - Brasileirão A/B 
 - Têndencias de filmes/séries
 - Encurtar links 

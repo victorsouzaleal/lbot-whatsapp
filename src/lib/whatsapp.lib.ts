@@ -1,7 +1,7 @@
 import { GroupMetadata, WAMessage, WAPresence, WASocket, S_WHATSAPP_NET } from "baileys"
 import { randomDelay } from "./util.lib.js"
 import { MessageOptions, MessageTypes } from "../interfaces/message.interface.js"
-import { convertLibrary } from "@victorsouzaleal/biblioteca-lbot"
+import * as convertAPI from '../api/convert.api.js'
 
 async function updatePresence(client: WASocket, chatId: string, presence: WAPresence){
     await client.presenceSubscribe(chatId)
@@ -124,7 +124,7 @@ export async function sendFileFromUrl(client: WASocket, chatId: string, type: Me
     if (type === "imageMessage") {
         return client.sendMessage(chatId, {image: {url}, caption}, {ephemeralExpiration: options?.expiration})
     }else if (type === 'videoMessage'){
-        const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
+        const base64Thumb = await convertAPI.convertVideoToThumbnail('url', url)
         return client.sendMessage(chatId, {video: {url}, mimetype: options?.mimetype, caption, jpegThumbnail: base64Thumb}, {ephemeralExpiration: options?.expiration})
     } else if (type === 'audioMessage'){
         return client.sendMessage(chatId, {audio: {url}, mimetype: options?.mimetype}, {ephemeralExpiration: options?.expiration})
@@ -140,7 +140,7 @@ export async function replyFile (client: WASocket, chatId: string, type: Message
     if (type == "imageMessage"){
         return client.sendMessage(chatId, {image: {url}, caption}, {quoted, ephemeralExpiration: options?.expiration})
     } else if (type == "videoMessage"){
-        const base64Thumb = await convertLibrary.convertVideoToThumbnail('file', url)
+        const base64Thumb = await convertAPI.convertVideoToThumbnail('file', url)
         return client.sendMessage(chatId, {video: {url}, mimetype: options?.mimetype, caption, jpegThumbnail: base64Thumb}, {quoted, ephemeralExpiration: options?.expiration})
     } else if (type == "audioMessage"){
         return client.sendMessage(chatId, {audio: {url}, mimetype: options?.mimetype}, {quoted, ephemeralExpiration: options?.expiration})
@@ -151,7 +151,7 @@ export async function replyFileFromUrl (client: WASocket, chatId: string, type: 
     if (type == "imageMessage"){
         return client.sendMessage(chatId, {image: {url}, caption}, {quoted, ephemeralExpiration: options?.expiration})
     } else if (type == "videoMessage"){
-        const base64Thumb = await convertLibrary.convertVideoToThumbnail('url', url)
+        const base64Thumb = await convertAPI.convertVideoToThumbnail('url', url)
         return client.sendMessage(chatId, {video: {url}, mimetype: options?.mimetype, caption, jpegThumbnail: base64Thumb}, {quoted, ephemeralExpiration: options?.expiration})
     } else if (type == "audioMessage"){
         return client.sendMessage(chatId, {audio: {url}, mimetype: options?.mimetype}, {quoted, ephemeralExpiration: options?.expiration})
@@ -160,7 +160,7 @@ export async function replyFileFromUrl (client: WASocket, chatId: string, type: 
 
 export async function replyFileFromBuffer (client: WASocket, chatId: string, type: MessageTypes, buffer: Buffer, caption: string, quoted: WAMessage, options?: MessageOptions){ 
     if (type == "videoMessage"){
-        const base64Thumb = await convertLibrary.convertVideoToThumbnail('buffer', buffer)
+        const base64Thumb = await convertAPI.convertVideoToThumbnail('buffer', buffer)
         return client.sendMessage(chatId, {video: buffer, caption, mimetype: options?.mimetype, jpegThumbnail: base64Thumb}, {quoted, ephemeralExpiration: options?.expiration})
     } else if (type == "imageMessage"){
         return client.sendMessage(chatId, {image: buffer, caption}, {quoted, ephemeralExpiration: options?.expiration})

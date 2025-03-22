@@ -4,7 +4,8 @@ import { Group } from "../../interfaces/group.interface.js"
 import { Message } from "../../interfaces/message.interface.js"
 import * as Whatsapp from '../../lib/whatsapp.lib.js'
 import { messageErrorCommandUsage} from "../../lib/util.lib.js"
-import { imageLibrary, stickerLibrary } from "@victorsouzaleal/biblioteca-lbot"
+import * as imageAPI from '../../api/image.api.js'
+import * as stickerAPI from '../../api/sticker.api.js'
 import { commandsSticker } from "./commands-list.sticker.js"
 
 export async function sCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -25,7 +26,7 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     if (messageData.type == "videoMessage" && messageData.seconds && messageData.seconds  > 9) throw new Error(stickerCommands.s.msgs.error_limit)
     
     let mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
-    let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker.trim(), author: botInfo.author_sticker.trim(), fps: 9, type: stickerType})
+    let stickerBuffer = await stickerAPI.createSticker(mediaBuffer, {pack: botInfo.pack_sticker.trim(), author: botInfo.author_sticker.trim(), fps: 9, type: stickerType})
     await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
@@ -36,7 +37,7 @@ export async function simgCommand(client: WASocket, botInfo: Bot, message: Messa
     if (message.quotedMessage?.type != "stickerMessage") throw new Error(stickerCommands.simg.msgs.error_sticker)
 
     let stickerBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    let imageBuffer = await stickerLibrary.stickerToImage(stickerBuffer)
+    let imageBuffer = await stickerAPI.stickerToImage(stickerBuffer)
     await Whatsapp.replyFileFromBuffer(client, message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'image/png'})
 }
 
@@ -52,8 +53,8 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
 
     await Whatsapp.replyText(client, message.chat_id, stickerCommands.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
-    const imageBuffer = await imageLibrary.removeBackground(mediaBuffer)
-    const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
+    const imageBuffer = await imageAPI.removeBackground(mediaBuffer)
+    const stickerBuffer = await stickerAPI.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
     await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
@@ -66,8 +67,8 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
 
     if (!emoji1 || !emoji2) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const imageBuffer = await imageLibrary.emojiMix(emoji1.trim(), emoji2.trim())
-    const stickerBuffer = await stickerLibrary.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
+    const imageBuffer = await imageAPI.emojiMix(emoji1.trim(), emoji2.trim())
+    const stickerBuffer = await stickerAPI.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
     await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
@@ -89,7 +90,7 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
         : messageQuotedData.message.stickerMessage.url
 
     let stickerBuffer = await downloadMediaMessage(messageQuotedData, 'buffer', {})
-    let stickerRenamedBuffer = await stickerLibrary.renameSticker(stickerBuffer, pack, author)
+    let stickerRenamedBuffer = await stickerAPI.renameSticker(stickerBuffer, pack, author)
     await Whatsapp.sendSticker(client, message.chat_id, stickerRenamedBuffer, {expiration: message.expiration})
 }
 
@@ -98,7 +99,7 @@ export async function autoSticker(client: WASocket, botInfo: Bot, message: Messa
     if (message.type == "videoMessage" && message.media?.seconds && message.media?.seconds > 9) return
 
     let mediaBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
-    let stickerBuffer = await stickerLibrary.createSticker(mediaBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
+    let stickerBuffer = await stickerAPI.createSticker(mediaBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
     await Whatsapp.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 

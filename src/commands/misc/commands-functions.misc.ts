@@ -4,7 +4,7 @@ import { Group } from "../../interfaces/group.interface.js"
 import { Message } from "../../interfaces/message.interface.js"
 import * as Whatsapp from '../../lib/whatsapp.lib.js'
 import { buildText, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../../lib/util.lib.js"
-import { miscLibrary } from "@victorsouzaleal/biblioteca-lbot"
+import * as miscAPI from '../../api/misc.api.js'
 import getGeneralMessages from "../../lib/general-messages.lib.js"
 import { commandsMisc } from "./commands-list.misc.js"
 
@@ -76,7 +76,7 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
     if (!quotedMessage) throw new Error(miscCommands.detector.msgs.error_message)
 
-    const truthMachineResult = miscLibrary.truthMachine()
+    const truthMachineResult = miscAPI.truthMachine()
     const waitReply = miscCommands.detector.msgs.wait
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.calibration_url, waitReply, quotedMessage, {expiration: message.expiration})
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.result_url, '', quotedMessage, {expiration: message.expiration})
@@ -121,7 +121,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
 
     if (!message.args.length || !validChoices.includes(userChoice)) throw new Error(messageErrorCommandUsage(botInfo, message))
     
-    const flipCoinInfo = miscLibrary.flipCoin()
+    const flipCoinInfo = miscAPI.flipCoin()
     const waitText = miscCommands.caracoroa.msgs.wait
     await Whatsapp.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
 
@@ -270,7 +270,7 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
-    const phraseResult = await miscLibrary.funnyRandomPhrases()
+    const phraseResult = await miscAPI.funnyRandomPhrases()
     const replyText =  buildText(miscCommands.frase.msgs.reply, phraseResult.text)
     await Whatsapp.replyFileFromUrl(client, message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message, {expiration: message.expiration})
 }

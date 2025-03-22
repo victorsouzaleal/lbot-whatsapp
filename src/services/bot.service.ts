@@ -4,7 +4,7 @@ import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
 import { buildText } from "../lib/util.lib.js"
-import Datastore from "@seald-io/nedb";
+import DataStore from "@seald-io/nedb";
 import { proto } from "baileys"
 import NodeCache from "node-cache"
 import { commandExist, getCommandsByCategory } from "../commands/commands.util.js"
@@ -12,7 +12,7 @@ import { commandsAdmin } from "../commands/admin/commands-list.admin.js"
 import { removePrefix } from "../lib/whatsapp.lib.js"
 
 const db = {
-    command_rate: new Datastore<UserCommandRate>({filename : './storage/command-rate.bot.db', autoload: true})
+    command_rate: new DataStore<UserCommandRate>({filename : './storage/command-rate.bot.db', autoload: true})
 }
 
 export class BotService {
