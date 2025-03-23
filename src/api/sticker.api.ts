@@ -2,7 +2,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
 import crypto from 'node:crypto'
 import webp from "node-webpmux"
-import {getTempPath} from '../lib/util.lib.js'
+import {getTempPath} from '../utils/general.utils.js'
 import {fileTypeFromBuffer} from 'file-type'
 import jimp from 'jimp'
 import { StickerOptions, StickerType } from "../interfaces/api.interface.js"

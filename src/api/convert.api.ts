@@ -1,7 +1,7 @@
 import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
 import axios from 'axios'
-import {getTempPath} from '../lib/util.lib.js'
+import {getTempPath} from '../utils/general.utils.js'
 
 export async function convertMp4ToMp3 (sourceType: 'buffer' | 'url',  video: Buffer | string){
     try {

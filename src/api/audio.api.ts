@@ -1,6 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
-import {getTempPath} from '../lib/util.lib.js'
+import {getTempPath} from '../utils/general.utils.js'
 import { convertMp4ToMp3 } from './convert.api.js'
 import duration from 'format-duration-time'
 import {createClient} from '@deepgram/sdk'
@@ -8,7 +8,7 @@ import tts from 'node-gtts'
 import {fileTypeFromBuffer, FileTypeResult} from 'file-type'
 import axios, { AxiosRequestConfig } from 'axios'
 import FormData from 'form-data'
-import { AudioModificationType, MusicRecognition } from '../interfaces/api.interface.js'
+import { AudioModificationType, MusicRecognition } from '..//interfaces/api.interface.js'
 import crypto from 'node:crypto'
 
 export async function textToVoice (lang: "pt" | 'en' | 'ja' | 'es' | 'it' | 'ru' | 'ko' | 'sv', text: string){

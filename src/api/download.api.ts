@@ -1,4 +1,4 @@
-import {formatSeconds} from '../lib/util.lib.js'
+import {formatSeconds} from '../utils/general.utils.js'
 import ytdl from '@distube/ytdl-core'
 import {instagramGetUrl} from 'instagram-url-direct'
 import { getFbVideoInfo } from 'fb-downloader-scrapper'

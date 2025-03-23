@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios'
-import {getRandomFilename} from '../lib/util.lib.js'
+import {getRandomFilename} from '../utils/general.utils.js'
 import duration from 'format-duration-time'
 import google from '@victorsouzaleal/googlethis'
 import FormData from 'form-data'
