@@ -11,12 +11,12 @@ export function commandsUtility(botInfo?: Bot){
                 reply_title: '🏴‍☠️ *STEAM VERDE*\n'+
                 '────────────────────────\n',
                 reply_item: '*{p1}*\n'+
-                '*Enviado por*: {p2}\n'+
-                '*Data do envio*: {p3}\n'+
-                '*Tamanho*: {p4}\n'+
-                '*Links*: \n- {p5}\n\n',
-                link_torrent: '*Torrent*: {p1}',
-                link_direct: '*Link direto*: {p1}',
+                '- *Enviado por*: {p2}\n'+
+                '- *Data do envio*: {p3}\n'+
+                '{p4}'+
+                '- *Tamanho*: {p5}\n\n',
+                link_torrent: '- *Torrent*: {p1}\n',
+                link_direct: '- *Link direto*: {p1}\n',
                 error_not_found: 'Nenhum jogo foi encontrado, tente pesquisar novamente com outros termos.'
             },
             function: utilityFunctions.steamverdeCommand

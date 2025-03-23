@@ -28,7 +28,7 @@ export async function steamverdeCommand(client: WASocket, botInfo: Bot, message:
             if (uri.includes('magnet')) return buildText(utilityCommands.steamverde.msgs.link_torrent, uri.split("&dn")[0])
             else return buildText(utilityCommands.steamverde.msgs.link_direct, uri)
         })
-        replyText += buildText(utilityCommands.steamverde.msgs.reply_item, game.title, game.uploader, game.uploadDate, game.fileSize, gamesUrl.join("\n- "))
+        replyText += buildText(utilityCommands.steamverde.msgs.reply_item, game.title, game.uploader, game.uploadDate, gamesUrl.join(""), game.fileSize.replace('\n', ''))
     })
 
     await Whatsapp.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
