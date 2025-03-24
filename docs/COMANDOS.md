@@ -16,7 +16,6 @@
 - Tiktok (video)
 - Google (imagem)
 
-
 ### ⚒️ Utilidades Gerais
 - Brasileirão A/B
 - Têndencias de Filmes/Séries

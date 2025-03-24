@@ -1,6 +1,19 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.0.2 - 24/03/2025
+
+### GERAL
+- Agora quando uma atualização é feita a pasta da versão anterior é deletada para evitar os arquivos que não são mais usados se acumulem.
+- Projeto foi reorganizado e agora as API's estão juntas com o bot para facilitar nas atualizações.
+
+### COMANDOS
+- Novo comando **!steamverde** para procurar links de "jogos alternativos" para PC.
+- Comando **!simi** removido do bot.
+
+### CORREÇÕES
+- Os comandos **!ouvir** e **!qualmusica** foram corrigidos e agora recebem a chave de API corretamente.
+
 ## 3.0.1 - 21/03/2025
 
 ### NOVO
