@@ -9,7 +9,8 @@ export default function getGeneralMessages (botInfo? : Bot){
             update_available: 'Uma nova atualização compatível foi encontrada, aguarde o término da atualização...',
             error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
             bot_updated: 'Seu bot foi atualizado e será desligado, inicie novamente usando yarn start.',
-            update_available_manual: 'Há uma atualização disponível, mas ela precisa ser instalada manualmente do zero por não ser compatível com a sua versão.',
+            update_available_manual: 'Há uma atualização disponível, mas é necessário deletar todos os dados para a nova atualização funcionar corretamente. '+
+            'Deseja continuar? ',
             server_started: '✓ Servidor iniciado!',
             groups_loaded: '✓ Todos os grupos foram carregados e atualizados.',
             admin_registered: `✅ Seu número foi cadastrado como DONO, agora você pode utilizar os comandos de ${prefix}admin`,
