@@ -1,7 +1,7 @@
 import moment from "moment-timezone"
 moment.tz.setDefault('America/Sao_Paulo')
-import { botUpdater } from './bot/helpers/bot.updater.helper.js'
-import connect from './bot/socket.js'
+import { botUpdater } from './helpers/bot.updater.helper.js'
+import connect from './socket.js'
 import ffmpeg from "fluent-ffmpeg"
 import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
     ffmpeg.setFfmpegPath(ffmpegInstaller.path)
