@@ -3,7 +3,6 @@
 </p>
 <h1 align="center">🤖 LBot - Robô para WhatsApp</h1>
 <p align="center">
-<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fvictorsouzaleal%2Flbot-whatsapp&count_bg=%234dc61f&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visualizacoes&edge_flat=false"/></a>
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouzaleal/lbot-whatsapp?label=vers%C3%A3o&color=#79C83D"/></a>
 <a href="https://github.com/victorsouzaleal/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouzaleal?label=seguidores&style=flat&color=#79C83D"/></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat&color=#79C83D"></a>
@@ -33,7 +32,9 @@ Antes da instalação você tem que instalar os programas abaixo, no Windows é 
 - Node.js LTS - [DOWNLOAD](https://nodejs.org/en/)<br><br>
 
 
-Faça o download do **.zip** da [ultima versão lançada](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)<br>
+Faça o download do **.zip** da última versão lançada: [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)
+
+<br>
 
 Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** para executar o comando abaixo:
 
@@ -56,8 +57,9 @@ Se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu cel
 
 ### 📱 Termux :
 
-A instalação no Termux é bem fácil e tentei simplificar o máximo que pude.<br>
+Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/termux/termux-app/releases/download/v0.118.1/termux-app_v0.118.1+github-debug_universal.apk).
 
+<br>
 
 Abra o **Termux** comece usando este comando para instalar automaticamente o bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
