@@ -2,7 +2,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
 import {getTempPath} from '../utils/general.util.js'
 import { convertMp4ToMp3 } from './convert.library.js'
-import duration from 'format-duration-time'
+import format from 'format-duration'
 import {createClient} from '@deepgram/sdk'
 import tts from 'node-gtts'
 import {fileTypeFromBuffer, FileTypeResult} from 'file-type'
@@ -147,7 +147,7 @@ export async function musicRecognition (mediaBuffer : Buffer, {acr_host , acr_ac
         
         const musicRecognition : MusicRecognition = {
             producer : recognitionResponse.metadata.humming[0].label || "-----",
-            duration: duration.default(recognitionResponse.metadata.humming[0].duration_ms).format("m:ss"),
+            duration: format(recognitionResponse.metadata.humming[0].duration_ms),
             release_date: `${arrayReleaseDate[2]}/${arrayReleaseDate[1]}/${arrayReleaseDate[0]}`,
             album: recognitionResponse.metadata.humming[0].album.name,
             title: recognitionResponse.metadata.humming[0].title,

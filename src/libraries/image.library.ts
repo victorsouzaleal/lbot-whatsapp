@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import {getRandomFilename} from '../utils/general.util.js'
-import duration from 'format-duration-time'
+import format from 'format-duration'
 import google from '@victorsouzaleal/googlethis'
 import FormData from 'form-data'
 import getEmojiMixUrl, {checkSupported} from 'emoji-mixer'
@@ -134,8 +134,8 @@ export async function animeRecognition(imageBuffer : Buffer){
         const msInitial = Math.round(animes[0].from * 1000) 
         const msFinal = Math.round(animes[0].to * 1000)
         const animeInfo : AnimeRecognition = {
-            initial_time : duration.default(msInitial).format("h:mm:ss"),
-            final_time: duration.default(msFinal).format("h:mm:ss"),
+            initial_time : format(msInitial),
+            final_time: format(msFinal),
             episode: animes[0].episode,
             title: animes[0].anilist.title.english || animes[0].anilist.title.romaji,
             similarity: parseInt((animes[0].similarity * 100).toFixed(2)),
