@@ -13,6 +13,7 @@
 
 <br>
 
+<h2 align="center"> 📱 Quer usar o bot? <a href="https://wa.me/5521999121990">AQUI</a> </h2>
 <h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a>  </h2>
 
 <br>
