@@ -90,7 +90,7 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
     let replyText = buildText(infoCommands.menu.msgs.reply, userData.name, userType, userData.commands)
 
     if (!message.args.length){
-        replyText += menu.mainMenu(botInfo)
+        replyText +=  message.isGroupMsg ? menu.mainMenuGroup(botInfo) : menu.mainMenu(botInfo)
     } else {
         const commandText = message.text_command.trim()
         switch(commandText){
@@ -107,14 +107,13 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
                 replyText += menu.downloadMenu(botInfo)
                 break
             case "4":
-                if (!message.isGroupMsg) throw new Error(getBotTexts(botInfo).permission.group)
-
-                if (message.isGroupAdmin) replyText += menu.groupAdminMenu(botInfo)
-                else replyText += menu.groupMenu(botInfo)
-                break
-            case "5":
                 if (message.isGroupMsg) replyText += menu.miscGroupMenu(botInfo)
                 else replyText += menu.miscMenu(botInfo)
+                break
+            case "5":
+                if (!message.isGroupMsg) throw new Error(getBotTexts(botInfo).permission.group)
+                if (message.isGroupAdmin) replyText += menu.groupAdminMenu(botInfo)
+                else replyText += menu.groupMenu(botInfo)
                 break
             default:
                 throw new Error(infoCommands.menu.msgs.error_invalid_option)

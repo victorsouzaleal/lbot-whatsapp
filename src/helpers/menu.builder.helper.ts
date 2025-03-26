@@ -13,8 +13,26 @@ export const mainMenu  = (botInfo : Bot)=> {
 ┣► *${prefix}menu* 1   🖼️ Figurinhas
 ┣► *${prefix}menu* 2   ⚒️ Utilidades
 ┣► *${prefix}menu* 3   📥 Downloads
-┣► *${prefix}menu* 4   👨‍👩‍👧‍👦 Grupo
-┣► *${prefix}menu* 5   🧩 Variado
+┣► *${prefix}menu* 4   🧩 Variado
+ ▎
+┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
+}
+
+// MENU PRINCIPAL (GRUPO)
+export const mainMenuGroup  = (botInfo : Bot)=> { 
+    let {name, prefix} = botInfo
+    return `┏━━━ ✦ *🤖 ${name?.trim()}* ✦
+ ▎
+┣━━━ ✦ 🔎 *MENU PRINCIPAL* ✦
+ ▎
+┣━━ Digite um dos comandos abaixo:
+ ▎
+┣► *${prefix}menu* 0   ❓ Informação
+┣► *${prefix}menu* 1   🖼️ Figurinhas
+┣► *${prefix}menu* 2   ⚒️ Utilidades
+┣► *${prefix}menu* 3   📥 Downloads
+┣► *${prefix}menu* 4   🧩 Variado
+┣► *${prefix}menu* 5   👨‍👩‍👧‍👦 Grupo
  ▎
 ┗━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }
