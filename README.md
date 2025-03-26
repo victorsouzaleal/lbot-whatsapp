@@ -12,7 +12,7 @@
 
 <br>
 
-<h2 align="center"> 📱 Quer usar o bot? <a href="https://wa.me/5521999121990">AQUI</a> </h2>
+<h2 align="center"> 📱 Quer utilizar o bot no privado? <a href="https://wa.me/5521999121990">AQUI</a> </h2>
 <h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a>  </h2>
 
 <br>
@@ -31,27 +31,29 @@ Antes da instalação você tem que instalar os programas abaixo, no Windows é 
 - Git 64-bit - [DOWNLOAD](https://git-scm.com/downloads/win)<br>
 - Node.js LTS - [DOWNLOAD](https://nodejs.org/en/)<br><br>
 
+<br>
+
+Após instalar o Git e o Node.js no sistema, use o comando abaixo para instalar o **Yarn**
+```bash
+npm i -g yarn
+```
+
+**OBS**: Caso o comando retorne erro no **Linux** você vai precisar se elevar a superusuário utilizando **sudo** antes do comando.
+
+<br>
 
 Faça o download do **.zip** da última versão lançada: [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)
 
 <br>
 
-Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** para executar o comando abaixo:
-
-```bash
-npm i -g yarn && yarn install
-```
-<br>
-
-**OBS**: Caso o comando retorne erro no **Linux** você vai precisar se elevar a superusuário utilizando **sudo** antes do comando.<br><br>
-
-Quando o comando terminar você pode iniciar o bot com o comando abaixo:
+Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** e inicie o bot com o abaixo:
 ```bash
 yarn start
 ```
+
 <br>
 
-Se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**.
+É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**.
 
 <br>
 
@@ -67,15 +69,17 @@ pkg install wget -y && wget -O - bit.ly/lbot-whatsapp | bash
 ```
 <br>
 
-Se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**.<br><br>
+É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**. 
+
+<br>
 
 Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
 ```bash
 cd LBOT && yarn start
 ```
 
-
-<br><br>
+<br>
+<br>
 
 ## 2 - 🤖 Uso :
 
@@ -150,8 +154,7 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 <br>
 
 ## 5 - 👤 Contato
-Caso tenha algum problema ou queira ajudar de alguma forma com o projeto. Estou também procurando alguem que possa oferecer um número de WhatsApp
-para eu deixar o bot rodando para o público.
+Caso tenha algum problema ou queira ajudar de alguma forma com o projeto. 
 
 * **Email**: victorsouzaleal@gmail.com
 * **WhatsApp (NÃO É O BOT, É MEU CONTATO PESSOAL PELO AMOR DE DEUS)**: https://wa.me/5521995612287
