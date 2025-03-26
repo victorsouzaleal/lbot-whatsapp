@@ -57,8 +57,6 @@ export async function handleGroupMessage(client: WASocket, group: Group, botInfo
     const isAutosticker = ((message.type === 'videoMessage' || message.type === "imageMessage") && group?.autosticker)
     let callCommand : boolean
 
-    //Verifica se o usuário está bloqueado, se estiver retorna.
-    if (await isUserBlocked(client, sender)) return false
     //Se o grupo estiver restrito para admins e o bot não for um admin, retorne.
     if (await isBotLimitedByGroupRestricted(groupController, group, botInfo)) return false
     //Se o antilink estiver ativado, e for detectado um link na mensagem, retorne.
@@ -67,14 +65,16 @@ export async function handleGroupMessage(client: WASocket, group: Group, botInfo
     if (await isDetectedByAntiFlood(client, groupController, botInfo, group, message)) return false
     //Verifica se é um registro de dono, se for retorne.
     if (await isOwnerRegister(client, userController, botInfo, message)) return false
-    //Se o contador estiver ativado, verifica se precisa adicionar o participante e incrementa a contagem dele.
+    //Incrementa a contagem do participante.
     await incrementParticipantActivity(groupController, message, isCommand)
-    //Se o grupo estiver mutado e o participante não for um admin, retorne.
-    if (await isIgnoredByGroupMuted(group, isGroupAdmin)) return false
-    //Leia a mensagem do usuário
-    await readUserMessage(client, message)
     //Atualize o nome do usuário
     await updateUserName(userController, message)
+    //Se o grupo estiver mutado e o participante não for um admin, retorne.
+    if (await isIgnoredByGroupMuted(group, isGroupAdmin)) return false
+    //Verifica se o usuário está bloqueado, se estiver retorna.
+    if (await isUserBlocked(client, sender)) return false
+    //Leia a mensagem do usuário
+    await readUserMessage(client, message)
 
     if (isCommand || isAutosticker){
         //Se a taxa de comandos estiver ativa e o usuário estiver limitado, retorne.
