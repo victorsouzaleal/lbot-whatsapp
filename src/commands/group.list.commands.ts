@@ -271,24 +271,26 @@ export function commandsGroup(botInfo?: Bot){
             },
             function: groupFunctions.topativosCommand
         },
-        atividade: {
-            guide: `Ex: *${PREFIX}atividade* @membro - Mostra a atividade do membro mencionado.\n\n`+
-            `Ex: Responder com *${PREFIX}atividade* - Mostra a atividade do membro que você respondeu.\n`,
+        membro: {
+            guide: `Ex: *${PREFIX}membro* @membro - Mostra os dados do membro mencionado.\n\n`+
+            `Ex: Responder com *${PREFIX}membro* - Mostra os dados do membro que você respondeu.\n`,
             msgs: {
                 error_not_member: "Não é possível obter a atividade de quem não está no grupo.",
-                reply: "📊 *Atividade do membro*:\n"+
+                reply: "📊 *Dados do membro*:\n"+
                 '────────────────────────\n'+
                 "👤 *Nome*: {p1}\n"+
-                "📲 *Número*: +{p2}\n\n"+
-                "🧮 *Total de mensagens*: {p3}\n"+
-                "🔤 *Textos enviados*: {p4}\n"+
-                "📸 *Imagens enviadas*: {p5}\n"+
-                "🎥 *Videos enviados*: {p6}\n"+
-                "🖼️ *Figurinhas enviadas*: {p7}\n"+
-                "🎧 *Aúdios enviados*: {p8}\n"+
-                "🧩 *Outros*: {p9}\n"
+                "📲 *Número*: +{p2}\n"+
+                "📆 *Registrado pelo bot em*: \n- {p3}\n\n"+
+                "🤖 *Comandos usados*: {p4}\n"+
+                "✉️ *Mensagens*: {p5}\n"+
+                "🔤 *Textos*: {p6}\n"+
+                "📸 *Imagens*: {p7}\n"+
+                "🎥 *Videos*: {p8}\n"+
+                "🖼️ *Figurinhas*: {p9}\n"+
+                "🎧 *Aúdios*: {p10}\n"+
+                "🧩 *Outros*: {p11}\n"
             },
-            function: groupFunctions.atividadeCommand
+            function: groupFunctions.membroCommand
         },
         inativos: {
             guide: `Ex: *${PREFIX}inativos* 5 - Marca todos os membros com menos de 5 mensagens.\n`,

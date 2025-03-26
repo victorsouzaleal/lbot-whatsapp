@@ -497,7 +497,7 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
     await waLib.replyWithMentions(client, message.chat_id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
 }
 
-export async function atividadeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+export async function membroCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const userController = new UserController()
     const botTexts = getBotTexts(botInfo)
@@ -511,12 +511,12 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
     else if (message.mentioned.length === 1) targetUserId = message.mentioned[0]
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let userActivity = await groupController.getParticipant(group.id, targetUserId)
+    let participant = await groupController.getParticipant(group.id, targetUserId)
 
-    if(!userActivity) throw new Error(groupCommands.atividade.msgs.error_not_member)
+    if(!participant) throw new Error(groupCommands.membro.msgs.error_not_member)
     
     const userData = await userController.getUser(targetUserId)
-    const replyText = buildText(groupCommands.atividade.msgs.reply, userData?.name || '---', waLib.removeWhatsappSuffix(targetUserId), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
+    const replyText = buildText(groupCommands.membro.msgs.reply, userData?.name || '---', waLib.removeWhatsappSuffix(targetUserId), participant.registered_since, participant.commands, participant.msgs, participant.text, participant.image, participant.video, participant.sticker, participant.audio, participant.other)
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 

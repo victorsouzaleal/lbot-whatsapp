@@ -185,8 +185,9 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 ┣► *${prefix}antifake* - Ativa/desativa o anti-fake
 ┣► *${prefix}antiflood* - Ativa/desativa o anti-flood
  ▎
-┣━━ ✦ 📊 *ATIVIDADE* ✦
+┣━━ ✦ 👤 *MEMBROS* ✦
  ▎
+┣► *${prefix}membro* @membro - Mostra os dados do membro
 ┣► *${prefix}topativos* - Marca os 10 membros mais ativos
 ┣► *${prefix}inativos* numero - Marca os membros com menos de um determinado número de mensagens
  ▎
