@@ -153,7 +153,7 @@ export function commandsMisc(botInfo?: Bot){
             msgs: {
                 reply: "👩‍❤️‍👨 *Par*\n"+
                 '────────────────────────\n'+
-                'A chance de compatibilidade entre @{p1} e @{p2} é de *{p1}%*'
+                'A chance de compatibilidade entre @{p1} e @{p2} é de *{p3}%*'
             },
             function: miscFunctions.parCommand
         },
