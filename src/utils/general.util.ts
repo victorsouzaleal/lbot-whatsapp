@@ -35,7 +35,7 @@ export function buildText(text : string, ...params : any[]){
 }
 
 export function timestampToDate(timestamp : number){
-    return moment(timestamp).format('DD/MM HH:mm:ss')
+    return moment(timestamp).format('DD/MM/YYYY HH:mm:ss')
 }
 
 export function formatSeconds(seconds : number){
@@ -43,7 +43,7 @@ export function formatSeconds(seconds : number){
 }
 
 export function currentDate(){
-  return moment(Date.now()).format('DD/MM HH:mm:ss')
+  return moment(Date.now()).format('DD/MM/YYYY HH:mm:ss')
 }
 
 export function getResponseTime(timestamp: number){

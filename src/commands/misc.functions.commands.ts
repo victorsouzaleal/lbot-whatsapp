@@ -6,6 +6,7 @@ import { waLib, miscLib } from "../libraries/library.js"
 import { buildText, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../utils/general.util.js"
 import getBotTexts from "../utils/bot.texts.util.js"
 import { commandsMisc } from "./misc.list.commands.js"
+import { GroupController } from "../controllers/group.controller.js"
 
 export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
@@ -22,13 +23,14 @@ export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Me
 }
 
 export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const groupController = new GroupController()
     const miscCommands = commandsMisc(botInfo)
     const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupMsg || !group) throw new Error(botTexts.permission.group)
 
-    const currentParticipants = group.participants
-    const randomParticipant = currentParticipants[Math.floor(Math.random() * currentParticipants.length)]
+    const currentParticipantsIds = await groupController.getParticipantsIds(group.id)
+    const randomParticipant = currentParticipantsIds[Math.floor(Math.random() * currentParticipantsIds.length)]
     const replyText = buildText(miscCommands.sorteiomembro.msgs.reply, waLib.removeWhatsappSuffix(randomParticipant))
     await waLib.replyWithMentions(client, message.chat_id, replyText, [randomParticipant], message.wa_message, {expiration: message.expiration})
 }
@@ -95,20 +97,21 @@ export async function roletarussaCommand(client: WASocket, botInfo: Bot, message
 }
 
 export async function casalCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const groupController = new GroupController()
     const miscCommands = commandsMisc(botInfo)
     const botTexts = getBotTexts(botInfo)
    
     if (!message.isGroupMsg || !group) throw new Error(botTexts.permission.group)
     
-    let currentParticipants = group.participants
+    let currentParticipantsIds = await groupController.getParticipantsIds(group.id)
 
-    if (currentParticipants && currentParticipants.length < 2) throw new Error(miscCommands.casal.msgs.error)
+    if (currentParticipantsIds && currentParticipantsIds.length < 2) throw new Error(miscCommands.casal.msgs.error)
     
-    let randomIndex = Math.floor(Math.random() * currentParticipants.length)
-    let chosenParticipant1 = currentParticipants[randomIndex]
-    currentParticipants.splice(randomIndex, 1)
-    randomIndex = Math.floor(Math.random() * currentParticipants.length)
-    let chosenParticipant2 = currentParticipants[randomIndex]
+    let randomIndex = Math.floor(Math.random() * currentParticipantsIds.length)
+    let chosenParticipant1 = currentParticipantsIds[randomIndex]
+    currentParticipantsIds.splice(randomIndex, 1)
+    randomIndex = Math.floor(Math.random() * currentParticipantsIds.length)
+    let chosenParticipant2 = currentParticipantsIds[randomIndex]
     let replyText = buildText(miscCommands.casal.msgs.reply, waLib.removeWhatsappSuffix(chosenParticipant1), waLib.removeWhatsappSuffix(chosenParticipant2))
     await waLib.sendTextWithMentions(client, message.chat_id, replyText, [chosenParticipant1, chosenParticipant2], {expiration: message.expiration})
 }
@@ -202,6 +205,7 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
 }
 
 export async function top5Command(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const groupController = new GroupController()
     const miscCommands = commandsMisc(botInfo)
     const botTexts = getBotTexts(botInfo)
 
@@ -209,9 +213,9 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
     
     let rankingTheme = message.text_command
-    let currentParticipants = group.participants
+    let currentParticipantsIds = await groupController.getParticipantsIds(group.id)
 
-    if (currentParticipants.length < 5) throw new Error(miscCommands.top5.msgs.error_members)
+    if (currentParticipantsIds.length < 5) throw new Error(miscCommands.top5.msgs.error_members)
 
     let replyText = buildText(miscCommands.top5.msgs.reply_title, rankingTheme)
     let mentionList = []
@@ -233,11 +237,11 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
                 icon = ''
         }
 
-        let randomIndex = Math.floor(Math.random() * currentParticipants.length)
-        let chosenParticipant = currentParticipants[randomIndex]
+        let randomIndex = Math.floor(Math.random() * currentParticipantsIds.length)
+        let chosenParticipant = currentParticipantsIds[randomIndex]
         replyText += buildText(miscCommands.top5.msgs.reply_item, icon, i, waLib.removeWhatsappSuffix(chosenParticipant))
         mentionList.push(chosenParticipant)
-        currentParticipants.splice(currentParticipants.indexOf(chosenParticipant, 1))                
+        currentParticipantsIds.splice(currentParticipantsIds.indexOf(chosenParticipant, 1))                
     }
 
     await waLib.sendTextWithMentions(client, message.chat_id, replyText, mentionList, {expiration: message.expiration})

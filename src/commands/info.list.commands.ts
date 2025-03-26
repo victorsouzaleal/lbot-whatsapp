@@ -36,13 +36,7 @@ export default function commandsInfo(botInfo?: Bot){
                 '────────────────────────\n'+
                 "*Tipo de usuário*: {p1}\n"+
                 "*Nome*: {p2}\n"+
-                "*Total de comandos usados*: {p3} comandos\n",
-                reply_group: "📊 *Seus dados de uso*\n"+
-                '────────────────────────\n'+
-                "*Tipo de usuário*: {p1}\n"+
-                "*Nome*: {p2}\n"+
-                "*Total de comandos usados*: {p3} comandos\n"+
-                "*Mensagens neste grupo*: {p4} mensagens\n",
+                "*Comandos usados*: {p3} comandos\n",
                 error_not_found: 'Usuário não foi encontrado.'
             },
             function: infoFunctions.meusdadosCommand

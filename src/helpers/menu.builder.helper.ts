@@ -160,8 +160,7 @@ export const groupAdminMenu = (botInfo : Bot)=>{
  ▎
 ┣━━ ✦ 🧰 *RECURSOS* ✦ 
  ▎
-┣► *${prefix}contador* - Ativa/desativa o contador de atividade
-┣► *${prefix}mutar* - Ativa/desativa o uso de comandos
+┣► *${prefix}mutar* - Ativa/desativa o uso de comandos somente para admins
 ┣► *${prefix}autosticker* - Ativa/desativa a criação automática de stickers
 ┣► *${prefix}bemvindo* - Ativa/desativa a mensagem de bem-vindo
 ┣► *${prefix}antilink* - Ativa/desativa o anti-link

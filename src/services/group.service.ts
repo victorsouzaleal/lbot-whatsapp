@@ -1,8 +1,8 @@
-import { ParticipantCounter, Group, ParticipantAntiFlood } from "../interfaces/group.interface.js";
+import { Participant, Group, ParticipantAntiFlood } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { Message, MessageTypes } from "../interfaces/message.interface.js";
-import { GroupMetadata } from 'baileys'
+import { GroupMetadata, GroupParticipant } from 'baileys'
 import { timestampToDate, buildText } from '../utils/general.util.js'
 import moment from 'moment-timezone'
 import getBotTexts from "../utils/bot.texts.util.js";
@@ -14,63 +14,63 @@ import DataStore from "@seald-io/nedb";
 
 const db = {
     groups : new DataStore<Group>({filename : './storage/groups.db', autoload: true}),
-    group_antiflood : new DataStore<ParticipantAntiFlood>({filename : './storage/antiflood.groups.db', autoload: true}),
-    group_counter : new DataStore<ParticipantCounter>({filename : './storage/counter.groups.db', autoload: true})
+    participants : new DataStore<Participant>({filename : './storage/participants.groups.db', autoload: true})
 }
 
 export class GroupService {
     // *********************** Registra/Atualiza/Remove grupos ***********************
-    public async registerGroup(group : GroupMetadata){
-        const isRegistered = await this.isRegistered(group.id)
+    public async registerGroup(groupMetadata : GroupMetadata){
+        const isRegistered = await this.isRegistered(groupMetadata.id)
 
         if (isRegistered) return
 
-        const participants = waLib.getGroupParticipantsByMetadata(group)
-        const admins = waLib.getGroupAdminsByMetadata(group)
         const groupData : Group = {
-            id: group.id,
-            name: group.subject,
-            description: group.desc,
+            id: groupMetadata.id,
+            name: groupMetadata.subject,
+            description: groupMetadata.desc,
             commands_executed: 0,
-            participants,
-            admins,
-            owner: group.owner,
-            restricted: group.announce,
-            expiration: group.ephemeralDuration,
+            owner: groupMetadata.owner,
+            restricted: groupMetadata.announce,
+            expiration: groupMetadata.ephemeralDuration,
             muted : false,
             welcome : { status: false, msg: '' },
             antifake : { status: false, allowed: [] },
             antilink : false,
             antiflood : { status: false, max_messages: 10, interval: 10},
             autosticker : false,
-            counter : { status: false, started: '' },
             block_cmds : [],
             blacklist : []
         }
 
-        return db.groups.insertAsync(groupData)
+        const newGroup = await db.groups.insertAsync(groupData) as Group
+
+        groupMetadata.participants.forEach( async(participant) => {
+            const isAdmin = (participant.admin) ? true : false
+            await this.addParticipant(newGroup.id, participant.id, isAdmin)
+        })
     }
 
     public async registerGroups(groups: GroupMetadata[]) {
         for (let group of groups) await this.registerGroup(group)
     }
 
-    public updateGroup(group : GroupMetadata){
-        const participants = waLib.getGroupParticipantsByMetadata(group)
-        const admins = waLib.getGroupAdminsByMetadata(group)
-        return db.groups.updateAsync({ id : group.id }, { $set: {
-            name: group.subject,
-            description: group.desc,
-            participants,
-            admins,
-            owner: group.owner,
-            restricted: group.announce,
-            expiration: group.ephemeralDuration
-        }})
-    }
+    public async updateGroups(groupsMeta: GroupMetadata[]){
+        for (let groupMeta of groupsMeta) {
+            await db.groups.updateAsync({ id : groupMeta.id }, { $set: {
+                name: groupMeta.subject,
+                description: groupMeta.desc,
+                owner: groupMeta.owner,
+                restricted: groupMeta.announce,
+                expiration: groupMeta.ephemeralDuration
+            }})
 
-    public async updateGroups(groups: GroupMetadata[]){
-        for (let group of groups) await this.updateGroup(group)
+            groupMeta.participants.forEach( async(participant) => {
+                const isAdmin = (participant.admin) ? true : false
+                const isParticipant = await this.isParticipant(groupMeta.id, participant.id)
+                if (!isParticipant) await this.addParticipant(groupMeta.id, participant.id, isAdmin)
+                else await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
+            })
+        }
     }
 
     public updatePartialGroup(group: Partial<GroupMetadata>) {
@@ -126,53 +126,137 @@ export class GroupService {
         return db.groups.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
     } 
 
-    // *********************** Adiciona/Atualiza/Remove participantes e admins. ***********************
-    public async getParticipants(groupId: string){
-        const group = await this.getGroup(groupId)
-        return group?.participants || []
-    }
-
-    public async isParticipant(groupId: string, userId: string){
-        const participants = await this.getParticipants(groupId)
-        return participants.includes(userId)
-    }
-
-    public async getAdmins(groupId: string){
-        const group = await this.getGroup(groupId)
-        return group?.admins || []
-    }
-
-    public async isAdmin(groupId: string, userId: string){
-        const admins = await this.getAdmins(groupId)
-        return admins.includes(userId)
-    }
-
     public async getOwner(groupId: string){
         const group = await this.getGroup(groupId)
         return group?.owner
     }
 
-    public async addParticipant(groupId: string, userId: string){
+    // ***** Participantes *****
+    public async addParticipant(groupId: string,  userId: string, isAdmin = false){
         const isParticipant = await this.isParticipant(groupId, userId)
-        if (!isParticipant) return db.groups.updateAsync({id : groupId}, { $push: { participants: userId } })
+
+        if (isParticipant) return
+
+        const participant : Participant = {
+            group_id : groupId,
+            user_id: userId,
+            registered_since: timestampToDate(moment.now()),
+            commands: 0,
+            admin: isAdmin,
+            msgs: 0,
+            image: 0,
+            audio: 0,
+            sticker: 0,
+            video: 0,
+            text: 0,
+            other: 0,
+            warnings: 0,
+            antiflood : {
+                expire: 0,
+                msgs: 0
+            }
+        }
+
+        return db.participants.insertAsync(participant)
     }
 
     public async removeParticipant(groupId: string, userId: string){
-        const isParticipant = await this.isParticipant(groupId, userId)
-        if (isParticipant) {
-            await db.groups.updateAsync({id : groupId}, { $pull: { participants : userId } })
-            return this.removeAdmin(groupId, userId)
-        }  
+        return db.participants.removeAsync({group_id: groupId, user_id: userId}, {})
     }
 
     public async addAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
-        if (!isAdmin) return db.groups.updateAsync({id : groupId}, { $push: { admins: userId} })
+        if (!isAdmin) return db.participants.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
     }
 
     public async removeAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
-        if (isAdmin) return db.groups.updateAsync({id : groupId}, { $pull: { admins : userId } })
+        if (isAdmin) return db.groups.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
+    }
+
+    public async getParticipant(groupId: string, userId: string){
+        const participant = await db.participants.findOneAsync({group_id: groupId, user_id: userId}) as Participant | null
+        return participant
+    }
+
+    public async getParticipants(groupId: string){
+        const participants = await db.participants.findAsync({group_id: groupId}) as Participant[]
+        return participants
+    }
+
+    public async getParticipantsIds(groupId: string){
+        const participants = await this.getParticipants(groupId)
+        return participants.map(participant => participant.user_id)
+    }
+
+    public async getAdmins(groupId: string){
+        const admins = await db.participants.findAsync({group_id: groupId, admin: true}) as Participant[]
+        return admins
+    }
+
+    public async getAdminsIds(groupId: string){
+        const admins = await db.participants.findAsync({group_id: groupId, admin: true}) as Participant[]
+        return admins.map(admin => admin.user_id)
+    }
+
+    public async isParticipant(groupId: string, userId: string){
+        const participantsIds = await this.getParticipantsIds(groupId)
+        return participantsIds.includes(userId)
+    }
+
+    public async isAdmin(groupId: string, userId: string){
+        const adminsIds = await this.getAdminsIds(groupId)
+        return adminsIds.includes(userId)
+    }
+
+    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes, isCommand: boolean){
+        let incrementedUser : {
+            msgs: number,
+            commands?: number,
+            text?: number,
+            image?: number,
+            video?: number,
+            sticker?: number,
+            audio?: number,
+            other?: number
+        } = { msgs: 1 }
+
+        if(isCommand) incrementedUser.commands = 1
+
+        switch (type) {
+            case "conversation":
+            case "extendedTextMessage":
+                incrementedUser.text = 1
+                break
+            case "imageMessage":
+                incrementedUser.image = 1
+                break
+            case "videoMessage":
+                incrementedUser.video = 1
+                break
+            case "stickerMessage":
+                incrementedUser.sticker = 1
+                break
+            case "audioMessage":
+                incrementedUser.audio = 1
+                break
+            case "documentMessage":
+                incrementedUser.other = 1
+                break
+        }
+
+        return db.participants.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
+    }  
+
+    public async getParticipantActivityLowerThan(group: Group, num : number){
+        const inactives = await db.participants.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1}) as Participant[]
+        return inactives
+    }
+
+    public async getParticipantsActivityRanking(group: Group, qty: number){
+        let participantsLeaderboard = await db.participants.findAsync({group_id : group.id}).sort({msgs: -1}) as Participant[]
+        const qty_leaderboard = (qty > participantsLeaderboard.length) ? participantsLeaderboard.length : qty
+        return participantsLeaderboard.splice(0, qty_leaderboard)
     }
 
     // *********************** RECURSOS DO GRUPO ***********************
@@ -215,13 +299,13 @@ export class GroupService {
     public async isMessageWithLink(message: Message, group: Group, botInfo : Bot){
         const { body, caption, isGroupAdmin} = message
         const userText = body || caption
-        const { id, admins } = group
-        const isBotAdmin = admins.includes(botInfo.host_number)
+        const groupAdmins = await this.getAdminsIds(group.id)
+        const isBotAdmin = groupAdmins.includes(botInfo.host_number)
 
         if (!group?.antilink) return false
 
         if (!isBotAdmin) {
-            await this.setAntilink(id, false)
+            await this.setAntilink(group.id, false)
         } else {
             if (userText) {
                 const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
@@ -239,67 +323,36 @@ export class GroupService {
 
     // ***** ANTI-FLOOD *****
     public async setAntiFlood(groupId: string, status: boolean, maxMessages: number, interval: number){
-        if (!status) await this.removeGroupAntiFlood(groupId)
-        return db.groups.updateAsync({id : groupId}, { $set:{ 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
+        return db.groups.updateAsync({id : groupId}, { $set: { 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
+    }
+
+    private async hasExpiredMessages(group: Group, participant: Participant, currentTimestamp: number){
+        if (group && currentTimestamp > participant.antiflood.expire){
+            const expireTimestamp = currentTimestamp + group?.antiflood.interval
+            await db.participants.updateAsync({group_id: group.id, user_id: participant.user_id}, { $set : { 'antiflood.expire': expireTimestamp, 'antiflood.msgs': 1 } })
+            return true
+        } else {
+            await db.participants.updateAsync({group_id: group.id, user_id: participant.user_id}, { $inc : { 'antiflood.msgs': 1 } })
+            return false
+        }
     }
 
     public async isFlood(group: Group, userId: string, isGroupAdmin: boolean){
         const currentTimestamp = Math.round(moment.now()/1000)
-        const participantAntiFlood = await this.getParticipantAntiFlood(group.id, userId)
+        const participant = await this.getParticipant(group.id, userId)
         let isFlood = false
 
-        if(isGroupAdmin) return false
+        if(!participant || isGroupAdmin) return false
 
-        if (participantAntiFlood){
-            const hasExpiredMessages = await this.hasExpiredMessages(group, participantAntiFlood, currentTimestamp)
+        const hasExpiredMessages = await this.hasExpiredMessages(group, participant, currentTimestamp)
 
-            if (!hasExpiredMessages && participantAntiFlood.msgs >= group.antiflood.max_messages) {
-                isFlood = true
-            } else {
-                isFlood = false
-            }
+        if (!hasExpiredMessages && participant.antiflood.msgs >= group.antiflood.max_messages) {
+            isFlood = true
         } else {
-            await this.registerParticipantAntiFlood(group, userId)
+            isFlood = false
         }
-    
+        
         return isFlood
-    }
-
-    private removeGroupAntiFlood(groupId: string){
-        return db.group_antiflood.removeAsync({group_id: groupId}, {multi: true})
-    }
-
-    private async registerParticipantAntiFlood(group: Group, userId: string){
-        const isRegistered = (await this.getParticipantAntiFlood(group.id, userId)) ? true : false
-
-        if (isRegistered) return 
-
-        const timestamp = Math.round(moment.now()/1000)
-
-        const participantAntiFlood : ParticipantAntiFlood = {
-            user_id: userId,
-            group_id: group.id,
-            expire: timestamp + group.antiflood.interval,
-            msgs: 1
-        }
-
-        return db.group_antiflood.insertAsync(participantAntiFlood)
-    }
-
-    private async getParticipantAntiFlood(groupId: string, userId: string){
-        const participantAntiFlood = await db.group_antiflood.findOneAsync({group_id: groupId, user_id: userId}) as ParticipantAntiFlood | null
-        return participantAntiFlood
-    }
-
-    private async hasExpiredMessages(group: Group, participantAntiFlood: ParticipantAntiFlood, currentTimestamp: number){
-        if (group && currentTimestamp > participantAntiFlood.expire){
-            const expireTimestamp = currentTimestamp + group?.antiflood.interval
-            await db.group_antiflood.updateAsync({group_id: participantAntiFlood.group_id, user_id: participantAntiFlood.user_id}, { $set : { expire: expireTimestamp, msgs: 1 } })
-            return true
-        } else {
-            await db.group_antiflood.updateAsync({group_id: participantAntiFlood.group_id, user_id: participantAntiFlood.user_id}, { $inc : { msgs: 1 } })
-            return false
-        }
     }
 
     // ***** LISTA-NEGRA *****
@@ -389,99 +442,5 @@ export class GroupService {
         return group.block_cmds.includes(waLib.removePrefix(prefix, command))
     }
 
-    // ***** Activity/Counter *****
-    public setCounter(groupId: string, status: boolean){
-        const dateNow = (status) ? timestampToDate(moment.now()) : ''
-        return db.groups.updateAsync({id: groupId}, { $set:{ "counter.status" : status, "counter.started" : dateNow } })
-    }
 
-    public removerGroupCounter(groupId: string){
-        return db.group_counter.removeAsync({group_id: groupId}, {multi: true})
-    }
-
-    public async getParticipantActivity(groupId: string, userId: string){
-        const participantCounter = await db.group_counter.findOneAsync({group_id: groupId, user_id: userId}) as ParticipantCounter | null
-        return participantCounter
-    }
-
-    private async isParticipantActivityRegistered(groupId: string, userId: string){
-        const userCounter = await this.getParticipantActivity(groupId, userId)
-        return (userCounter != null)
-    }
-
-    public async registerParticipantActivity(groupId: string, userId: string){
-        const isRegistered = await this.isParticipantActivityRegistered(groupId, userId)
-
-        if (isRegistered) return
-
-        const participantCounter : ParticipantCounter = {
-            group_id : groupId,
-            user_id: userId,
-            msgs: 0,
-            image: 0,
-            audio: 0,
-            sticker: 0,
-            video: 0,
-            text: 0,
-            other: 0
-        }
-
-        return db.group_counter.insertAsync(participantCounter)
-    }
-
-    public async registerAllParticipantsActivity(groupId: string, participants: string[]){
-        participants.forEach(async (participant) =>{
-            await this.registerParticipantActivity(groupId, participant)
-        })
-    }
-
-    public async getAllParticipantsActivity(groupId: string){
-        const counters = await db.group_counter.findAsync({group_id : groupId}) as ParticipantCounter[]
-        return counters
-    }
-
-    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes){
-        let incrementedUser : {msgs: number, text?: number, image?: number, video?: number, sticker?: number,  audio?: number, other?: number} = { msgs: 1 }
-
-        switch (type) {
-            case "conversation":
-            case "extendedTextMessage":
-                incrementedUser.text = 1
-                break
-            case "imageMessage":
-                incrementedUser.image = 1
-                break
-            case "videoMessage":
-                incrementedUser.video = 1
-                break
-            case "stickerMessage":
-                incrementedUser.sticker = 1
-                break
-            case "audioMessage":
-                incrementedUser.audio = 1
-                break
-            case "documentMessage":
-                incrementedUser.other = 1
-                break
-        }
-
-        return db.group_counter.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
-    }  
-
-    public async getParticipantActivityLowerThan(group: Group, num : number){
-        let inactives = await db.group_counter.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1}) as ParticipantCounter[]
-        inactives.forEach((inactive) => {
-            if (!group.participants.includes(inactive.user_id)) inactives.splice(inactives.indexOf(inactive), 1)
-        })
-        return inactives
-    }
-
-    public async getParticipantsActivityRanking(group: Group, qty: number){
-        let participantsLeaderboard = await db.group_counter.findAsync({group_id : group.id}).sort({msgs: -1}) as ParticipantCounter[]
-        const qty_leaderboard = (qty > participantsLeaderboard.length) ? participantsLeaderboard.length : qty
-        for (let i = 0; i < qty_leaderboard; i++) {
-            if (!group.participants.includes(participantsLeaderboard[i].user_id)) participantsLeaderboard.splice(i, 1)
-        }
-        return participantsLeaderboard
-    }
 }

@@ -1,18 +1,22 @@
 import { downloadMediaMessage, WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
-import { Group, ParticipantCounter } from "../interfaces/group.interface.js";
+import { Group } from "../interfaces/group.interface.js";
 import { waLib } from "../libraries/library.js";
 import { buildText, messageErrorCommandUsage } from "../utils/general.util.js";
 import getBotTexts from "../utils/bot.texts.util.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import { commandsGroup } from "./group.list.commands.js";
+import { replyText } from "../libraries/whatsapp.library.js";
 
 export async function grupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupCommands = commandsGroup(botInfo)
+    const groupController = new GroupController()
+    const currentParticipants = await groupController.getParticipants(group.id)
+    const currentAdmins = await groupController.getAdmins(group.id)
 
-    let replyText = buildText(groupCommands.grupo.msgs.reply_title, group.name, group.participants.length, group.admins.length, group.description || '---', group.commands_executed)
+    let replyText = buildText(groupCommands.grupo.msgs.reply_title, group.name, currentParticipants.length, currentAdmins.length, group.description || '---', group.commands_executed)
 
     if (message.isGroupAdmin) {
         replyText += groupCommands.grupo.msgs.reply_resource_title
@@ -28,9 +32,7 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += (group.antifake.status) ? buildText(groupCommands.grupo.msgs.reply_item_antifake_on, group.antifake.allowed.toString()) : groupCommands.grupo.msgs.reply_item_antifake_off
         //Anti-Flood
         replyText += (group.antiflood.status) ? buildText(groupCommands.grupo.msgs.reply_item_antiflood_on, group.antiflood.max_messages, group.antiflood.interval) : groupCommands.grupo.msgs.reply_item_antiflood_off
-        //Contador
-        replyText += (group.counter.status) ? buildText(groupCommands.grupo.msgs.reply_item_counter_on, group.counter.started) : groupCommands.grupo.msgs.reply_item_counter_off
-
+        
         //Bloqueio de CMDS
         let blockedCommands = []
         for (let command of group.block_cmds){
@@ -46,9 +48,10 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
 }
 
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -66,7 +69,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
     let targetUserId : string
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
@@ -79,7 +82,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     if (targetUserId == botInfo.host_number) throw new Error(groupCommands.addlista.msgs.error_add_bot)
-    else if (group.admins.includes(targetUserId)) throw new Error(groupCommands.addlista.msgs.error_add_admin)
+    else if (await groupController.isAdmin(group.id, targetUserId)) throw new Error(groupCommands.addlista.msgs.error_add_admin)
 
     const currentBlacklist = await groupController.getBlackList(group.id)
 
@@ -87,14 +90,14 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
 
     await groupController.addBlackList(group.id, targetUserId)
     await waLib.replyText(client, message.chat_id, groupCommands.addlista.msgs.reply, message.wa_message, {expiration: message.expiration})
-    if (group.participants.includes(targetUserId)) await waLib.removeParticipant(client, group.id, targetUserId)
+    if (await groupController.isParticipant(group.id, targetUserId)) await waLib.removeParticipant(client, group.id, targetUserId)
 }
 
 export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
     let targetUserId : string
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
@@ -117,7 +120,7 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -137,9 +140,10 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
 }
 
 export async function addCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -161,9 +165,10 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
 }
 
 export async function banCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -177,8 +182,8 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
     let replyText = groupCommands.ban.msgs.reply_title
 
     for(let userId of targetUsers){
-        if (group.participants.includes(userId)){
-            if (!group.admins.includes(userId)){
+        if (await groupController.isParticipant(group.id, userId)){
+            if (!await groupController.isAdmin(group.id, userId)){
                 await waLib.removeParticipant(client, group.id, userId)
                 replyText += buildText(groupCommands.ban.msgs.reply_item_success, waLib.removeWhatsappSuffix(userId))
             } else {
@@ -193,9 +198,10 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
 }
 
 export async function promoverCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -208,7 +214,7 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
     for(let userId of targetUsers){
-        if (!group.admins.includes(userId)) {
+        if (!await groupController.isAdmin(group.id, userId)) {
             await waLib.promoteParticipant(client, group.id, userId)
             replyText += buildText(groupCommands.promover.msgs.reply_item_success, waLib.removeWhatsappSuffix(userId))
         } else {
@@ -220,9 +226,10 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
 }
 
 export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -237,7 +244,7 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
     for(let userId of targetUsers){
         if (userId == botInfo.host_number || userId == group.owner){
             replyText += buildText(groupCommands.rebaixar.msgs.reply_item_error, waLib.removeWhatsappSuffix(userId))
-        } else if (group.admins.includes(userId)) {
+        } else if (await groupController.isAdmin(group.id, userId)) {
             replyText += buildText(groupCommands.rebaixar.msgs.reply_item_success, waLib.removeWhatsappSuffix(userId))
             await waLib.demoteParticipant(client, group.id, userId)
         } else {
@@ -249,50 +256,51 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
 }
 
 export async function mtCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
+    const currentParticipantsIds = await groupController.getParticipantsIds(group.id)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     
     let replyMention : string
 
-    if (message.args.length) replyMention = buildText(groupCommands.mt.msgs.reply_with_message, group.participants.length, message.text_command)
-    else replyMention = buildText(groupCommands.mt.msgs.reply, group.participants.length)
+    if (message.args.length) replyMention = buildText(groupCommands.mt.msgs.reply_with_message, currentParticipantsIds.length, message.text_command)
+    else replyMention = buildText(groupCommands.mt.msgs.reply, currentParticipantsIds.length)
 
-    await waLib.replyWithMentions(client, message.chat_id, replyMention, group.participants, message.wa_message, {expiration: message.expiration})
+    await waLib.replyWithMentions(client, message.chat_id, replyMention, currentParticipantsIds, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mmCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupCommands = commandsGroup(botInfo)
+    const groupController = new GroupController()
     const botTexts = getBotTexts(botInfo)
+    let replyText : string
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     
-    let replyMention : string
-    let groupMembers : string[] = []
-    
-    group.participants.forEach((participant) => {
-        if (!group.admins.includes(participant)) groupMembers.push(participant)
-    })
+    const currentParticipants = await groupController.getParticipants(group.id)
+    const participantsNotAdmins = currentParticipants.filter(participant => participant.admin == false).map(participant => participant.user_id)
 
-    if (!groupMembers.length) throw new Error(groupCommands.mm.msgs.error_no_members)
+    if (!participantsNotAdmins.length) throw new Error(groupCommands.mm.msgs.error_no_members)
 
-    if (message.args.length) replyMention = buildText(groupCommands.mm.msgs.reply_with_message, groupMembers.length, message.text_command)
-    else replyMention = buildText(groupCommands.mm.msgs.reply, groupMembers.length)
+    if (message.args.length) replyText = buildText(groupCommands.mm.msgs.reply_with_message, participantsNotAdmins.length, message.text_command)
+    else replyText = buildText(groupCommands.mm.msgs.reply, participantsNotAdmins.length)
 
-    await waLib.replyWithMentions(client, message.chat_id, replyMention, groupMembers, message.wa_message, {expiration: message.expiration})
+    await waLib.replyWithMentions(client, message.chat_id, replyText, participantsNotAdmins, message.wa_message, {expiration: message.expiration})
 }
 
 export async function admsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
-
-    let replyMention : string
+    const adminsIds = await groupController.getAdminsIds(group.id)
+    let replyText : string
     
-    if (message.args.length) replyMention = buildText(groupCommands.adms.msgs.reply_with_message, group.admins.length, message.text_command)
-    else replyMention = buildText(groupCommands.adms.msgs.reply, group.admins.length)
+    if (message.args.length) replyText = buildText(groupCommands.adms.msgs.reply_with_message, adminsIds.length, message.text_command)
+    else replyText = buildText(groupCommands.adms.msgs.reply, adminsIds.length)
 
     const messageToReply = (message.isQuoted && message.quotedMessage) ? message.quotedMessage.wa_message : message.wa_message
-    await waLib.replyWithMentions(client, message.chat_id, replyMention, group.admins, messageToReply, {expiration: message.expiration})
+    await waLib.replyWithMentions(client, message.chat_id, replyText, adminsIds, messageToReply, {expiration: message.expiration})
 }
 
 export async function donoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -317,9 +325,10 @@ export async function mutarCommand(client: WASocket, botInfo: Bot, message: Mess
 }
 
 export async function linkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -330,9 +339,10 @@ export async function linkCommand(client: WASocket, botInfo: Bot, message: Messa
 }
 
 export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -346,9 +356,10 @@ export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Mess
 }
 
 export async function restritoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -362,7 +373,7 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -400,7 +411,7 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -415,7 +426,7 @@ export async function antifloodCommand(client: WASocket, botInfo: Bot, message: 
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -435,8 +446,9 @@ export async function antifloodCommand(client: WASocket, botInfo: Bot, message: 
 }
 
 export async function apgCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
     const botTexts = getBotTexts(botInfo)
-    const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
     if (!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
@@ -453,7 +465,6 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
     let qtyRanking = 10
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
-    if (!group.counter.status) throw new Error(groupCommands.topativos.msgs.error_counter)
     if (Number(message.text_command)) qtyRanking = Number(message.text_command)
     if (qtyRanking < 1 || qtyRanking > 50) throw new Error(groupCommands.topativos.msgs.error_value_limit)
     
@@ -486,19 +497,6 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
     await waLib.replyWithMentions(client, message.chat_id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
 }
 
-export async function contadorCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
-    const groupCommands = commandsGroup(botInfo)
-
-    if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
-    if (!group.counter.status) await groupController.registerAllParticipantsActivity(group.id, group.participants)
-
-    const replyText = group.counter.status ? groupCommands.contador.msgs.reply_off : groupCommands.contador.msgs.reply_on
-    await groupController.setCounter(group.id, !group.counter.status)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
-}
-
 export async function atividadeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const userController = new UserController()
@@ -506,7 +504,6 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
     const groupCommands = commandsGroup(botInfo)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
-    if (!group.counter.status) throw new Error(groupCommands.atividade.msgs.error_counter)
     
     let targetUserId : string
 
@@ -514,15 +511,10 @@ export async function atividadeCommand(client: WASocket, botInfo: Bot, message: 
     else if (message.mentioned.length === 1) targetUserId = message.mentioned[0]
     else throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let userActivity = await groupController.getParticipantActivity(group.id, targetUserId)
+    let userActivity = await groupController.getParticipant(group.id, targetUserId)
 
-    if (!userActivity){
-        if (group.participants.includes(targetUserId)) userActivity = await groupController.registerParticipantActivity(group.id, targetUserId) as ParticipantCounter
-        else throw new Error(groupCommands.atividade.msgs.error_not_member)
-    } else {
-        if (!group.participants.includes(targetUserId)) throw new Error(groupCommands.atividade.msgs.error_not_member)
-    }
-
+    if(!userActivity) throw new Error(groupCommands.atividade.msgs.error_not_member)
+    
     const userData = await userController.getUser(targetUserId)
     const replyText = buildText(groupCommands.atividade.msgs.reply, userData?.name || '---', waLib.removeWhatsappSuffix(targetUserId), userActivity.msgs, userActivity.text, userActivity.image, userActivity.video, userActivity.sticker, userActivity.audio, userActivity.other)
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
@@ -534,7 +526,6 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
     const groupCommands = commandsGroup(botInfo)
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
-    if (!group.counter.status) throw new Error(groupCommands.inativos.msgs.error_counter)
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
     const qtyMessage = Number(message.text_command)
@@ -542,20 +533,18 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
     if (!qtyMessage) throw new Error(groupCommands.inativos.msgs.error_value_invalid)
     if (qtyMessage < 1) throw new Error(groupCommands.inativos.msgs.error_value_limit)
 
-    await groupController.registerAllParticipantsActivity(group.id, group.participants)
-    let inactiveUsers = await groupController.getParticipantsActivityLowerThan(group, qtyMessage)
+    const inactiveUsers = await groupController.getParticipantsActivityLowerThan(group, qtyMessage)
+    const inactiveUsersIds = inactiveUsers.map(user => user.user_id)
 
     if (!inactiveUsers.length) throw new Error(groupCommands.inativos.msgs.error_no_inactives)
 
-    let mentionedUsers = []
     let replyText = buildText(groupCommands.inativos.msgs.reply_title, inactiveUsers.length, qtyMessage)
 
     for(let user of inactiveUsers){
         replyText += buildText(groupCommands.inativos.msgs.reply_item, waLib.removeWhatsappSuffix(user.user_id), user.msgs)
-        mentionedUsers.push(user.user_id)
     }
 
-    await waLib.replyWithMentions(client, group.id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
+    await waLib.replyWithMentions(client, group.id, replyText, inactiveUsersIds, message.wa_message, {expiration: message.expiration})
 }
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){

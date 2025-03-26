@@ -17,22 +17,19 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
         if (event.action === 'add') {
             //Filtro de LISTA-NEGRA
             if (!await filterUserBlacklist(client, botInfo, group, event.participants[0])) return
-
             //Filtro de ANTI-FAKE
             if (!await filterUserAntifake(client, botInfo, group, event.participants[0])) return
-            
             //Mensagem de boas vindas
             await sendWelcome(client, group, botInfo, event.participants[0])
             //Inclusão no banco de dados
-            await groupController.addParticipant(event.id, event.participants[0])
+            await groupController.addParticipant(group.id, event.participants[0])
         } else if (event.action === "remove"){
             if (isBotUpdate){
-                //Se o bot for removido do grupo, remova o contador e o grupo do banco de dados. 
-                if (group?.counter.status) await groupController.removeGroupCounter(event.id)
+                //Se o bot for removido, remova o grupo do banco de dados.
                 await groupController.removeGroup(event.id)
             } else {
                 //Se um participante for removido, somente remova ele do banco de dados do grupo.
-                await groupController.removeParticipant(event.id, event.participants[0])
+                await groupController.removeParticipant(group.id, event.participants[0])
             }
         } else if (event.action === "promote"){
             //Se um participante for promovido
@@ -48,24 +45,26 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
 }
 
 async function filterUserBlacklist(client: WASocket, botInfo: Bot, group: Group, userId: string){
-    const groupAdmins = group.admins
-    const isUserBlacklisted = await new GroupController().isBlackListed(group.id, userId)
+    const groupController = new GroupController()
+    const isUserBlacklisted = await groupController.isBlackListed(group.id, userId)
     const botTexts = getBotTexts(botInfo)
-    const isBotAdmin = botInfo.host_number ? groupAdmins.includes(botInfo.host_number) : false
+    const isBotAdmin = botInfo.host_number ? await groupController.isAdmin(group.id, botInfo.host_number) : false
+
     if (isBotAdmin && isUserBlacklisted) {
         const replyText = buildText(botTexts.blacklist_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
         await waLib.removeParticipant(client, group.id, userId)
         await waLib.sendTextWithMentions(client, group.id, replyText, [userId], {expiration: group.expiration})
         return false
     }
+
     return true
 }
 
 async function filterUserAntifake(client: WASocket, botInfo: Bot, group: Group, userId: string){
     if (group.antifake.status){
-        const groupAdmins = group.admins
-        const isBotAdmin = botInfo.host_number ? groupAdmins.includes(botInfo.host_number) : false
         const groupController = new GroupController()
+        const isBotAdmin = botInfo.host_number ? await groupController.isAdmin(group.id, botInfo.host_number) : false
+        
         if (isBotAdmin){
             const isFake = groupController.isNumberFake(group, userId)
             if (isFake){

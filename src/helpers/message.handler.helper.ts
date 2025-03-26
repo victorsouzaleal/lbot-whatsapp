@@ -20,35 +20,26 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
 
     //Verifica se o usuário está bloqueado, se estiver retorna.
     if (await isUserBlocked(client, sender)) return false
-
     //Verifica se é um registro de dono, se for retorne.
     if (await isOwnerRegister(client, userController, botInfo, message)) return false
-
     //Se o PV do bot não estiver liberado e o usuário não for um admin, retorne.
     if (isIgnoredByPvAllowed(message, botInfo)) return false
-
     //Se o usuário não tiver recebido boas vindas no PV, faça-o
     await sendPrivateWelcome(client, userController, message, botInfo)
-
     //Leia a mensagem do usuário
     await readUserMessage(client, message)
-
     //Atualize o nome do usuário
     await updateUserName(userController, message)
 
     if (isCommand || isAutosticker){
         //Se a taxa de comandos estiver ativado e o usuário estiver limitado, retorne.
         if (await isUserLimitedByCommandRate(client, botController, botInfo, message)) return false
-
         //Se o comando estiver bloqueado globalmente, retorne.
         if (await isCommandBlockedGlobally(client, botController, botInfo, message)) return false
-
         //Incrementa contagem de comandos do usuário
         await userController.increaseUserCommandsCount(sender)
-
         //Incrementa contagem de comandos do bot
         botController.incrementExecutedCommands()
-
         callCommand = true
     } else {
         callCommand = false
@@ -57,65 +48,47 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
     return callCommand
 }
 
-export async function handleGroupMessage(client: WASocket, group: Group|null, botInfo: Bot, message: Message){
+export async function handleGroupMessage(client: WASocket, group: Group, botInfo: Bot, message: Message){
     const userController = new UserController()
     const groupController = new GroupController()
     const botController = new BotController()
-    const {command, sender} = message
+    const {command, sender, isGroupAdmin} = message
     const isCommand = commandExist(botInfo, command)
     const isAutosticker = ((message.type === 'videoMessage' || message.type === "imageMessage") && group?.autosticker)
-    const isGroupAdmin = group?.admins.includes(sender) || false
     let callCommand : boolean
-
-    //Se por acaso o grupo não estiver cadastrado, retorne
-    if (!group) return false
 
     //Verifica se o usuário está bloqueado, se estiver retorna.
     if (await isUserBlocked(client, sender)) return false
-
     //Se o grupo estiver restrito para admins e o bot não for um admin, retorne.
-    if (await isBotLimitedByGroupRestricted(group, botInfo)) return false
-
+    if (await isBotLimitedByGroupRestricted(groupController, group, botInfo)) return false
     //Se o antilink estiver ativado, e for detectado um link na mensagem, retorne.
     if (await isDetectedByAntiLink(client, groupController, botInfo, group, message)) return false
-
     //Se o Anti-FLOOD estiver ativado, e for detectada como FLOOD, retorne.
     if (await isDetectedByAntiFlood(client, groupController, botInfo, group, message)) return false
-
     //Verifica se é um registro de dono, se for retorne.
     if (await isOwnerRegister(client, userController, botInfo, message)) return false
-
     //Se o contador estiver ativado, verifica se precisa adicionar o participante e incrementa a contagem dele.
-    await handleUserCounter(groupController, message, group)
-
+    await incrementParticipantActivity(groupController, message, isCommand)
     //Se o grupo estiver mutado e o participante não for um admin, retorne.
     if (await isIgnoredByGroupMuted(group, isGroupAdmin)) return false
-
     //Leia a mensagem do usuário
     await readUserMessage(client, message)
-
     //Atualize o nome do usuário
     await updateUserName(userController, message)
 
     if (isCommand || isAutosticker){
         //Se a taxa de comandos estiver ativa e o usuário estiver limitado, retorne.
         if (await isUserLimitedByCommandRate(client, botController, botInfo, message)) return false
-
         //Se o comando estiver bloqueado globalmente, retorne.
         if (await isCommandBlockedGlobally(client, botController, botInfo, message)) return false
-
         //Se o comando estiver bloqueado no grupo, retorne.
         if (await isCommandBlockedGroup(client, groupController, group, isGroupAdmin, botInfo, message)) return false
-
         //Incrementa contagem de comandos do usuário
         await userController.increaseUserCommandsCount(sender)
-
         //Incrementa contagem de comandos do bot
         botController.incrementExecutedCommands()
-
         //Incrementa contagem de comandos do grupo
         await groupController.incrementGroupCommands(group.id)
-
         callCommand = true
     } else {
         callCommand = false
@@ -142,11 +115,8 @@ async function isOwnerRegister(client: WASocket, userController: UserController,
     return false
 }
 
-async function handleUserCounter(groupController: GroupController, message: Message, group: Group){
-    if (group?.counter.status) {
-        await groupController.registerParticipantActivity(message.chat_id, message.sender)
-        await groupController.incrementParticipantActivity(message.chat_id, message.sender, message.type)
-    }
+async function incrementParticipantActivity(groupController: GroupController, message: Message, isCommand: boolean){
+    await groupController.incrementParticipantActivity(message.chat_id, message.sender, message.type, isCommand)
 }
 
 function isIgnoredByPvAllowed(message: Message, botInfo: Bot){
@@ -158,10 +128,10 @@ async function isIgnoredByGroupMuted(group: Group, isGroupAdmin: boolean){
     return (group.muted && !isGroupAdmin)
 }
 
-async function isBotLimitedByGroupRestricted(group: Group, botInfo: Bot){
+async function isBotLimitedByGroupRestricted(groupController: GroupController, group: Group, botInfo: Bot){
     if (group.restricted){
         if (!botInfo.host_number) return true
-        const isBotGroupAdmin = group.admins.includes(botInfo.host_number)
+        const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
         if (!isBotGroupAdmin) return true
     }
     return false
@@ -235,12 +205,14 @@ async function isDetectedByAntiLink(client: WASocket, groupController: GroupCont
 async function isDetectedByAntiFlood(client: WASocket, groupController: GroupController, botInfo: Bot, group: Group, message: Message){
     const botTexts = getBotTexts(botInfo)
     const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender, message.isGroupAdmin)
+
     if (isDetectedByAntiFlood){
         const replyText = buildText(botTexts.antiflood_ban_messages, waLib.removeWhatsappSuffix(message.sender), botInfo.name)
         await waLib.removeParticipant(client, message.chat_id, message.sender)
         await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
         return true
     }
+    
     return false
 }
 

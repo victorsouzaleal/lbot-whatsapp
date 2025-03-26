@@ -74,17 +74,9 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
 
     const userName = userData.name || '---'
     const userType = userData.owner ? botTexts.user_types.owner : (userData.admin ? botTexts.user_types.admin  : botTexts.user_types.user)
-    let replyMessage = buildText(infoCommands.meusdados.msgs.reply, userType, userName, userData.commands)
+    let replyText = buildText(infoCommands.meusdados.msgs.reply, userType, userName, userData.commands)
 
-    if (message.isGroupMsg && group){
-        if (group.counter.status){
-            const groupController = new GroupController()
-            let userActivity = await groupController.getParticipantActivity(group.id, message.sender)
-            replyMessage = buildText(infoCommands.meusdados.msgs.reply_group, userType, userName, userData.commands, userActivity?.msgs)
-        }   
-    }
-
-    await waLib.replyText(client, message.chat_id, replyMessage, message.wa_message, {expiration: message.expiration})
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){

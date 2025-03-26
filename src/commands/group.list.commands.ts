@@ -261,32 +261,20 @@ export function commandsGroup(botInfo?: Bot){
         },
         topativos: {
             guide: `Ex: *${PREFIX}topativos* - Marca os 10 membros com mais mensagens do grupo.\n`+
-            `Ex: *${PREFIX}topativos* 15 - Marca os 15 membros com mais mensagens do grupo.\n\n`+
-            `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
+            `Ex: *${PREFIX}topativos* 15 - Marca os 15 membros com mais mensagens do grupo.\n`,
             msgs: {
                 error_value_invalid: "A quantidade de pessoas não é um número válido.",
                 error_value_limit: "A quantidade de pessoas deve ser entre 1 e 50",
-                error_counter: "Este comando só funciona quando o contador está ativado.",
                 reply_title: "🏆 *Top {p1} - Membros ativos*\n"+
                 '────────────────────────\n',
                 reply_item: "{p1} *{p2}° Lugar* @{p3} - {p4} msgs\n"
             },
             function: groupFunctions.topativosCommand
         },
-        contador: {
-            guide: `Ex: *${PREFIX}contador* - Liga/desliga a contagem de mensagens no grupo.\n`,
-            msgs: {
-                reply_on: "✅ O recurso de *CONTADOR* foi ligado com sucesso",
-                reply_off: "✅ O recurso de *CONTADOR* foi desligado com sucesso",
-            },
-            function: groupFunctions.contadorCommand
-        }, 
         atividade: {
             guide: `Ex: *${PREFIX}atividade* @membro - Mostra a atividade do membro mencionado.\n\n`+
-            `Ex: Responder com *${PREFIX}atividade* - Mostra a atividade do membro que você respondeu.\n\n`+
-            `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
+            `Ex: Responder com *${PREFIX}atividade* - Mostra a atividade do membro que você respondeu.\n`,
             msgs: {
-                error_counter: "Este comando só funciona quando o contador está ativado.",
                 error_not_member: "Não é possível obter a atividade de quem não está no grupo.",
                 reply: "📊 *Atividade do membro*:\n"+
                 '────────────────────────\n'+
@@ -303,12 +291,10 @@ export function commandsGroup(botInfo?: Bot){
             function: groupFunctions.atividadeCommand
         },
         inativos: {
-            guide: `Ex: *${PREFIX}inativos* 5 - Marca todos os membros com menos de 5 mensagens.\n\n`+
-            `*Obs*: Este comando só funciona com o *${PREFIX}contador* ativado.\n`,
+            guide: `Ex: *${PREFIX}inativos* 5 - Marca todos os membros com menos de 5 mensagens.\n`,
             msgs: {
                 error_value_invalid: "A quantidade mínima de mensagens não é um número válido.",
                 error_value_limit: "A quantidade mínima de mensagens deve ser maior ou igual a 1.",
-                error_counter: "Este comando só funciona quando o contador está ativado.",
                 error_no_inactives: "Não existem membros inativos neste grupo.",
                 reply_title: "💤 *Membros inativos*:\n\n"+
                 "👤 *Quantidade de inativos*: {p1}\n"+

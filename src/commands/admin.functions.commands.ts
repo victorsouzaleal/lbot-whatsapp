@@ -71,10 +71,11 @@ export async function vergruposCommand(client: WASocket, botInfo: Bot, message: 
 
     for (let group of currentGroups){
         const groupNumber = currentGroups.indexOf(group) + 1
-        const adminsGroup = group.admins
-        const isBotGroupAdmin = adminsGroup.includes(botInfo.host_number)
+        const adminsGroup = await groupController.getAdmins(group.id)
+        const participantsGroup = await groupController.getParticipants(group.id)
+        const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
         const linkGroupCommand = isBotGroupAdmin ? `${botInfo.prefix}linkgrupo ${groupNumber}` : '----'
-        replyText += buildText(adminCommands.vergrupos.msgs.reply_item, groupNumber, group.name, group.participants.length, adminsGroup.length,  isBotGroupAdmin ? "Sim" : "Não",  linkGroupCommand, groupNumber)
+        replyText += buildText(adminCommands.vergrupos.msgs.reply_item, groupNumber, group.name, participantsGroup.length, adminsGroup.length,  isBotGroupAdmin ? "Sim" : "Não",  linkGroupCommand, groupNumber)
     }
 
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
@@ -106,7 +107,7 @@ export async function linkgrupoCommand(client: WASocket, botInfo: Bot, message: 
     const indexGroup = chosenGroupNumber - 1
 
     if(!chosenGroupNumber || !currentGroups[indexGroup]) throw new Error(adminCommands.linkgrupo.msgs.error_not_found)
-    if(!currentGroups[indexGroup].admins.includes(botInfo.host_number)) throw new Error(adminCommands.linkgrupo.msgs.error_bot_not_admin)
+    if(!await groupController.isAdmin(currentGroups[indexGroup].id, botInfo.host_number)) throw new Error(adminCommands.linkgrupo.msgs.error_bot_not_admin)
 
     const inviteLink = await waLib.getGroupInviteLink(client, currentGroups[indexGroup].id)
     const replyTextAdmin = buildText(adminCommands.linkgrupo.msgs.reply_admin, currentGroups[indexGroup].name, chosenGroupNumber, inviteLink)

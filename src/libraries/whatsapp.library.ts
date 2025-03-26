@@ -5,6 +5,7 @@ import * as convertLibrary from './convert.library.js'
 import { Group } from "../interfaces/group.interface.js"
 import { User } from "../interfaces/user.interface.js"
 import { removeBold } from "../utils/general.util.js"
+import { GroupController } from "../controllers/group.controller.js"
 
 async function updatePresence(client: WASocket, chatId: string, presence: WAPresence){
     await client.presenceSubscribe(chatId)
@@ -234,7 +235,7 @@ export async function demoteParticipant(client: WASocket, groupId: string, parti
     return response
 }
 
-export function formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){
+export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){
     if (!m.message) return
     
     const type = getContentType(m.message)
@@ -254,7 +255,7 @@ export function formatWAMessage(m: WAMessage, group: Group|null, hostId: string,
     const message_id = m.key.id
     const t = m.messageTimestamp as number
     const chat_id = m.key.remoteJid
-    const isGroupAdmin = (sender && group) ? group.admins.includes(sender) : false
+    const isGroupAdmin = (sender && group) ? await new GroupController().isAdmin(group.id, sender) : false
 
     if (!message_id || !t || !sender || !chat_id ) return 
 

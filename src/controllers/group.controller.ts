@@ -20,20 +20,12 @@ export class GroupController {
         return this.groupService.isRegistered(groupId)
     }
 
-    public getAdmins(groupId: string) {
-        return this.groupService.getAdmins(groupId)
-    }
-
     public getOwner(groupId: string) {
         return this.groupService.getOwner(groupId)
     }
 
     public isRestricted(groupId: string) {
         return this.groupService.isRestricted(groupId)
-    }
-
-    public getParticipants(groupId: string) {
-        return this.groupService.getParticipants(groupId)
     }
 
     public getAllGroups() {
@@ -57,10 +49,6 @@ export class GroupController {
         return this.groupService.registerGroups(groups)
     }
 
-    public updateGroup(group: GroupMetadata) {
-        return this.groupService.updateGroup(group)
-    }
-
     public updateGroups(groups: GroupMetadata[]){
         return this.groupService.updateGroups(groups)
     }
@@ -77,13 +65,33 @@ export class GroupController {
         return this.groupService.incrementGroupCommands(groupId)
     }
 
-    // *********************** ADICIONA/ATUALIZA/REMOVE PARTICIPANTES E ADMINS ***********************
+    // *********************** PARTICIPANTES/ADMINS ***********************
+    public getParticipant(groupId: string, userId: string){
+        return this.groupService.getParticipant(groupId, userId)
+    }
+
+    public getParticipants(groupId: string){
+        return this.groupService.getParticipants(groupId)
+    }
+
+    public getParticipantsIds(groupId: string){
+        return this.groupService.getParticipantsIds(groupId)
+    }
+
+    public getAdmins(groupId: string) {
+        return this.groupService.getAdmins(groupId)
+    }
+
+    public getAdminsIds(groupId: string) {
+        return this.groupService.getAdminsIds(groupId)
+    }
+    
     public isParticipant(groupId: string, userId: string) {
         return this.groupService.isParticipant(groupId, userId)
     }
 
-    public addParticipant(groupId: string, userId: string) {
-        return this.groupService.addParticipant(groupId, userId)
+    public addParticipant(groupId: string, userId: string, isAdmin = false) {
+        return this.groupService.addParticipant(groupId, userId, isAdmin)
     }
 
     public addAdmin(groupId: string, userId: string) {
@@ -100,6 +108,18 @@ export class GroupController {
 
     public removeParticipant(groupId: string, userId: string) {
         return this.groupService.removeParticipant(groupId, userId)
+    }
+
+    public getParticipantsActivityLowerThan(group: Group, num: number) {
+        return this.groupService.getParticipantActivityLowerThan(group, num)
+    }
+
+    public getParticipantsActivityRanking(group: Group, num: number){
+        return this.groupService.getParticipantsActivityRanking(group, num)
+    }
+
+    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes, isCommand: boolean){
+        return this.groupService.incrementParticipantActivity(groupId, userId, type, isCommand)
     }
 
     // *********************** Recursos do grupo ***********************
@@ -178,42 +198,5 @@ export class GroupController {
 
     public isBlockedCommand(group: Group, command: string, botInfo: Bot) {
         return this.groupService.isBlockedCommand(group, command, botInfo)
-    }
-
-    // ***** ATIVIDADE/CONTADOR *****
-    public setCounter(groupId: string, status = true) {
-        return this.groupService.setCounter(groupId, status)
-    }
-
-    public removeGroupCounter(groupId: string) {
-        return this.groupService.removerGroupCounter(groupId)
-    }
-
-    public registerParticipantActivity(groupId: string, userId: string){
-        return this.groupService.registerParticipantActivity(groupId, userId)
-    }
-
-    public registerAllParticipantsActivity(groupId: string, participants: string[]){
-        return this.groupService.registerAllParticipantsActivity(groupId, participants)
-    }
-
-    public getParticipantActivity(groupId: string, userId: string) {
-        return this.groupService.getParticipantActivity(groupId, userId)
-    }
-
-    public getParticipantsActivityLowerThan(group: Group, num: number) {
-        return this.groupService.getParticipantActivityLowerThan(group, num)
-    }
-
-    public getParticipantsActivityRanking(group: Group, num: number){
-        return this.groupService.getParticipantsActivityRanking(group, num)
-    }
-
-    public getAllParticipantsActivity(groupId: string) {
-        return this.groupService.getAllParticipantsActivity(groupId)
-    }
-
-    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes){
-        return this.groupService.incrementParticipantActivity(groupId, userId, type)
     }
 }

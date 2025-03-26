@@ -3,8 +3,6 @@ export interface Group {
     name : string
     description?: string
     commands_executed: number
-    participants : string[]
-    admins : string[]
     owner?: string
     restricted?: boolean
     expiration?: number,
@@ -24,10 +22,6 @@ export interface Group {
         interval: number
     },
     autosticker: boolean
-    counter: {
-        status: boolean
-        started: string
-    }
     block_cmds: string[]
     blacklist : string[]
 }
@@ -39,14 +33,22 @@ export interface ParticipantAntiFlood {
     msgs: number
 }
 
-export interface ParticipantCounter {
+export interface Participant{
     group_id : string,
     user_id : string,
+    admin: boolean,
+    registered_since: string,
+    commands: number,
     msgs : number,
     image : number,
     audio : number,
     sticker : number,
     video : number,
     text : number,
-    other : number
+    other : number,
+    warnings: number,
+    antiflood: {
+        expire: number,
+        msgs: number
+    }
 }
