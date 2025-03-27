@@ -282,18 +282,20 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: Responder com *${PREFIX}membro* - Mostra os dados do membro que você respondeu.\n`,
             msgs: {
                 error_not_member: "Não é possível obter a atividade de quem não está no grupo.",
-                reply: "📊 *Dados do membro*:\n\n"+
+                reply: "📖 *Dados do membro*:\n\n"+
                 "👤 *Nome*: {p1}\n"+
                 "📲 *Número*: +{p2}\n"+
-                "📆 *Registrado pelo bot em*: \n- {p3}\n\n"+
-                "🤖 *Comandos usados*: {p4}\n"+
-                "✉️ *Mensagens*: {p5}\n"+
-                "🔤 *Textos*: {p6}\n"+
-                "📸 *Imagens*: {p7}\n"+
-                "🎥 *Videos*: {p8}\n"+
-                "🖼️ *Figurinhas*: {p9}\n"+
-                "🎧 *Aúdios*: {p10}\n"+
-                "🧩 *Outros*: {p11}\n"
+                "‼️ *Avisos*: {p3}\n"+
+                "📆 *Registrado pelo bot em*: \n- {p4}\n\n"+
+                "📊 *Atividade*:\n"+
+                "- 🤖 *Comandos usados*: {p5}\n"+
+                "- ✉️ *Mensagens*: {p6}\n"+
+                "- 🔤 *Textos*: {p7}\n"+
+                "- 📸 *Imagens*: {p8}\n"+
+                "- 🎥 *Videos*: {p9}\n"+
+                "- 🖼️ *Figurinhas*: {p10}\n"+
+                "- 🎧 *Aúdios*: {p11}\n"+
+                "- 🧩 *Outros*: {p12}\n"
             },
             function: groupFunctions.membroCommand
         },

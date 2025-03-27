@@ -553,7 +553,7 @@ export async function membroCommand(client: WASocket, botInfo: Bot, message: Mes
     if(!participant) throw new Error(groupCommands.membro.msgs.error_not_member)
     
     const userData = await userController.getUser(targetUserId)
-    const replyText = buildText(groupCommands.membro.msgs.reply, userData?.name || '---', waLib.removeWhatsappSuffix(targetUserId), participant.registered_since, participant.commands, participant.msgs, participant.text, participant.image, participant.video, participant.sticker, participant.audio, participant.other)
+    const replyText = buildText(groupCommands.membro.msgs.reply, userData?.name || '---', waLib.removeWhatsappSuffix(targetUserId), participant.warnings, participant.registered_since, participant.commands, participant.msgs, participant.text, participant.image, participant.video, participant.sticker, participant.audio, participant.other)
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
