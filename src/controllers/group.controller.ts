@@ -122,6 +122,10 @@ export class GroupController {
         return this.groupService.incrementParticipantActivity(groupId, userId, type, isCommand)
     }
 
+    public addWarning(groupId: string, userId: string){
+        return this.groupService.addWarning(groupId, userId)
+    }
+
     // *********************** Recursos do grupo ***********************
 
     // ***** BEM VINDO *****

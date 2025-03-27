@@ -259,6 +259,10 @@ export class GroupService {
         return participantsLeaderboard.splice(0, qty_leaderboard)
     }
 
+    public async addWarning(groupId: string, userId: string){
+        return db.participants.updateAsync({group_id: groupId, user_id: userId}, { $inc: { warnings: 1} })
+    }
+
     // *********************** RECURSOS DO GRUPO ***********************
 
     // ***** BEM-VINDO *****

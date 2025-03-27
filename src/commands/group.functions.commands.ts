@@ -47,6 +47,43 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
+export async function avisoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const groupCommands = commandsGroup(botInfo)
+    const botTexts = getBotTexts(botInfo)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+    let targetUserId : string
+    let replyText: string
+
+    if(!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
+    else if(!isBotGroupAdmin) throw new Error(botTexts.permission.bot_group_admin)
+
+    if (message.mentioned.length) targetUserId = message.mentioned[0]
+    else if (message.isQuoted && message.quotedMessage) targetUserId = message.quotedMessage.sender
+    else throw new Error(messageErrorCommandUsage(botInfo, message))
+
+    const isBotTarget = botInfo.host_number == targetUserId
+    const isAdminTarget = await groupController.isAdmin(group.id, targetUserId)
+    
+    if(isBotTarget) throw new Error(groupCommands.aviso.msgs.error_warning_bot)
+    else if (isAdminTarget) throw new Error(groupCommands.aviso.msgs.error_warning_admin)
+
+    await groupController.addWarning(group.id, targetUserId)
+    const participant = await groupController.getParticipant(group.id, targetUserId)
+
+    if(!participant) throw new Error(groupCommands.aviso.msgs.error_not_registered)
+    
+    if(participant.warnings >= 3){
+        replyText = buildText(groupCommands.aviso.msgs.reply_max_warning, waLib.removeWhatsappSuffix(targetUserId))
+        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
+        await groupController.addBlackList(group.id, targetUserId)
+    } else {
+        replyText = buildText(groupCommands.aviso.msgs.reply, waLib.removeWhatsappSuffix(targetUserId), participant.warnings)
+        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
+    }
+
+}
+
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)

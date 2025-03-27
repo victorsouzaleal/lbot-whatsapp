@@ -47,6 +47,25 @@ export function commandsGroup(botInfo?: Bot){
             },
             function: groupFunctions.fotogrupoCommand
         },
+        aviso:{
+            guide: `Ex: Responda alguém com *${PREFIX}aviso* - Adiciona um aviso ao membro respondido.\n`+
+            `Ex: Marque alguém com *${PREFIX}aviso* - Adiciona um aviso ao membro marcado.\n\n`+
+            `*Obs*: Se o membro chegar a 3 avisos ele é adicionado automaticamente a lista negra do grupo.\n`,
+            msgs: {
+                reply: '‼️ Aviso\n'+
+                '────────────────────────\n'+
+                "@{p1}, você recebeu um aviso do administrador, se chegar a 3 avisos será adicionado a lista negra do grupo.\n\n"+
+                'Atualmente você tem {p2} avisos.',
+                reply_max_warning: '‼️ Aviso\n'+
+                '────────────────────────\n'+
+                '@{p1}, você recebeu o 3° aviso e será adicionado a lista negra do grupo.',
+                error_not_registered: 'Membro do grupo ainda não foi registrado pelo bot.',
+                error_warning_bot: 'Não é possível dar um aviso ao bot.',
+                error_warning_admin: 'Não é possível dar um aviso a um administrador do grupo.'
+            },
+            function: groupFunctions.avisoCommand
+        },
+
         addlista: {
             guide: `Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
             `Ex: Marque alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi marcado a lista negra e bane em seguida.\n\n`+

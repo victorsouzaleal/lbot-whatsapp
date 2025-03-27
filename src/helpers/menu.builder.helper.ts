@@ -202,6 +202,7 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 *|*
 *|*► *${prefix}add* +55 219xxxxxxxx - Adiciona ao grupo
 *|*► *${prefix}ban* @membro - Bane do grupo
+*|*► *${prefix}aviso* @membro - Adiciona um aviso a um membro
 *|*► *${prefix}restrito* - Abre/feche o grupo só para admin
 *|*► *${prefix}promover* @membro - Promove a admin
 *|*► *${prefix}rebaixar* @admin - Rebaixa a membro
