@@ -26,15 +26,14 @@ export function commandsAdmin(botInfo?: Bot){
             guide: `Ex: *${PREFIX}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
             msgs: {
                 reply_title: "👥 *Grupos atuais ({p1})*\n\n"+
-                "*ATENÇÃO*: Se quiser sair de *TODOS* os grupos digite !sairgrupos\n",
-                reply_item: '────────────────────────\n'+
-                "- *ID*: {p1}\n"+
+                "*ATENÇÃO*: Se quiser sair de *TODOS* os grupos digite !sairgrupos\n\n",
+                reply_item: "- *ID*: {p1}\n"+
                 "- *Nome*: {p2}\n"+
                 "- *Participantes*: {p3}\n"+
                 "- *Admins*: {p4}\n"+
                 "- *Bot é admin?* {p5}\n"+
                 `- *Link*: {p6}\n\n`+
-                `- *Deseja sair desse grupo?* Use ${PREFIX}sair {p7}\n`
+                `- *Deseja sair desse grupo?* Use ${PREFIX}sair {p7}\n\n`
             },
             function: adminFunctions.vergruposCommand
         },
@@ -42,8 +41,7 @@ export function commandsAdmin(botInfo?: Bot){
             guide: `Ex: Digite *${PREFIX}sair 1* - Faz o bot sair do grupo selecionado.\n\n`+
             `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
             msgs: {
-                reply: `🤖 *Sair do grupo* - {p1} (Opção n° {p2})\n`+
-                '────────────────────────\n'+
+                reply: `🤖 *Sair do grupo* - {p1} (Opção n° {p2})\n\n`+
                 '✅ Saí com sucesso do grupo selecionado.',
                 error: `Não foi possível sair deste grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${PREFIX}grupos*`,
             },
@@ -52,8 +50,7 @@ export function commandsAdmin(botInfo?: Bot){
         sairgrupos: {
             guide: `Ex: *${PREFIX}sairgrupos* - Sai de todos os grupos.\n`,
             msgs: {
-                reply: `🤖 *Sair de todos os grupos*\n`+
-                '────────────────────────\n'+
+                reply: `🤖 *Sair de todos os grupos*\n\n`+
                 '✅ Saí com sucesso de todos os *{p1}* grupos.',
             },
             function: adminFunctions.sairgruposCommand
@@ -63,8 +60,7 @@ export function commandsAdmin(botInfo?: Bot){
             `*Obs*: Para ver o número dos grupos é necessário checar no comando *${PREFIX}grupos*\n`,
             msgs: {
                 reply_group: '🤖 Entendido, eu enviei o link para você no privado.',
-                reply_admin: `🤖 *Link do grupo* - {p1} (Opção n° {p2})\n`+
-                '────────────────────────\n'+
+                reply_admin: `🤖 *Link do grupo* - {p1} (Opção n° {p2})\n\n`+
                 '✅ Aqui está o link do grupo selecionado: {p3}',
                 error_bot_not_admin: 'Não foi possível obter o link, o bot não é administrador deste grupo.',
                 error_not_found: `Não foi possível obter o link do grupo, o grupo não foi encontrado ou o número é inválido. Cheque o comando correto em *${PREFIX}grupos*`,
@@ -74,9 +70,8 @@ export function commandsAdmin(botInfo?: Bot){
         veradmins: {
             guide: `Ex: *${PREFIX}veradmins* - Exibe todos os admins do bot.\n`,
             msgs: {
-                reply_title: `⭐ *Admins do bot* ({p1})\n`,
-                reply_item: '────────────────────────\n'+
-                '- *ID*: {p1}\n'+
+                reply_title: `⭐ *Admins do bot* ({p1})\n\n`,
+                reply_item: '- *ID*: {p1}\n'+
                 '- *Nome*: {p2}\n'+
                 '- *Contato*: +{p3}\n'+
                 `- *Tipo*: {p4}\n\n`
@@ -124,8 +119,7 @@ export function commandsAdmin(botInfo?: Bot){
             msgs: {
                 error_max_commands_invalid: "A quantidade máxima de comandos por minuto está inválida, precisa ser um número e ser maior que 3.",
                 error_block_time_invalid: "O tempo de bloqueio de mensagens está inválido, precisa ser um número e maior que 10.",
-                reply_on: "✅ A *TAXA DE COMANDOS POR MINUTO* foi ativada com sucesso.\n"+
-                '────────────────────────\n'+
+                reply_on: "✅ A *TAXA DE COMANDOS POR MINUTO* foi ativada com sucesso.\n\n"+
                 '*Configuração atual*: \n'+
                 '- *Comandos por minuto*: {p1}\n'+
                 '- *Tempo de bloqueio*: {p2}s\n',
@@ -149,8 +143,7 @@ export function commandsAdmin(botInfo?: Bot){
             `Ex: *${PREFIX}bcmdglobal* variado - Bloqueia todos os comandos da categoria VARIADO.\n\n`+
             `*Obs*: Você não pode bloquear comandos de administrador.\n`,
             msgs: {
-                reply_title: "🔒 *Bloquear comandos - Global*\n"+
-                '────────────────────────\n',
+                reply_title: "🔒 *Bloquear comandos - Global*\n\n",
                 reply_item_already_blocked: "Comando *{p1}* já está bloqueado.\n",
                 reply_item_blocked: "Comando *{p1}* bloqueado com sucesso.\n",
                 reply_item_error: "Comando *{p1}* não pode ser bloqueado.\n",
@@ -167,8 +160,7 @@ export function commandsAdmin(botInfo?: Bot){
             `Ex: *${PREFIX}dcmdglobal* variado - Desbloqueia todos os comandos da categoria VARIADO.\n\n`+
             `*Obs*: Verifique os comandos que estão bloqueados com ${PREFIX}infocompleta.\n`,
             msgs: {
-                reply_title: "🔓 *Desbloquear Comandos - Global* \n"+
-                '────────────────────────\n',
+                reply_title: "🔓 *Desbloquear Comandos - Global* \n\n",
                 reply_item_unblocked: "Comando *{p1}* foi desbloqueado.\n",
                 reply_item_not_blocked: "Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
             },
@@ -187,11 +179,9 @@ export function commandsAdmin(botInfo?: Bot){
         bcgrupos: {
             guide: `Ex: *${PREFIX}bcgrupos* mensagem - Envia uma mensagem para todos os *GRUPOS*.\n`,
             msgs: {
-                message: `🤖*${BOT_NAME}® - Mensagem para os grupos*\n`+
-                '────────────────────────\n'+
+                message: `🤖*${BOT_NAME}® - Mensagem para os grupos*\n\n`+
                 "{p1}",
-                wait: "⏳ Em andamento , estou enviando sua mensagem para {p1} grupos.\n"+
-                '────────────────────────\n'+
+                wait: "⏳ Em andamento , estou enviando sua mensagem para {p1} grupos.\n\n"+
                 "*Tempo estimado*: {p2} segundos",
                 reply: "✅ Anúncio feito com sucesso."
             },
@@ -239,10 +229,9 @@ export function commandsAdmin(botInfo?: Bot){
             guide: `Ex: *${PREFIX}listablock* - Exibe a lista de usuários bloqueados pelo bot.\n`,
             msgs: {
                 reply_title: "🚷 *Usuários bloqueados* \n\n"+
-                "*Total*: {p1}\n",
-                reply_item: '────────────────────────\n'+
-                "- *ID*: {p1}\n"+
-                "- *Contato*: +{p2}\n",
+                "*Total*: {p1}\n\n",
+                reply_item: "- *ID*: {p1}\n"+
+                "- *Contato*: +{p2}\n\n",
                 error: "O bot não tem usuários bloqueados.",
             },
             function: adminFunctions.listablockCommand
@@ -276,8 +265,7 @@ export function commandsAdmin(botInfo?: Bot){
         recado: {
             guide: `Ex: *${PREFIX}recado* texto - Muda o texto do recado/status do bot.\n`,
             msgs: {
-                reply: '📝 *Recado/Status*:\n'+
-                '────────────────────────\n'+ 
+                reply: '📝 *Recado/Status*:\n\n'+
                 "Seu recado/status foi alterado com sucesso para: {p1}"
             },
             function: adminFunctions.recadoCommand
@@ -288,8 +276,7 @@ export function commandsAdmin(botInfo?: Bot){
             `Ex: *${PREFIX}usuario* 55219xxxxxxxx - Mostra os dados gerais do usuário com esse número.\n`,
             msgs: {
                 error_user_not_found: "Este usuário ainda não está registrado, faça ele interagir com o bot primeiro.",
-                reply: "👤 *Dados do usuário*\n"+
-                '────────────────────────\n'+ 
+                reply: "👤 *Dados do usuário*\n\n"+
                 "*Nome*: {p1}\n"+
                 "*Tipo de usuário*: {p2}\n"+
                 "*Número*: +{p3}\n"+
@@ -307,8 +294,7 @@ export function commandsAdmin(botInfo?: Bot){
         ping: {
             guide: `Ex: *${PREFIX}ping* - Exibe as informações do sistema do BOT e o tempo de resposta dele.\n`,
             msgs: {
-                reply: "🖥️ *Informação geral*\n"+
-                '────────────────────────\n'+ 
+                reply: "🖥️ *Informação geral*\n\n"+
                 "*OS*: {p1}\n"+
                 "*CPU*: {p2}\n"+
                 "*RAM*: {p3}GB/{p4}GB\n"+

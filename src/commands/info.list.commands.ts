@@ -21,8 +21,7 @@ export default function commandsInfo(botInfo?: Bot){
             msgs: {
                 reply: `✅ Obrigado, seu problema foi reportado com sucesso e será analisado pelo dono.`,
                 error: 'Não foi possível enviar a mensagem para o dono, pois ele ainda não está cadastrado.',
-                reply_admin: "‼️ *Reportar*\n"+
-                '────────────────────────\n'+
+                reply_admin: "‼️ *Reportar*\n\n"+
                 "*Usuário*: {p1}\n"+
                 "*Contato*: http://wa.me/{p2}\n"+
                 "*Problema*: {p3}\n"
@@ -32,8 +31,7 @@ export default function commandsInfo(botInfo?: Bot){
         meusdados: {
             guide: `Ex: *${PREFIX}meusdados* - Exibe seus dados gerais como comandos, mensagens, tipo de usuário, etc.\n`,
             msgs: {
-                reply: "📊 *Seus dados de uso*\n"+
-                '────────────────────────\n'+
+                reply: "📊 *Seus dados de uso*\n\n"+
                 "*Tipo de usuário*: {p1}\n"+
                 "*Nome*: {p2}\n"+
                 "*Comandos usados*: {p3} comandos\n",
@@ -50,8 +48,7 @@ export default function commandsInfo(botInfo?: Bot){
                 "*GitHub*: https://github.com/victorsouzaleal/lbot-whatsapp\n"+
                 "*Comandos executados*: *{p4}*\n"+
                 "*Contato do administradores*:\n{p5}\n",
-                reply_title_resources: '🤖 *Recursos do bot*\n'+
-                '────────────────────────\n',
+                reply_title_resources: '🤖 *Recursos do bot*\n\n',
                 reply_item_autosticker_on: "*Auto-Sticker PV*: ✅\n",
                 reply_item_autosticker_off: "*Auto-Sticker PV*: ❌\n",
                 reply_item_commandspv_on: "*Comandos PV*: ✅\n",

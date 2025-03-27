@@ -7,8 +7,7 @@ export function commandsDownload(botInfo?: Bot){
         play: {
             guide: `Ex: *${PREFIX}play* musica - Faz download de uma música do Youtube e envia como audio.\n`,
             msgs: {
-                wait: "[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n"+
-                '────────────────────────\n'+
+                wait: "[AGUARDE] 🎧 Sua música está sendo baixada e processada.\n\n"+
                 "*Título*: {p1}\n"+
                 "*Duração*: {p2}",
                 error_limit: "O vídeo deve ter no máximo *6 minutos*",
@@ -19,8 +18,7 @@ export function commandsDownload(botInfo?: Bot){
         yt: {
             guide: `Ex: *${PREFIX}yt* titulo - Faz download de um video do Youtube com o titulo digitado e envia.\n`,
             msgs: {
-                wait: "[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n"+
-                '────────────────────────\n'+
+                wait: "[AGUARDE] 🎥 Seu video está sendo baixado e processado.\n\n"+
                 "*Título*: {p1}\n"+
                 "*Duração*: {p2}",
                 error_limit: "O video deve ter no máximo *6 minutos*",
@@ -31,8 +29,7 @@ export function commandsDownload(botInfo?: Bot){
         fb: {
             guide: `Ex: *${PREFIX}fb* link - Faz download de um video do Facebook pelo link digitado e envia.\n`,
             msgs: {
-                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n"+
-                '────────────────────────\n'+
+                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Título*: {p1}\n"+
                 "*Duração*: {p2}",
                 error_limit: "O video deve ter no máximo *6 minutos*",
@@ -42,8 +39,7 @@ export function commandsDownload(botInfo?: Bot){
         ig: {
             guide: `Ex: *${PREFIX}ig* link - Faz download de videos/fotos do Instagram pelo link digitado e envia.\n`,
             msgs: {
-                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n"+
-                '────────────────────────\n'+
+                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Autor*: {p1} (@{p2})\n"+
                 "*Descrição*: {p3}\n"+
                 "*Likes*: {p4}"
@@ -53,8 +49,7 @@ export function commandsDownload(botInfo?: Bot){
         x: {
             guide: `Ex: *${PREFIX}x* link - Faz download de um video/imagem do X pelo link digitado e envia.\n`,
             msgs: {
-                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n"+
-                '────────────────────────\n'+
+                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Postagem*: {p1}",
             },
             function: downloadFunctions.xCommand
@@ -62,8 +57,7 @@ export function commandsDownload(botInfo?: Bot){
         tk: {
             guide: `Ex: *${PREFIX}tk* link - Faz download de um video do Tiktok pelo link digitado e envia.\n`,
             msgs: {
-                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n"+
-                '────────────────────────\n'+
+                wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Perfil*: @{p1}\n"+
                 "*Descrição*: {p2}",
             },

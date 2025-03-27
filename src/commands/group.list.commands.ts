@@ -7,15 +7,13 @@ export function commandsGroup(botInfo?: Bot){
         grupo: {
             guide: `Ex: *${PREFIX}grupo* - Exibe os dados atuais do grupo.\n`,
             msgs: {
-                reply_title: "👥 *Dados gerais do grupo* \n"+
-                '────────────────────────\n'+
+                reply_title: "👥 *Dados gerais do grupo* \n\n"+
                 "*Nome*: {p1}\n"+
                 "*Participantes*: {p2}\n"+
                 "*Admins*: {p3} \n"+
                 "*Descrição/Regras*: {p4}\n\n"+
                 "*Comandos executados*: {p5} \n\n",
-                reply_resource_title: '🧰 *RECURSOS DO GRUPO* \n'+
-                '────────────────────────\n',
+                reply_resource_title: '🧰 *RECURSOS DO GRUPO* \n\n',
                 reply_item_welcome_on: "*Boas vindas*: ✅\n",
                 reply_item_welcome_off: "*Boas vindas*: ❌\n",
                 reply_item_mute_on: "*Mutar*: ✅\n",
@@ -52,12 +50,10 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: Marque alguém com *${PREFIX}aviso* - Adiciona um aviso ao membro marcado.\n\n`+
             `*Obs*: Se o membro chegar a 3 avisos ele é adicionado automaticamente a lista negra do grupo.\n`,
             msgs: {
-                reply: '‼️ Aviso\n'+
-                '────────────────────────\n'+
+                reply: '‼️ Aviso\n\n'+
                 "@{p1}, você recebeu um aviso do administrador, se chegar a 3 avisos será adicionado a lista negra do grupo.\n\n"+
                 'Atualmente você tem {p2} avisos.',
-                reply_max_warning: '‼️ Aviso\n'+
-                '────────────────────────\n'+
+                reply_max_warning: '‼️ Aviso\n\n'+
                 '@{p1}, você recebeu o 3° aviso e será adicionado a lista negra do grupo.',
                 error_not_registered: 'Membro do grupo ainda não foi registrado pelo bot.',
                 error_warning_bot: 'Não é possível dar um aviso ao bot.',
@@ -94,9 +90,8 @@ export function commandsGroup(botInfo?: Bot){
             msgs: {
                 error_empty_list: "Não existem usuários na lista negra deste grupo.",
                 reply_title: "❌ *Lista negra*\n\n"+
-                "*Usuários na lista negra*: {p1}\n",
-                reply_item: '────────────────────────\n'+
-                '- *ID*: {p1}\n'+
+                "*Usuários na lista negra*: {p1}\n\n",
+                reply_item: '- *ID*: {p1}\n'+
                 '- *Nome*: {p2}\n'+
                 '- *Contato*: +{p3}\n\n'
             },
@@ -117,8 +112,7 @@ export function commandsGroup(botInfo?: Bot){
             guide: `Ex: *${PREFIX}ban* @membro - Para banir um membro marcando ele.\n\n`+
             `Ex: Responder alguém com *${PREFIX}ban* - Bane o membro que você respondeu.\n`,
             msgs: {
-                reply_title: '🚷 *Banimento de membros*\n'+
-                '────────────────────────\n',
+                reply_title: '🚷 *Banimento de membros*\n\n',
                 reply_item_success: "+{p1} foi banido do grupo com sucesso.\n",
                 reply_item_ban_admin: "+{p1} não pode ser banido, o bot não pode banir um administrador.\n",
                 reply_item_not_found: "+{p1} não pode ser banido, provavelmente ele já saiu do grupo.\n",
@@ -130,8 +124,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: Responder com *${PREFIX}promover* - Promove o usuário respondido a *administrador*.\n`,
             msgs: {
                 error: "O bot não pode ser promovido por ele mesmo.",
-                reply_title: "⬆️ *Promover membros*\n"+
-                '────────────────────────\n',
+                reply_title: "⬆️ *Promover membros*\n\n",
                 reply_item_success: "@{p1} foi promovido para *ADMINISTRADOR*.\n",
                 reply_item_error: "@{p1} já é um *ADMINISTRADOR*.\n",
             },
@@ -142,8 +135,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: Responder com *${PREFIX}rebaixar* - Rebaixa o administrador respondido a *membro*.\n`,
             msgs: {
                 error: "O bot não pode ser rebaixado por ele mesmo.",
-                reply_title: "⬇️ *Rebaixar membros*\n"+
-                '────────────────────────\n',
+                reply_title: "⬇️ *Rebaixar membros*\n\n",
                 reply_item_success: "@{p1} foi rebaixado para *MEMBRO*.\n",
                 reply_item_error_is_member: "@{p1} já é um *MEMBRO*.\n",
                 reply_item_error: "@{p1} não pode ser rebaixado.\n"
@@ -155,8 +147,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: *${PREFIX}mt* mensagem - Marca todos os *membros/admin* do grupo com uma mensagem.\n`,
             msgs: {
                 reply: "❕ Marquei todos os {p1} *membros/admins*.",
-                reply_with_message: "❕ Marquei todos os {p1} *membros/admins*.\n"+
-                '────────────────────────\n'+
+                reply_with_message: "❕ Marquei todos os {p1} *membros/admins*.\n\n"+
                 "*Mensagem*: {p2}\n"
             },
             function: groupFunctions.mtCommand
@@ -166,8 +157,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: *${PREFIX}mm* mensagem - Marca todos os *MEMBROS* do grupo com uma mensagem.\n`,
             msgs: {
                 reply: "❕ Marquei todos os {p1} *membros*.",
-                reply_with_message: "❕ Marquei os {p1} *membros*.\n"+
-                '────────────────────────\n'+
+                reply_with_message: "❕ Marquei os {p1} *membros*.\n\n"+
                 "*Mensagem*: {p2}\n",
                 error_no_members: "Não existem membros comuns para serem marcados.",
             },
@@ -178,8 +168,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: *${PREFIX}adms* - Marca os *ADMINISTRADORES* do grupo.\n`,
             msgs: {
                 reply: "🤖❕ Marquei todos os *{p1}* admins.",
-                reply_with_message: "❕ Marquei todos os {p1} *admins*.\n"+
-                '────────────────────────\n'+
+                reply_with_message: "❕ Marquei todos os {p1} *admins*.\n\n"+
                 "*Mensagem*: {p2}\n",
             },
             function: groupFunctions.admsCommand
@@ -203,8 +192,7 @@ export function commandsGroup(botInfo?: Bot){
         link: {
             guide: `Ex: *${PREFIX}link* - Exibe o link do grupo.\n`,
             msgs: {
-                reply: "👥 *Link do grupo*\n"+
-                '────────────────────────\n'+
+                reply: "👥 *Link do grupo*\n\n"+
                 "*Nome do grupo*: {p1}\n"+
                 "*Link do grupo*: {p2}"
             },
@@ -284,8 +272,7 @@ export function commandsGroup(botInfo?: Bot){
             msgs: {
                 error_value_invalid: "A quantidade de pessoas não é um número válido.",
                 error_value_limit: "A quantidade de pessoas deve ser entre 1 e 50",
-                reply_title: "🏆 *Top {p1} - Membros ativos*\n"+
-                '────────────────────────\n',
+                reply_title: "🏆 *Top {p1} - Membros ativos*\n\n",
                 reply_item: "{p1} *{p2}° Lugar* @{p3} - {p4} msgs\n"
             },
             function: groupFunctions.topativosCommand
@@ -295,8 +282,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: Responder com *${PREFIX}membro* - Mostra os dados do membro que você respondeu.\n`,
             msgs: {
                 error_not_member: "Não é possível obter a atividade de quem não está no grupo.",
-                reply: "📊 *Dados do membro*:\n"+
-                '────────────────────────\n'+
+                reply: "📊 *Dados do membro*:\n\n"+
                 "👤 *Nome*: {p1}\n"+
                 "📲 *Número*: +{p2}\n"+
                 "📆 *Registrado pelo bot em*: \n- {p3}\n\n"+
@@ -319,8 +305,7 @@ export function commandsGroup(botInfo?: Bot){
                 error_no_inactives: "Não existem membros inativos neste grupo.",
                 reply_title: "💤 *Membros inativos*:\n\n"+
                 "👤 *Quantidade de inativos*: {p1}\n"+
-                'Marcando todos que tem menos de *{p2}* mensagens:\n'+
-                '────────────────────────\n',
+                'Marcando todos que tem menos de *{p2}* mensagens:\n\n',
                 reply_item: "@{p1} - {p2} msgs\n"
             },
             function: groupFunctions.inativosCommand
@@ -333,8 +318,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: *${PREFIX}bcmd* variado - Bloqueia todos os comandos da categoria VARIADO.\n\n`+
             `*Obs*: Você não pode bloquear comandos de administrador.\n`,
             msgs: {
-                reply_title: "🔒 *Bloquear comandos - Grupo*\n"+
-                '────────────────────────\n',
+                reply_title: "🔒 *Bloquear comandos - Grupo*\n\n",
                 reply_item_already_blocked: "Comando *{p1}* já está bloqueado.\n",
                 reply_item_blocked: "Comando *{p1}* bloqueado com sucesso.\n",
                 reply_item_error: "Comando *{p1}* não pode ser bloqueado.\n",
@@ -351,8 +335,7 @@ export function commandsGroup(botInfo?: Bot){
             `Ex: *${PREFIX}dcmd* variado - Desbloqueia todos os comandos da categoria VARIADO.\n\n`+
             `*Obs*: Verifique os comandos que estão bloqueados com *${PREFIX}status*.\n`,
             msgs: {
-                reply_title: "🔓 *Desbloquear comandos - Grupo*\n"+
-                '────────────────────────\n',
+                reply_title: "🔓 *Desbloquear comandos - Grupo*\n\n",
                 reply_item_unblocked: "Comando *{p1}* foi desbloqueado.\n",
                 reply_item_not_blocked: "Comando *{p1}* já esta desbloqueado ou nunca foi bloqueado.\n"
             },

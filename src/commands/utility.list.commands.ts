@@ -8,8 +8,7 @@ export function commandsUtility(botInfo?: Bot){
         steamverde: {
             guide: `Ex: *${PREFIX}steamverde GTA* - Exibe os downloads disponíveis do jogo GTA.\n`,
             msgs: {
-                reply_title: '🏴‍☠️ *STEAM VERDE*\n'+
-                '────────────────────────\n',
+                reply_title: '🏴‍☠️ *STEAM VERDE*\n\n',
                 reply_item: '*{p1}*\n'+
                 '- *Enviado por*: {p2}\n'+
                 '- *Data do envio*: {p3}\n'+
@@ -24,8 +23,7 @@ export function commandsUtility(botInfo?: Bot){
         animes:{
             guide: `Ex: *${PREFIX}animes* - Exibe os ultimos lançamentos de episódios de anime.\n`,
             msgs: {
-                reply_title: '🇯🇵 *Lançamento de animes*\n'+
-                '────────────────────────\n',
+                reply_title: '🇯🇵 *Lançamento de animes*\n\n',
                 reply_item: '*{p1}*\n'+
                 '- *Episódio*: {p2} \n'+
                 '- *Link*: {p3} \n\n',
@@ -35,8 +33,7 @@ export function commandsUtility(botInfo?: Bot){
         mangas:{
             guide: `Ex: *${PREFIX}mangas* - Exibe os ultimos lançamentos de capitulos de mangá.\n`,
             msgs: {
-                reply_title: '🇯🇵 *Lançamento de mangás*\n'+
-                '────────────────────────\n',
+                reply_title: '🇯🇵 *Lançamento de mangás*\n\n',
                 reply_item: '*{p1}*\n'+
                 '- *Capítulo*: {p2} \n'+
                 '- *Link*: {p3} \n\n',
@@ -49,11 +46,9 @@ export function commandsUtility(botInfo?: Bot){
             msgs: {
                 error: '[❗] A série digitada não é suportada, atualmente são suportados apenas A e B.',
                 reply_title: '⚽ *Brasileirão série {p1}*\n\n',
-                reply_table_title: '🗒️ *Tabela*:\n'+
-                '────────────────────────\n',
+                reply_table_title: '🗒️ *Tabela*:\n\n',
                 reply_table_item: '- {p1}° {p2} - P:{p3} J:{p4} V:{p5}\n',
-                reply_round_title: '\n📆 *Rodada Atual*:\n'+
-                '────────────────────────\n',
+                reply_round_title: '\n📆 *Rodada Atual*:\n\n',
                 reply_match_item:'- Partida: {p1} x {p2}\n'+
                 '- Data: {p3}\n'+
                 '- Local: {p4}\n'+
@@ -64,8 +59,7 @@ export function commandsUtility(botInfo?: Bot){
         encurtar: {
             guide: `Ex: *${PREFIX}encurtar* link - Encurta o link digitado.\n`,
             msgs: {
-                reply: "✂️ *Encurtador de link*\n"+
-                '────────────────────────\n'+
+                reply: "✂️ *Encurtador de link*\n\n"+
                 "*Link*: {p1}\n"
             },
             function: utilityFunctions.encurtarCommand
@@ -73,8 +67,7 @@ export function commandsUtility(botInfo?: Bot){
         upimg: {
             guide: `Ex: Envie/responda uma *imagem* com *${PREFIX}upimg* - Faz upload da imagem e retorna o link.\n`,
             msgs: {
-                reply: "🖼️ *Upload de imagem*\n"+
-                '────────────────────────\n'+
+                reply: "🖼️ *Upload de imagem*\n\n"+
                 "*Link*: {p1}\n"
             },
             function: utilityFunctions.upimgCommand
@@ -82,8 +75,7 @@ export function commandsUtility(botInfo?: Bot){
         filmes: {
             guide: `Ex: *${PREFIX}filmes* - Exibe as tendências atuais de filmes.\n`,
             msgs: {
-                reply: "🎬 *Têndencias de filmes*\n"+
-                '────────────────────────\n'+
+                reply: "🎬 *Têndencias de filmes*\n\n"+
                 "{p1}\n"
             },
             function: utilityFunctions.filmesCommand
@@ -91,8 +83,7 @@ export function commandsUtility(botInfo?: Bot){
         series: {
             guide: `Ex: *${PREFIX}series* - Exibe as tendências atuais de séries.\n`,
             msgs: {
-                reply: "📺 *Têndencias de séries*\n"+
-                '────────────────────────\n'+
+                reply: "📺 *Têndencias de séries*\n\n"+
                 "{p1}\n"
             },
             function: utilityFunctions.seriesCommand
@@ -101,8 +92,7 @@ export function commandsUtility(botInfo?: Bot){
         ia: {
             guide: `Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
             msgs: {
-                reply: "🤖 *Inteligência Artificial*:\n"+
-                '────────────────────────\n'+
+                reply: "🤖 *Inteligência Artificial*:\n\n"+
                 "*Resposta*: {p1}"
             },
             function: utilityFunctions.iaCommand
@@ -117,8 +107,7 @@ export function commandsUtility(botInfo?: Bot){
         tabela: {
             guide: `Ex: *${PREFIX}tabela* - Exibe a tabela de caracteres para criação de nicks.\n`,
             msgs: {
-                reply: "🔠 *Tabela de caracteres*\n"+
-                '────────────────────────\n'+
+                reply: "🔠 *Tabela de caracteres*\n\n"+
                 "{p1}"
             },
             function: utilityFunctions.tabelaCommand
@@ -137,8 +126,7 @@ export function commandsUtility(botInfo?: Bot){
             msgs: {
                 error_audio_limit: "Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
                 error_key: "A chave de API do Deepgram ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
-                reply: "🔤 *Transcrição de áudio*\n"+
-                '────────────────────────\n'+
+                reply: "🔤 *Transcrição de áudio*\n\n"+
                 "*Texto*: {p1}"
             },
             function: utilityFunctions.ouvirCommand
@@ -179,9 +167,8 @@ export function commandsUtility(botInfo?: Bot){
                 `- 🇪🇸 Espanhol - ${PREFIX}traduz es\n`+
                 `- 🇷🇺 Russo - ${PREFIX}traduz ru\n`+
                 `- 🇰🇷 Coreano - ${PREFIX}traduz ko\n`,
-                reply: "🔠 *Tradução* 🔠:\n"+
-                '────────────────────────\n'+
-                "*Texto*: {p1}\n\n"+
+                reply: "🔠 *Tradução* 🔠:\n\n"+
+                "*Texto*: {p1}\n"+
                 "*Tradução*: {p2}"
             },
             function: utilityFunctions.traduzCommand
@@ -216,8 +203,7 @@ export function commandsUtility(botInfo?: Bot){
         letra: {
             guide: `Ex: *${PREFIX}letra* nome-musica - Exibe a letra da música que você digitou.\n`,
             msgs: {
-                reply: "🎼 *Letra de música*\n"+
-                '────────────────────────\n'+
+                reply: "🎼 *Letra de música*\n\n"+
                 "*Música*: {p1}\n"+
                 "*Artista*: {p2}\n"+
                 "*Letra*:\n"+
@@ -228,8 +214,7 @@ export function commandsUtility(botInfo?: Bot){
         noticias: {
             guide: `Ex: *${PREFIX}noticias* - Exibe as notícias atuais.\n`,
             msgs: {
-                reply_title: "🗞️ *Últimas notícias*\n"+
-                '────────────────────────\n',
+                reply_title: "🗞️ *Últimas notícias*\n\n",
                 reply_item: "*{p1}*\n"+
                 "- *Publicado por*: {p2} há {p3}\n"+
                 "- *Link*: {p4}\n\n"
@@ -240,8 +225,7 @@ export function commandsUtility(botInfo?: Bot){
             guide: `Ex: *${PREFIX}calc* 8x8 - Exibe o resultado do cálculo.\n\n`+
             `Ex: *${PREFIX}calc* 1mm em 1km - Exibe o resultado do conversão de medidas.\n`,
             msgs: {
-                reply: "🧮 *Calculadora*\n"+
-                '────────────────────────\n'+
+                reply: "🧮 *Calculadora*\n\n"+
                 "*Resultado*: {p1}"
             },
             function: utilityFunctions.calcCommand
@@ -250,8 +234,7 @@ export function commandsUtility(botInfo?: Bot){
             guide: `Ex: *${PREFIX}pesquisa* tema - Faz uma pesquisa com o tema que você digitar.\n`,
             msgs: {
                 reply_title: "🔎 *Pesquisa*\n\n"+
-                "*Você pesquisou por*: {p1}\n"+
-                '────────────────────────\n',
+                "*Você pesquisou por*: {p1}\n\n",
                 reply_item: "*{p1}*\n"+
                 "- *Link*: {p2}\n\n",
             },
@@ -262,10 +245,9 @@ export function commandsUtility(botInfo?: Bot){
             `Ex: *${PREFIX}moeda* dolar 20 - Converte 20 dólares para outras moedas.\n`+
             `Ex: *${PREFIX}moeda* euro 20 - Converte 20 euros para outras moedas.\n`,
             msgs: {
-                reply_title: "💵 *Conversão de moeda*\n"+
+                reply_title: "💵 *Conversão de moeda*\n\n"+
                 "*Tipo da moeda*: {p1}\n"+
-                "*Valor*: {p2}\n"+
-                '────────────────────────\n',
+                "*Valor*: {p2}\n\n",
                 reply_item: "- *Conversão*: {p1}\n"+
                 "- *Valor convertido*: *{p2}* {p3}\n"+
                 "- *Última atualização*: {p4}\n\n"
@@ -276,8 +258,7 @@ export function commandsUtility(botInfo?: Bot){
             guide: `Ex: *${PREFIX}clima* Rio de Janeiro - Mostra o clima atual e dos próximos dias para o Rio de Janeiro.\n`,
             msgs: {
                 reply: "☀️ *Clima atual*\n\n"+
-                '*Local escolhido*: {p1}\n'+
-                '────────────────────────\n'+
+                '*Local escolhido*: {p1}\n\n'+
                 "- *Nome*: {p2}\n"+
                 "- *Estado*: {p3}\n"+
                 "- *País*: {p4}\n"+
@@ -304,8 +285,7 @@ export function commandsUtility(botInfo?: Bot){
             `Ex: Responda com *${PREFIX}ddd* - Exibe qual estado e região do membro respondido.\n`,
             msgs: {
                 error: "Esse comando só é aceito com números brasileiros.",
-                reply: "📱 *Informação do DDD*\n"+
-                '────────────────────────\n'+
+                reply: "📱 *Informação do DDD*\n\n"+
                 "*Estado*: {p1}\n"+ 
                 "*Região*: {p2}\n"
             },
@@ -318,8 +298,7 @@ export function commandsUtility(botInfo?: Bot){
                 wait: "⏳ Estou processando a imagem e pesquisando o anime.",
                 error_similarity: "Nível de similaridade é muito baixo, certifique se enviar uma cena VÁLIDA de anime (Não funciona com imagens não oficiais, Wallpapers ou imagens recortadas e/ou baixa qualidade).",
                 error_message: "Houve um erro ao obter os dados da mensagem",
-                reply: "🔎 *Reconhecimento de anime*\n"+
-                '────────────────────────\n'+
+                reply: "🔎 *Reconhecimento de anime*\n\n"+
                 "*Título*: {p1}\n"+
                 "*Episódio*: {p2}\n"+
                 "*Tempo da cena*: {p3} - {p4}\n"+
@@ -335,8 +314,7 @@ export function commandsUtility(botInfo?: Bot){
                 error_message: "Houve um erro ao obter os dados da mensagem.",
                 error_key: "A chave de API do ACRCloud ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
                 wait: "⏳ Em andamento , estou procurando sua música.",
-                reply: "💿 *Reconhecimento de música*\n"+
-                '────────────────────────\n'+
+                reply: "💿 *Reconhecimento de música*\n\n"+
                 "*Título*: {p1}\n"+
                 "*Produtora*: {p2}\n"+
                 "*Duração*: {p3}\n"+

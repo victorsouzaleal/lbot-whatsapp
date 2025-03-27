@@ -14,40 +14,32 @@ export default function getBotTexts (botInfo? : Bot){
         server_started: '✓ Servidor iniciado!',
         groups_loaded: '✓ Todos os grupos foram carregados e atualizados.',
         admin_registered: `✅ Seu número foi cadastrado como DONO, agora você pode utilizar os comandos de ${prefix}admin`,
-        new_user: "🤖 Boas vindas ao {p1}\n"+
-        '────────────────────────\n'+
+        new_user: "🤖 Boas vindas ao {p1}\n\n"+
         `👋 Olá {p2}, vi que você é um usuário novo para abrir o menu de comandos digite *${prefix}menu*`,
         new_group: "Saudações *{p1}* , se tiverem alguma dúvida só digitar "+`*${prefix}menu*`,
-        guide_header_text: '❔ USO DO COMANDO ❔\n'+
-        '────────────────────────\n',
+        guide_header_text: '❔ USO DO COMANDO ❔\n\n',
         no_guide_found: 'Não foi encontrado um guia para este comando.',
         error_command_usage: "Parece que você usou o comando *{p1}* incorretamente ou não sabe como utilizá-lo.\n\nDigite: *{p2} guia* para ver o guia e aprender sobre este comando.",
-        error_command: "❗ Não foi possível realizar o comando *{p1}*.\n"+
-        '────────────────────────\n'+
+        error_command: "❗ Não foi possível realizar o comando *{p1}*.\n\n"+
         "*Motivo* : {p2}\n",
         command_rate_limited_message : "Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
         group_blocked_command: "O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
         globally_blocked_command: "O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",
         detected_link: "🤖 Ei @{p1}, o ANTI-LINK está ativado e um possível link foi detectado na sua mensagem, ela foi apagada por segurança.",
-        group_welcome_message: "👋 Olá, @{p1}\n"+
-        '────────────────────────\n'+
+        group_welcome_message: "👋 Olá, @{p1}\n\n"+
         "Seja bem vindo(a) ao grupo *{p2}*\n\n"+
         "{p3}"+
         `Digite *${prefix}menu* para ver os comandos.`,
-        ban_message : "✅ Entendido, +{p1} será banido.\n"+
-        '────────────────────────\n'+
+        ban_message : "✅ Entendido, +{p1} será banido.\n\n"+
         "*Tipo*: BAN MANUAL\n"+
         "*Quem baniu*: {p2}",
-        blacklist_ban_message : "✅ Entendido, +{p1} será banido.\n"+
-        '────────────────────────\n'+
+        blacklist_ban_message : "✅ Entendido, +{p1} será banido.\n\n"+
         "*Tipo*: LISTA NEGRA\n"+
         "*Quem baniu*: {p2}",
-        antifake_ban_message : "✅ Entendido, +{p1} será banido.\n"+
-        '────────────────────────\n'+
+        antifake_ban_message : "✅ Entendido, +{p1} será banido.\n\n"+
         "*Motivo*: ANTI-FAKE\n"+
         "*Quem baniu*: {p2}",
-        antiflood_ban_messages : "✅ Entendido, +{p1} será banido.\n"+
-        '────────────────────────\n'+
+        antiflood_ban_messages : "✅ Entendido, +{p1} será banido.\n\n"+
         "*Motivo*: ANTI-FLOOD\n"+
         "*Quem baniu*: {p2}",
         queue_commands: "⏳ O bot está atendendo muitas pessoas ao mesmo tempo, tenha paciência!\n\n"+
