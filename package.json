@@ -43,6 +43,7 @@
     "@victorsouzaleal/brasileirao": "^1.1.1",
     "@victorsouzaleal/googlethis": "^1.8.1",
     "@vitalets/google-translate-api": "^7.0.0",
+    "@vreden/youtube_scraper": "^1.2.7",
     "adm-zip": "^0.5.16",
     "axios": "^1.7.4",
     "baileys": "^6.7.16",

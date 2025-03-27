@@ -59,12 +59,9 @@ export interface YTInfo {
     description: string,
     duration: number,
     is_live: boolean,
-    keywords?: string[],
-    id_channel: string,
+    channel: string,
     duration_formatted: string,
-    format: ytdl.videoFormat,
     url: string
-    
 }
 
 

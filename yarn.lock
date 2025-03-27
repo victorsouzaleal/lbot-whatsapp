@@ -1189,6 +1189,14 @@
     configstore "^5.0.1"
     got "^9.6.0"
 
+"@vreden/youtube_scraper@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@vreden/youtube_scraper/-/youtube_scraper-1.2.7.tgz#4f0d23eddd04008d9faeafa7cfea42f8da8ea87c"
+  integrity sha512-zhVMuYPLif+W5HNqAY+8jAAx+F4K+l0xKKy81Lsj3qfe4xkp/LhnASop8UVRhUlnonnQrflQuPaEdasxWgOdfg==
+  dependencies:
+    axios "^0.27.2"
+    yt-search "^2.0.0"
+
 "@wasm-audio-decoders/common@9.0.5":
   version "9.0.5"
   resolved "https://registry.yarnpkg.com/@wasm-audio-decoders/common/-/common-9.0.5.tgz#d94d628f3cc0eb5a6e3702870cb621f0e8f1447c"
@@ -1485,6 +1493,14 @@ axios@^0.21.1:
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
   dependencies:
     follow-redirects "^1.14.0"
+
+axios@^0.27.2:
+  version "0.27.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
+  integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
+  dependencies:
+    follow-redirects "^1.14.9"
+    form-data "^4.0.0"
 
 axios@^1.3.4, axios@^1.4.0, axios@^1.6.0, axios@^1.7.2, axios@^1.7.4, axios@^1.7.7, axios@^1.7.9:
   version "1.8.4"
@@ -2448,7 +2464,7 @@ fluent-ffmpeg@^2.1.3:
     async "^0.2.9"
     which "^1.1.1"
 
-follow-redirects@^1.14.0, follow-redirects@^1.15.6:
+follow-redirects@^1.14.0, follow-redirects@^1.14.9, follow-redirects@^1.15.6:
   version "1.15.9"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.9.tgz#a604fa10e443bf98ca94228d9eebcc2e8a2c8ee1"
   integrity sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==
@@ -4951,7 +4967,7 @@ yoctocolors-cjs@^2.1.2:
   resolved "https://registry.yarnpkg.com/yoctocolors-cjs/-/yoctocolors-cjs-2.1.2.tgz#f4b905a840a37506813a7acaa28febe97767a242"
   integrity sha512-cYVsTjKl8b+FrnidjibDWskAv7UKOfcwaVZdp/it9n1s9fU3IkgDbhdIRKCW4JDsAlECJY0ytoVPT3sK6kideA==
 
-yt-search@^2.12.1:
+yt-search@^2.0.0, yt-search@^2.12.1:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/yt-search/-/yt-search-2.12.1.tgz#0646f0481bd9a097304c694bc1b29f35c9612ee5"
   integrity sha512-suEbEGqIDa7OBuZQSNabPKS4sZrHrocak7JhxSw3gagCUxPgHqyEDqyWEruvLYax2uCIQ7UhQoDVqQGOFn+jrQ==
