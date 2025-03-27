@@ -24,6 +24,7 @@ export interface Group {
     autosticker: boolean
     block_cmds: string[]
     blacklist : string[]
+    word_filter: string[]
 }
 
 export interface ParticipantAntiFlood {

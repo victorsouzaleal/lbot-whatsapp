@@ -39,7 +39,8 @@ export class BotService {
             prefix: "!",
             executed_cmds: 0,
             autosticker: false,
-            commands_pv: true, 
+            commands_pv: true,
+            admin_mode: false, 
             block_cmds: [],    
             command_rate:{
                 status: false,

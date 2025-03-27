@@ -39,7 +39,8 @@ export class GroupService {
             antiflood : { status: false, max_messages: 10, interval: 10},
             autosticker : false,
             block_cmds : [],
-            blacklist : []
+            blacklist : [],
+            word_filter: []
         }
 
         const newGroup = await db.groups.insertAsync(groupData) as Group
