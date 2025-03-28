@@ -62,12 +62,12 @@ export async function sairCommand(client: WASocket, botInfo: Bot, message: Messa
     else await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
-export async function vergruposCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+export async function gruposCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const adminCommands = commandsAdmin(botInfo)
 
     const currentGroups = await groupController.getAllGroups()
-    let replyText = buildText(adminCommands.vergrupos.msgs.reply_title, currentGroups.length)
+    let replyText = buildText(adminCommands.grupos.msgs.reply_title, currentGroups.length)
 
     for (let group of currentGroups){
         const groupNumber = currentGroups.indexOf(group) + 1
@@ -75,7 +75,7 @@ export async function vergruposCommand(client: WASocket, botInfo: Bot, message: 
         const participantsGroup = await groupController.getParticipants(group.id)
         const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
         const linkGroupCommand = isBotGroupAdmin ? `${botInfo.prefix}linkgrupo ${groupNumber}` : '----'
-        replyText += buildText(adminCommands.vergrupos.msgs.reply_item, groupNumber, group.name, participantsGroup.length, adminsGroup.length,  isBotGroupAdmin ? "Sim" : "Não",  linkGroupCommand, groupNumber)
+        replyText += buildText(adminCommands.grupos.msgs.reply_item, groupNumber, group.name, participantsGroup.length, adminsGroup.length,  isBotGroupAdmin ? "Sim" : "Não",  linkGroupCommand, groupNumber)
     }
 
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
@@ -121,7 +121,7 @@ export async function linkgrupoCommand(client: WASocket, botInfo: Bot, message: 
     }
 }
 
-export async function veradminsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+export async function adminsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const userController = new UserController()
     const adminCommands = commandsAdmin(botInfo)
     const botTexts = getBotTexts(botInfo)
@@ -129,12 +129,12 @@ export async function veradminsCommand(client: WASocket, botInfo: Bot, message: 
     if(!message.isBotOwner) throw new Error(botTexts.permission.owner_bot_only)
 
     const adminsBot = await userController.getAdmins()
-    let replyText = buildText(adminCommands.veradmins.msgs.reply_title, adminsBot.length)
+    let replyText = buildText(adminCommands.admins.msgs.reply_title, adminsBot.length)
 
     adminsBot.forEach((admin) => {
         const adminNumberList  = adminsBot.indexOf(admin) + 1
         const userType = admin.owner ? botTexts.user_types.owner : (admin.admin ? botTexts.user_types.admin  : botTexts.user_types.user)
-        replyText += buildText(adminCommands.veradmins.msgs.reply_item, adminNumberList, admin.name, waLib.removeWhatsappSuffix(admin.id), userType)
+        replyText += buildText(adminCommands.admins.msgs.reply_item, adminNumberList, admin.name, waLib.removeWhatsappSuffix(admin.id), userType)
     })
 
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
@@ -429,7 +429,7 @@ export async function recadoCommand(client: WASocket, botInfo: Bot, message: Mes
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
-export async function verusuarioCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+export async function usuarioCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const userController = new UserController()
     const adminCommands = commandsAdmin(botInfo)
     const botTexts = getBotTexts(botInfo)
@@ -442,10 +442,10 @@ export async function verusuarioCommand(client: WASocket, botInfo: Bot, message:
 
     let userData = await userController.getUser(targetUserId)
 
-    if (!userData) throw new Error(adminCommands.verusuario.msgs.error_user_not_found)
+    if (!userData) throw new Error(adminCommands.usuario.msgs.error_user_not_found)
 
     const userType = userData.owner ? botTexts.user_types.owner : (userData.admin ? botTexts.user_types.admin  : botTexts.user_types.user)
-    const replyText = buildText(adminCommands.verusuario.msgs.reply, userData.name || '---', userType, waLib.removeWhatsappSuffix(userData.id), userData.commands)
+    const replyText = buildText(adminCommands.usuario.msgs.reply, userData.name || '---', userType, waLib.removeWhatsappSuffix(userData.id), userData.commands)
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 

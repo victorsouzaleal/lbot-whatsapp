@@ -22,7 +22,7 @@ export function commandsAdmin(botInfo?: Bot){
             },
             function: adminFunctions.apiCommand
         },
-        vergrupos: {
+        grupos: {
             guide: `Ex: *${PREFIX}grupos* - Mostra os grupos atuais que o bot está e suas informações.\n`,
             msgs: {
                 reply_title: "👥 *Grupos atuais ({p1})*\n\n"+
@@ -35,7 +35,7 @@ export function commandsAdmin(botInfo?: Bot){
                 `- *Link*: {p6}\n\n`+
                 `- *Deseja sair desse grupo?* Use ${PREFIX}sair {p7}\n\n`
             },
-            function: adminFunctions.vergruposCommand
+            function: adminFunctions.gruposCommand
         },
         sair: {
             guide: `Ex: Digite *${PREFIX}sair 1* - Faz o bot sair do grupo selecionado.\n\n`+
@@ -67,8 +67,8 @@ export function commandsAdmin(botInfo?: Bot){
             },
             function: adminFunctions.linkgrupoCommand
         },
-        veradmins: {
-            guide: `Ex: *${PREFIX}veradmins* - Exibe todos os admins do bot.\n`,
+        admins: {
+            guide: `Ex: *${PREFIX}admins* - Exibe todos os admins do bot.\n`,
             msgs: {
                 reply_title: `⭐ *Admins do bot* ({p1})\n\n`,
                 reply_item: '- *ID*: {p1}\n'+
@@ -76,7 +76,7 @@ export function commandsAdmin(botInfo?: Bot){
                 '- *Contato*: +{p3}\n'+
                 `- *Tipo*: {p4}\n\n`
             },
-            function: adminFunctions.veradminsCommand
+            function: adminFunctions.adminsCommand
         },
         addadmin: {
             guide: `Ex: Responda alguém com *${PREFIX}addadmin* - Promove o usuário respondido a admin do bot.\n`+
@@ -270,7 +270,7 @@ export function commandsAdmin(botInfo?: Bot){
             },
             function: adminFunctions.recadoCommand
         },
-        verusuario: {
+        usuario: {
             guide: `Ex: *${PREFIX}usuario* @usuario - Mostra os dados gerais do usuário mencionado.\n\n`+
             `Ex: Responder com *${PREFIX}usuario* - Mostra os dados gerais do usuário respondido.\n\n`+
             `Ex: *${PREFIX}usuario* 55219xxxxxxxx - Mostra os dados gerais do usuário com esse número.\n`,
@@ -282,7 +282,7 @@ export function commandsAdmin(botInfo?: Bot){
                 "*Número*: +{p3}\n"+
                 "*Total de comandos usados*: {p4} comandos"
             },
-            function: adminFunctions.verusuarioCommand
+            function: adminFunctions.usuarioCommand
         },
         desligar: {
             guide: `Ex: *${PREFIX}desligar* - Desliga o bot.\n`,

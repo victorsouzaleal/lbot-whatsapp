@@ -303,11 +303,11 @@ export const adminMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 👤 *USUÁRIOS* ✦
 *|*
-*|*► *${prefix}verusuario* @usuario - Dados do usuário
+*|*► *${prefix}usuario* @usuario - Dados do usuário
 *|*
 *|*━━ ✦ ⭐ *ADMINS* ✦
 *|*
-*|*► *${prefix}veradmins* - Administradores do bot
+*|*► *${prefix}admins* - Administradores do bot
 *|*► *${prefix}addadmin* - Promove a admin do bot
 *|*► *${prefix}rmadmin* - Rebaixa a usuário do bot
 *|*
@@ -324,7 +324,7 @@ export const adminMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 👨‍👩‍👧‍👦 *GRUPOS* ✦
 *|*
-*|*► *${prefix}vergrupos* - Dados dos grupos atuais
+*|*► *${prefix}grupos* - Dados dos grupos atuais
 *|*► *${prefix}entrargrupo* link - Entra no grupo
 *|*
 *|*━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
