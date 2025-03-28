@@ -71,17 +71,17 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
     await groupController.addWarning(group.id, targetUserId)
     const participant = await groupController.getParticipant(group.id, targetUserId)
 
-    if(!participant) throw new Error(groupCommands.aviso.msgs.error_not_registered)
+    if (!participant) throw new Error(groupCommands.aviso.msgs.error_not_registered)
     
-    if(participant.warnings >= 3){
+    if (participant.warnings < 3){
+        replyText = buildText(groupCommands.aviso.msgs.reply, waLib.removeWhatsappSuffix(targetUserId), participant.warnings)
+        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
+    } else {
         replyText = buildText(groupCommands.aviso.msgs.reply_max_warning, waLib.removeWhatsappSuffix(targetUserId))
         await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
         await groupController.addBlackList(group.id, targetUserId)
-    } else {
-        replyText = buildText(groupCommands.aviso.msgs.reply, waLib.removeWhatsappSuffix(targetUserId), participant.warnings)
-        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
+        await waLib.removeParticipant(client, group.id, targetUserId)
     }
-
 }
 
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
