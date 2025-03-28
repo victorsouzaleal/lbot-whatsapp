@@ -75,9 +75,9 @@ export class GroupService {
 
             //Remove participantes do banco de dados que sairam do grupo enquanto o bot estava off.
             const currentParticipants = await this.getParticipants(groupMeta.id)
-            const groupMetaParticipantsId = groupMeta.participants.map(participant => participant.id)
+
             currentParticipants.forEach(async (participant) => {
-                if (!groupMetaParticipantsId.includes(participant.user_id)) await this.removeParticipant(groupMeta.id, participant.user_id)
+                if(!groupMeta.participants.find(groupMetaParticipant => groupMetaParticipant.id == participant.user_id)) await this.removeParticipant(groupMeta.id, participant.user_id)
             })
         }
     }
