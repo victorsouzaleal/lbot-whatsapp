@@ -65,11 +65,19 @@ export class GroupService {
                 expiration: groupMeta.ephemeralDuration
             }})
 
-            groupMeta.participants.forEach( async(participant) => {
+            //Adiciona participantes no banco de dados que entraram enquanto o bot estava off.
+            groupMeta.participants.forEach(async (participant) => {
                 const isAdmin = (participant.admin) ? true : false
                 const isParticipant = await this.isParticipant(groupMeta.id, participant.id)
                 if (!isParticipant) await this.addParticipant(groupMeta.id, participant.id, isAdmin)
                 else await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
+            })
+
+            //Remove participantes do banco de dados que sairam do grupo enquanto o bot estava off.
+            const currentParticipants = await this.getParticipants(groupMeta.id)
+            const groupMetaParticipantsId = groupMeta.participants.map(participant => participant.id)
+            currentParticipants.forEach(async (participant) => {
+                if (!groupMetaParticipantsId.includes(participant.user_id)) await this.removeParticipant(groupMeta.id, participant.user_id)
             })
         }
     }
