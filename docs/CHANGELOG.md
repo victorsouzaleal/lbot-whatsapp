@@ -1,6 +1,28 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.1.0 - 28/03/2025
+
+### GERAL
+- Reorganização na estrutura do projeto para me facilitar na manutenção.
+- O atualizador agora verifica se a versão nova é compativel com os dados atuais, caso não seja será perguntado se deseja instalar a versão nova e deletar os dados antigos.
+- Implementação de banco de dados para guardar os dados de participantes dos grupos.
+
+### COMANDOS
+- Comando **!menu** agora não exibe a categoria grupo quando é usado no privado.
+- Comando **!contador** foi removido e agora o contador já está integrado com o grupo.
+- Comando **!atividade** foi renomeado para **!membro** e foram adicionadas informações adicionais sobre o membro do grupo.
+- Comando **!verusuario** foi renomeado para **!usuario**
+- Comando **!veradmins** foi renomeado para **!admins**
+- Comando **!vergrupos** foi renomeado para **!grupos**
+- Novo comando de grupo **!aviso** (Se o membro receber 3 avisos será automaticamente adicionado a lista negra).
+
+### CORREÇÕES
+- Corrigida a resposta do comando **!par**
+- Modificado visual do menu para corrigir o visual quebrado em alguns navegadores no PC.
+- Corrigida falha que se o usuário fosse bloqueado pelo bot ele não passava pelos filtros dos recursos de segurança do grupo.
+
+
 ## 3.0.2 - 24/03/2025
 
 ### GERAL
