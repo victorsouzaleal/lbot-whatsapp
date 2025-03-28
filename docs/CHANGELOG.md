@@ -1,6 +1,13 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.1.1 - 28/03/2025
+
+### CORREÇÕES
+- Corrigida a atualização de grupos quando o bot inicia, agora ele remove corretamente os participantes do banco de dados que já sairam do grupo.
+- Corrigido banimento do comando **!aviso**, agora ao chegar aos 3 avisos ele irá banir corretamente e adicionar a lista negra.
+
+
 ## 3.1.0 - 28/03/2025
 
 ### GERAL
