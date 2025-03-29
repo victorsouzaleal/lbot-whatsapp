@@ -8,7 +8,7 @@ import { messageReceived } from './events/message-received.event.js'
 import { addedOnGroup } from './events/group-added.event.js'
 import { groupParticipantsUpdated } from './events/group-participants-updated.event.js'
 import { partialGroupUpdate } from './events/group-partial-update.event.js'
-import { updateGroupsOnStart } from './helpers/update.groups.helper.js'
+import { syncGroupsOnStart } from './helpers/groups.sync.helper.js'
 import { executeEventQueue, queueEvent } from './helpers/events.queue.helper.js'
 
 //Cache de tentativa de envios
@@ -38,7 +38,7 @@ export default async function connect(){
 
             if (connection === 'open'){
                 connectionOpen(client)
-                isBotReady = await updateGroupsOnStart(client)
+                isBotReady = await syncGroupsOnStart(client)
                 await executeEventQueue(client, eventsCache)
             } else if (connection === 'close'){
                 needReconnect = connectionClose(connectionState)

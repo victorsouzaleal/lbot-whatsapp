@@ -45,12 +45,8 @@ export class GroupController {
         return this.groupService.setRestricted(groupId, status)
     }
 
-    public registerGroups(groups: GroupMetadata[]) {
-        return this.groupService.registerGroups(groups)
-    }
-
-    public updateGroups(groups: GroupMetadata[]){
-        return this.groupService.updateGroups(groups)
+    public syncGroups(groups: GroupMetadata[]){
+        return this.groupService.syncGroups(groups)
     }
 
     public updatePartialGroup(group: Partial<GroupMetadata>){

@@ -51,34 +51,43 @@ export class GroupService {
         })
     }
 
-    public async registerGroups(groups: GroupMetadata[]) {
-        for (let group of groups) await this.registerGroup(group)
-    }
-
-    public async updateGroups(groupsMeta: GroupMetadata[]){
+    public async syncGroups(groupsMeta: GroupMetadata[]){
+        //Deletando grupos em que o bot não está mais
+        const currentGroups = await this.getAllGroups()
+        currentGroups.forEach(async (group) => {
+            if (!groupsMeta.find(groupMeta => groupMeta.id == group.id)) await this.removeGroup(group.id)
+        })
+        
+        //Atualizando grupos em que o bot está
         for (let groupMeta of groupsMeta) {
-            await db.groups.updateAsync({ id : groupMeta.id }, { $set: {
-                name: groupMeta.subject,
-                description: groupMeta.desc,
-                owner: groupMeta.owner,
-                restricted: groupMeta.announce,
-                expiration: groupMeta.ephemeralDuration
-            }})
+            const isRegistered = await this.isRegistered(groupMeta.id)
 
-            //Adiciona participantes no banco de dados que entraram enquanto o bot estava off.
-            groupMeta.participants.forEach(async (participant) => {
-                const isAdmin = (participant.admin) ? true : false
-                const isParticipant = await this.isParticipant(groupMeta.id, participant.id)
-                if (!isParticipant) await this.addParticipant(groupMeta.id, participant.id, isAdmin)
-                else await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
-            })
-
-            //Remove participantes do banco de dados que sairam do grupo enquanto o bot estava off.
-            const currentParticipants = await this.getParticipants(groupMeta.id)
-
-            currentParticipants.forEach(async (participant) => {
-                if(!groupMeta.participants.find(groupMetaParticipant => groupMetaParticipant.id == participant.user_id)) await this.removeParticipant(groupMeta.id, participant.user_id)
-            })
+            if(isRegistered){ // Se o grupo já estiver registrado sincronize os dados do grupo e os participantes.
+                await db.groups.updateAsync({ id : groupMeta.id }, { $set: {
+                    name: groupMeta.subject,
+                    description: groupMeta.desc,
+                    owner: groupMeta.owner,
+                    restricted: groupMeta.announce,
+                    expiration: groupMeta.ephemeralDuration
+                }})
+    
+                //Adiciona participantes no banco de dados que entraram enquanto o bot estava off.
+                groupMeta.participants.forEach(async (participant) => {
+                    const isAdmin = (participant.admin) ? true : false
+                    const isParticipant = await this.isParticipant(groupMeta.id, participant.id)
+                    if (!isParticipant) await this.addParticipant(groupMeta.id, participant.id, isAdmin)
+                    else await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
+                })
+    
+                //Remove participantes do banco de dados que sairam do grupo enquanto o bot estava off.
+                const currentParticipants = await this.getParticipants(groupMeta.id)
+    
+                currentParticipants.forEach(async (participant) => {
+                    if(!groupMeta.participants.find(groupMetaParticipant => groupMetaParticipant.id == participant.user_id)) await this.removeParticipant(groupMeta.id, participant.user_id)
+                })
+            } else { // Se o grupo não estiver registrado, faça o registro.
+                await this.registerGroup(groupMeta)
+            }
         }
     }
 
