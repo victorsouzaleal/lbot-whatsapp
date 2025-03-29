@@ -1,6 +1,13 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.1.2 - 29/03/2025
+
+### CORREÇÕES
+- Corrigida a sincronização inicial de grupos e da lista negra
+- Corrigida resposta quando não encontra nenhuma letra de música pelo comando **!letra**
+
+
 ## 3.1.1 - 28/03/2025
 
 ### CORREÇÕES
