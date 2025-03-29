@@ -292,9 +292,11 @@ export async function musicLyrics(text: string){
         const geniusClient = new Genius.Client()
 
         const musicSearch = await geniusClient.songs.search(text).catch((err) => {
-            if(err.message == "No result was found") throw new Error("A letra da música não foi encontrada")
+            if(err.message == "No result was found") throw new Error("A letra da música não foi encontrada, tente pesquisar corretamente o nome da música.")
             else throw new Error("Houve um erro ao obter a letra da música, tente novamente mais tarde.")
         })
+
+        if(!musicSearch.length) throw new Error("A letra da música não foi encontrada, tente pesquisar corretamente o nome da música.")
 
         const musicResult : MusicLyrics = {
             title: musicSearch[0].title,
