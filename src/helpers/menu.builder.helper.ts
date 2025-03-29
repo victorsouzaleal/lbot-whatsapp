@@ -100,6 +100,7 @@ export const utilityMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🔎 *CONSULTAS/TEXTO* ✦
 *|*
+*|*► *${prefix}ia* texto - Obtem resposta da IA
 *|*► *${prefix}steamverde* jogo - Pesquisa de jogos "alternativos"
 *|*► *${prefix}brasileirao* - Tabela do Brasileirão
 *|*► *${prefix}animes* - Últimos lançamentos de animes
@@ -125,6 +126,7 @@ export const utilityMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🖼️ *IMAGENS* ✦
 *|*
+*|*► *${prefix}criarimg* - Cria imagem com IA
 *|*► *${prefix}upimg* - Upload de imagem
 *|*► *${prefix}rbg* - Removedor de fundo
 *|*

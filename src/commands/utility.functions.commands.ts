@@ -3,9 +3,29 @@ import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
-import { waLib, imageLib, audioLib, utilityLib } from "../libraries/library.js"
+import { waLib, imageLib, audioLib, utilityLib, aiLib } from "../libraries/library.js"
 import { commandsUtility } from "./utility.list.commands.js"
 
+export async function iaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const utilityCommands = commandsUtility(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    
+    const aiResponse = await aiLib.questionAI(message.text_command)
+    const replyText = buildText(utilityCommands.ia.msgs.reply, aiResponse)
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function criarimgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const utilityCommands = commandsUtility(botInfo)
+
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    
+    const waitText = utilityCommands.criarimg.msgs.wait
+    await waLib.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
+    const aiResponse = await aiLib.imageAI(message.text_command)
+    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', aiResponse, '', message.wa_message, {expiration: message.expiration})
+}
 
 export async function steamverdeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)

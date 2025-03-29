@@ -88,12 +88,11 @@ export function commandsUtility(botInfo?: Bot){
             },
             function: utilityFunctions.seriesCommand
         },
-        /*
         ia: {
             guide: `Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
             msgs: {
                 reply: "🤖 *Inteligência Artificial*:\n\n"+
-                "*Resposta*: {p1}"
+                "*Resposta*: {p1}",
             },
             function: utilityFunctions.iaCommand
         },
@@ -103,7 +102,7 @@ export function commandsUtility(botInfo?: Bot){
                 wait: '[AGUARDE] 📸 Sua imagem está sendo gerada pela IA, pode levar entre 20-40s.',
             },
             function: utilityFunctions.criarimgCommand
-        },*/
+        },
         tabela: {
             guide: `Ex: *${PREFIX}tabela* - Exibe a tabela de caracteres para criação de nicks.\n`,
             msgs: {
