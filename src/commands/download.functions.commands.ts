@@ -119,7 +119,9 @@ export async function imgCommand(client: WASocket, botInfo: Bot, message: Messag
         let chosenImage = images[randomIndex].url
         await waLib.sendFileFromUrl(client, message.chat_id, 'imageMessage', chosenImage, '', {expiration: message.expiration}).then(() =>{
             imagesSent++
-        }).catch()
+        }).catch(() => {
+            //Ignora se não for possível enviar essa imagem
+        })
         images.splice(randomIndex, 1)
 
         if (imagesSent == MAX_SENT) break

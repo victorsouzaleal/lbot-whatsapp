@@ -290,7 +290,9 @@ export async function bcgruposCommand(client: WASocket, botInfo: Bot, message: M
             await new Promise<void>((resolve)=>{
                 setTimeout(async ()=>{
                     const announceMessage = buildText(adminCommands.bcgrupos.msgs.message, message.text_command)
-                    await waLib.sendText(client, group.id, announceMessage, {expiration: group.expiration}).catch()
+                    await waLib.sendText(client, group.id, announceMessage, {expiration: group.expiration}).catch(() => {
+                        //Ignora se não for possível enviar a mensagem para esse grupo
+                    })
                     resolve()
                 }, 1000)
             })

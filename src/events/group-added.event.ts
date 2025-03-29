@@ -10,7 +10,9 @@ export async function addedOnGroup (client: WASocket, groupMetadata: GroupMetada
         const botTexts = getBotTexts(botInfo)
         await new GroupController().registerGroup(groupMetadata[0])
         const replyText = buildText(botTexts.new_group, groupMetadata[0].subject)
-        await waLib.sendText(client, groupMetadata[0].id, replyText, {expiration: groupMetadata[0].ephemeralDuration}).catch()
+        await waLib.sendText(client, groupMetadata[0].id, replyText, {expiration: groupMetadata[0].ephemeralDuration}).catch(() => {
+            //Ignora se não for possível enviar a mensagem para esse grupo
+        })
     } catch(err: any){
         showConsoleError(err, "GROUPS-UPSERT")
         client.end(new Error("fatal_error"))
