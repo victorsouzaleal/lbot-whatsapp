@@ -364,7 +364,7 @@ export class GroupService {
         const participant = await this.getParticipant(group.id, userId)
         let isFlood = false
 
-        if(!participant || isGroupAdmin) return false
+        if(!participant || isGroupAdmin || !group.antiflood.status) return false
 
         const hasExpiredMessages = await this.hasExpiredMessages(group, participant, currentTimestamp)
 
