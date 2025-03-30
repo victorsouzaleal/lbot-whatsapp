@@ -6,20 +6,22 @@ import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import { downloadLib, imageLib, convertLib, waLib } from "../libraries/library.js"
 import format from 'format-duration'
 import { commandsDownload } from "./download.list.commands.js"
+import { convertMp4ToMp3 } from "../libraries/convert.library.js"
 
 export async function playCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const downloadCommands = commandsDownload(botInfo)
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const videoInfo = await downloadLib.youtubeMedia(message.text_command, 'mp3')
+    const videoInfo = await downloadLib.youtubeMedia(message.text_command)
 
     if (videoInfo.is_live) throw new Error(downloadCommands.play.msgs.error_live)
     if (videoInfo.duration > 360) throw new Error(downloadCommands.play.msgs.error_limit)
-
+    
     const waitReply = buildText(downloadCommands.play.msgs.wait, videoInfo.title, videoInfo.duration_formatted)
     await waLib.replyText(client, message.chat_id, waitReply, message.wa_message, {expiration: message.expiration})
-    await waLib.replyFileFromUrl(client, message.chat_id, 'audioMessage', videoInfo.url, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
+    const audioBuffer = await convertMp4ToMp3('url', videoInfo.url)
+    await waLib.replyFileFromBuffer(client, message.chat_id, 'audioMessage', audioBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
 }
 
 export async function ytCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -27,7 +29,7 @@ export async function ytCommand(client: WASocket, botInfo: Bot, message: Message
 
     if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    const videoInfo = await downloadLib.youtubeMedia(message.text_command, 'mp4')
+    const videoInfo = await downloadLib.youtubeMedia(message.text_command)
 
     if (videoInfo.is_live) throw new Error(downloadCommands.yt.msgs.error_live)
     if (videoInfo.duration > 360) throw new Error(downloadCommands.yt.msgs.error_limit)
