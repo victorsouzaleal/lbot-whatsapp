@@ -84,14 +84,4 @@ export class BotController {
     public isCommandBlockedGlobally(command: string){
         return this.botService.isCommandBlockedGlobally(command)
     }
-    
-    // Configurar API
-    public setDeepgramApiKey(secret_key: string){
-        return this.botService.setDeepgramApiKey(secret_key)
-    }
-
-    public setAcrcloudApiKey(host: string, access_key: string, secret_key: string){
-        return this.botService.setAcrcloudApiKey(host, access_key, secret_key)
-    }
-
 }

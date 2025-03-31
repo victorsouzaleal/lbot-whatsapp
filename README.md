@@ -102,11 +102,6 @@ Todos os comandos tem um guia ao digitar: **!comando** guia
 Para usar as funções de **administrador** digite **!admin** pela primeira vez ao iniciar ao bot e ai seu número será cadastrado como dono.<br><br>
 Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeautor**, **!nomepack** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.<br><br>
 
-### Como obter as chaves API para uso em comandos específicos :
-Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário antes configurar as chaves de API, abaixo tem um guia completo com imagens para obter as chaves.<br>
-
-**Informações detalhadas sobre como obter as chaves do ACRCloud(Reconhecimento de Músicas) e DEEPGRAM (Áudio para texto)** :  [Clique Aqui](docs/CHAVESAPI.md)
-
 <br>
 
 ## 4 - 🛠️ Recursos/Comandos :
@@ -128,6 +123,8 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 - Google (imagem)
 
 ### ⚒️ Utilidades Gerais
+- Respostas de IA
+- Criar imagem com IA
 - Pesquisa na Steam verde
 - Brasileirão A/B 
 - Têndencias de filmes/séries
@@ -139,8 +136,8 @@ Para usar comandos específicos como **!qualmusica** e **!ouvir** é necessário
 - Letra de música 
 - Reconhecimento de músicas  
 - Detector de DDD 
-- Detector anime 
-- Consulta de Clima/Previsão do Tempo
+- Detector de anime 
+- Clima/Previsão do Tempo
 - Conversão de moedas
 - Calculadora 
 - Pesquisa Google      

@@ -17,32 +17,6 @@ export async function adminCommand(client: WASocket, botInfo: Bot, message: Mess
     await waLib.replyText(client, message.chat_id, adminMenu(botInfo), message.wa_message, {expiration: message.expiration})
 }
 
-export async function apiCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const adminCommands = commandsAdmin(botInfo)
-    const botController = new BotController()
-    const supportedServices =  ['deepgram', 'acrcloud']
-    const args = message.text_command.split(',')
-    
-    if (!message.text_command || !supportedServices.includes(args[0].toLowerCase().trim())) throw new Error(messageErrorCommandUsage(botInfo, message))
-    
-    const [serviceName] = args
-    let replyText : string 
-
-    if (serviceName.trim() == 'deepgram'){
-        if (args.length != 2) throw new Error(adminCommands.api.msgs.reply_deepgram_error)
-        const [secret_key] = args.slice(1)
-        botController.setDeepgramApiKey(secret_key.trim())
-        replyText = adminCommands.api.msgs.reply_deepgram_success
-    } else {
-        if (args.length != 4) throw new Error(adminCommands.api.msgs.reply_acrcloud_error)
-        const [host, access_key, secret_key] = args.slice(1)
-        botController.setAcrcloudApiKey(host.trim(), access_key.trim(), secret_key.trim())
-        replyText = adminCommands.api.msgs.reply_acrcloud_success
-    }
-    
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
-}
-
 export async function sairCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const adminCommands = commandsAdmin(botInfo)

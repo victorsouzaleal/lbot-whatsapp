@@ -17,6 +17,8 @@
 - Google (imagem)
 
 ### ⚒️ Utilidades Gerais
+- Respostas de IA
+- Criar imagem com IA
 - Brasileirão A/B
 - Têndencias de Filmes/Séries
 - Encurtar Links

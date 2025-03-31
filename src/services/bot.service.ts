@@ -46,16 +46,6 @@ export class BotService {
                 status: false,
                 max_cmds_minute: 5,
                 block_time: 60,
-            },
-            api_keys:{
-                deepgram: {
-                    secret_key: null
-                },
-                acrcloud: {
-                    host: null,
-                    access_key: null,
-                    secret_key: null
-                }
             }
         }
 
@@ -295,20 +285,5 @@ export class BotService {
         let botInfo = this.getBot()
         const {prefix} = botInfo
         return botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))
-    }
-
-    // Configuração de API
-    public setDeepgramApiKey(secret_key: string){
-        let bot = this.getBot()
-        bot.api_keys.deepgram.secret_key = secret_key
-        return this.updateBot(bot)
-    }
-
-    public setAcrcloudApiKey(host: string, access_key: string, secret_key: string){
-        let bot = this.getBot()
-        bot.api_keys.acrcloud.host = host
-        bot.api_keys.acrcloud.access_key = access_key
-        bot.api_keys.acrcloud.secret_key = secret_key
-        return this.updateBot(bot)
     }
 }

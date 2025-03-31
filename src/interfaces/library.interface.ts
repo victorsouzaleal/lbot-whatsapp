@@ -1,4 +1,16 @@
-import ytdl from '@distube/ytdl-core'
+export interface ApiKeys {
+    deepgram: {
+        secret_key: string
+    }[],
+    acrcloud: {
+        host: string,
+        access_key: string,
+        secret_key: string
+    }[],
+    togetherai: {
+        secret_key: string
+    }[]
+}
 
 export interface SearchGame {
     uploader: string

@@ -200,14 +200,12 @@ export async function letraCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function ouvirCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    const secret_key = botInfo.api_keys.deepgram.secret_key
 
-    if (!secret_key) throw new Error(utilityCommands.ouvir.msgs.error_key)
     if (!message.isQuoted || message.quotedMessage?.type != 'audioMessage') throw new Error(messageErrorCommandUsage(botInfo, message))
     if (message.quotedMessage?.media?.seconds && message.quotedMessage?.media?.seconds > 90) throw new Error(utilityCommands.ouvir.msgs.error_audio_limit)
 
     let audioBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    let replyText = await audioLib.audioTranscription(audioBuffer, {deepgram_secret_key : secret_key})
+    let replyText = await audioLib.audioTranscription(audioBuffer)
     await waLib.replyText(client, message.chat_id, buildText(utilityCommands.ouvir.msgs.reply, replyText), message.quotedMessage.wa_message, {expiration: message.expiration})
 }
 
@@ -390,24 +388,18 @@ export async function dddCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
-    const host = botInfo.api_keys.acrcloud.host
-    const access_key = botInfo.api_keys.acrcloud.access_key
-    const secret_key = botInfo.api_keys.acrcloud.secret_key
-
-    if (!host || !access_key || !secret_key) throw new Error(utilityCommands.qualmusica.msgs.error_key)
-
-    let messageType = message.isQuoted ? message.quotedMessage?.type : message.type
+    const messageType = message.isQuoted ? message.quotedMessage?.type : message.type
 
     if (messageType != "videoMessage" && messageType != "audioMessage") throw new Error(messageErrorCommandUsage(botInfo, message))
 
-    let messageData = message.isQuoted ? message.quotedMessage?.wa_message : message.wa_message 
+    const messageData = message.isQuoted ? message.quotedMessage?.wa_message : message.wa_message 
     
     if (!messageData) throw new Error(utilityCommands.qualmusica.msgs.error_message)
 
-    let messageMediaBuffer = await downloadMediaMessage(messageData, "buffer", {})
+    const messageMediaBuffer = await downloadMediaMessage(messageData, "buffer", {})
 
     await waLib.replyText(client, message.chat_id, utilityCommands.qualmusica.msgs.wait, message.wa_message, {expiration: message.expiration})
-    const musicResult = await audioLib.musicRecognition(messageMediaBuffer, {acr_host: host, acr_access_key: access_key, acr_access_secret: secret_key})
+    const musicResult = await audioLib.musicRecognition(messageMediaBuffer)
     const replyText = buildText(utilityCommands.qualmusica.msgs.reply, musicResult.title, musicResult.producer, musicResult.duration, musicResult.release_date, musicResult.album, musicResult.artists)
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }

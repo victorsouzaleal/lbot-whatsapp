@@ -124,7 +124,6 @@ export function commandsUtility(botInfo?: Bot){
             guide: `Ex: Responda um áudio com *${PREFIX}ouvir* para transformar em texto.\n`,
             msgs: {
                 error_audio_limit: "Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
-                error_key: "A chave de API do Deepgram ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
                 reply: "🔤 *Transcrição de áudio*\n\n"+
                 "*Texto*: {p1}"
             },
@@ -311,7 +310,6 @@ export function commandsUtility(botInfo?: Bot){
             `*Obs*: Este comando funciona apenas com *AUDIO/VIDEO*.\n`,
             msgs: {
                 error_message: "Houve um erro ao obter os dados da mensagem.",
-                error_key: "A chave de API do ACRCloud ainda não foi configurada, relate ao administrador para ele realizar a configuração.",
                 wait: "⏳ Em andamento , estou procurando sua música.",
                 reply: "💿 *Reconhecimento de música*\n\n"+
                 "*Título*: {p1}\n"+

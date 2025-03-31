@@ -14,16 +14,6 @@ export interface Bot {
         status: boolean,
         max_cmds_minute: number,
         block_time: number,
-    },
-    api_keys: {
-        deepgram: {
-            secret_key: string | null
-        },
-        acrcloud: {
-            host: string | null,
-            access_key: string | null,
-            secret_key: string | null
-        }
     }
 }
 
