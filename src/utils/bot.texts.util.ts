@@ -8,6 +8,10 @@ export default function getBotTexts (botInfo? : Bot){
         no_update_available: 'Não há atualização disponível, seu bot está na versão mais recente.',
         update_available: 'Uma nova atualização compatível foi encontrada, aguarde o término da atualização...',
         error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
+        input_connection_method: 'Qual dos métodos você prefere usar para se conectar?',
+        input_phone_number: 'Digite aqui o número em que o bot vai ficar, o número precisa ter o código internacional'+
+        '(Ex: 5521912345678) -> ',
+        show_pairing_code: 'Seu código de pareamento é {p1}',
         bot_updated: 'Seu bot foi atualizado e será desligado, inicie novamente usando yarn start.',
         update_available_manual: 'Há uma atualização disponível, mas é necessário deletar todos os dados para a nova atualização funcionar corretamente. '+
         'Deseja continuar? ',
@@ -52,7 +56,7 @@ export default function getBotTexts (botInfo? : Bot){
         disconnected:{
             command: "A conexão com o WhatsApp foi encerrada pelo comando do Administrador.",
             fatal_error: "A conexão com o WhatsApp foi encerrada devido a uma falha grave no código.",
-            logout: "A sua sessão com o WhatsApp foi deslogada, leia o código QR novamente.",
+            logout: "A sua sessão com o WhatsApp foi deslogada, conecte-se novamente.",
             restart: "A sua conexão com o WhatsApp precisa ser reiniciada, tentando reconectar...",
             bad_connection: "A sua conexão com o WhatsApp foi encerrada, tentando reconectar... Motivo : {p1} - {p2}"
         },

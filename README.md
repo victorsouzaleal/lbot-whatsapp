@@ -18,7 +18,7 @@
 <br>
 
 ## 🚨 REQUERIMENTOS :
-- Um **número de celular conectado ao WhatsApp** para ler o QR Code e conectar o bot. <br>
+- Um **número de celular conectado ao WhatsApp** para conectar o bot. <br>
 - Um **computador com sistema Windows/Linux** ou um **smartphone Android** para executar a aplicação.<br>
 
 <br>
@@ -53,7 +53,7 @@ yarn start
 
 <br>
 
-É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**.
+É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será perguntado se você quer se conectar com **QR Code** ou **Código de Pareamento**, faça a sua escolha e se conecte com o aplicativo do WhatsApp. 
 
 <br>
 
@@ -69,7 +69,7 @@ pkg install wget -y && wget -O - bit.ly/lbot-whatsapp | bash
 ```
 <br>
 
-É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será solicitado para ler o QR Code no terminal, pegue seu celular e faça a leitura do QR Code com seu aplicativo do **WhatsApp**. 
+É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será perguntado se você quer se conectar com **QR Code** ou **Código de Pareamento**, faça a sua escolha e se conecte com o aplicativo do WhatsApp. 
 
 <br>
 

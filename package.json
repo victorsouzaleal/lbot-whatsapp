@@ -26,6 +26,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.13.1",
+    "@types/qrcode": "^1.5.5",
     "@types/user-agents": "^1.0.4",
     "@types/yt-search": "^2.10.3",
     "copyfiles": "^2.4.1",
@@ -70,7 +71,7 @@
     "openai": "^4.90.0",
     "pino": "7.11.0",
     "pretty-num": "^0.5.0",
-    "qrcode-terminal": "^0.12.0",
+    "qrcode": "^1.5.4",
     "user-agents": "^1.1.231",
     "yt-search": "^2.12.1"
   },

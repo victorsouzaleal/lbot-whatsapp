@@ -3,7 +3,7 @@ import {makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, WASocket
 import NodeCache from 'node-cache'
 import configSocket from './config.js'
 import { BotController } from './controllers/bot.controller.js'
-import { connectionClose, connectionOpen } from './events/connection.event.js'
+import { connectionClose, connectionOpen, connectionQr } from './events/connection.event.js'
 import { messageReceived } from './events/message-received.event.js'
 import { addedOnGroup } from './events/group-added.event.js'
 import { groupParticipantsUpdated } from './events/group-participants-updated.event.js'
@@ -27,16 +27,17 @@ export default async function connect(){
 
     //Eventos
     client.ev.process(async(events)=>{
-        //Informações atualizadas do bot : prefixo atual, nome, nome do admin...
         const botInfo = new BotController().getBot()
 
         //Status da conexão
         if (events['connection.update']){
             const connectionState = events['connection.update']
-            const { connection } = connectionState
+            const { connection, qr } = connectionState
             let needReconnect = false
 
-            if (connection === 'open'){
+            if (qr) {
+                connectionQr(client, connectionState) 
+            } else if (connection === 'open'){
                 connectionOpen(client)
                 isBotReady = await syncGroupsOnStart(client)
                 await executeEventQueue(client, eventsCache)

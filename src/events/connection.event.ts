@@ -7,6 +7,35 @@ import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '..
 import getBotTexts from '../utils/bot.texts.util.js'
 import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
+import inquirer from 'inquirer'
+import QRCode from 'qrcode'
+
+export async function connectionQr(client: WASocket, connectionState : Partial<ConnectionState>){
+    const botTexts = getBotTexts()
+    const { qr } = connectionState
+    const answerMethod = await inquirer.prompt([{
+        type: 'rawlist',
+        name: 'connection_method',
+        message: botTexts.input_connection_method,
+        choices: [
+            "QR Code",
+            "Código de pareamento"
+        ]
+    }])
+
+    if(answerMethod.connection_method == 'QR Code'){
+        if (qr) console.log(await QRCode.toString(qr, {type:'terminal', small: true}))
+    } else {
+        const answerNumber = await inquirer.prompt([{
+            type: 'input',
+            name: 'input_number',
+            message: botTexts.input_phone_number
+        }])
+
+        const code = await client.requestPairingCode(answerNumber.input_number.replace(/\W+/g,""))
+        console.log('[CÓDIGO DE PAREAMENTO]', colorText(buildText(botTexts.show_pairing_code, code)))
+    }
+}
 
 export async function connectionOpen(client: WASocket){
     try{
@@ -39,6 +68,8 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
             if (errorCode == DisconnectReason?.loggedOut){
                 fs.rmSync("session", {recursive: true, force: true})
                 showConsoleError(new Error(botTexts.disconnected.logout), 'CONNECTION')
+            } else if (errorCode == 405) {
+                fs.rmSync("session", {recursive: true, force: true})
             } else if (errorCode == DisconnectReason?.restartRequired){
                 showConsoleError(new Error(botTexts.disconnected.restart), 'CONNECTION')
             } else {
