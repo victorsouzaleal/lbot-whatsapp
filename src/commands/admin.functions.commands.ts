@@ -204,6 +204,15 @@ export async function comandospvCommand(client: WASocket, botInfo: Bot, message:
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
+export async function modoadminCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const botController = new BotController()
+    const adminCommands = commandsAdmin(botInfo)
+    const replyText = botInfo.admin_mode ? adminCommands.modoadmin.msgs.reply_off : adminCommands.modoadmin.msgs.reply_on
+
+    botController.setAdminMode(!botInfo.admin_mode)
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
 export async function taxacomandosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const botController = new BotController()
     const adminCommands = commandsAdmin(botInfo)

@@ -8,6 +8,14 @@ export function commandsAdmin(botInfo?: Bot){
             guide: `Ex: *${PREFIX}admin* - Exibe o menu de administração do bot.\n`,
             function: adminFunctions.adminCommand
         },
+        modoadmin: {
+            guide: `Ex: *${PREFIX}modoadmin* - Liga/desliga o MODO ADMIN (apenas administradores do bot podem usar comandos).\n`,
+            msgs: {
+                reply_off: "✅ O *MODO ADMIN* foi desativado com sucesso e agora todos podem usar comandos.",
+                reply_on: "✅ O *MODO ADMIN* foi ativado com sucesso e apenas administradores do bot podem usar comandos."
+            },
+            function: adminFunctions.modoadminCommand
+        },
         api: {
             guide: 'Esse comando é usado apenas para configurar as chave de API de certos serviços.\n\n'+
             `Configurar *DEEPGRAM*\nEx: ${PREFIX}api deepgram, *secret_key*\n\n`+

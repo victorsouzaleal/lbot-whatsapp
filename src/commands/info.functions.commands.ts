@@ -23,6 +23,8 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 
     if(message.isBotAdmin){
         replyText += infoCommands.info.msgs.reply_title_resources
+        // MODO ADMIN
+        replyText += (botInfo.admin_mode) ? infoCommands.info.msgs.reply_item_adminmode_on: infoCommands.info.msgs.reply_item_adminmode_off
         // AUTO-STICKER
         replyText += (botInfo.autosticker) ? infoCommands.info.msgs.reply_item_autosticker_on: infoCommands.info.msgs.reply_item_autosticker_off
         // PV LIBERADO

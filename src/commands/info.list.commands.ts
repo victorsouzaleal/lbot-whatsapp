@@ -49,6 +49,8 @@ export default function commandsInfo(botInfo?: Bot){
                 "*Comandos executados*: *{p4}*\n"+
                 "*Contato do administradores*:\n{p5}\n",
                 reply_title_resources: '🤖 *Recursos do bot*\n\n',
+                reply_item_adminmode_on: "*Modo ADMIN*: ✅\n",
+                reply_item_adminmode_off: "*Modo ADMIN*: ❌\n",
                 reply_item_autosticker_on: "*Auto-Sticker PV*: ✅\n",
                 reply_item_autosticker_off: "*Auto-Sticker PV*: ❌\n",
                 reply_item_commandspv_on: "*Comandos PV*: ✅\n",

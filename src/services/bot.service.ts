@@ -123,6 +123,13 @@ export class BotService {
         return this.updateBot(bot)
     }
 
+    // Modo admin
+    public setAdminMode(status: boolean){
+        let bot = this.getBot()
+        bot.admin_mode = status
+        return this.updateBot(bot)
+    }
+
     // Comandos no PV
     public setCommandsPv(status: boolean){
         let bot = this.getBot()

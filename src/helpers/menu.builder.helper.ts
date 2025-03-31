@@ -320,6 +320,7 @@ export const adminMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🧰  *RECURSOS* ✦
 *|*
+*|*► *${prefix}modoadmin* - Ativa/desativa o modo para apenas admins do bot usarem comandos
 *|*► *${prefix}taxacomandos* numero - Ativa/desativa a taxa de comandos por minuto
 *|*► *${prefix}comandospv* - Ativa/desativa os comandos em mensagens privadas
 *|*► *${prefix}autostickerpv* - Ativa/desativa a criação automática de stickers no privado

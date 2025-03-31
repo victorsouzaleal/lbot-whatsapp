@@ -53,6 +53,11 @@ export class BotController {
         return this.botService.setAutosticker(status)
     }
 
+    // Modo admin
+    public setAdminMode(status: boolean){
+        return this.botService.setAdminMode(status)
+    }
+
     // Comandos no PV
     public setCommandsPv(status: boolean){
         return this.botService.setCommandsPv(status)
