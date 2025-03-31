@@ -40,7 +40,7 @@
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.1.1",
     "@tobyg74/tiktok-api-dl": "^1.1.9",
-    "@victorsouzaleal/brasileirao": "^1.1.1",
+    "@victorsouzaleal/brasileirao": "^1.1.2",
     "@victorsouzaleal/googlethis": "^1.8.1",
     "@vitalets/google-translate-api": "^7.0.0",
     "adm-zip": "^0.5.16",

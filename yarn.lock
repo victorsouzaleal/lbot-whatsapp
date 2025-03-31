@@ -1177,10 +1177,10 @@
     "@typescript-eslint/types" "7.18.0"
     eslint-visitor-keys "^3.4.3"
 
-"@victorsouzaleal/brasileirao@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@victorsouzaleal/brasileirao/-/brasileirao-1.1.1.tgz#562a4c0a59d80749d138575e25509945144afe54"
-  integrity sha512-v7tx63II1ISRG5Fe1p3GAB9tC2NpsceZBDsm7ZoxSYulZuvT7+pQsp2knUVTe/75KuxPELwgor3hnHxRfLOdZA==
+"@victorsouzaleal/brasileirao@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@victorsouzaleal/brasileirao/-/brasileirao-1.1.2.tgz#2c20413f78d73f5b77c0342b9e8a8a34dea3b478"
+  integrity sha512-5+BG/sgut/qhCvIrWjEOTHynb0tvfhtzlsLZKD+gnRP/LuFnbCN9+XuOuQvya+vfvJeV3xe0aN3w2tjGbV1ZmQ==
   dependencies:
     axios "^1.7.2"
     jsdom "^24.1.0"
@@ -3543,9 +3543,9 @@ nth-check@^2.0.1:
     boolbase "^1.0.0"
 
 nwsapi@^2.2.12:
-  version "2.2.19"
-  resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.19.tgz#586660f7c24c34691907002309a8dc28064c9c0b"
-  integrity sha512-94bcyI3RsqiZufXjkr3ltkI86iEl+I7uiHVDtcq9wJUTwYQJ5odHDeSzkkrRzi80jJ8MaeZgqKjH1bAWAFw9bA==
+  version "2.2.20"
+  resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.20.tgz#22e53253c61e7b0e7e93cef42c891154bcca11ef"
+  integrity sha512-/ieB+mDe4MrrKMT8z+mQL8klXydZWGR5Dowt4RAGKbJ3kIGEx3X4ljUo+6V73IXtUPWgfOlU5B9MlGxFO5T+cA==
 
 oauth-sign@~0.9.0:
   version "0.9.0"
@@ -4703,7 +4703,14 @@ url-parse@^1.5.3:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-user-agents@^1.1.225, user-agents@^1.1.231:
+user-agents@^1.1.225:
+  version "1.1.495"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.1.495.tgz#652376d6072682edd938bee751ede351b4738879"
+  integrity sha512-2JDaJv94EIq7IP8HAJgoZ9LE38SO2kU1jnlK9vZz8Ba11tF53/z5TieWRgljrCIuTSV7W76svqOa/D2hjwi5/g==
+  dependencies:
+    lodash.clonedeep "^4.5.0"
+
+user-agents@^1.1.231:
   version "1.1.486"
   resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.1.486.tgz#d896086ea49e563efca6480dad4a1e29a975a6d9"
   integrity sha512-qO8tDpKHD9WQyr8Hx8Au2kus8dUolcbZq7vbRps4JJzhfKO0+uG/LhQHgm2BcXOgmJI5E/QGBS5hpJZ91E/ePg==
