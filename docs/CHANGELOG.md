@@ -1,6 +1,18 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.1.3 - 31/03/2025
+
+### COMANDOS
+- Comando **!ia** foi adicionado novamente
+- Comando **!criarimg** foi adicionado novamente
+
+### CORREÇÕES
+- Correção na mensagem de espera do comando **!play**
+- Correção no problema de download dos comandos **!play** e **!yt**
+- Correção no antiflood que ficava sempre ativo mesmo ele estando desativado.
+
+
 ## 3.1.2 - 29/03/2025
 
 ### CORREÇÕES

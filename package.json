@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "main": "dist/app.js",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@deepgram/sdk": "^3.5.1",
-    "@distube/ytdl-core": "https://github.com/victorsouzaleal/ytdl-core-temp-fix.git",
+    "@distube/ytdl-core": "^4.16.6",
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.1.1",
     "@tobyg74/tiktok-api-dl": "^1.1.9",
