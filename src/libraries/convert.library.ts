@@ -46,6 +46,61 @@ export async function convertMp4ToMp3 (sourceType: 'buffer' | 'url',  video: Buf
     }
 }
 
+export async function convertVideoToWhatsApp(sourceType: 'buffer' | 'url',  video: Buffer | string){
+    try {
+        const inputVideoPath = getTempPath('mp4')
+        const outputVideoPath = getTempPath('mp4')
+
+        if(sourceType == 'buffer'){
+            if(!Buffer.isBuffer(video)) throw new Error("O tipo selecionado da mídia foi Buffer mas a mídia não é um Buffer.")
+                
+            fs.writeFileSync(inputVideoPath, video)
+        } else if (sourceType == 'url'){
+            if(typeof video != 'string') throw new Error("O tipo selecionado da mídia foi URL mas a mídia não é uma URL.")
+
+            const {data : mediaResponse} = await axios.get(video, {responseType: 'arraybuffer'}).catch((err) => {
+                throw new Error("Houve um erro ao fazer download do vídeo para converter para WhatsApp.")
+            })
+
+            const videoBuffer = Buffer.from(mediaResponse)
+            fs.writeFileSync(inputVideoPath, videoBuffer)
+        } else {
+            throw new Error("Tipo de mídia não suportada.")
+        }
+        
+        await new Promise <void> ((resolve, reject)=>{
+            ffmpeg(inputVideoPath)
+            .outputOptions([
+                '-c:v libx264',
+                '-profile:v baseline',
+                '-level 3.0',
+                '-pix_fmt yuv420p',
+                '-movflags faststart',
+                '-crf 23', 
+                '-preset fast',
+                '-c:a aac',
+                '-b:a 128k',
+                '-ar 44100',
+                '-f mp4'
+            ])
+            .save(outputVideoPath)
+            .on('end', () => resolve())
+            .on("error", () => reject())
+        }).catch(() =>{
+            fs.unlinkSync(inputVideoPath)
+            throw new Error("Houve um erro ao converter de MP4 para WhatsApp, use outro vídeo ou tente novamente mais tarde.")
+        })
+
+        const videoBuffer = fs.readFileSync(outputVideoPath)
+        fs.unlinkSync(inputVideoPath)
+        fs.unlinkSync(outputVideoPath)
+
+        return videoBuffer
+    } catch(err){
+        throw err
+    }
+}
+
 export async function convertVideoToThumbnail(sourceType : "file"|"buffer"|"url", video : Buffer | string){
     try{
         let inputPath : string | undefined

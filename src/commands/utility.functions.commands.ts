@@ -3,7 +3,7 @@ import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
-import { waLib, imageLib, audioLib, utilityLib, aiLib } from "../libraries/library.js"
+import { waLib, imageLib, audioLib, utilityLib, aiLib, convertLib } from "../libraries/library.js"
 import { commandsUtility } from "./utility.list.commands.js"
 
 export async function iaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -421,7 +421,9 @@ export async function qualanimeCommand(client: WASocket, botInfo: Bot, message: 
 
     if (animeInfo.similarity < 87) throw new Error(utilityCommands.qualanime.msgs.error_similarity)
 
+    const videoBuffer = await convertLib.convertVideoToWhatsApp('url', animeInfo.preview_url)
+
     const replyText = buildText(utilityCommands.qualanime.msgs.reply, animeInfo.title, animeInfo.episode || "---", animeInfo.initial_time, animeInfo.final_time, animeInfo.similarity, animeInfo.preview_url)
-    await waLib.replyFileFromUrl(client, message.chat_id, 'videoMessage', animeInfo.preview_url, replyText, message.wa_message, {expiration: message.expiration, mimetype: 'video/mp4'})
+    await waLib.replyFileFromBuffer(client, message.chat_id, 'videoMessage', videoBuffer, replyText, message.wa_message, {expiration: message.expiration, mimetype: 'video/mp4'})
 }
 
