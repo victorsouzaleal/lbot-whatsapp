@@ -73,6 +73,14 @@ export function commandsGroup(botInfo?: Bot){
             },
             function: groupFunctions.rmavisoCommand
         },
+        zeraravisos:{
+            guide: `Ex: *${PREFIX}zeraravisos* - Remove todos os avisos dos membros do grupo.\n`,
+            msgs: {
+                reply: '‼️ Zerar avisos\n\n'+
+                "Todos os avisos dos membros foram zerados.",
+            },
+            function: groupFunctions.zeraravisosCommand
+        },
         addlista: {
             guide: `Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
             `Ex: Marque alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi marcado a lista negra e bane em seguida.\n\n`+

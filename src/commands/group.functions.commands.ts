@@ -131,6 +131,23 @@ export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Me
     }
 }
 
+export async function zeraravisosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const groupCommands = commandsGroup(botInfo)
+    const botTexts = getBotTexts(botInfo)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    }
+
+    await groupController.removeParticipantsWarnings(group.id)
+    const replyText = groupCommands.zeraravisos.msgs.reply
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+}
+
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)

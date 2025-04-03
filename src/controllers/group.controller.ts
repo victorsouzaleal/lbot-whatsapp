@@ -126,6 +126,10 @@ export class GroupController {
         return this.groupService.removeWarning(groupId, userId, currentWarnings)
     }
 
+    public removeParticipantsWarnings(groupId: string){
+        return this.groupService.removeParticipantsWarnings(groupId)
+    }
+
     // *********************** Recursos do grupo ***********************
 
     // ***** BEM VINDO *****

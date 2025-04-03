@@ -310,6 +310,10 @@ export class GroupService {
         return db.participants.updateAsync({group_id: groupId, user_id: userId}, { $set: { warnings: --currentWarnings} })
     }
 
+    public removeParticipantsWarnings(groupId: string){
+        return db.participants.updateAsync({group_id: groupId}, { $set: { warnings: 0} })
+    }
+
     // *********************** RECURSOS DO GRUPO ***********************
 
     // ***** BEM-VINDO *****

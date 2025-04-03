@@ -206,6 +206,7 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 *|*► *${prefix}ban* @membro - Bane do grupo
 *|*► *${prefix}aviso* @membro - Adiciona um aviso a um membro
 *|*► *${prefix}rmaviso* @membro - Remove 1 aviso de um membro
+*|*► *${prefix}zeraravisos* - Zera avisos de todos os membros
 *|*► *${prefix}restrito* - Abre/feche o grupo só para admin
 *|*► *${prefix}promover* @membro - Promove a admin
 *|*► *${prefix}rebaixar* @admin - Rebaixa a membro
