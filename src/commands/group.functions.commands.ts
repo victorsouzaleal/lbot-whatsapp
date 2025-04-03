@@ -95,6 +95,42 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
     }
 }
 
+export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const groupCommands = commandsGroup(botInfo)
+    const botTexts = getBotTexts(botInfo)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+    let targetUserId : string
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    }
+
+    if (message.mentioned.length) {
+        targetUserId = message.mentioned[0]
+    } else if (message.isQuoted && message.quotedMessage) {
+        targetUserId = message.quotedMessage.sender
+    } else {
+        throw new Error(messageErrorCommandUsage(botInfo, message))
+    }
+
+    const participant = await groupController.getParticipant(group.id, targetUserId)
+
+    if (!participant) {
+        throw new Error(groupCommands.rmaviso.msgs.error_not_registered)
+    } else if(participant.warnings < 1) {
+        throw new Error(groupCommands.rmaviso.msgs.error_no_warning)
+    } else {
+        const currentWarnings = participant.warnings
+        const newWarningCount = participant.warnings - 1
+        await groupController.removeWarning(group.id, targetUserId, currentWarnings)
+        const replyText = buildText(groupCommands.rmaviso.msgs.reply, waLib.removeWhatsappSuffix(targetUserId), newWarningCount)
+        await waLib.replyWithMentions(client, message.chat_id, replyText, [targetUserId], message.wa_message, { expiration : message.expiration })
+    }
+}
+
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const groupCommands = commandsGroup(botInfo)

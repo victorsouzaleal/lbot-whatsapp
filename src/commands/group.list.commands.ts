@@ -61,7 +61,18 @@ export function commandsGroup(botInfo?: Bot){
             },
             function: groupFunctions.avisoCommand
         },
-
+        rmaviso:{
+            guide: `Ex: Responda alguém com *${PREFIX}rmaviso* - Remove um aviso do membro respondido.\n`+
+            `Ex: Marque alguém com *${PREFIX}rmaviso* - Remove um aviso do membro marcado.\n\n`,
+            msgs: {
+                reply: '‼️ Aviso removido\n\n'+
+                "@{p1}, você teve um aviso removido pelo administrador.\n\n"+
+                'Atualmente você tem {p2} avisos.',
+                error_no_warning: 'Esse membro não tem nenhum aviso para ser removido',
+                error_not_registered: 'Membro do grupo ainda não foi registrado pelo bot.',
+            },
+            function: groupFunctions.rmavisoCommand
+        },
         addlista: {
             guide: `Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+
             `Ex: Marque alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi marcado a lista negra e bane em seguida.\n\n`+

@@ -302,8 +302,12 @@ export class GroupService {
         return participantsLeaderboard.splice(0, qty_leaderboard)
     }
 
-    public async addWarning(groupId: string, userId: string){
+    public addWarning(groupId: string, userId: string){
         return db.participants.updateAsync({group_id: groupId, user_id: userId}, { $inc: { warnings: 1} })
+    }
+
+    public removeWarning(groupId: string, userId: string, currentWarnings: number){
+        return db.participants.updateAsync({group_id: groupId, user_id: userId}, { $set: { warnings: --currentWarnings} })
     }
 
     // *********************** RECURSOS DO GRUPO ***********************
