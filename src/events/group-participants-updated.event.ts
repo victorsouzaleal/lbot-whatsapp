@@ -12,13 +12,19 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
         const isBotUpdate = event.participants[0] == botInfo.host_number
         const group = await groupController.getGroup(event.id)
 
-        if (!group) return
+        if (!group) {
+            return
+        }
 
         if (event.action === 'add') {
             //Filtro de LISTA-NEGRA
-            if (!await filterUserBlacklist(client, botInfo, group, event.participants[0])) return
+            if (!await filterUserBlacklist(client, botInfo, group, event.participants[0])){
+                return
+            } 
             //Filtro de ANTI-FAKE
-            if (!await filterUserAntifake(client, botInfo, group, event.participants[0])) return
+            if (!await filterUserAntifake(client, botInfo, group, event.participants[0])) {
+                return
+            }
             //Mensagem de boas vindas
             await sendWelcome(client, group, botInfo, event.participants[0])
             //Inclusão no banco de dados

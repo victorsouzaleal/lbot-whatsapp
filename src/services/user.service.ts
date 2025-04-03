@@ -16,7 +16,9 @@ export class UserService{
     public async registerUser(userId: string, name?: string|null){
         const isRegistered = await this.isUserRegistered(userId)
 
-        if (isRegistered) return 
+        if (isRegistered) {
+            return 
+        }
 
         const user : User = {
             id : userId,

@@ -15,7 +15,7 @@ export async function botUpdater(){
 
         if (checkUpdate.latest) {
             console.log("[ATUALIZAÇÃO]", colorText(botTexts.no_update_available))
-        } else if(!checkUpdate.patch_update) {
+        } else if (!checkUpdate.patch_update) {
             const answer = await inquirer.prompt([{
                 type: 'rawlist',
                 name: 'update',
@@ -26,7 +26,7 @@ export async function botUpdater(){
                 ]
             }])
 
-            if(answer.update === "Sim"){
+            if (answer.update === "Sim") {
                 fs.removeSync('./dist')
                 fs.removeSync('./storage')
                 await updaterLib.makeUpdate('./')

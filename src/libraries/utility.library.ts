@@ -5,32 +5,31 @@ import google from '@victorsouzaleal/googlethis'
 import { OrganicResult, search } from 'google-sr'
 import Genius from 'genius-lyrics'
 import qs from 'querystring'
-import { timestampToDate } from '../utils/general.util.js'
+import { showConsoleLibraryError, timestampToDate } from '../utils/general.util.js'
 import {obterDadosBrasileiraoA, obterDadosBrasileiraoB, DadosBrasileirao} from '@victorsouzaleal/brasileirao'
 import {JSDOM} from 'jsdom'
 import UserAgent from 'user-agents'
 import { AnimeRelease, CurrencyConvert, MangaRelease, MusicLyrics, News, SearchGame, WebSearch, Wheather } from '../interfaces/library.interface.js'
 import moment from 'moment-timezone'
 import Fuse from 'fuse.js'
+import getBotTexts from '../utils/bot.texts.util.js'
 
 export async function animeReleases(){
     try {
         const URL_BASE = 'https://animedays.org/'
-
-        const {data : animesResponse} = await axios.get(URL_BASE, {headers: {"User-Agent": new UserAgent().toString()}}).catch(()=>{
-            throw new Error("Houve um erro ao obter dados de animes, tente novamente mais tarde.")
-        })
-
+        const {data : animesResponse} = await axios.get(URL_BASE, {headers: {"User-Agent": new UserAgent().toString()}})
         const { window : { document } } = new JSDOM(animesResponse)
         let $animes = document.querySelectorAll('div.postbody > div:nth-child(2) > div.listupd.normal > div.excstf > article > div')
         let animes : AnimeRelease[] = []
 
-        $animes.forEach($anime =>{
+        for (let $anime of $animes){
             let name = $anime.querySelector('a > div.tt > h2')?.innerHTML
             let episode = $anime.querySelector('a > div.limit > div.bt > span.epx')?.innerHTML
             let url = $anime.querySelector('a')?.href
 
-            if(!name || !episode || !url) throw new Error("Houve um erro ao coletar os dados dos animes.")
+            if (!name || !episode || !url){
+                continue
+            } 
 
             name = name.split("Episódio")[0]
             animes.push({
@@ -38,65 +37,62 @@ export async function animeReleases(){
                 episode,
                 url
             })
-        })
-
+        }
+        
         return animes
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'animeReleases')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function mangaReleases(){
     try {
         const URL_BASE = 'https://mangabr.net/'
-
-        const {data : mangasResponse} = await axios.get(URL_BASE, {headers: {"User-Agent": new UserAgent().toString()}}).catch(() => {
-            throw new Error("Houve um erro ao obter dados de mangás, tente novamente mais tarde.")
-        })
-
+        const {data : mangasResponse} = await axios.get(URL_BASE, {headers: {"User-Agent": new UserAgent().toString()}})
         const { window : { document } } = new JSDOM(mangasResponse)
         let $mangas = document.querySelectorAll('div.col-6.col-sm-3.col-md-3.col-lg-2.p-1')
         let mangas : MangaRelease[] = []
 
-        $mangas.forEach($manga =>{
+        for (let $manga of $mangas){
             let name = $manga.querySelector('h3.chapter-title > span.series-name')?.innerHTML.trim()
             let chapter = $manga.querySelector('h3.chapter-title > span.chapter-name')?.innerHTML.trim()
             let url = `https://mangabr.net${$manga.querySelector('a.link-chapter')?.getAttribute('href')}`
             
-            if(!name || !chapter) throw new Error("Houve um erro ao coletar os dados dos mangás.")
+            if (!name || !chapter){
+                continue
+            }
 
             mangas.push({
                 name,
                 chapter,
                 url
             })
-        })
+        }
 
         return mangas
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'mangaReleases')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function brasileiraoTable(serie : "A" | "B"){
     try {
-        let table : DadosBrasileirao | undefined
+        let table : DadosBrasileirao
 
         if(serie == "A"){
-            table = await obterDadosBrasileiraoA().catch(() => {
-                throw new Error("Houve um erro ao obter a tabela da série A do Brasileirão, tente novamente mais tarde.")
-            })
+            table = await obterDadosBrasileiraoA()
         } else if(serie == "B"){
-            table = await obterDadosBrasileiraoB().catch(() => {
-                throw new Error("Houve um erro ao obter a tabela da série B do Brasileirão, tente novamente mais tarde.")
-            })
-        } 
+            table = await obterDadosBrasileiraoB()
+        } else {
+            throw new Error("Unsupported league")
+        }   
         
-        if(!table) throw new Error("Série não suportada")
-    
         return table
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'brasileiraoTable')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -104,11 +100,7 @@ export async function moviedbTrendings(type : 'movie' | 'tv' = "movie"){
     try {
         let num = 0
         const BASE_URL = `https://api.themoviedb.org/3/trending/${type}/day?api_key=6618ac868ff51ffa77d586ee89223f49&language=pt-BR`
-
-        const {data : movieDbResponse} = await axios.get(BASE_URL).catch(() => {
-            throw new Error(`Houve um erro ao listar ${type === 'movie' ? "os filmes" : "as séries"}, tente novamente mais tarde.`)
-        })
-
+        const {data : movieDbResponse} = await axios.get(BASE_URL)
         const trendings : string = movieDbResponse.results.map((item: { title: string; name: string; overview: string })=>{
             num++
             return `${num}°: *${item.title || item.name}.*\n\`Sinopse:\` ${item.overview} \n`
@@ -116,7 +108,8 @@ export async function moviedbTrendings(type : 'movie' | 'tv' = "movie"){
 
         return trendings
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'moviedbTrendings')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -128,13 +121,12 @@ export async function calcExpression(expr: string){
         expr = expr.replace(/,/g,".")
         expr = expr.replace("em","in")
 
-        const {data : calcResponse} = await axios.post(URL_BASE, {expr}).catch(() => {
-            throw new Error('Houve um erro ao obter resultado do cálculo, tente novamente mais tarde.')
-        })
-
+        const {data : calcResponse} = await axios.post(URL_BASE, {expr})
         let calcResult = calcResponse.result;
 
-        if(calcResult == "NaN" || calcResult == "Infinity") throw new Error('Foi feita uma divisão por 0 ou algum outro cálculo inválido.')
+        if (calcResult == "NaN" || calcResult == "Infinity"){
+            return null
+        } 
         
         calcResult = calcResult.split(" ")
         calcResult[0] = (calcResult[0].includes("e")) ? prettyNum(calcResult[0]) : calcResult[0]
@@ -142,97 +134,80 @@ export async function calcExpression(expr: string){
         
         return calcResult as string
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'calcExpression')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function newsGoogle(lang = 'pt'){
     try {
-        const newsList = await google.getTopNews(lang).catch(() => {
-            throw new Error ("Houve um erro ao obter notícias, tente novamente mais tarde.")
-        })
-        
-        let newsResponse : News[] = []
-
-        for(let news of newsList.headline_stories){
-            newsResponse.push({
+        const newsList = await google.getTopNews(lang)
+        let newsResponse : News[] = newsList.headline_stories.map(news => {
+            return {
                 title : news.title,
                 published : news.published,
                 author: news.by,
                 url : news.url
-            })
-        }
+            }
+        })
 
         return newsResponse
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'newsGoogle')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function translationGoogle(text: string, lang: "pt" | "es" | "en" | "ja" | "it" | "ru" | "ko"){
     try {
-        const translationResponse = await translate(text , {to: lang}).catch(() => {
-            throw new Error('Houve um erro ao obter tradução, tente novamente mais tarde.')
-        })
+        const translationResponse = await translate(text , {to: lang})
 
         return translationResponse.text
     } catch (err){
-        throw err
+        showConsoleLibraryError(err, 'translationGoogle')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function shortenUrl(url: string){
     try {
         const URL_BASE = 'https://shorter.me/page/shorten'
+        const {data : shortenResponse} = await axios.post(URL_BASE, qs.stringify({url, alias: '', password: ''}))
 
-        const {data : shortenResponse} = await axios.post(URL_BASE, qs.stringify({url, alias: '', password: ''})).catch(() => {
-            throw new Error(`Houve um erro ao obter link encurtado, tente novamente mais tarde.`)
-        })
-
-        if(!shortenResponse.data) throw new Error(`O link inserido é inválido e não foi possível encurtar.`)
+        if (!shortenResponse.data){
+            return null
+        } 
         
         return shortenResponse.data as string
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'shortenUrl')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function webSearchGoogle(texto: string){
     try {
-        const searchResults = await search({query : texto, resultTypes: [OrganicResult]}).catch(() => {
-            throw new Error("Houve um erro ao obter a pesquisa do Google, tente novamente mais tarde.")
-        })
-
-        if(!searchResults.length) throw new Error ("Não foram encontrados resultados para esta pesquisa.")
-
-        let searchResponse : WebSearch[] = []
-
-        for(let search of searchResults){
-            searchResponse.push({
+        const searchResults = await search({query : texto, resultTypes: [OrganicResult]})
+        let searchResponse : WebSearch[] = searchResults.map(search => {
+            return {
                 title: search.title,
                 url: search.link,
                 description : search.description
-            })
-        }
+            }
+        })
 
         return searchResponse
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'webSearchGoogle')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function wheatherInfo(location: string){
     try {
         const WEATHER_API_URL = `http://api.weatherapi.com/v1/forecast.json?key=516f58a20b6c4ad3986123104242805&q=${encodeURIComponent(location)}&days=3&aqi=no&alerts=no`
-        
-        const {data : wheatherResult} = await axios.get(WEATHER_API_URL).catch(() => {
-            throw new Error("Houve um erro ao obter dados de clima, tente novamente mais tarde.")
-        })
-
-        const {data: wheatherConditions} = await axios.get("https://www.weatherapi.com/docs/conditions.json", {responseType: 'json'}).catch(() => {
-            throw new Error("Houve um erro ao obter dados de condições climáticas, tente novamente mais tarde.")
-        })
-
+        const {data : wheatherResult} = await axios.get(WEATHER_API_URL)
+        const {data: wheatherConditions} = await axios.get("https://www.weatherapi.com/docs/conditions.json", {responseType: 'json'})
         const currentCondition = wheatherConditions.find((condition: { code: number }) => 
             condition.code === wheatherResult.current.condition.code
         ).languages.find((language: { lang_iso: string }) =>
@@ -283,20 +258,25 @@ export async function wheatherInfo(location: string){
 
         return weatherResponse
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'wheatherInfo')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function musicLyrics(text: string){
     try {
         const geniusClient = new Genius.Client()
-
         const musicSearch = await geniusClient.songs.search(text).catch((err) => {
-            if(err.message == "No result was found") throw new Error("A letra da música não foi encontrada, tente pesquisar corretamente o nome da música.")
-            else throw new Error("Houve um erro ao obter a letra da música, tente novamente mais tarde.")
+            if (err.message == "No result was found"){
+                return null
+            } else {
+                throw err
+            }
         })
 
-        if(!musicSearch.length) throw new Error("A letra da música não foi encontrada, tente pesquisar corretamente o nome da música.")
+        if (!musicSearch || !musicSearch.length) {
+            return null
+        }
 
         const musicResult : MusicLyrics = {
             title: musicSearch[0].title,
@@ -307,7 +287,8 @@ export async function musicLyrics(text: string){
 
         return musicResult
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'musicLyrics')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -316,9 +297,6 @@ export async function convertCurrency(currency: "dolar" | "euro" | "real" | "ien
         const URL_BASE = 'https://economia.awesomeapi.com.br/json/last/'
         value = parseInt(value.toString().replace(",","."))
         let params : string | undefined
-
-        if(isNaN(value)) throw new Error('O valor não é um número válido.')
-        else if(value > 1000000000000000)throw new Error('Quantidade muito alta, você provavelmente não tem todo esse dinheiro.')
     
         switch(currency){
             case 'dolar':
@@ -335,10 +313,7 @@ export async function convertCurrency(currency: "dolar" | "euro" | "real" | "ien
                 break                  
         }
 
-        const {data : convertResponse} = await axios.get(URL_BASE+params).catch(() => {
-            throw new Error('Houve um erro ao obter conversão de moeda, tente novamente mais tarde.')
-        })
-
+        const {data : convertResponse} = await axios.get(URL_BASE+params)
         let convertResult : CurrencyConvert = {
             value : value,
             currency: currency,
@@ -381,22 +356,21 @@ export async function convertCurrency(currency: "dolar" | "euro" | "real" | "ien
 
         return convertResult
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'convertCurrency')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function infoDDD(ddd: string){
     try {
         const URL_BASE = 'https://gist.githubusercontent.com/victorsouzaleal/ea89a42a9f912c988bbc12c1f3c2d110/raw/af37319b023503be780bb1b6a02c92bcba9e50cc/ddd.json'
-        
-        const {data : dddResponse} = await axios.get(URL_BASE).catch(() => {
-            throw new Error("Houve um erro ao obter os dados do DDD, tente novamente mais tarde.")
-        })
-
+        const {data : dddResponse} = await axios.get(URL_BASE)
         const states = dddResponse.estados
         const indexDDD = states.findIndex((state : { ddd: string }) => state.ddd.includes(ddd))
 
-        if(indexDDD === -1) throw new Error("Este DDD não foi encontrado, certifique-se que ele é válido.")
+        if(indexDDD === -1) {
+            return null
+        }
         
         const response = {
             state: states[indexDDD].nome,
@@ -405,21 +379,20 @@ export async function infoDDD(ddd: string){
 
         return response
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'infoDDD')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function symbolsASCI(){
     try {
         const URL_BASE = 'https://gist.githubusercontent.com/victorsouzaleal/9a58a572233167587e11683aa3544c8a/raw/aea5d03d251359b61771ec87cb513360d9721b8b/tabela.txt'
-        
-        const {data : symbolsResponse} = await axios.get(URL_BASE).catch(() => {
-            throw new Error('Houve um erro ao obter a tabela de caracteres, tente novamente mais tarde.')
-        })
+        const {data : symbolsResponse} = await axios.get(URL_BASE)
 
         return symbolsResponse as string
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'symbolsASCI')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -457,7 +430,8 @@ export async function searchGame(gameTitle: string){
 
         return resultList
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'searchGame')
+        throw new Error(getBotTexts().library_error)
     }
 }
 

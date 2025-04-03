@@ -1,5 +1,7 @@
 import axios from 'axios'
 import qs from 'querystring'
+import { showConsoleLibraryError } from '../utils/general.util.js'
+import getBotTexts from '../utils/bot.texts.util.js'
 
 export async function simSimi(text: string){
     try {
@@ -12,13 +14,17 @@ export async function simSimi(text: string){
         }
 
         const {data : simiResponse} = await axios(config).catch((err)=>{
-            if(err.response?.data?.message) return err.response.data
-            else throw new Error("Houve um erro ao obter resposta do SimSimi, tente novamente mais tarde.")
+            if (err.response?.data?.message){
+                return err.response
+            } else {
+                throw err
+            }
         })
 
-        return simiResponse.message as string
+        return simiResponse.message as string | null | undefined
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'simSimi')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -26,16 +32,15 @@ export async function funnyRandomPhrases(){
     try {
         const URL_BASE = 'https://gist.githubusercontent.com/victorsouzaleal/bfbafb665a35436acc2310d51d754abb/raw/2be5f3b5333b2a9c97492888ed8e63b7c7675ae6/frases.json'
         const IMAGE_URL = 'https://i.imgur.com/pRSN2ml.png'
-
-        let {data} = await axios.get(URL_BASE).catch(() => {
-            throw new Error("Houve um erro ao obter a frase, tente novamente mais tarde.")
-        })
-
+        let { data } = await axios.get(URL_BASE)
         let responsePhrase = data.frases[Math.floor(Math.random() * data.frases.length)]
         let cont_params = 1
 
-        if(responsePhrase.indexOf("{p3}") != -1) cont_params = 3
-        else if(responsePhrase.indexOf("{p2}") != -1) cont_params = 2
+        if(responsePhrase.indexOf("{p3}") != -1) {
+            cont_params = 3
+        } else if (responsePhrase.indexOf("{p2}") != -1){
+            cont_params = 2
+        } 
     
         for(let i = 1; i <= cont_params; i++){
             let complementChosen = data.complementos[Math.floor(Math.random() * data.complementos.length)]
@@ -50,7 +55,8 @@ export async function funnyRandomPhrases(){
 
         return response
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'funnyRandomPhrases')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -76,7 +82,8 @@ export function truthMachine(){
 
         return response
     } catch(err) {
-        throw new Error("Houve um erro ao obter as imagens da máquina da verdade, tente novamente mais tarde.")
+        showConsoleLibraryError(err, 'truthMachine')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -92,7 +99,8 @@ export function flipCoin(){
         
         return response
     } catch(err) {
-        throw new Error("Houve um erro ao obter as imagem do lado da moeda, tente novamente mais tarde.")
+        showConsoleLibraryError(err, 'flipCoin')
+        throw new Error(getBotTexts().library_error)
     }
 }
 

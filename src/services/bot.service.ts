@@ -21,8 +21,13 @@ export class BotService {
         const storageFolderExists = fs.pathExistsSync(path.resolve("storage"))
         const jsonFileExists = fs.existsSync(this.pathJSON)
         
-        if (!storageFolderExists) fs.mkdirSync(path.resolve("storage"), {recursive: true})
-        if (!jsonFileExists) this.initBot()
+        if (!storageFolderExists) {
+            fs.mkdirSync(path.resolve("storage"), {recursive: true})
+        }
+
+        if (!jsonFileExists) {
+            this.initBot()
+        }
     }
 
     private updateBot(bot : Bot){
@@ -129,7 +134,10 @@ export class BotService {
 
     // Taxa de comandos
     public async setCommandRate(status: boolean, maxCommandsMinute: number, blockTime: number){
-        if(!status) await this.removeCommandRate()
+        if(!status) {
+            await this.removeCommandRate()
+        }
+
         let bot = this.getBot()
         bot.command_rate.status = status
         bot.command_rate.max_cmds_minute = maxCommandsMinute
@@ -142,13 +150,14 @@ export class BotService {
         const userCommandRate = await this.getUserCommandRate(userId)
         let hasExceeded = false
 
-        if(isBotAdmin) return false
+        if(isBotAdmin) {
+            return false
+        }
 
         if (userCommandRate){
             if (userCommandRate.limited){
                 const hasExpiredLimited = await this.hasExpiredLimited(userCommandRate, botInfo, currentTimestamp)
-                if (hasExpiredLimited) hasExceeded = false
-                else hasExceeded = true
+                hasExceeded = hasExpiredLimited ? false : true
             } else {
                 const hasExpiredMessages = await this.hasExpiredCommands(userCommandRate, currentTimestamp)
                 if (!hasExpiredMessages && userCommandRate.cmds >= botInfo.command_rate.max_cmds_minute) {
@@ -170,12 +179,13 @@ export class BotService {
     }
 
     private async registerUserCommandRate(userId: string){
-        const isRegistered = (await this.getUserCommandRate(userId)) ? true : false
+        const existentUserCommandRate = await this.getUserCommandRate(userId)
 
-        if (isRegistered) return 
+        if (existentUserCommandRate) {
+            return 
+        }
 
         const timestamp = Math.round(moment.now()/1000)
-
         const userCommandRate : UserCommandRate = {
             user_id: userId,
             limited: false,
@@ -228,9 +238,15 @@ export class BotService {
         let blockResponse = adminCommands.bcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] = ['sticker', 'utility', 'download', 'misc']
 
-        if (commands[0] == 'variado') commands[0] = 'misc'
-        if (commands[0] == 'utilidade') commands[0] = 'utility'
-        if (categories.includes(commands[0] as CategoryCommand)) commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+        if (commands[0] == 'variado') {
+            commands[0] = 'misc'
+        } else if (commands[0] == 'utilidade') {
+            commands[0] = 'utility'
+        } 
+        
+        if (categories.includes(commands[0] as CategoryCommand)) {
+            commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+        }
         
         for(let command of commands){
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'misc') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')){
@@ -258,13 +274,20 @@ export class BotService {
         let unblockResponse = adminCommands.dcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
 
-        if (commands[0] == 'todos') commands[0] = 'all'
-        if (commands[0] == 'utilidade') commands[0] = 'utility'
-        if (commands[0] == 'variado') commands[0] = 'misc'
+        if (commands[0] == 'todos') {
+            commands[0] = 'all'
+        } else if (commands[0] == 'utilidade') {
+            commands[0] = 'utility'
+        } else if (commands[0] == 'variado') {
+            commands[0] = 'misc'
+        } 
         
         if (categories.includes(commands[0])){
-            if (commands[0] === 'all') commands = botInfo.block_cmds.map(command => prefix+command)
-            else commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+            if (commands[0] === 'all') {
+                commands = botInfo.block_cmds.map(command => prefix+command)
+            } else {
+                commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+            }
         }
 
         for(let command of commands){

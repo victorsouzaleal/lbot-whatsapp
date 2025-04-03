@@ -3,9 +3,11 @@ import NodeCache from 'node-cache'
 
 export async function executeEventQueue(client: WASocket, eventsCache: NodeCache){
     const eventsQueue = eventsCache.get("events") as {event: BaileysEvent, data: any}[]
+
     for (let ev of eventsQueue) {
         client.ev.emit(ev.event, ev.data)
     }
+    
     eventsCache.set("events", [])
 }
 

@@ -82,7 +82,11 @@ export function randomDelay(ms_min : number, ms_max : number){
 }
 
 export function showConsoleError(err: any, error_type : string){
-  console.error(colorText(`[${error_type}]`,"#d63e3e"), err)
+  console.error(colorText(`[${error_type}]`,"#d63e3e"), err.message)
+}
+
+export function showConsoleLibraryError(err: any, error_type : string){
+  console.error(colorText(`[${error_type}]`,"#d63e3e"), err.message)
 }
 
 export function getRandomFilename(ext: FileExtensions){

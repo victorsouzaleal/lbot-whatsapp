@@ -1,5 +1,6 @@
 import axios from 'axios'
 import AdmZip from 'adm-zip'
+import { showConsoleLibraryError } from '../utils/general.util.js'
 
 export async function checkUpdate(currentBotVersion : string){
     try {
@@ -24,6 +25,7 @@ export async function checkUpdate(currentBotVersion : string){
 
         return response
     } catch (err){
+        showConsoleLibraryError(err, 'checkUpdate')
         throw err
     }
 }

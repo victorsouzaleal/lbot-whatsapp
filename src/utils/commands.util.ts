@@ -14,8 +14,11 @@ import { removePrefix } from "../libraries/whatsapp.library.js"
 const COMMAND_CATEGORIES = ['info', 'utility', 'download', 'sticker', 'misc', 'group', 'admin']
 
 export function commandExist(botInfo: Bot, command: string, category? : CategoryCommand){
-    if(!category) return getCommands(botInfo).includes(command)
-    else return getCommandsByCategory(botInfo, category).includes(command)
+    if (!category) {
+        return getCommands(botInfo).includes(command)
+    } else {
+        return getCommandsByCategory(botInfo, category).includes(command)
+    }
 }
 
 export function getCommands(botInfo: Bot){
@@ -54,15 +57,20 @@ export function getCommandsByCategory(botInfo: Bot, category: CategoryCommand){
 export function getCommandCategory(botInfo: Bot, command: string){
     let foundCategory : CategoryCommand | null = null
     const categories = COMMAND_CATEGORIES as CategoryCommand[] 
+
     for (let category of categories){
-        if(getCommandsByCategory(botInfo, category).includes(command)) foundCategory = category as CategoryCommand
+        if(getCommandsByCategory(botInfo, category).includes(command)) {
+            foundCategory = category as CategoryCommand
+        }
     }
+
     return foundCategory
 }
 
 export function getCommandGuide(botInfo: Bot, command: string){
     const commandCategory = getCommandCategory(botInfo, command)
     const {guide_header_text, no_guide_found} = getBotTexts(botInfo)
+    
     switch(commandCategory){
         case 'info':
             const info = commandsInfo(botInfo) as Commands

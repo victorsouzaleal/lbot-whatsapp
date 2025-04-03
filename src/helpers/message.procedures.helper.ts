@@ -48,8 +48,7 @@ export async function incrementGroupCommandsCount(group: Group){
 }
 
 export function isIgnoredByPvAllowed(botInfo: Bot, message: Message){
-    if (!message.isBotAdmin && !botInfo.commands_pv) return true
-    return false
+    return (!message.isBotAdmin && !botInfo.commands_pv)
 }
 
 export function isIgnoredByGroupMuted(group: Group, message: Message){
@@ -61,17 +60,14 @@ export function isIgnoredByAdminMode(bot: Bot, message: Message){
 }
 
 export async function isBotLimitedByGroupRestricted(group: Group, botInfo: Bot){
-    if (group.restricted){
-        if (!botInfo.host_number) return true
-        const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
-        if (!isBotGroupAdmin) return true
-    }
-    return false
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+    return (group.restricted && !isBotGroupAdmin)
 }
 
 export async function sendPrivateWelcome(client: WASocket, botInfo: Bot, message: Message){
     const botTexts = getBotTexts(botInfo)
     const user = await userController.getUser(message.sender)
+
     if (user && !user.receivedWelcome){
         const replyText = buildText(botTexts.new_user, botInfo.name, message.pushname)
         await waLib.sendText(client, message.chat_id, replyText, {expiration: message.expiration})
@@ -84,7 +80,9 @@ export async function readUserMessage(client: WASocket, message: Message){
 }
 
 export async function updateUserName(message: Message){
-    if (message.pushname) await userController.setName(message.sender, message.pushname)
+    if (message.pushname) {
+        await userController.setName(message.sender, message.pushname)
+    }
 }
 
 export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot, message: Message){
@@ -103,34 +101,40 @@ export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot,
 export async function isCommandBlockedGlobally(client: WASocket, botInfo: Bot, message: Message ){
     const commandBlocked = botController.isCommandBlockedGlobally(message.command)
     const botTexts = getBotTexts(botInfo)
+
     if (commandBlocked && !message.isBotAdmin){
         const replyText = buildText(botTexts.globally_blocked_command, message.command)
         await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
         return true
     }
+
     return false
 }
 
 export async function isCommandBlockedGroup(client: WASocket, group: Group, botInfo: Bot, message: Message){
     const commandBlocked = groupController.isBlockedCommand(group, message.command, botInfo)
     const botTexts = getBotTexts(botInfo)
+
     if (commandBlocked && !message.isGroupAdmin){
         const replyText = buildText(botTexts.group_blocked_command, message.command)
         await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
         return true
     }
+
     return false
 }
 
 export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group: Group, message: Message){
     const botTexts = getBotTexts(botInfo)
     const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
+
     if (isDetectedByAntilink){
         const replyText = buildText(botTexts.detected_link, waLib.removeWhatsappSuffix(message.sender))
         await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
         await waLib.deleteMessage(client, message.wa_message, false)
         return true
     }
+    
     return false
 }
 

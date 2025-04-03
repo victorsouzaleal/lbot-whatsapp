@@ -26,6 +26,7 @@ export default function getBotTexts (botInfo? : Bot){
         error_command_usage: "Parece que você usou o comando *{p1}* incorretamente ou não sabe como utilizá-lo.\n\nDigite: *{p2} guia* para ver o guia e aprender sobre este comando.",
         error_command: "❗ Não foi possível realizar o comando *{p1}*.\n\n"+
         "*Motivo* : {p2}\n",
+        library_error: 'Houve um erro na biblioteca desse comando, tente novamente e se o problema persistir relate ao administrador.',
         command_rate_limited_message : "Você está impossibilitado de mandar comandos por *{p1}* segundos, pega leve cara.",
         group_blocked_command: "O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
         globally_blocked_command: "O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",

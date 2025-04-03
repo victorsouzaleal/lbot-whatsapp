@@ -22,7 +22,9 @@ export class GroupService {
     public async registerGroup(groupMetadata : GroupMetadata){
         const isRegistered = await this.isRegistered(groupMetadata.id)
 
-        if (isRegistered) return
+        if (isRegistered) {
+            return
+        }
 
         const groupData : Group = {
             id: groupMetadata.id,
@@ -55,14 +57,16 @@ export class GroupService {
         //Deletando grupos em que o bot não está mais
         const currentGroups = await this.getAllGroups()
         currentGroups.forEach(async (group) => {
-            if (!groupsMeta.find(groupMeta => groupMeta.id == group.id)) await this.removeGroup(group.id)
+            if (!groupsMeta.find(groupMeta => groupMeta.id == group.id)) {
+                await this.removeGroup(group.id)
+            }
         })
         
         //Atualizando grupos em que o bot está
         for (let groupMeta of groupsMeta) {
             const isRegistered = await this.isRegistered(groupMeta.id)
 
-            if(isRegistered){ // Se o grupo já estiver registrado sincronize os dados do grupo e os participantes.
+            if (isRegistered){ // Se o grupo já estiver registrado sincronize os dados do grupo e os participantes.
                 await db.groups.updateAsync({ id : groupMeta.id }, { $set: {
                     name: groupMeta.subject,
                     description: groupMeta.desc,
@@ -75,15 +79,21 @@ export class GroupService {
                 groupMeta.participants.forEach(async (participant) => {
                     const isAdmin = (participant.admin) ? true : false
                     const isParticipant = await this.isParticipant(groupMeta.id, participant.id)
-                    if (!isParticipant) await this.addParticipant(groupMeta.id, participant.id, isAdmin)
-                    else await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
+
+                    if (!isParticipant) {
+                        await this.addParticipant(groupMeta.id, participant.id, isAdmin)
+                    } else {
+                        await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
+                    }
                 })
     
                 //Remove participantes do banco de dados que sairam do grupo enquanto o bot estava off.
                 const currentParticipants = await this.getParticipants(groupMeta.id)
     
                 currentParticipants.forEach(async (participant) => {
-                    if(!groupMeta.participants.find(groupMetaParticipant => groupMetaParticipant.id == participant.user_id)) await this.removeParticipant(groupMeta.id, participant.user_id)
+                    if(!groupMeta.participants.find(groupMetaParticipant => groupMetaParticipant.id == participant.user_id)) {
+                        await this.removeParticipant(groupMeta.id, participant.user_id)
+                    }
                 })
             } else { // Se o grupo não estiver registrado, faça o registro.
                 await this.registerGroup(groupMeta)
@@ -93,10 +103,15 @@ export class GroupService {
 
     public updatePartialGroup(group: Partial<GroupMetadata>) {
         if (group.id){
-            if (group.desc) return this.setDescription(group.id, group.desc)
-            if (group.subject) return this.setName(group.id, group.subject)
-            if (group.announce) return this.setRestricted(group.id, group.announce)
-            if (group.ephemeralDuration) return this.setExpiration(group.id, group.ephemeralDuration)
+            if (group.desc) {
+                return this.setDescription(group.id, group.desc)
+            } else if (group.subject) {
+                return this.setName(group.id, group.subject)
+            } else if (group.announce) {
+                return this.setRestricted(group.id, group.announce)
+            } else if (group.ephemeralDuration) {
+                return this.setExpiration(group.id, group.ephemeralDuration)
+            }
         }
     }
 
@@ -153,7 +168,9 @@ export class GroupService {
     public async addParticipant(groupId: string,  userId: string, isAdmin = false){
         const isParticipant = await this.isParticipant(groupId, userId)
 
-        if (isParticipant) return
+        if (isParticipant) {
+            return
+        }
 
         const participant : Participant = {
             group_id : groupId,
@@ -184,12 +201,18 @@ export class GroupService {
 
     public async addAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
-        if (!isAdmin) return db.participants.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
+
+        if (!isAdmin) {
+            return db.participants.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
+        }
     }
 
     public async removeAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
-        if (isAdmin) return db.groups.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
+
+        if (isAdmin) {
+            return db.groups.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
+        }
     }
 
     public async getParticipant(groupId: string, userId: string){
@@ -239,7 +262,9 @@ export class GroupService {
             other?: number
         } = { msgs: 1 }
 
-        if(isCommand) incrementedUser.commands = 1
+        if(isCommand) {
+            incrementedUser.commands = 1
+        }
 
         switch (type) {
             case "conversation":
@@ -303,7 +328,9 @@ export class GroupService {
     public isNumberFake(group: Group, userId: string){
         const allowedPrefixes = group.antifake.allowed
         for(let numberPrefix of allowedPrefixes){
-            if (userId.startsWith(numberPrefix)) return false
+            if (userId.startsWith(numberPrefix)) {
+                return false
+            }
         }
         return true
     }
@@ -324,14 +351,15 @@ export class GroupService {
         const groupAdmins = await this.getAdminsIds(group.id)
         const isBotAdmin = groupAdmins.includes(botInfo.host_number)
 
-        if (!group?.antilink) return false
-
-        if (!isBotAdmin) {
+        if (!group?.antilink) {
+            return false
+        } else if (!isBotAdmin) {
             await this.setAntilink(group.id, false)
         } else {
-            if (userText) {
-                const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
-                if (isUrl && !isGroupAdmin) return true
+            const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
+            
+            if (isUrl && !isGroupAdmin) {
+                return true
             }
         }
 
@@ -364,7 +392,9 @@ export class GroupService {
         const participant = await this.getParticipant(group.id, userId)
         let isFlood = false
 
-        if(!participant || isGroupAdmin || !group.antiflood.status) return false
+        if(!participant || isGroupAdmin || !group.antiflood.status) {
+            return false
+        }
 
         const hasExpiredMessages = await this.hasExpiredMessages(group, participant, currentTimestamp)
 
@@ -404,10 +434,15 @@ export class GroupService {
         let blockResponse = groupCommands.bcmd.msgs.reply_title
         let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'misc']
 
-        if (commands[0] == 'variado') commands[0] = 'misc'
-        if (commands[0] == 'utilidade') commands[0] = 'utility'
-
-        if (categories.includes(commands[0] as CategoryCommand)) commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+        if (commands[0] == 'variado') {
+            commands[0] = 'misc'
+        } else if (commands[0] == 'utilidade') {
+            commands[0] = 'utility'
+        } 
+        
+        if (categories.includes(commands[0] as CategoryCommand)) {
+            commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+        }
 
         for (let command of commands) {
             if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'misc') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
@@ -424,7 +459,9 @@ export class GroupService {
             }
         }
 
-        if (blockedCommands.length != 0) await db.groups.updateAsync({id : group.id}, { $push: { block_cmds: { $each: blockedCommands } } })
+        if (blockedCommands.length != 0) {
+            await db.groups.updateAsync({id : group.id}, { $push: { block_cmds: { $each: blockedCommands } } })
+        }
 
         return blockResponse
     }
@@ -436,13 +473,20 @@ export class GroupService {
         let unblockResponse = groupCommands.dcmd.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
 
-        if (commands[0] == 'todos') commands[0] = 'all'
-        if (commands[0] == 'utilidade') commands[0] = 'utility'
-        if (commands[0] == 'variado') commands[0] = 'misc'
-
+        if (commands[0] == 'todos') {
+            commands[0] = 'all'
+        } else if (commands[0] == 'utilidade') {
+            commands[0] = 'utility'
+        } else if (commands[0] == 'variado') {
+            commands[0] = 'misc'
+        } 
+        
         if (categories.includes(commands[0])) {
-            if (commands[0] === 'all') commands = group.block_cmds.map(command => prefix + command)
-            else commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+            if (commands[0] === 'all') {
+                commands = group.block_cmds.map(command => prefix + command)
+            } else {
+                commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+            }
         }
 
         for (let command of commands) {
@@ -454,7 +498,9 @@ export class GroupService {
             }
         }
 
-        if (unblockedCommands.length != 0) await db.groups.updateAsync({id : group.id}, { $pull: { block_cmds: { $in: unblockedCommands }} })
+        if (unblockedCommands.length != 0) {
+            await db.groups.updateAsync({id : group.id}, { $pull: { block_cmds: { $in: unblockedCommands }} })
+        }
 
         return unblockResponse
     }

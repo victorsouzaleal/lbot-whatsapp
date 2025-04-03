@@ -1,6 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
-import {getTempPath} from '../utils/general.util.js'
+import {getTempPath, showConsoleLibraryError} from '../utils/general.util.js'
 import { convertMp4ToMp3 } from './convert.library.js'
 import format from 'format-duration'
 import {createClient} from '@deepgram/sdk'
@@ -10,15 +10,14 @@ import axios, { AxiosRequestConfig } from 'axios'
 import FormData from 'form-data'
 import { ApiKeys, AudioModificationType, MusicRecognition } from '../interfaces/library.interface.js'
 import crypto from 'node:crypto'
+import getBotTexts from '../utils/bot.texts.util.js'
 
 export async function textToVoice (lang: "pt" | 'en' | 'ja' | 'es' | 'it' | 'ru' | 'ko' | 'sv', text: string){
     try {
         const audioPath = getTempPath("mp3")
 
         await new Promise <void>((resolve) =>{
-            tts(lang).save(audioPath, text, ()=> resolve())
-        }).catch(() => { 
-            throw new Error("Houve um erro ao converter texto para voz, tente novamente mais tarde.")
+            tts(lang).save(audioPath, text, () => resolve())
         })
 
         const audioBuffer = fs.readFileSync(audioPath)
@@ -26,16 +25,14 @@ export async function textToVoice (lang: "pt" | 'en' | 'ja' | 'es' | 'it' | 'ru'
 
         return audioBuffer
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'textToVoice')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function audioTranscription (audioBuffer : Buffer){
     try {
-        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'}).catch(()=> {
-            throw new Error("Houve um erro ao obter as chaves API.")
-        })
-
+        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'})
         const apiKeys = apiKeysResponse.data as ApiKeys
         let error : any | undefined
 
@@ -48,11 +45,11 @@ export async function audioTranscription (audioBuffer : Buffer){
                     smart_format: true, 
                 }
         
-                const { result, error } = await deepgram.listen.prerecorded.transcribeFile(audioBuffer, deepgramConfig).catch(()=>{
-                    throw new Error("Houve um erro ao obter a transcrição do áudio, use outro aúdio ou tente novamente mais tarde.")
-                })
+                const { result, error } = await deepgram.listen.prerecorded.transcribeFile(audioBuffer, deepgramConfig)
                 
-                if(error) throw new Error("Houve um erro ao obter a transcrição do áudio, use outro aúdio ou tente novamente mais tarde.")
+                if (error) {
+                    throw new Error("An error occurred while trying to get the audio transcript")
+                }
         
                 return result.results.channels[0].alternatives[0].transcript
             } catch(err: any) {
@@ -62,7 +59,8 @@ export async function audioTranscription (audioBuffer : Buffer){
 
         throw error
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'audioTranscription')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -94,7 +92,7 @@ export async function audioModified (audioBuffer: Buffer, type: AudioModificatio
                 break
             default:
                 fs.unlinkSync(inputAudioPath)
-                throw new Error(`Esse tipo de edição não é suportado`)
+                throw new Error(`This type of editing is not supported`)
         }
         
         await new Promise <void>((resolve, reject) => {
@@ -102,10 +100,10 @@ export async function audioModified (audioBuffer: Buffer, type: AudioModificatio
             .outputOptions(options)
             .save(outputAudioPath)
             .on('end', () => resolve())
-            .on("error", () => reject())
-        }).catch(()=>{
+            .on("error", (err) => reject(err))
+        }).catch((err)=>{
             fs.unlinkSync(inputAudioPath)
-            throw new Error("Houve um erro de conversão no FFMPEG ao obter o áudio modificado, tente usar outro áudio.")
+            throw err
         })
 
         const bufferModifiedAudio = fs.readFileSync(outputAudioPath)
@@ -114,16 +112,14 @@ export async function audioModified (audioBuffer: Buffer, type: AudioModificatio
         
         return bufferModifiedAudio
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'audioTranscription')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function musicRecognition (mediaBuffer : Buffer){
     try {
-        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'}).catch(()=> {
-            throw new Error("Houve um erro ao obter as chaves API.")
-        })
-
+        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'})
         const apiKeys = apiKeysResponse.data as ApiKeys
         let error : any | undefined
 
@@ -131,12 +127,16 @@ export async function musicRecognition (mediaBuffer : Buffer){
             try {
                 const ENDPOINT = '/v1/identify'
                 const URL_BASE = 'http://'+ key.host + ENDPOINT
-                const {mime} = await fileTypeFromBuffer(mediaBuffer) as FileTypeResult
+                const { mime } = await fileTypeFromBuffer(mediaBuffer) as FileTypeResult
                 let audioBuffer : Buffer | undefined
         
-                if(!mime.startsWith('video') && !mime.startsWith('audio')) throw new Error('Esse tipo de arquivo não é suportado.')
-                if(mime.startsWith('video')) audioBuffer = await convertMp4ToMp3('buffer', mediaBuffer)
-                else audioBuffer = mediaBuffer
+                if (!mime.startsWith('video') && !mime.startsWith('audio')){
+                    throw new Error('This file type is not supported')
+                } else if(mime.startsWith('video')) {
+                    audioBuffer = await convertMp4ToMp3('buffer', mediaBuffer)
+                } else {
+                    audioBuffer = mediaBuffer
+                }
         
                 const timestamp = (new Date().getTime()/1000).toFixed(0).toString()
                 const signatureString = ['POST', ENDPOINT, key.access_key, 'audio', 1, timestamp].join('\n')
@@ -156,13 +156,15 @@ export async function musicRecognition (mediaBuffer : Buffer){
                     data: formData
                 }
         
-                const { data : recognitionResponse} = await axios.request(config).catch((err) => {
-                    throw new Error('Houve um erro ao obter o reconhecimento de música, tente novamente mais tarde.')
-                })
+                const { data : recognitionResponse} = await axios.request(config)
         
-                if(recognitionResponse.status.code == 1001) throw new Error('Não foi encontrada uma música compatível.')
-                else if(recognitionResponse.status.code == 3003 || recognitionResponse.status.code == 3015) throw new Error("Você excedeu o limite do ACRCloud, crie uma nova chave no site")
-                else if (recognitionResponse.status.code == 3000) throw new Error('Houve um erro no servidor do ACRCloud, tente novamente mais tarde')
+                if (recognitionResponse.status.code == 1001){
+                    return null
+                } else if(recognitionResponse.status.code == 3003 || recognitionResponse.status.code == 3015){
+                    throw new Error("You have exceeded your ACRCloud limit")
+                } else if (recognitionResponse.status.code == 3000){
+                    throw new Error('There was an error on the ACRCloud server')
+                }
 
                 const arrayReleaseDate = recognitionResponse.metadata.humming[0].release_date ? recognitionResponse.metadata.humming[0].release_date.split("-") : []
                 const artists : string[] = recognitionResponse.metadata.humming[0].artists.map((artist : {name: string}) => artist.name)    
@@ -183,7 +185,8 @@ export async function musicRecognition (mediaBuffer : Buffer){
 
         throw error
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'musicRecognition')
+        throw new Error(getBotTexts().library_error)
     }
 }
 

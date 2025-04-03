@@ -1,13 +1,12 @@
 import axios from 'axios';
 import { OpenAI } from 'openai'
-import { ApiKeys } from '../interfaces/library.interface';
+import { ApiKeys } from '../interfaces/library.interface.js';
+import { showConsoleLibraryError } from '../utils/general.util.js';
+import getBotTexts from '../utils/bot.texts.util.js';
 
 export async function questionAI(text: string){
     try {
-        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'}).catch(()=> {
-            throw new Error("Houve um erro ao obter as chaves API.")
-        })
-
+        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'})
         const apiKeys = apiKeysResponse.data as ApiKeys
         let error : any | undefined
 
@@ -22,11 +21,7 @@ export async function questionAI(text: string){
                     messages: [{role: 'user', content: text}],
                     model: 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free',
                     stream: false
-                }).catch(() => {
-                    throw new Error("Não foi possível obter uma resposta da IA nesse momento, tente novamente mais tarde.")
                 })
-
-                if(!responseOpenAI.choices[0].message.content) throw new Error('Não foi possível obter o conteúdo da resposta.')
 
                 return responseOpenAI.choices[0].message.content
             } catch(err: any) {
@@ -36,16 +31,14 @@ export async function questionAI(text: string){
 
         throw error
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'questionAI')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function imageAI(text: string){
     try {
-        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'}).catch(()=> {
-            throw new Error("Houve um erro ao obter as chaves API.")
-        })
-
+        const apiKeysResponse = await axios.get('https://bit.ly/lbot-api-keys', {responseType: 'json'})
         const apiKeys = apiKeysResponse.data as ApiKeys
         let error : any | undefined
 
@@ -60,11 +53,7 @@ export async function imageAI(text: string){
                     model: 'stabilityai/stable-diffusion-xl-base-1.0',
                     size: '512x512',
                     prompt: text
-                }).catch(() => {
-                    throw new Error("Não foi possível obter uma imagem da IA nesse momento, tente novamente mais tarde.")
                 })
-        
-                if(!responseOpenAI.data[0].url) throw new Error('Não foi possível obter a URL da imagem.')
         
                 return responseOpenAI.data[0].url
             } catch(err: any) {
@@ -74,6 +63,7 @@ export async function imageAI(text: string){
 
         throw error
     } catch(err){
-        throw err
+        showConsoleLibraryError(err, 'imageAI')
+        throw new Error(getBotTexts().library_error)
     }
 }

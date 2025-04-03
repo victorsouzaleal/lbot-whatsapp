@@ -11,7 +11,8 @@ export function commandsDownload(botInfo?: Bot){
                 "*Título*: {p1}\n"+
                 "*Duração*: {p2}",
                 error_limit: "O vídeo deve ter no máximo *6 minutos*",
-                error_live: "Esse vídeo não pode ser convertido em áudio, lives não são aceitas."
+                error_live: "Esse vídeo não pode ser convertido em áudio, lives não são aceitas.",
+                error_not_found: "Nenhum áudio foi encontrado"
             },
             function: downloadFunctions.playCommand
         },
@@ -22,7 +23,8 @@ export function commandsDownload(botInfo?: Bot){
                 "*Título*: {p1}\n"+
                 "*Duração*: {p2}",
                 error_limit: "O video deve ter no máximo *6 minutos*",
-                error_live: "Houve um erro de download, o bot não aceita download de lives."
+                error_live: "Houve um erro de download, o bot não aceita download de lives.",
+                error_not_found: "Nenhum vídeo foi encontrado"
             },
             function: downloadFunctions.ytCommand
         },
@@ -32,7 +34,7 @@ export function commandsDownload(botInfo?: Bot){
                 wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Título*: {p1}\n"+
                 "*Duração*: {p2}",
-                error_limit: "O video deve ter no máximo *6 minutos*",
+                error_limit: "O video deve ter no máximo *6 minutos*"
             },
             function: downloadFunctions.fbCommand
         },
@@ -42,7 +44,7 @@ export function commandsDownload(botInfo?: Bot){
                 wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Autor*: {p1} (@{p2})\n"+
                 "*Descrição*: {p3}\n"+
-                "*Likes*: {p4}"
+                "*Likes*: {p4}",
             },
             function: downloadFunctions.igCommand
         },
@@ -51,6 +53,7 @@ export function commandsDownload(botInfo?: Bot){
             msgs: {
                 wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Postagem*: {p1}",
+                error_not_found: 'Não foi encontrada nenhuma mídia, verifique o link'
             },
             function: downloadFunctions.xCommand
         },
@@ -60,6 +63,7 @@ export function commandsDownload(botInfo?: Bot){
                 wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
                 "*Perfil*: @{p1}\n"+
                 "*Descrição*: {p2}",
+                error_not_found: 'Não foi encontrada nenhuma mídia, verifique o link'
             },
             function: downloadFunctions.tkCommand
         },

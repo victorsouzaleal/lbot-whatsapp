@@ -26,7 +26,7 @@ export function commandsUtility(botInfo?: Bot){
                 reply_title: '🇯🇵 *Lançamento de animes*\n\n',
                 reply_item: '*{p1}*\n'+
                 '- *Episódio*: {p2} \n'+
-                '- *Link*: {p3} \n\n',
+                '- *Link*: {p3} \n\n'
             },
             function: utilityFunctions.animesCommand
         },
@@ -45,6 +45,7 @@ export function commandsUtility(botInfo?: Bot){
             `Ex: *${PREFIX}brasileirao* B - Exibe a tabela e a rodada atual do Brasileirão Serie B.\n`,
             msgs: {
                 error: '[❗] A série digitada não é suportada, atualmente são suportados apenas A e B.',
+                error_rounds_not_found: 'Não foram encontradas rodadas para este campeonato',
                 reply_title: '⚽ *Brasileirão série {p1}*\n\n',
                 reply_table_title: '🗒️ *Tabela*:\n\n',
                 reply_table_item: '- {p1}° {p2} - P:{p3} J:{p4} V:{p5}\n',
@@ -60,7 +61,8 @@ export function commandsUtility(botInfo?: Bot){
             guide: `Ex: *${PREFIX}encurtar* link - Encurta o link digitado.\n`,
             msgs: {
                 reply: "✂️ *Encurtador de link*\n\n"+
-                "*Link*: {p1}\n"
+                "*Link*: {p1}\n",
+                error: "Não foi possível encurtar este link, tente novamente com outro."
             },
             function: utilityFunctions.encurtarCommand
         },
@@ -93,6 +95,7 @@ export function commandsUtility(botInfo?: Bot){
             msgs: {
                 reply: "🤖 *Inteligência Artificial*:\n\n"+
                 "*Resposta*: {p1}",
+                error_not_found: 'Nenhuma resposta foi obtida'
             },
             function: utilityFunctions.iaCommand
         },
@@ -100,6 +103,7 @@ export function commandsUtility(botInfo?: Bot){
             guide: `Ex: *${PREFIX}criarimg* texto - Criar uma imagem de acordo com o texto usando IA.\n`,
             msgs: {
                 wait: '[AGUARDE] 📸 Sua imagem está sendo gerada pela IA, pode levar entre 20-40s.',
+                error_not_found: 'Nenhuma imagem foi obtida'
             },
             function: utilityFunctions.criarimgCommand
         },
@@ -157,7 +161,7 @@ export function commandsUtility(botInfo?: Bot){
             `- 🇷🇺 Russo (ru)\n`+
             `- 🇰🇷 Coreano (ko)\n`,
             msgs: {
-                error: "[❗] Sem dados do idioma ou idioma não suportado. Atualmente suportamos:\n\n"+
+                error: "Sem dados do idioma ou idioma não suportado. Atualmente suportamos:\n\n"+
                 `- 🇧🇷 Português - ${PREFIX}traduz pt\n`+
                 `- 🇺🇸 Inglês - ${PREFIX}traduz en\n`+
                 `- 🇯🇵 Japonês - ${PREFIX}traduz ja\n`+
@@ -205,7 +209,8 @@ export function commandsUtility(botInfo?: Bot){
                 "*Música*: {p1}\n"+
                 "*Artista*: {p2}\n"+
                 "*Letra*:\n"+
-                "{p3}"
+                "{p3}",
+                error_not_found: 'A letra dessa música não foi encontrada'
             },
             function: utilityFunctions.letraCommand
         },
@@ -224,7 +229,8 @@ export function commandsUtility(botInfo?: Bot){
             `Ex: *${PREFIX}calc* 1mm em 1km - Exibe o resultado do conversão de medidas.\n`,
             msgs: {
                 reply: "🧮 *Calculadora*\n\n"+
-                "*Resultado*: {p1}"
+                "*Resultado*: {p1}",
+                error_invalid_result: 'O cálculo não pode ser feito porque deu um valor inválido, verifique se não digitou nenhum caractere inválido para o cálculo.'
             },
             function: utilityFunctions.calcCommand
         },
@@ -235,6 +241,7 @@ export function commandsUtility(botInfo?: Bot){
                 "*Você pesquisou por*: {p1}\n\n",
                 reply_item: "*{p1}*\n"+
                 "- *Link*: {p2}\n\n",
+                error_not_found: "Nenhum resultado foi encontrado para essa pesquisa"
             },
             function: utilityFunctions.pesquisaCommand
         },
@@ -248,7 +255,8 @@ export function commandsUtility(botInfo?: Bot){
                 "*Valor*: {p2}\n\n",
                 reply_item: "- *Conversão*: {p1}\n"+
                 "- *Valor convertido*: *{p2}* {p3}\n"+
-                "- *Última atualização*: {p4}\n\n"
+                "- *Última atualização*: {p4}\n\n",
+                error_invalid_value: "O valor inserido não é um número válido"
             },
             function: utilityFunctions.moedaCommand
         },
@@ -285,7 +293,8 @@ export function commandsUtility(botInfo?: Bot){
                 error: "Esse comando só é aceito com números brasileiros.",
                 reply: "📱 *Informação do DDD*\n\n"+
                 "*Estado*: {p1}\n"+ 
-                "*Região*: {p2}\n"
+                "*Região*: {p2}\n",
+                error_not_found: 'Nenhum resultado foi encontrado para esse DDD'
             },
             function: utilityFunctions.dddCommand
         },
@@ -302,6 +311,7 @@ export function commandsUtility(botInfo?: Bot){
                 "*Tempo da cena*: {p3} - {p4}\n"+
                 "*Similaridade*: {p5}%\n"+
                 "*Prévia*: {p6}",
+                error_not_found: 'Nenhum anime compatível foi encontrado'
             },
             function: utilityFunctions.qualanimeCommand
         },
@@ -318,6 +328,7 @@ export function commandsUtility(botInfo?: Bot){
                 "*Lançamento*: {p4}\n"+
                 "*Album*: {p5}\n"+
                 "*Artistas*: {p6}\n",
+                error_not_found: 'Nenhuma música compatível foi encontrada'
             },
             function: utilityFunctions.qualmusicaCommand
         }

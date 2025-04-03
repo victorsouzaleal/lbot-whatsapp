@@ -1,4 +1,4 @@
-import {formatSeconds} from '../utils/general.util.js'
+import {formatSeconds, showConsoleLibraryError} from '../utils/general.util.js'
 import ytdl from '@distube/ytdl-core'
 import {instagramGetUrl} from 'instagram-url-direct'
 import { getFbVideoInfo } from 'fb-downloader-scrapper'
@@ -6,40 +6,41 @@ import Tiktok from '@tobyg74/tiktok-api-dl'
 import axios from 'axios'
 import yts from 'yt-search'
 import { FacebookMedia, InstagramMedia, TiktokMedia, XMedia, YTInfo } from '../interfaces/library.interface.js'
+import getBotTexts from '../utils/bot.texts.util.js'
 
 export async function xMedia (url: string){
     try {
-        url = url.replace(/twitter\.com|x\.com/g, 'api.vxtwitter.com')
+        const newURL = url.replace(/twitter\.com|x\.com/g, 'api.vxtwitter.com')
+        const {data : xResponse} = await axios.get(newURL)
 
-        const {data : xResponse} = await axios.get(url).catch(() => {
-            throw new Error('Houve um erro ao tentar obter os dados do X, verifique o link ou tente mais tarde.')
-        })
+        if (!xResponse.media_extended){
+            return null
+        } 
 
-        let xMedia : XMedia  = {
-            text : xResponse.text,
-            media : []
-        }
-
-        xResponse.media_extended.forEach((media : {type: string, url: string})=>{
-            xMedia.media.push({
-                type: (media.type === 'video') ? 'video' : 'image',
-                url: media.url
+        const xMedia : XMedia = {
+            text: xResponse.text,
+            media : xResponse.media_extended.map((media : {type: string, url: string}) => {
+                return {
+                    type: (media.type === 'video') ? 'video' : 'image',
+                    url: media.url
+                }
             })
-        })
-
+        }
+    
         return xMedia
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'xMedia')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function tiktokMedia (url : string){
     try {
-        const tiktokResponse = await Tiktok.Downloader(url, {version: "v1"}).catch(() => {
-            throw new Error("Houve um erro ao tentar obter os dados do Tiktok, verifique o link ou tente mais tarde.")
-        })
+        const tiktokResponse = await Tiktok.Downloader(url, {version: "v1"})
 
-        if(tiktokResponse.status === 'error') throw new Error("Houve um erro ao obter as mídias desse link, verifique o link ou tente mais tarde.")
+        if(tiktokResponse.status === 'error') {
+            return null
+        }
 
         const tiktokMedia : TiktokMedia = {
             author_profile: tiktokResponse.result?.author.nickname,
@@ -51,16 +52,14 @@ export async function tiktokMedia (url : string){
 
         return tiktokMedia
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'tiktokMedia')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function facebookMedia(url : string) {
     try {
-        const facebookResponse = await getFbVideoInfo(url).catch(() => {
-            throw new Error("Houve um erro ao tentar obter os dados do Facebook, verifique o link ou tente mais tarde.")
-        })
-
+        const facebookResponse = await getFbVideoInfo(url)
         const facebookMedia : FacebookMedia = {
             url: facebookResponse.url,
             duration: parseInt((facebookResponse.duration_ms/1000).toFixed(0)),
@@ -72,16 +71,14 @@ export async function facebookMedia(url : string) {
 
         return facebookMedia
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'facebookMedia')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
 export async function instagramMedia (url: string){
     try {
-        const instagramResponse = await instagramGetUrl(url).catch(() => {
-            throw new Error("Houve um erro ao tentar obter os dados do Instagram, verifique o link ou tente mais tarde.")
-        })
-
+        const instagramResponse = await instagramGetUrl(url)
         let instagramMedia : InstagramMedia = {
             author_username : instagramResponse.post_info.owner_username,
             author_fullname: instagramResponse.post_info.owner_fullname,
@@ -98,7 +95,8 @@ export async function instagramMedia (url: string){
 
         return instagramMedia
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'instagramMedia')
+        throw new Error(getBotTexts().library_error)
     }
 }
 
@@ -121,19 +119,20 @@ export async function youtubeMedia (text : string){
         if(isURLValid) {
             videoId = ytdl.getVideoID(text)
         } else {
-            const {videos} = await yts(text).catch(() => {
-                throw new Error('Houve um erro ao obter as informações da mídia, faça uma pesquisa diferente ou tente novamente mais tarde.')
-            })
+            const {videos} = await yts(text)
 
-            videoId = videos[0].videoId
+            if(!videos.length) {
+                videoId = undefined
+            } else {
+                videoId = videos[0].videoId
+            }
         }
 
-        if(!videoId) throw new Error('Houve um erro ao obter o ID do vídeo.')
+        if(!videoId) {
+            return null
+        }
 
-        const videoInfo = await ytdl.getInfo(videoId, {agent: yt_agent}).catch(()=> {
-            throw new Error('Houve um erro ao obter as informações da mídia.')
-        })
-        
+        const videoInfo = await ytdl.getInfo(videoId, {agent: yt_agent})
         const formats = ytdl.filterFormats(videoInfo.formats, 'videoandaudio')
         const format = ytdl.chooseFormat(formats, {quality: 'highest'})
         const ytInfo : YTInfo = {
@@ -149,6 +148,7 @@ export async function youtubeMedia (text : string){
         
         return ytInfo
     } catch(err) {
-        throw err
+        showConsoleLibraryError(err, 'youtubeMedia')
+        throw new Error(getBotTexts().library_error)
     }
 }

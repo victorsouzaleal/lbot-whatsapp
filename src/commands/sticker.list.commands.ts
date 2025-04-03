@@ -36,7 +36,9 @@ export function commandsSticker(botInfo?: Bot){
             guide: `Ex: *${PREFIX}emojimix* 💩+😀 - Junta os dois emojis e transforma em sticker.\n\n`+
             `*Obs*: Nem todos os emojis são compátiveis, então vá tentando fazer combinações.\n`,
             msgs: {
-                error: ''
+                error_emoji: "O emoji {p1} não é compatível para essa união",
+                error_emojis: "Os emoji {p1} e {p2} não são compatíveis para a união",
+                error_not_found: "Não foi encontrada uma união válida para esses emojis"
             },
             function: stickerFunctions.emojimixCommand
         },

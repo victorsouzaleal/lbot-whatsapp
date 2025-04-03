@@ -24,7 +24,9 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
     }])
 
     if(answerMethod.connection_method == 'QR Code'){
-        if (qr) console.log(await QRCode.toString(qr, {type:'terminal', small: true}))
+        if (qr) {
+            console.log(await QRCode.toString(qr, {type:'terminal', small: true}))
+        }
     } else {
         const answerNumber = await inquirer.prompt([{
             type: 'input',

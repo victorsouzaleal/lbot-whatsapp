@@ -6,7 +6,6 @@ import { waLib } from "../libraries/library.js";
 import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../utils/general.util.js";
 import getBotTexts from "../utils/bot.texts.util.js";
 import { UserController } from "../controllers/user.controller.js";
-import { GroupController } from "../controllers/group.controller.js";
 import * as menu from "../helpers/menu.builder.helper.js";
 import commandsInfo from "./info.list.commands.js";
 
@@ -44,20 +43,27 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 
     //RESPOSTA
     await waLib.getProfilePicUrl(client, botInfo.host_number).then(async (pic)=>{
-        if (pic) await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', pic, replyText, message.wa_message, {expiration: message.expiration})
-        else await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+        if (pic) {
+            await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', pic, replyText, message.wa_message, {expiration: message.expiration})
+        } else {
+            await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+        }
     }).catch(async ()=>{
         await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
     })
 }
 
 export async function reportarCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
-    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(botInfo, message))
+    }
 
     const infoCommands = commandsInfo(botInfo)
     const admins = await new UserController().getAdmins()
 
-    if (!admins.length) throw new Error(infoCommands.reportar.msgs.error)
+    if (!admins.length) {
+        throw new Error(infoCommands.reportar.msgs.error)
+    }
 
     admins.forEach(async (admin) => {
         let replyAdmin = buildText(infoCommands.reportar.msgs.reply_admin, message.pushname, waLib.removeWhatsappSuffix(message.sender), message.text_command)
@@ -72,7 +78,9 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
     const infoCommands = commandsInfo(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
-    if (!userData) throw new Error(infoCommands.meusdados.msgs.error_not_found)
+    if (!userData) {
+        throw new Error(infoCommands.meusdados.msgs.error_not_found)
+    }
 
     const userName = userData.name || '---'
     const userType = userData.owner ? botTexts.user_types.owner : (userData.admin ? botTexts.user_types.admin  : botTexts.user_types.user)
@@ -86,7 +94,9 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
     const botTexts = getBotTexts(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
-    if (!userData) throw new Error(infoCommands.menu.msgs.error_user_not_found)
+    if (!userData) {
+        throw new Error(infoCommands.menu.msgs.error_user_not_found)
+    }
 
     const userType = userData.owner ? botTexts.user_types.owner : (userData.admin ? botTexts.user_types.admin  : botTexts.user_types.user)
     let replyText = buildText(infoCommands.menu.msgs.reply, userData.name, userType, userData.commands)
@@ -109,13 +119,22 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
                 replyText += menu.downloadMenu(botInfo)
                 break
             case "4":
-                if (message.isGroupMsg) replyText += menu.miscGroupMenu(botInfo)
-                else replyText += menu.miscMenu(botInfo)
+                if (message.isGroupMsg) {
+                    replyText += menu.miscGroupMenu(botInfo)
+                } else {
+                    replyText += menu.miscMenu(botInfo)
+                }
+
                 break
             case "5":
-                if (!message.isGroupMsg) throw new Error(getBotTexts(botInfo).permission.group)
-                if (message.isGroupAdmin) replyText += menu.groupAdminMenu(botInfo)
-                else replyText += menu.groupMenu(botInfo)
+                if (!message.isGroupMsg) {
+                    throw new Error(getBotTexts(botInfo).permission.group)
+                } else if (message.isGroupAdmin) {
+                    replyText += menu.groupAdminMenu(botInfo)
+                } else {
+                    replyText += menu.groupMenu(botInfo)
+                }
+                
                 break
             default:
                 throw new Error(infoCommands.menu.msgs.error_invalid_option)
