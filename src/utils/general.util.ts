@@ -72,6 +72,10 @@ export function removeBold(text: string){
     return text.replace(/\*/gm, "").trim()
 }
 
+export function removeFormatting(text: string){
+  return text.replace(/(_)|(\*)|(~)|(```)/g, "").trim()
+}
+
 export function randomDelay(ms_min : number, ms_max : number){
    return new Promise <void> ((resolve, reject)=>{
       let randomDelayMs = Math.floor(Math.random() * (ms_max - ms_min + 1)) + ms_min

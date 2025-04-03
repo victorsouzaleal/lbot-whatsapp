@@ -34,6 +34,9 @@ export function commandsGroup(botInfo?: Bot){
                 reply_item_blockcmds_on: "*Bloqueio de comandos*: ✅\n"+
                 "- *{p1}*\n",
                 reply_item_blockcmds_off: "*Bloqueio de comandos*: ❌\n",
+                reply_item_filter_on: "*Filtro de palavras*: ✅\n"+
+                "- *{p1}*\n",
+                reply_item_filter_off: "*Filtro de palavras*: ❌\n",
                 reply_item_blacklist: "*Lista Negra*: *{p1}*\n"
             },
             function: groupFunctions.grupoCommand
@@ -80,6 +83,25 @@ export function commandsGroup(botInfo?: Bot){
                 "Todos os avisos dos membros foram zerados.",
             },
             function: groupFunctions.zeraravisosCommand
+        },
+        addfiltros: {
+            guide: `Ex: *${PREFIX}addfiltros* batata uva - Adiciona as palavras *batata* e *uva* no filtro de palavras.\n\n`+
+            '*Obs*: Se algum membro enviar uma mensagem contendo uma palavra do filtro, a mensagem dele será deletada automaticamente.',
+            msgs: {
+                reply_title: '🚫 Filtro de palavras\n\n',
+                reply_item_success: 'A palavra *{p1}* foi adicionada ao filtro.\n',
+                reply_item_error: 'A palavra *{p1}* já existe no filtro.\n',
+            },
+            function: groupFunctions.addfiltrosCommand
+        },
+        rmfiltros: {
+            guide: `Ex: *${PREFIX}rmfiltros* batata uva - Remove as palavras *batata* e *uva* do filtro de palavras.`,
+            msgs: {
+                reply_title: '🚫 Filtro de palavras\n\n',
+                reply_item_success: 'A palavra *{p1}* foi removida do filtro.\n',
+                reply_item_error: 'A palavra *{p1}* não existe no filtro.\n',
+            },
+            function: groupFunctions.rmfiltrosCommand
         },
         addlista: {
             guide: `Ex: Responda alguém com *${PREFIX}addlista* - Adiciona o numero de quem foi respondido a lista negra e bane em seguida.\n\n`+

@@ -315,6 +315,14 @@ export class GroupService {
     }
 
     // *********************** RECURSOS DO GRUPO ***********************
+    // ***** FILTRO DE PALAVRAS *****
+    public addWordFilter(groupId: string, word: string){
+        return db.groups.updateAsync({id: groupId}, { $push: { word_filter : word }})
+    }
+
+    public removeWordFilter(groupId: string, word: string){
+        return db.groups.updateAsync({id: groupId}, { $pull: { word_filter : word }})
+    }
 
     // ***** BEM-VINDO *****
     public setWelcome(groupId: string, status: boolean, msg: string){
@@ -351,27 +359,6 @@ export class GroupService {
     // ***** ANTI-LINK *****
     public setAntilink(groupId: string, status: boolean){
         return db.groups.updateAsync({id : groupId}, { $set: { antilink: status } })
-    }
-
-    public async isMessageWithLink(message: Message, group: Group, botInfo : Bot){
-        const { body, caption, isGroupAdmin} = message
-        const userText = body || caption
-        const groupAdmins = await this.getAdminsIds(group.id)
-        const isBotAdmin = groupAdmins.includes(botInfo.host_number)
-
-        if (!group?.antilink) {
-            return false
-        } else if (!isBotAdmin) {
-            await this.setAntilink(group.id, false)
-        } else {
-            const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
-            
-            if (isUrl && !isGroupAdmin) {
-                return true
-            }
-        }
-
-        return false
     }
 
     // ***** AUTO-STICKER *****

@@ -189,7 +189,7 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 *|*► *${prefix}topativos* - Marca os 10 membros mais ativos
 *|*► *${prefix}inativos* numero - Marca os membros com menos de um determinado número de mensagens
 *|*
-*|*━━ ✦ 🚫 *BLOQUEIO DE COMANDOS* ✦
+*|*━━ ✦ 🔒 *BLOQUEIO DE COMANDOS* ✦
 *|*
 *|*► *${prefix}bcmd* !cmd1 !cmd2 - Bloqueia os comandos
 *|*► *${prefix}dcmd* !cmd1 !cmd2 - Desbloqueia os comandos
@@ -199,6 +199,11 @@ export const groupAdminMenu = (botInfo : Bot)=>{
 *|*► *${prefix}listanegra* - Lista negra do grupo
 *|*► *${prefix}addlista* +55 219xxxxxxxx - Adiciona a lista negra do grupo
 *|*► *${prefix}rmlista* +55 219xxxxxxxx - Remove da lista negra do grupo
+*|*
+*|*━━ ✦ 🚫 *FILTRO DE PALAVRAS* ✦
+*|*
+*|*► *${prefix}addfiltros* palavra - Adiciona palavras ao filtro
+*|*► *${prefix}rmfiltros* palavra - Remove palavras do filtro
 *|*
 *|*━━ ✦ ⌨️ *ADMINISTRATIVO* ✦
 *|*

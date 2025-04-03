@@ -5,7 +5,7 @@ import { Message } from "../interfaces/message.interface.js";
 import { UserController } from "../controllers/user.controller.js";
 import getBotTexts from "../utils/bot.texts.util.js";
 import { GroupController } from "../controllers/group.controller.js";
-import { buildText } from "../utils/general.util.js";
+import { buildText, removeFormatting } from "../utils/general.util.js";
 import { BotController } from "../controllers/bot.controller.js";
 import { waLib } from "../libraries/library.js";
 
@@ -124,17 +124,43 @@ export async function isCommandBlockedGroup(client: WASocket, group: Group, botI
     return false
 }
 
-export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group: Group, message: Message){
-    const botTexts = getBotTexts(botInfo)
-    const isDetectedByAntilink = await groupController.isMessageWithLink(message, group, botInfo)
+export async function isDetectedByWordFilter(client: WASocket, botInfo: Bot, group: Group, message: Message){
+    const { isGroupAdmin, body, caption } = message
+    const groupAdmins = await groupController.getAdminsIds(group.id)
+    const isBotAdmin = groupAdmins.includes(botInfo.host_number)
+    const userText = body || caption
+    const userTextNoFormatting = removeFormatting(userText)
+    const userWords = userTextNoFormatting.split(' ')
+    const wordsFiltered = userWords.filter(userWord => group.word_filter.includes(removeFormatting(userWord.toLowerCase())) == true)
 
-    if (isDetectedByAntilink){
-        const replyText = buildText(botTexts.detected_link, waLib.removeWhatsappSuffix(message.sender))
-        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
+    if (wordsFiltered.length && isBotAdmin && !isGroupAdmin) {
         await waLib.deleteMessage(client, message.wa_message, false)
         return true
     }
-    
+
+    return false
+}
+
+export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group: Group, message: Message){
+    const botTexts = getBotTexts(botInfo)
+    const { body, caption, isGroupAdmin} = message
+    const userText = body || caption
+    const groupAdmins = await groupController.getAdminsIds(group.id)
+    const isBotAdmin = groupAdmins.includes(botInfo.host_number)
+
+    if (group.antilink && !isBotAdmin) {
+        await groupController.setAntiLink(group.id, false)
+    } else if (group.antilink && !isGroupAdmin) {
+        const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
+        
+        if (isUrl) {
+            const replyText = buildText(botTexts.detected_link, waLib.removeWhatsappSuffix(message.sender))
+            await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
+            await waLib.deleteMessage(client, message.wa_message, false)
+            return true
+        }
+    }
+
     return false
 }
 

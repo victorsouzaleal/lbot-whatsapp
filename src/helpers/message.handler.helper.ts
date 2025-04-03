@@ -82,6 +82,11 @@ export async function handleGroupMessage(client: WASocket, group: Group, botInfo
         return false
     }
 
+    //Se uma palavra do filtro for detectada, retorne.
+    if (await procs.isDetectedByWordFilter(client, botInfo, group, message)) {
+        return false
+    }
+
     //Se o Anti-FLOOD estiver ativado, e for detectada como FLOOD, retorne.
     if (await procs.isDetectedByAntiFlood(client, botInfo, group, message)) {
         return false

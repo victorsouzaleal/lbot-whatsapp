@@ -132,6 +132,15 @@ export class GroupController {
 
     // *********************** Recursos do grupo ***********************
 
+    // ***** FILTRO DE PALAVRAS *****
+    public addWordFilter(groupId: string, word: string){
+        return this.groupService.addWordFilter(groupId, word)
+    }
+
+    public removeWordFilter(groupId: string, word: string){
+        return this.groupService.removeWordFilter(groupId, word)
+    }
+
     // ***** BEM VINDO *****
     public setWelcome(groupId: string, status: boolean, message = '') {
         return this.groupService.setWelcome(groupId, status, message)
@@ -144,10 +153,6 @@ export class GroupController {
     // ***** ANTI-LINK *****
     public setAntiLink(groupId: string, status = true) {
         return this.groupService.setAntilink(groupId, status)
-    }
-
-    public isMessageWithLink(message: Message, group: Group, botInfo: Bot){
-        return this.groupService.isMessageWithLink(message, group, botInfo)
     }
 
     // ***** AUTO-STICKER *****

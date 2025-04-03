@@ -31,14 +31,10 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += (group.antifake.status) ? buildText(groupCommands.grupo.msgs.reply_item_antifake_on, group.antifake.allowed.toString()) : groupCommands.grupo.msgs.reply_item_antifake_off
         //Anti-Flood
         replyText += (group.antiflood.status) ? buildText(groupCommands.grupo.msgs.reply_item_antiflood_on, group.antiflood.max_messages, group.antiflood.interval) : groupCommands.grupo.msgs.reply_item_antiflood_off
-        
         //Bloqueio de CMDS
-        let blockedCommands = []
-        for (let command of group.block_cmds){
-            blockedCommands.push(botInfo.prefix+command)
-        }
-        replyText += (group.block_cmds.length) ? buildText(groupCommands.grupo.msgs.reply_item_blockcmds_on, blockedCommands.toString()) : groupCommands.grupo.msgs.reply_item_blockcmds_off
-        
+        replyText += (group.block_cmds.length) ? buildText(groupCommands.grupo.msgs.reply_item_blockcmds_on, group.block_cmds.map(command => botInfo.prefix + command).toString()) : groupCommands.grupo.msgs.reply_item_blockcmds_off
+        //Filtro de palavras
+        replyText += (group.word_filter.length) ? buildText(groupCommands.grupo.msgs.reply_item_filter_on, group.word_filter.toString()) : groupCommands.grupo.msgs.reply_item_filter_off
         //Lista Negra
         replyText += buildText(groupCommands.grupo.msgs.reply_item_blacklist, group.blacklist.length)
     }
@@ -145,6 +141,62 @@ export async function zeraravisosCommand(client: WASocket, botInfo: Bot, message
 
     await groupController.removeParticipantsWarnings(group.id)
     const replyText = groupCommands.zeraravisos.msgs.reply
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+}
+
+export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const groupCommands = commandsGroup(botInfo)
+    const botTexts = getBotTexts(botInfo)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(botInfo, message))
+    }
+
+    let replyText = groupCommands.addfiltros.msgs.reply_title
+
+    for (let word of message.args) {
+        if (group.word_filter.includes(word.toLowerCase())) {
+            replyText += buildText(groupCommands.addfiltros.msgs.reply_item_error, word)
+        } else {
+            await groupController.addWordFilter(group.id, word.toLowerCase())
+            replyText += buildText(groupCommands.addfiltros.msgs.reply_item_success, word)
+        }
+    }
+
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+}
+
+export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const groupCommands = commandsGroup(botInfo)
+    const botTexts = getBotTexts(botInfo)
+    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(botInfo, message))
+    }
+
+    let replyText = groupCommands.rmfiltros.msgs.reply_title
+
+    for (let word of message.args) {
+        if (!group.word_filter.includes(word.toLowerCase())) {
+            replyText += buildText(groupCommands.rmfiltros.msgs.reply_item_error, word)
+        } else {
+            await groupController.removeWordFilter(group.id, word.toLowerCase())
+            replyText += buildText(groupCommands.rmfiltros.msgs.reply_item_success, word)
+        }
+    }
+
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
 }
 
