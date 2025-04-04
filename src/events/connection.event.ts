@@ -9,33 +9,26 @@ import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
 import inquirer from 'inquirer'
 import QRCode from 'qrcode'
+import readline from 'readline/promises'
 
 export async function connectionQr(client: WASocket, connectionState : Partial<ConnectionState>){
     const botTexts = getBotTexts()
     const { qr } = connectionState
-    const answerMethod = await inquirer.prompt([{
-        type: 'rawlist',
-        name: 'connection_method',
-        message: botTexts.input_connection_method,
-        choices: [
-            "QR Code",
-            "Código de pareamento"
-        ]
-    }])
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    })
 
-    if(answerMethod.connection_method == 'QR Code'){
-        if (qr) {
-            console.log(await QRCode.toString(qr, {type:'terminal', small: true}))
-        }
-    } else {
-        const answerNumber = await inquirer.prompt([{
-            type: 'input',
-            name: 'input_number',
-            message: botTexts.input_phone_number
-        }])
+    const answerMethod = await rl.question(botTexts.input_connection_method + '\n\n' + '1 - QR Code\n' + '2 - Código de Pareamento\n\n'+ "Resposta: ")
 
-        const code = await client.requestPairingCode(answerNumber.input_number.replace(/\W+/g,""))
+    if (answerMethod == '2') {
+        const answerNumber = await rl.question(botTexts.input_phone_number)
+        const code = await client.requestPairingCode(answerNumber.replace(/\W+/g,""))
         console.log('[CÓDIGO DE PAREAMENTO]', colorText(buildText(botTexts.show_pairing_code, code)))
+    } else {
+        if (qr) {
+            console.log(await QRCode.toString(qr, { type:'terminal', small: true}))
+        }
     }
 }
 
