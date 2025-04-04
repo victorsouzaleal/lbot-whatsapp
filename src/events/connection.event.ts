@@ -7,8 +7,7 @@ import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '..
 import getBotTexts from '../utils/bot.texts.util.js'
 import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
-import inquirer from 'inquirer'
-import QRCode from 'qrcode'
+import qrcode from 'qrcode-terminal'
 import readline from 'readline/promises'
 
 export async function connectionQr(client: WASocket, connectionState : Partial<ConnectionState>){
@@ -19,7 +18,7 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
         output: process.stdout
     })
 
-    const answerMethod = await rl.question(botTexts.input_connection_method + '\n\n' + '1 - QR Code\n' + '2 - Código de Pareamento\n\n'+ "Resposta: ")
+    const answerMethod = await rl.question(botTexts.input_connection_method)
 
     if (answerMethod == '2') {
         const answerNumber = await rl.question(botTexts.input_phone_number)
@@ -27,7 +26,12 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
         console.log('[CÓDIGO DE PAREAMENTO]', colorText(buildText(botTexts.show_pairing_code, code)))
     } else {
         if (qr) {
-            console.log(await QRCode.toString(qr, { type:'terminal', small: true}))
+            await new Promise<void>(resolve => {
+                qrcode.generate(qr, {small: true}, (qrcode) => {
+                    console.log(qrcode)
+                    resolve()
+                })
+            })
         }
     }
 }

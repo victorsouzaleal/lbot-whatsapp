@@ -3,7 +3,7 @@ import { colorText, getCurrentBotVersion } from "../utils/general.util.js";
 import getBotTexts from "../utils/bot.texts.util.js";
 import { BotController } from "../controllers/bot.controller.js";
 import fs from 'fs-extra'
-import inquirer from "inquirer"
+import readline from 'readline/promises'
 
 export async function botUpdater(){
     const botTexts = getBotTexts(new BotController().getBot())
@@ -16,17 +16,14 @@ export async function botUpdater(){
         if (checkUpdate.latest) {
             console.log("[ATUALIZAÇÃO]", colorText(botTexts.no_update_available))
         } else if (!checkUpdate.patch_update) {
-            const answer = await inquirer.prompt([{
-                type: 'rawlist',
-                name: 'update',
-                message: botTexts.update_available_manual,
-                choices: [
-                    "Sim",
-                    "Não"
-                ]
-            }])
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            })
 
-            if (answer.update === "Sim") {
+            const answer = await rl.question(botTexts.update_available_manual)
+
+            if (answer === "2") {
                 fs.removeSync('./dist')
                 fs.removeSync('./storage')
                 await updaterLib.makeUpdate('./')

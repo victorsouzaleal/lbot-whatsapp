@@ -8,13 +8,18 @@ export default function getBotTexts (botInfo? : Bot){
         no_update_available: 'Não há atualização disponível, seu bot está na versão mais recente.',
         update_available: 'Uma nova atualização compatível foi encontrada, aguarde o término da atualização...',
         error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
-        input_connection_method: 'Qual dos métodos você prefere usar para se conectar?',
+        input_connection_method: 'Qual dos métodos você prefere usar para se conectar?\n\n'+
+        '1 - QR Code\n'+
+        '2 - Código de Pareamento\n\n'+
+        'Resposta: ',
         input_phone_number: 'Digite aqui o número em que o bot vai ficar, o número precisa ter o código internacional'+
         '(Ex: 5521912345678) -> ',
         show_pairing_code: 'Seu código de pareamento é {p1}',
         bot_updated: 'Seu bot foi atualizado e será desligado, inicie novamente usando yarn start.',
-        update_available_manual: 'Há uma atualização disponível, mas é necessário deletar todos os dados para a nova atualização funcionar corretamente. '+
-        'Deseja continuar? ',
+        update_available_manual: 'Há uma atualização disponível, mas é necessário deletar todos os dados para a nova atualização funcionar corretamente. Deseja atualizar?\n\n'+
+        "1 - NÃO\n"+
+        "2 - SIM\n\n"+
+        "Resposta: ",
         server_started: '✓ Servidor iniciado!',
         groups_loaded: '✓ Todos os grupos foram carregados e atualizados.',
         admin_registered: `✅ Seu número foi cadastrado como DONO, agora você pode utilizar os comandos de ${prefix}admin`,

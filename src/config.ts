@@ -5,7 +5,6 @@ import { BotController } from './controllers/bot.controller.js'
 
 export default function configSocket (state : AuthenticationState, retryCache : NodeCache, version: WAVersion, messageCache: NodeCache){
     const config : UserFacingSocketConfig =  {
-        printQRInTerminal: true,
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, pino({level : "silent"}))
