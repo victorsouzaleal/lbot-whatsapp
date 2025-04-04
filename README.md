@@ -63,17 +63,10 @@ Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/ter
 
 <br>
 
-Abra o **Termux** comece usando este comando para fazer o download do bot, isso pode demorar algum tempo até instalar tudo.
+Abra o **Termux** comece usando este comando para fazer o download e instalação do bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
-pkg install wget -y && wget -O - https://bit.ly/lbot-termux | bash
+pkg install wget -y && wget -O - https://bit.ly/lbot-termux | bash && cd ~/LBOT && yarn start
 ```
-<br>
-
-Após terminar o comando acima use o comando abaixo para instalar os requerimentos do bot e iniciar ele.
-```bash
-cd ~/LBOT && yarn start
-```
-
 <br>
 
 É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será perguntado se você quer se conectar com **QR Code** ou **Código de Pareamento**, faça a sua escolha e se conecte com o aplicativo do WhatsApp. 
@@ -82,7 +75,7 @@ cd ~/LBOT && yarn start
 
 Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
 ```bash
-cd LBOT && yarn start
+cd ~/LBOT && yarn start
 ```
 
 <br>
