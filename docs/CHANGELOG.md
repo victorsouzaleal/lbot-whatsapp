@@ -1,6 +1,11 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.1.5 - 04/04/2025
+
+### CORREÇÕES
+- Correção na escolha de método de autenticação no Termux
+
 ## 3.1.4 - 04/04/2025
 
 ### GERAL
