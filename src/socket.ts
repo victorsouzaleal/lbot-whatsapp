@@ -22,7 +22,7 @@ export default async function connect(){
     const { state, saveCreds } = await useMultiFileAuthState('session')
     const {version} = await fetchLatestBaileysVersion()
     const client : WASocket = makeWASocket(configSocket(state, retryCache, version, messagesCache))
-    let isBotReady  = false
+    let isBotReady = false
     eventsCache.set("events", [])
 
     //Eventos
@@ -72,9 +72,11 @@ export default async function connect(){
 
             if (isBotReady) {
                 await groupParticipantsUpdated(client, participantsUpdate, botInfo)
-            }    
+            } else {
+                queueEvent(eventsCache, "group-participants.update", participantsUpdate)
+            }     
         }
-
+        
         // Novo grupo
         if (events['groups.upsert']){
             const groups = events['groups.upsert']
