@@ -70,10 +70,13 @@ async function filterUserAntifake(client: WASocket, botInfo: Bot, group: Group, 
     if (group.antifake.status){
         const groupController = new GroupController()
         const isBotAdmin = botInfo.host_number ? await groupController.isAdmin(group.id, botInfo.host_number) : false
+        const isGroupAdmin = await groupController.isAdmin(group.id, userId)
+        const isBotNumber = userId == botInfo.host_number
         
         if (isBotAdmin){
             const isFake = groupController.isNumberFake(group, userId)
-            if (isFake){
+
+            if (isFake && !isBotNumber && !isGroupAdmin){
                 const botTexts = getBotTexts(botInfo)
                 const replyText = buildText(botTexts.antifake_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
                 await waLib.sendTextWithMentions(client, group.id, replyText , [userId], {expiration: group.expiration})
@@ -95,4 +98,3 @@ async function sendWelcome(client: WASocket, group: Group, botInfo: Bot, userId:
         await waLib.sendTextWithMentions(client, group.id, messageWelcome, [userId], {expiration: group.expiration})
     }
 }
-

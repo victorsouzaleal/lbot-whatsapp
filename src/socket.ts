@@ -72,9 +72,7 @@ export default async function connect(){
 
             if (isBotReady) {
                 await groupParticipantsUpdated(client, participantsUpdate, botInfo)
-            } else {
-                queueEvent(eventsCache, "group-participants.update", participantsUpdate)
-            }      
+            }    
         }
 
         // Novo grupo

@@ -121,6 +121,7 @@ export class GroupService {
     }
 
     public async removeGroup(groupId: string){
+        await this.removeParticipants(groupId)
         return db.groups.removeAsync({id: groupId}, {multi: true})
     }
 
@@ -199,6 +200,10 @@ export class GroupService {
         return db.participants.removeAsync({group_id: groupId, user_id: userId}, {})
     }
 
+    public async removeParticipants(groupId: string){
+        return db.participants.removeAsync({group_id: groupId}, {multi: true})
+    }
+
     public async addAdmin(groupId: string, userId: string){
         const isAdmin = await this.isAdmin(groupId, userId)
 
@@ -211,7 +216,7 @@ export class GroupService {
         const isAdmin = await this.isAdmin(groupId, userId)
 
         if (isAdmin) {
-            return db.groups.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
+            return db.participants.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
         }
     }
 

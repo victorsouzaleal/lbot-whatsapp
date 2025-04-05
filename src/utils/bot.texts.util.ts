@@ -52,6 +52,8 @@ export default function getBotTexts (botInfo? : Bot){
         antiflood_ban_messages : "✅ Entendido, +{p1} será banido.\n\n"+
         "*Motivo*: ANTI-FLOOD\n"+
         "*Quem baniu*: {p2}",
+        sync_blacklist: '✅ Foram banidos {p1} membros na sincronização da LISTA-NEGRA',
+        sync_antifake: '✅ Foram banidos {p1} membros na sincronização do ANTI-FAKE',
         queue_commands: "⏳ O bot está atendendo muitas pessoas ao mesmo tempo, tenha paciência!\n\n"+
         "Atualmente existem *{p1}* comandos na fila de espera.",
         user_types: {
