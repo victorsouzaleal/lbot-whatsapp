@@ -334,13 +334,6 @@ export class GroupService {
         return db.groups.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
     }
 
-    public getWelcomeMessage(group: Group, botInfo: Bot, userId: string){
-        const botTexts = getBotTexts(botInfo)
-        const custom_message = (group.welcome.msg != "") ? group.welcome.msg + "\n\n" : ""
-        const message_welcome = buildText(botTexts.group_welcome_message, waLib.removeWhatsappSuffix(userId), group.name, custom_message)
-        return message_welcome
-    }
-
     // ***** ANTI-FAKE *****
     public setAntifake(groupId: string, status: boolean, allowed: string[]){
         return db.groups.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})

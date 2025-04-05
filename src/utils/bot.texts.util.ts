@@ -36,7 +36,7 @@ export default function getBotTexts (botInfo? : Bot){
         group_blocked_command: "O comando *{p1}* está temporariamente bloqueado neste grupo pelo administrador.",
         globally_blocked_command: "O comando *{p1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",
         detected_link: "🤖 Ei @{p1}, o ANTI-LINK está ativado e um possível link foi detectado na sua mensagem, ela foi apagada por segurança.",
-        group_welcome_message: "👋 Olá, @{p1}\n\n"+
+        group_welcome_message: "👋 Olá, @{p1}\n"+
         "Seja bem vindo(a) ao grupo *{p2}*\n\n"+
         "{p3}"+
         `Digite *${prefix}menu* para ver os comandos.`,

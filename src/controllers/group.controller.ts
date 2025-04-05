@@ -146,10 +146,6 @@ export class GroupController {
         return this.groupService.setWelcome(groupId, status, message)
     }
 
-    public getWelcomeMessage(group: Group, botInfo: Bot, userId: string){
-        return this.groupService.getWelcomeMessage(group, botInfo, userId)
-    }
-
     // ***** ANTI-LINK *****
     public setAntiLink(groupId: string, status = true) {
         return this.groupService.setAntilink(groupId, status)

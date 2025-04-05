@@ -109,8 +109,9 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
 
 async function sendWelcome(client: WASocket, group: Group, botInfo: Bot, userId: string){
     if (group.welcome.status) {
-        const groupController = new GroupController()
-        const messageWelcome = groupController.getWelcomeMessage(group, botInfo, userId)
-        await waLib.sendTextWithMentions(client, group.id, messageWelcome, [userId], {expiration: group.expiration})
+        const botTexts = getBotTexts(botInfo)
+        const customMessage = group.welcome.msg ?  group.welcome.msg + "\n\n" : ""
+        const welcomeMessage = buildText(botTexts.group_welcome_message, waLib.removeWhatsappSuffix(userId), group.name, customMessage)
+        await waLib.sendTextWithMentions(client, group.id, welcomeMessage, [userId], {expiration: group.expiration})
     }
 }
