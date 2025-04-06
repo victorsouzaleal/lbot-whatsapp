@@ -4,7 +4,7 @@ import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { waLib } from "../libraries/library.js";
 import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../utils/general.util.js";
-import getBotTexts from "../utils/bot.texts.util.js";
+import getBotTexts from "../helpers/bot.texts.helper.js";
 import { UserController } from "../controllers/user.controller.js";
 import * as menu from "../helpers/menu.builder.helper.js";
 import commandsInfo from "./info.list.commands.js";

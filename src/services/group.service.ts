@@ -5,7 +5,6 @@ import { Message, MessageTypes } from "../interfaces/message.interface.js";
 import { GroupMetadata, GroupParticipant } from 'baileys'
 import { timestampToDate, buildText } from '../utils/general.util.js'
 import moment from 'moment-timezone'
-import getBotTexts from "../utils/bot.texts.util.js";
 import { commandsGroup } from "../commands/group.list.commands.js";
 import { commandExist, getCommandsByCategory } from "../utils/commands.util.js";
 import { waLib } from "../libraries/library.js";

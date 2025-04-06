@@ -2,7 +2,7 @@ import { WASocket, GroupMetadata } from 'baileys'
 import { BotController } from '../controllers/bot.controller.js'
 import { buildText, showConsoleError, colorText } from '../utils/general.util.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 import { waLib } from '../libraries/library.js'
 
 export async function syncGroupsOnStart(client: WASocket){

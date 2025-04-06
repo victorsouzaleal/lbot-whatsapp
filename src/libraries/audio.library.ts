@@ -10,7 +10,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import FormData from 'form-data'
 import { ApiKeys, AudioModificationType, MusicRecognition } from '../interfaces/library.interface.js'
 import crypto from 'node:crypto'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 
 export async function textToVoice (lang: "pt" | 'en' | 'ja' | 'es' | 'it' | 'ru' | 'ko' | 'sv', text: string){
     try {

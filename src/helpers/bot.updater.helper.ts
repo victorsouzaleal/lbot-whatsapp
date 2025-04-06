@@ -1,6 +1,6 @@
 import { updaterLib } from "../libraries/library.js";
 import { colorText, getCurrentBotVersion } from "../utils/general.util.js";
-import getBotTexts from "../utils/bot.texts.util.js";
+import getBotTexts from "../helpers/bot.texts.helper.js";
 import { BotController } from "../controllers/bot.controller.js";
 import fs from 'fs-extra'
 import readline from 'readline/promises'

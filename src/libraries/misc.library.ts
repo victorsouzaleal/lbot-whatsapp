@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'querystring'
 import { showConsoleLibraryError } from '../utils/general.util.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 
 export async function simSimi(text: string){
     try {

@@ -4,7 +4,7 @@ import fs from "fs-extra"
 import dotenv from 'dotenv'
 import { BotController } from '../controllers/bot.controller.js'
 import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../utils/general.util.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
 import qrcode from 'qrcode-terminal'

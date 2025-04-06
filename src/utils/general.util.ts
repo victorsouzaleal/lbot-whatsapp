@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import path from 'node:path'
 import fs from 'fs-extra'
 import { Bot } from "../interfaces/bot.interface.js"
-import getBotTexts from "./bot.texts.util.js"
+import getBotTexts from "../helpers/bot.texts.helper.js"
 import { Message } from "../interfaces/message.interface.js"
 import { FileExtensions } from "../interfaces/library.interface.js"
 import { tmpdir } from "node:os"

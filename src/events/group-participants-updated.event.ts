@@ -3,7 +3,7 @@ import { buildText, showConsoleError} from '../utils/general.util.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 import { waLib } from '../libraries/library.js'
 
 export async function groupParticipantsUpdated (client: WASocket, event: {id: string, author: string, participants: string[], action: ParticipantAction}, botInfo: Bot){

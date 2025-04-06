@@ -3,7 +3,7 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { buildText, messageErrorCommandUsage, timestampToDate } from "../utils/general.util.js";
-import getBotTexts from "../utils/bot.texts.util.js";
+import getBotTexts from "../helpers/bot.texts.helper.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import { BotController } from "../controllers/bot.controller.js";

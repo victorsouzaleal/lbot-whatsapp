@@ -5,7 +5,7 @@ import { messageErrorCommand, showCommandConsole } from "../utils/general.util.j
 import { Group } from "../interfaces/group.interface.js";
 import { Commands } from "../interfaces/command.interface.js";
 import { autoSticker } from "../commands/sticker.functions.commands.js";
-import getBotTexts from "../utils/bot.texts.util.js";
+import getBotTexts from "../helpers/bot.texts.helper.js";
 import { waLib } from "../libraries/library.js";
 import commandsInfo from "../commands/info.list.commands.js";
 import { commandsUtility } from "../commands/utility.list.commands.js";

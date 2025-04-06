@@ -5,7 +5,7 @@ import { Message } from "../interfaces/message.interface.js"
 import { waLib, imageLib, stickerLib } from "../libraries/library.js"
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import { commandsSticker } from "./sticker.list.commands.js"
-import getBotTexts from "../utils/bot.texts.util.js"
+import getBotTexts from "../helpers/bot.texts.helper.js"
 
 export async function sCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const stickerCommands = commandsSticker(botInfo)

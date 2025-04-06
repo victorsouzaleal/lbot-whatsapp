@@ -6,7 +6,7 @@ import FormData from 'form-data'
 import getEmojiMixUrl, {checkSupported} from 'emoji-mixer'
 import {ImageUploadService} from 'node-upload-images'
 import { AnimeRecognition, ImageSearch } from '../interfaces/library.interface.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 
 export async function uploadImage(imageBuffer : Buffer){
     try {

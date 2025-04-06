@@ -2,7 +2,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
 import axios from 'axios'
 import {getTempPath, showConsoleLibraryError} from '../utils/general.util.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 
 export async function convertMp4ToMp3 (sourceType: 'buffer' | 'url',  video: Buffer | string){
     try {

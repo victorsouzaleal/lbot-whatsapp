@@ -2,7 +2,7 @@ import axios from 'axios';
 import { OpenAI } from 'openai'
 import { ApiKeys } from '../interfaces/library.interface.js';
 import { showConsoleLibraryError } from '../utils/general.util.js';
-import getBotTexts from '../utils/bot.texts.util.js';
+import getBotTexts from '../helpers/bot.texts.helper.js';
 
 export async function questionAI(text: string){
     try {

@@ -12,7 +12,7 @@ import UserAgent from 'user-agents'
 import { AnimeRelease, CurrencyConvert, MangaRelease, MusicLyrics, News, SearchGame, WebSearch, Wheather } from '../interfaces/library.interface.js'
 import moment from 'moment-timezone'
 import Fuse from 'fuse.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 
 export async function animeReleases(){
     try {

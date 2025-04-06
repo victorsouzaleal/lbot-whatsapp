@@ -4,7 +4,7 @@ import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
 import { waLib, miscLib } from "../libraries/library.js"
 import { buildText, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../utils/general.util.js"
-import getBotTexts from "../utils/bot.texts.util.js"
+import getBotTexts from "../helpers/bot.texts.helper.js"
 import { commandsMisc } from "./misc.list.commands.js"
 import { GroupController } from "../controllers/group.controller.js"
 

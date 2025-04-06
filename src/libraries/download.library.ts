@@ -6,7 +6,7 @@ import Tiktok from '@tobyg74/tiktok-api-dl'
 import axios from 'axios'
 import yts from 'yt-search'
 import { FacebookMedia, InstagramMedia, TiktokMedia, XMedia, YTInfo } from '../interfaces/library.interface.js'
-import getBotTexts from '../utils/bot.texts.util.js'
+import getBotTexts from '../helpers/bot.texts.helper.js'
 
 export async function xMedia (url: string){
     try {

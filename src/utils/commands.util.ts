@@ -1,7 +1,7 @@
 
 import { Bot } from "../interfaces/bot.interface.js"
 import {CategoryCommand, Commands } from "../interfaces/command.interface.js"
-import getBotTexts from "./bot.texts.util.js"
+import getBotTexts from "../helpers/bot.texts.helper.js"
 import { commandsUtility } from "../commands/utility.list.commands.js"
 import { commandsMisc } from "../commands/misc.list.commands.js"
 import commandsInfo from "../commands/info.list.commands.js"
