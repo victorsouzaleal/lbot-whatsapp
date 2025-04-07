@@ -100,7 +100,6 @@ export const utilityMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🔎 *CONSULTAS/TEXTO* ✦
 *|*
-*|*► *${prefix}ia* texto - Obtem resposta da IA
 *|*► *${prefix}steamverde* jogo - Pesquisa de jogos "alternativos"
 *|*► *${prefix}brasileirao* - Tabela do Brasileirão
 *|*► *${prefix}animes* - Últimos lançamentos de animes
@@ -120,20 +119,14 @@ export const utilityMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🔊 *AUDIO* ✦
 *|*
-*|*► *${prefix}ouvir* - Áudio para texto
 *|*► *${prefix}audio* tipo - Edição de áudio
 *|*► *${prefix}voz* pt texto - Texto para áudio
 *|*
 *|*━━ ✦ 🖼️ *IMAGENS* ✦
 *|*
-*|*► *${prefix}criarimg* - Cria imagem com IA
+*|*► *${prefix}qualanime* - Reconhecimento de anime
 *|*► *${prefix}upimg* - Upload de imagem
 *|*► *${prefix}rbg* - Removedor de fundo
-*|*
-*|*━━ ✦ ❔ *RECONHECIMENTO* ✦
-*|*
-*|*► *${prefix}qualmusica* - Reconhecimento de música
-*|*► *${prefix}qualanime* - Reconhecimento de anime
 *|*
 *|*━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }

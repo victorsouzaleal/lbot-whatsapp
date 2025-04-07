@@ -6,39 +6,6 @@ import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import { waLib, imageLib, audioLib, utilityLib, aiLib, convertLib } from "../libraries/library.js"
 import { commandsUtility } from "./utility.list.commands.js"
 
-export async function iaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const utilityCommands = commandsUtility(botInfo)
-
-    if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
-    }
-    
-    const aiResponse = await aiLib.questionAI(message.text_command)
-
-    if (!aiResponse) {
-        throw new Error(utilityCommands.ia.msgs.error_not_found)
-    }
-
-    const replyText = buildText(utilityCommands.ia.msgs.reply, aiResponse)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
-}
-
-export async function criarimgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const utilityCommands = commandsUtility(botInfo)
-
-    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
-    
-    const waitText = utilityCommands.criarimg.msgs.wait
-    await waLib.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
-    const aiResponse = await aiLib.imageAI(message.text_command)
-
-    if (!aiResponse) {
-        throw new Error(utilityCommands.criarimg.msgs.error_not_found)
-    }
-
-    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', aiResponse, '', message.wa_message, {expiration: message.expiration})
-}
-
 export async function steamverdeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
     const LIMIT_RESULTS = 20
@@ -242,19 +209,6 @@ export async function letraCommand(client: WASocket, botInfo: Bot, message: Mess
     await waLib.replyFile(client, message.chat_id, 'imageMessage', musicLyrics.image, replyText, message.wa_message, {expiration: message.expiration})
 }
 
-export async function ouvirCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const utilityCommands = commandsUtility(botInfo)
-
-    if (!message.isQuoted || message.quotedMessage?.type != 'audioMessage') {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
-    } else if (message.quotedMessage?.media?.seconds && message.quotedMessage?.media?.seconds > 90) {
-        throw new Error(utilityCommands.ouvir.msgs.error_audio_limit)
-    }
-
-    let audioBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    let replyText = await audioLib.audioTranscription(audioBuffer)
-    await waLib.replyText(client, message.chat_id, buildText(utilityCommands.ouvir.msgs.reply, replyText), message.quotedMessage.wa_message, {expiration: message.expiration})
-}
 
 export async function audioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const supportedEffects = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume']
@@ -470,33 +424,6 @@ export async function dddCommand(client: WASocket, botInfo: Bot, message: Messag
     }
 
     const replyText = buildText(utilityCommands.ddd.msgs.reply, dddResult.state, dddResult.region)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
-}
-
-export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const utilityCommands = commandsUtility(botInfo)
-    const messageType = message.isQuoted ? message.quotedMessage?.type : message.type
-
-    if (messageType != "videoMessage" && messageType != "audioMessage") {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
-    } 
-
-    const messageData = message.isQuoted ? message.quotedMessage?.wa_message : message.wa_message 
-    
-    if (!messageData) {
-        throw new Error(utilityCommands.qualmusica.msgs.error_message)
-    }
-
-    const messageMediaBuffer = await downloadMediaMessage(messageData, "buffer", {})
-
-    await waLib.replyText(client, message.chat_id, utilityCommands.qualmusica.msgs.wait, message.wa_message, {expiration: message.expiration})
-    const musicResult = await audioLib.musicRecognition(messageMediaBuffer)
-
-    if (!musicResult) {
-        throw new Error(utilityCommands.qualmusica.msgs.error_not_found)
-    }
-
-    const replyText = buildText(utilityCommands.qualmusica.msgs.reply, musicResult.title, musicResult.producer, musicResult.duration, musicResult.release_date, musicResult.album, musicResult.artists)
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 

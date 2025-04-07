@@ -90,23 +90,6 @@ export function commandsUtility(botInfo?: Bot){
             },
             function: utilityFunctions.seriesCommand
         },
-        ia: {
-            guide: `Ex: *${PREFIX}ia* texto - Recebe uma resposta de IA de acordo com o texto.\n`,
-            msgs: {
-                reply: "🤖 *Inteligência Artificial*:\n\n"+
-                "*Resposta*: {p1}",
-                error_not_found: 'Nenhuma resposta foi obtida'
-            },
-            function: utilityFunctions.iaCommand
-        },
-        criarimg: {
-            guide: `Ex: *${PREFIX}criarimg* texto - Criar uma imagem de acordo com o texto usando IA.\n`,
-            msgs: {
-                wait: '[AGUARDE] 📸 Sua imagem está sendo gerada pela IA, pode levar entre 20-40s.',
-                error_not_found: 'Nenhuma imagem foi obtida'
-            },
-            function: utilityFunctions.criarimgCommand
-        },
         tabela: {
             guide: `Ex: *${PREFIX}tabela* - Exibe a tabela de caracteres para criação de nicks.\n`,
             msgs: {
@@ -123,15 +106,6 @@ export function commandsUtility(botInfo?: Bot){
                 wait: "[AGUARDE] 📸 O fundo da imagem está sendo removido.",
             },
             function: utilityFunctions.rbgCommand
-        },
-        ouvir: {
-            guide: `Ex: Responda um áudio com *${PREFIX}ouvir* para transformar em texto.\n`,
-            msgs: {
-                error_audio_limit: "Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
-                reply: "🔤 *Transcrição de áudio*\n\n"+
-                "*Texto*: {p1}"
-            },
-            function: utilityFunctions.ouvirCommand
         },
         audio: {
             guide: `Responda um aúdio com um desses comandos:\n\n`+
@@ -314,23 +288,6 @@ export function commandsUtility(botInfo?: Bot){
                 error_not_found: 'Nenhum anime compatível foi encontrado'
             },
             function: utilityFunctions.qualanimeCommand
-        },
-        qualmusica: {
-            guide: `Ex: Envie/responda um audio/video com *${PREFIX}qualmusica* - Procura a música tocada no audio/video.\n\n`+
-            `*Obs*: Este comando funciona apenas com *AUDIO/VIDEO*.\n`,
-            msgs: {
-                error_message: "Houve um erro ao obter os dados da mensagem.",
-                wait: "⏳ Em andamento , estou procurando sua música.",
-                reply: "💿 *Reconhecimento de música*\n\n"+
-                "*Título*: {p1}\n"+
-                "*Produtora*: {p2}\n"+
-                "*Duração*: {p3}\n"+
-                "*Lançamento*: {p4}\n"+
-                "*Album*: {p5}\n"+
-                "*Artistas*: {p6}\n",
-                error_not_found: 'Nenhuma música compatível foi encontrada'
-            },
-            function: utilityFunctions.qualmusicaCommand
         }
     }
 
