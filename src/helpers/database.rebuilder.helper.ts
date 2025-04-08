@@ -1,6 +1,6 @@
-import { GroupController } from "../controllers/group.controller";
-import { UserController } from "../controllers/user.controller";
-import { BotController } from "../controllers/bot.controller";
+import { GroupController } from "../controllers/group.controller.js";
+import { UserController } from "../controllers/user.controller.js";
+import { BotController } from "../controllers/bot.controller.js";
 
 export default async function databaseRebuilder(){
     //Reconstroi e atualiza os dados do bot
