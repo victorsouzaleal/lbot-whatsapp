@@ -8,6 +8,7 @@ import { GroupController } from "../controllers/group.controller.js";
 import { buildText, removeFormatting } from "../utils/general.util.js";
 import { BotController } from "../controllers/bot.controller.js";
 import { waLib } from "../libraries/library.js";
+import moment from "moment";
 
 const userController = new UserController()
 const botController = new BotController()
@@ -60,7 +61,7 @@ export function isIgnoredByAdminMode(bot: Bot, message: Message){
 }
 
 export async function isBotLimitedByGroupRestricted(group: Group, botInfo: Bot){
-    const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
     return (group.restricted && !isBotGroupAdmin)
 }
 
@@ -166,15 +167,23 @@ export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group
 
 export async function isDetectedByAntiFlood(client: WASocket, botInfo: Bot, group: Group, message: Message){
     const botTexts = getBotTexts(botInfo)
-    const isDetectedByAntiFlood = await groupController.isFlood(group, message.sender, message.isGroupAdmin)
+    const currentTimestamp = Math.round(moment.now()/1000)
+    const { isGroupAdmin } = message
+    const participant = await groupController.getParticipant(group.id, message.sender)
 
-    if (isDetectedByAntiFlood){
+    if (!participant || isGroupAdmin || !group.antiflood.status) {
+        return false
+    }
+
+    const hasExpiredMessages = await groupController.hasParticipantExpiredMessages(group, participant, currentTimestamp)
+
+    if (!hasExpiredMessages && participant.antiflood.msgs >= group.antiflood.max_messages) {
         const replyText = buildText(botTexts.antiflood_ban_messages, waLib.removeWhatsappSuffix(message.sender), botInfo.name)
         await waLib.removeParticipant(client, message.chat_id, message.sender)
         await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
         return true
+    } else {
+        return false
     }
-    
-    return false
 }
 

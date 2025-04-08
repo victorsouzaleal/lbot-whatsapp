@@ -35,7 +35,7 @@ async function syncResources(client: WASocket){
     for (let group of currentGroups){
         const botTexts = getBotTexts(botInfo)
         const participants = await groupController.getParticipants(group.id)
-        const isBotAdmin = botInfo.host_number ? await groupController.isAdmin(group.id, botInfo.host_number) : false
+        const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
         let bannedByBlackList = 0
         let bannedByAntiFake = 0
 

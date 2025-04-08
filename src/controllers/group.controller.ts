@@ -1,14 +1,17 @@
-import { GroupMetadata } from "baileys"
+import { GroupMetadata, GroupParticipant } from "baileys"
 import { GroupService } from "../services/group.service.js"
 import { Bot } from "../interfaces/bot.interface.js"
-import { Group } from "../interfaces/group.interface.js"
+import { Group, Participant } from "../interfaces/group.interface.js"
 import { Message, MessageTypes } from "../interfaces/message.interface.js"
+import { ParticipantService } from "../services/participant.service.js"
 
 export class GroupController {
     private groupService
+    private participantService
 
     constructor(){
         this.groupService = new GroupService()
+        this.participantService = new ParticipantService()
     }
 
     // *********************** OBTER DADOS DO GRUPO ***********************
@@ -37,6 +40,10 @@ export class GroupController {
         return this.groupService.registerGroup(group)
     }
 
+    public rebuildGroupsDatabase() {
+        return this.groupService.rebuildGroupsDatabase()
+    }
+
     public setNameGroup(groupId: string, name: string) {
         return this.groupService.setName(groupId, name)
     }
@@ -63,71 +70,75 @@ export class GroupController {
 
     // *********************** PARTICIPANTES/ADMINS ***********************
     public getParticipant(groupId: string, userId: string){
-        return this.groupService.getParticipant(groupId, userId)
+        return this.participantService.getParticipantFromGroup(groupId, userId)
     }
 
     public getParticipants(groupId: string){
-        return this.groupService.getParticipants(groupId)
+        return this.participantService.getParticipantsFromGroup(groupId)
     }
 
     public getParticipantsIds(groupId: string){
-        return this.groupService.getParticipantsIds(groupId)
+        return this.participantService.getParticipantsIdsFromGroup(groupId)
     }
 
     public getAdmins(groupId: string) {
-        return this.groupService.getAdmins(groupId)
+        return this.participantService.getAdminsFromGroup(groupId)
     }
 
     public getAdminsIds(groupId: string) {
-        return this.groupService.getAdminsIds(groupId)
+        return this.participantService.getAdminsIdsFromGroup(groupId)
     }
     
     public isParticipant(groupId: string, userId: string) {
-        return this.groupService.isParticipant(groupId, userId)
+        return this.participantService.isGroupParticipant(groupId, userId)
     }
 
     public addParticipant(groupId: string, userId: string, isAdmin = false) {
-        return this.groupService.addParticipant(groupId, userId, isAdmin)
+        return this.participantService.addParticipant(groupId, userId, isAdmin)
     }
 
     public addAdmin(groupId: string, userId: string) {
-        return this.groupService.addAdmin(groupId, userId)
+        return this.participantService.addAdmin(groupId, userId)
     }
 
     public removeAdmin(groupId: string, userId: string) {
-        return this.groupService.removeAdmin(groupId, userId)
+        return this.participantService.removeAdmin(groupId, userId)
     }
 
-    public isAdmin(groupId: string, userId: string) {
-        return this.groupService.isAdmin(groupId, userId)
+    public isParticipantAdmin(groupId: string, userId: string) {
+        return this.participantService.isGroupAdmin(groupId, userId)
     }
 
     public removeParticipant(groupId: string, userId: string) {
-        return this.groupService.removeParticipant(groupId, userId)
+        return this.participantService.removeParticipant(groupId, userId)
     }
 
     public getParticipantsActivityLowerThan(group: Group, num: number) {
-        return this.groupService.getParticipantActivityLowerThan(group, num)
+        return this.participantService.getParticipantActivityLowerThan(group, num)
     }
 
     public getParticipantsActivityRanking(group: Group, num: number){
-        return this.groupService.getParticipantsActivityRanking(group, num)
+        return this.participantService.getParticipantsActivityRanking(group, num)
     }
 
     public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes, isCommand: boolean){
-        return this.groupService.incrementParticipantActivity(groupId, userId, type, isCommand)
+        return this.participantService.incrementParticipantActivity(groupId, userId, type, isCommand)
     }
 
-    public addWarning(groupId: string, userId: string){
-        return this.groupService.addWarning(groupId, userId)
+    public addParticipantWarning(groupId: string, userId: string){
+        return this.participantService.addWarning(groupId, userId)
     }
 
-    public removeWarning(groupId: string, userId: string, currentWarnings: number){
-        return this.groupService.removeWarning(groupId, userId, currentWarnings)
+    public removeParticipantWarning(groupId: string, userId: string, currentWarnings: number){
+        return this.participantService.removeWarning(groupId, userId, currentWarnings)
     }
 
     public removeParticipantsWarnings(groupId: string){
-        return this.groupService.removeParticipantsWarnings(groupId)
+        return this.participantService.removeParticipantsWarnings(groupId)
+    }
+
+    public hasParticipantExpiredMessages(group: Group, participant: Participant, currentTimestamp: number){
+        return this.participantService.hasAntiFloodExpiredMessages(group, participant, currentTimestamp)
     }
 
     // *********************** Recursos do grupo ***********************
@@ -173,10 +184,6 @@ export class GroupController {
     // ***** ANTI-FLOOD *****
     public setAntiFlood(groupId: string, status = true, maxMessages = 10, interval = 10) {
         return this.groupService.setAntiFlood(groupId, status, maxMessages, interval)
-    }
-
-    public isFlood(group: Group, userId: string, isGroupAdmin: boolean){
-        return this.groupService.isFlood(group, userId, isGroupAdmin)
     }
 
     // ***** LISTA-NEGRA *****

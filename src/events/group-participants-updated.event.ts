@@ -42,7 +42,7 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
             }
 
         } else if (event.action === "promote"){
-            const isAdmin = await groupController.isAdmin(group.id, event.participants[0])
+            const isAdmin = await groupController.isParticipantAdmin(group.id, event.participants[0])
 
             if (isAdmin) {
                 return
@@ -51,7 +51,7 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
             await groupController.addAdmin(event.id, event.participants[0])
 
         } else if (event.action === "demote"){
-            const isAdmin = await groupController.isAdmin(group.id, event.participants[0])
+            const isAdmin = await groupController.isParticipantAdmin(group.id, event.participants[0])
 
             if (!isAdmin) {
                 return
@@ -70,7 +70,7 @@ async function isParticipantBlacklisted(client: WASocket, botInfo: Bot, group: G
     const groupController = new GroupController()
     const isUserBlacklisted = await groupController.isBlackListed(group.id, userId)
     const botTexts = getBotTexts(botInfo)
-    const isBotAdmin = botInfo.host_number ? await groupController.isAdmin(group.id, botInfo.host_number) : false
+    const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
 
     if (isBotAdmin && isUserBlacklisted) {
         const replyText = buildText(botTexts.blacklist_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
@@ -85,8 +85,8 @@ async function isParticipantBlacklisted(client: WASocket, botInfo: Bot, group: G
 async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, userId: string){
     if (group.antifake.status){
         const groupController = new GroupController()
-        const isBotAdmin = botInfo.host_number ? await groupController.isAdmin(group.id, botInfo.host_number) : false
-        const isGroupAdmin = await groupController.isAdmin(group.id, userId)
+        const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
+        const isGroupAdmin = await groupController.isParticipantAdmin(group.id, userId)
         const isBotNumber = userId == botInfo.host_number
         
         if (isBotAdmin){

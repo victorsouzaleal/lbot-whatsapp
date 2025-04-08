@@ -1,22 +1,23 @@
-import { Participant, Group, ParticipantAntiFlood } from "../interfaces/group.interface.js";
+import { Group } from "../interfaces/group.interface.js";
 import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
-import { Message, MessageTypes } from "../interfaces/message.interface.js";
-import { GroupMetadata, GroupParticipant } from 'baileys'
-import { timestampToDate, buildText } from '../utils/general.util.js'
-import moment from 'moment-timezone'
+import { GroupMetadata } from 'baileys'
+import { buildText } from '../utils/general.util.js'
 import { commandsGroup } from "../commands/group.list.commands.js";
 import { commandExist, getCommandsByCategory } from "../utils/commands.util.js";
 import { waLib } from "../libraries/library.js";
 import DataStore from "@seald-io/nedb";
+import { ParticipantService } from "./participant.service.js";
 
-
-const db = {
-    groups : new DataStore<Group>({filename : './storage/groups.db', autoload: true}),
-    participants : new DataStore<Participant>({filename : './storage/participants.groups.db', autoload: true})
-}
+const db = new DataStore<Group>({filename : './storage/groups.db', autoload: true})
 
 export class GroupService {
+    private participantService
+
+    constructor() {
+        this.participantService = new ParticipantService()
+    }
+
     // *********************** Registra/Atualiza/Remove grupos ***********************
     public async registerGroup(groupMetadata : GroupMetadata){
         const isRegistered = await this.isRegistered(groupMetadata.id)
@@ -44,12 +45,43 @@ export class GroupService {
             word_filter: []
         }
 
-        const newGroup = await db.groups.insertAsync(groupData) as Group
+        const newGroup = await db.insertAsync(groupData) as Group
 
-        groupMetadata.participants.forEach( async(participant) => {
+        for (let participant of groupMetadata.participants) {
             const isAdmin = (participant.admin) ? true : false
-            await this.addParticipant(newGroup.id, participant.id, isAdmin)
-        })
+            await this.participantService.addParticipant(groupMetadata.id, participant.id, isAdmin)
+        }
+
+        return newGroup
+    }
+
+    public async rebuildGroupsDatabase() {
+        const groups = await this.getAllGroups()
+
+        for (let group of groups) {
+            const oldGroupData = group as any
+            const updatedGroupData : Group = {
+                id: oldGroupData.id,
+                name: oldGroupData.name,
+                description : oldGroupData.description,
+                commands_executed: oldGroupData.commands_executed,
+                owner: oldGroupData.owner,
+                restricted: oldGroupData.restricted,
+                expiration: oldGroupData.expiration,
+                muted : oldGroupData.muted ? oldGroupData.muted : false,
+                welcome : oldGroupData.welcome ? oldGroupData.welcome : { status: false, msg: '' },
+                antifake : oldGroupData.antifake ? oldGroupData.antifake : { status: false, allowed: [] },
+                antilink : oldGroupData.antilink ? oldGroupData.antilink : false,
+                antiflood : oldGroupData.antiflood ? oldGroupData.antiflood : { status: false, max_messages: 10, interval: 10},
+                autosticker : oldGroupData.autosticker ? oldGroupData.autosticker : false,
+                block_cmds : oldGroupData.block_cmds ? oldGroupData.block_cmds : [],
+                blacklist : oldGroupData.blacklist ? oldGroupData.blacklist : [],
+                word_filter: oldGroupData.word_filter ? oldGroupData.word_filter : []
+            }
+
+            await db.removeAsync({id: group.id}, {})
+            await db.insertAsync(updatedGroupData)
+        }
     }
 
     public async syncGroups(groupsMeta: GroupMetadata[]){
@@ -66,34 +98,16 @@ export class GroupService {
             const isRegistered = await this.isRegistered(groupMeta.id)
 
             if (isRegistered){ // Se o grupo já estiver registrado sincronize os dados do grupo e os participantes.
-                await db.groups.updateAsync({ id : groupMeta.id }, { $set: {
+                await db.updateAsync({ id : groupMeta.id }, { $set: {
                     name: groupMeta.subject,
                     description: groupMeta.desc,
                     owner: groupMeta.owner,
                     restricted: groupMeta.announce,
                     expiration: groupMeta.ephemeralDuration
                 }})
-    
-                //Adiciona participantes no banco de dados que entraram enquanto o bot estava off.
-                groupMeta.participants.forEach(async (participant) => {
-                    const isAdmin = (participant.admin) ? true : false
-                    const isParticipant = await this.isParticipant(groupMeta.id, participant.id)
 
-                    if (!isParticipant) {
-                        await this.addParticipant(groupMeta.id, participant.id, isAdmin)
-                    } else {
-                        await db.participants.updateAsync({group_id: groupMeta.id, user_id: participant.id}, { $set: {admin: isAdmin}})
-                    }
-                })
+                await this.participantService.syncParticipants(groupMeta)
     
-                //Remove participantes do banco de dados que sairam do grupo enquanto o bot estava off.
-                const currentParticipants = await this.getParticipants(groupMeta.id)
-    
-                currentParticipants.forEach(async (participant) => {
-                    if(!groupMeta.participants.find(groupMetaParticipant => groupMetaParticipant.id == participant.user_id)) {
-                        await this.removeParticipant(groupMeta.id, participant.user_id)
-                    }
-                })
             } else { // Se o grupo não estiver registrado, faça o registro.
                 await this.registerGroup(groupMeta)
             }
@@ -115,17 +129,17 @@ export class GroupService {
     }
 
     public async getGroup(groupId : string){
-        const group = await db.groups.findOneAsync({id: groupId}) as Group | null
+        const group = await db.findOneAsync({id: groupId}) as Group | null
         return group
     }
 
     public async removeGroup(groupId: string){
-        await this.removeParticipants(groupId)
-        return db.groups.removeAsync({id: groupId}, {multi: true})
+        await this.participantService.removeParticipants(groupId)
+        return db.removeAsync({id: groupId}, {multi: true})
     }
 
     public async getAllGroups(){
-        const groups = await db.groups.findAsync({}) as Group[]
+        const groups = await db.findAsync({}) as Group[]
         return groups
     }
 
@@ -140,23 +154,23 @@ export class GroupService {
     }
 
     public setName(groupId: string, name: string){
-        return db.groups.updateAsync({id: groupId}, { $set : { name } })
+        return db.updateAsync({id: groupId}, { $set : { name } })
     }
 
     public setRestricted(groupId: string, restricted: boolean){
-        return db.groups.updateAsync({id: groupId}, { $set: { restricted } })
+        return db.updateAsync({id: groupId}, { $set: { restricted } })
     }
 
     private setExpiration(groupId: string, expiration: number | undefined){
-        return db.groups.updateAsync({id: groupId}, { $set: { expiration } })
+        return db.updateAsync({id: groupId}, { $set: { expiration } })
     }
 
     public setDescription(groupId: string, description?: string){
-        return db.groups.updateAsync({id: groupId}, { $set: { description } })
+        return db.updateAsync({id: groupId}, { $set: { description } })
     }
 
     public incrementGroupCommands(groupId: string){
-        return db.groups.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
+        return db.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
     } 
 
     public async getOwner(groupId: string){
@@ -164,178 +178,24 @@ export class GroupService {
         return group?.owner
     }
 
-    // ***** Participantes *****
-    public async addParticipant(groupId: string,  userId: string, isAdmin = false){
-        const isParticipant = await this.isParticipant(groupId, userId)
-
-        if (isParticipant) {
-            return
-        }
-
-        const participant : Participant = {
-            group_id : groupId,
-            user_id: userId,
-            registered_since: timestampToDate(moment.now()),
-            commands: 0,
-            admin: isAdmin,
-            msgs: 0,
-            image: 0,
-            audio: 0,
-            sticker: 0,
-            video: 0,
-            text: 0,
-            other: 0,
-            warnings: 0,
-            antiflood : {
-                expire: 0,
-                msgs: 0
-            }
-        }
-
-        return db.participants.insertAsync(participant)
-    }
-
-    public async removeParticipant(groupId: string, userId: string){
-        return db.participants.removeAsync({group_id: groupId, user_id: userId}, {})
-    }
-
-    public async removeParticipants(groupId: string){
-        return db.participants.removeAsync({group_id: groupId}, {multi: true})
-    }
-
-    public async addAdmin(groupId: string, userId: string){
-        const isAdmin = await this.isAdmin(groupId, userId)
-
-        if (!isAdmin) {
-            return db.participants.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
-        }
-    }
-
-    public async removeAdmin(groupId: string, userId: string){
-        const isAdmin = await this.isAdmin(groupId, userId)
-
-        if (isAdmin) {
-            return db.participants.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
-        }
-    }
-
-    public async getParticipant(groupId: string, userId: string){
-        const participant = await db.participants.findOneAsync({group_id: groupId, user_id: userId}) as Participant | null
-        return participant
-    }
-
-    public async getParticipants(groupId: string){
-        const participants = await db.participants.findAsync({group_id: groupId}) as Participant[]
-        return participants
-    }
-
-    public async getParticipantsIds(groupId: string){
-        const participants = await this.getParticipants(groupId)
-        return participants.map(participant => participant.user_id)
-    }
-
-    public async getAdmins(groupId: string){
-        const admins = await db.participants.findAsync({group_id: groupId, admin: true}) as Participant[]
-        return admins
-    }
-
-    public async getAdminsIds(groupId: string){
-        const admins = await db.participants.findAsync({group_id: groupId, admin: true}) as Participant[]
-        return admins.map(admin => admin.user_id)
-    }
-
-    public async isParticipant(groupId: string, userId: string){
-        const participantsIds = await this.getParticipantsIds(groupId)
-        return participantsIds.includes(userId)
-    }
-
-    public async isAdmin(groupId: string, userId: string){
-        const adminsIds = await this.getAdminsIds(groupId)
-        return adminsIds.includes(userId)
-    }
-
-    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes, isCommand: boolean){
-        let incrementedUser : {
-            msgs: number,
-            commands?: number,
-            text?: number,
-            image?: number,
-            video?: number,
-            sticker?: number,
-            audio?: number,
-            other?: number
-        } = { msgs: 1 }
-
-        if(isCommand) {
-            incrementedUser.commands = 1
-        }
-
-        switch (type) {
-            case "conversation":
-            case "extendedTextMessage":
-                incrementedUser.text = 1
-                break
-            case "imageMessage":
-                incrementedUser.image = 1
-                break
-            case "videoMessage":
-                incrementedUser.video = 1
-                break
-            case "stickerMessage":
-                incrementedUser.sticker = 1
-                break
-            case "audioMessage":
-                incrementedUser.audio = 1
-                break
-            case "documentMessage":
-                incrementedUser.other = 1
-                break
-        }
-
-        return db.participants.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
-    }  
-
-    public async getParticipantActivityLowerThan(group: Group, num : number){
-        const inactives = await db.participants.findAsync({group_id : group.id, msgs: {$lt: num}}).sort({msgs: -1}) as Participant[]
-        return inactives
-    }
-
-    public async getParticipantsActivityRanking(group: Group, qty: number){
-        let participantsLeaderboard = await db.participants.findAsync({group_id : group.id}).sort({msgs: -1}) as Participant[]
-        const qty_leaderboard = (qty > participantsLeaderboard.length) ? participantsLeaderboard.length : qty
-        return participantsLeaderboard.splice(0, qty_leaderboard)
-    }
-
-    public addWarning(groupId: string, userId: string){
-        return db.participants.updateAsync({group_id: groupId, user_id: userId}, { $inc: { warnings: 1} })
-    }
-
-    public removeWarning(groupId: string, userId: string, currentWarnings: number){
-        return db.participants.updateAsync({group_id: groupId, user_id: userId}, { $set: { warnings: --currentWarnings} })
-    }
-
-    public removeParticipantsWarnings(groupId: string){
-        return db.participants.updateAsync({group_id: groupId}, { $set: { warnings: 0} })
-    }
-
     // *********************** RECURSOS DO GRUPO ***********************
     // ***** FILTRO DE PALAVRAS *****
     public addWordFilter(groupId: string, word: string){
-        return db.groups.updateAsync({id: groupId}, { $push: { word_filter : word }})
+        return db.updateAsync({id: groupId}, { $push: { word_filter : word }})
     }
 
     public removeWordFilter(groupId: string, word: string){
-        return db.groups.updateAsync({id: groupId}, { $pull: { word_filter : word }})
+        return db.updateAsync({id: groupId}, { $pull: { word_filter : word }})
     }
 
     // ***** BEM-VINDO *****
     public setWelcome(groupId: string, status: boolean, msg: string){
-        return db.groups.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
+        return db.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
     }
 
     // ***** ANTI-FAKE *****
     public setAntifake(groupId: string, status: boolean, allowed: string[]){
-        return db.groups.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})
+        return db.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})
     }
 
     public isNumberFake(group: Group, userId: string){
@@ -350,53 +210,22 @@ export class GroupService {
 
     // ***** MUTAR GRUPO *****
     public setMuted(groupId: string, status: boolean){
-        return db.groups.updateAsync({id: groupId}, {$set: { muted : status}})
+        return db.updateAsync({id: groupId}, {$set: { muted : status}})
     }
 
     // ***** ANTI-LINK *****
     public setAntilink(groupId: string, status: boolean){
-        return db.groups.updateAsync({id : groupId}, { $set: { antilink: status } })
+        return db.updateAsync({id : groupId}, { $set: { antilink: status } })
     }
 
     // ***** AUTO-STICKER *****
     public setAutosticker(groupId: string, status: boolean){
-        return db.groups.updateAsync({id: groupId}, { $set: { autosticker: status } })
+        return db.updateAsync({id: groupId}, { $set: { autosticker: status } })
     }
 
     // ***** ANTI-FLOOD *****
     public async setAntiFlood(groupId: string, status: boolean, maxMessages: number, interval: number){
-        return db.groups.updateAsync({id : groupId}, { $set: { 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
-    }
-
-    private async hasExpiredMessages(group: Group, participant: Participant, currentTimestamp: number){
-        if (group && currentTimestamp > participant.antiflood.expire){
-            const expireTimestamp = currentTimestamp + group?.antiflood.interval
-            await db.participants.updateAsync({group_id: group.id, user_id: participant.user_id}, { $set : { 'antiflood.expire': expireTimestamp, 'antiflood.msgs': 1 } })
-            return true
-        } else {
-            await db.participants.updateAsync({group_id: group.id, user_id: participant.user_id}, { $inc : { 'antiflood.msgs': 1 } })
-            return false
-        }
-    }
-
-    public async isFlood(group: Group, userId: string, isGroupAdmin: boolean){
-        const currentTimestamp = Math.round(moment.now()/1000)
-        const participant = await this.getParticipant(group.id, userId)
-        let isFlood = false
-
-        if(!participant || isGroupAdmin || !group.antiflood.status) {
-            return false
-        }
-
-        const hasExpiredMessages = await this.hasExpiredMessages(group, participant, currentTimestamp)
-
-        if (!hasExpiredMessages && participant.antiflood.msgs >= group.antiflood.max_messages) {
-            isFlood = true
-        } else {
-            isFlood = false
-        }
-        
-        return isFlood
+        return db.updateAsync({id : groupId}, { $set: { 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
     }
 
     // ***** LISTA-NEGRA *****
@@ -406,11 +235,11 @@ export class GroupService {
     }
 
     public addBlackList(groupId: string, userId: string){
-        return db.groups.updateAsync({id: groupId}, { $push: { blacklist: userId } })
+        return db.updateAsync({id: groupId}, { $push: { blacklist: userId } })
     }
 
     public removeBlackList(groupId: string, userId: string){
-        return db.groups.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
+        return db.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
     }
 
     public async isBlackListed(groupId: string, userId: string){
@@ -452,7 +281,7 @@ export class GroupService {
         }
 
         if (blockedCommands.length != 0) {
-            await db.groups.updateAsync({id : group.id}, { $push: { block_cmds: { $each: blockedCommands } } })
+            await db.updateAsync({id : group.id}, { $push: { block_cmds: { $each: blockedCommands } } })
         }
 
         return blockResponse
@@ -491,7 +320,7 @@ export class GroupService {
         }
 
         if (unblockedCommands.length != 0) {
-            await db.groups.updateAsync({id : group.id}, { $pull: { block_cmds: { $in: unblockedCommands }} })
+            await db.updateAsync({id : group.id}, { $pull: { block_cmds: { $in: unblockedCommands }} })
         }
 
         return unblockResponse

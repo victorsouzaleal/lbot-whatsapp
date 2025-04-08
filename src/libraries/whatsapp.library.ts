@@ -255,7 +255,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     const message_id = m.key.id
     const t = m.messageTimestamp as number
     const chat_id = m.key.remoteJid
-    const isGroupAdmin = (sender && group) ? await new GroupController().isAdmin(group.id, sender) : false
+    const isGroupAdmin = (sender && group) ? await new GroupController().isParticipantAdmin(group.id, sender) : false
 
     if (!message_id || !t || !sender || !chat_id ) return 
 

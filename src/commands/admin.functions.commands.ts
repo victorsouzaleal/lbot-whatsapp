@@ -54,7 +54,7 @@ export async function gruposCommand(client: WASocket, botInfo: Bot, message: Mes
         const groupNumber = currentGroups.indexOf(group) + 1
         const adminsGroup = await groupController.getAdmins(group.id)
         const participantsGroup = await groupController.getParticipants(group.id)
-        const isBotGroupAdmin = await groupController.isAdmin(group.id, botInfo.host_number)
+        const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
         const linkGroupCommand = isBotGroupAdmin ? `${botInfo.prefix}linkgrupo ${groupNumber}` : '----'
         replyText += buildText(adminCommands.grupos.msgs.reply_item, groupNumber, group.name, participantsGroup.length, adminsGroup.length,  isBotGroupAdmin ? "Sim" : "Não",  linkGroupCommand, groupNumber)
     }
@@ -94,7 +94,7 @@ export async function linkgrupoCommand(client: WASocket, botInfo: Bot, message: 
 
     if(!chosenGroupNumber || !currentGroups[indexGroup]) {
         throw new Error(adminCommands.linkgrupo.msgs.error_not_found)
-    } else if(!await groupController.isAdmin(currentGroups[indexGroup].id, botInfo.host_number)) {
+    } else if(!await groupController.isParticipantAdmin(currentGroups[indexGroup].id, botInfo.host_number)) {
         throw new Error(adminCommands.linkgrupo.msgs.error_bot_not_admin)
     }
 
