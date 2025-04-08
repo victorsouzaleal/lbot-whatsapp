@@ -119,14 +119,19 @@ export const utilityMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🔊 *AUDIO* ✦
 *|*
+*|*► *${prefix}ouvir* - Áudio para texto
 *|*► *${prefix}audio* tipo - Edição de áudio
 *|*► *${prefix}voz* pt texto - Texto para áudio
 *|*
 *|*━━ ✦ 🖼️ *IMAGENS* ✦
 *|*
-*|*► *${prefix}qualanime* - Reconhecimento de anime
 *|*► *${prefix}upimg* - Upload de imagem
 *|*► *${prefix}rbg* - Removedor de fundo
+*|*
+*|*━━ ✦ ❔ *RECONHECIMENTO* ✦
+*|*
+*|*► *${prefix}qualmusica* - Reconhecimento de música
+*|*► *${prefix}qualanime* - Reconhecimento de anime
 *|*
 *|*━━✦༻ _*by @Victorsouzaleal*_ ༺✦`
 }

@@ -37,6 +37,7 @@
     "typescript": "^5.8.1-rc"
   },
   "dependencies": {
+    "@deepgram/sdk": "^3.11.3",
     "@distube/ytdl-core": "^4.16.8",
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.1.1",

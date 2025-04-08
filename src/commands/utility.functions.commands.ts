@@ -6,6 +6,47 @@ import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import { waLib, imageLib, audioLib, utilityLib, aiLib, convertLib } from "../libraries/library.js"
 import { commandsUtility } from "./utility.list.commands.js"
 
+export async function ouvirCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const utilityCommands = commandsUtility(botInfo)
+
+    if (!message.isQuoted || message.quotedMessage?.type != 'audioMessage') {
+        throw new Error(messageErrorCommandUsage(botInfo, message))
+    } else if (message.quotedMessage?.media?.seconds && message.quotedMessage?.media?.seconds > 90) {
+        throw new Error(utilityCommands.ouvir.msgs.error_audio_limit)
+    }
+
+    let audioBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
+    let replyText = await audioLib.audioTranscription(audioBuffer)
+    await waLib.replyText(client, message.chat_id, buildText(utilityCommands.ouvir.msgs.reply, replyText), message.quotedMessage.wa_message, {expiration: message.expiration})
+}
+
+export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    const utilityCommands = commandsUtility(botInfo)
+    const messageType = message.isQuoted ? message.quotedMessage?.type : message.type
+
+    if (messageType != "videoMessage" && messageType != "audioMessage") {
+        throw new Error(messageErrorCommandUsage(botInfo, message))
+    } 
+
+    const messageData = message.isQuoted ? message.quotedMessage?.wa_message : message.wa_message 
+    
+    if (!messageData) {
+        throw new Error(utilityCommands.qualmusica.msgs.error_message)
+    }
+
+    const messageMediaBuffer = await downloadMediaMessage(messageData, "buffer", {})
+
+    await waLib.replyText(client, message.chat_id, utilityCommands.qualmusica.msgs.wait, message.wa_message, {expiration: message.expiration})
+    const musicResult = await audioLib.musicRecognition(messageMediaBuffer)
+
+    if (!musicResult) {
+        throw new Error(utilityCommands.qualmusica.msgs.error_not_found)
+    }
+
+    const replyText = buildText(utilityCommands.qualmusica.msgs.reply, musicResult.title, musicResult.producer, musicResult.duration, musicResult.release_date, musicResult.album, musicResult.artists)
+    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
 export async function steamverdeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const utilityCommands = commandsUtility(botInfo)
     const LIMIT_RESULTS = 20

@@ -5,6 +5,32 @@ export function commandsUtility(botInfo?: Bot){
     const PREFIX = botInfo?.prefix, BOT_NAME = botInfo?.name
     // *********************************** COMANDOS - UTILIDADE ***********************************
     const utility = {
+        ouvir: {
+            guide: `Ex: Responda um áudio com *${PREFIX}ouvir* para transformar em texto.\n`,
+            msgs: {
+                error_audio_limit: "Houve um erro na transcrição, o áudio ultrapassa *1m30s*",
+                reply: "🔤 *Transcrição de áudio*\n\n"+
+                "*Texto*: {p1}"
+            },
+            function: utilityFunctions.ouvirCommand
+        },
+        qualmusica: {
+            guide: `Ex: Envie/responda um audio/video com *${PREFIX}qualmusica* - Procura a música tocada no audio/video.\n\n`+
+            `*Obs*: Este comando funciona apenas com *AUDIO/VIDEO*.\n`,
+            msgs: {
+                error_message: "Houve um erro ao obter os dados da mensagem.",
+                wait: "⏳ Em andamento , estou procurando sua música.",
+                reply: "💿 *Reconhecimento de música*\n\n"+
+                "*Título*: {p1}\n"+
+                "*Produtora*: {p2}\n"+
+                "*Duração*: {p3}\n"+
+                "*Lançamento*: {p4}\n"+
+                "*Album*: {p5}\n"+
+                "*Artistas*: {p6}\n",
+                error_not_found: 'Nenhuma música compatível foi encontrada'
+            },
+            function: utilityFunctions.qualmusicaCommand
+        },
         steamverde: {
             guide: `Ex: *${PREFIX}steamverde GTA* - Exibe os downloads disponíveis do jogo GTA.\n`,
             msgs: {
