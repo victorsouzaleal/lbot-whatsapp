@@ -1,5 +1,7 @@
 import DataStore from "@seald-io/nedb";
 import { User } from "../interfaces/user.interface.js";
+import moment from "moment";
+import { Bot } from "../interfaces/bot.interface.js";
 const db = new DataStore<User>({filename : './storage/users.db', autoload: true})
 
 export class UserService{
@@ -20,16 +22,50 @@ export class UserService{
             return 
         }
 
+        const timestamp = Math.round(moment.now()/1000)
+
         const user : User = {
             id : userId,
             name,
             commands: 0,
             receivedWelcome: false,
             owner: false,
-            admin: false
+            admin: false,
+            command_rate : {
+                limited: false,
+                expire_limited: 0,
+                cmds: 1,
+                expire_cmds: timestamp + 60
+            }
         }
 
         return db.insertAsync(user)
+    }
+
+    public async rebuildUserDatabase(){
+        const users = await this.getUsers()
+
+        for (let user of users) {
+            const timestamp = Math.round(moment.now()/1000)
+            const oldUserData = user as any
+            const updatedUserData = {
+                id: oldUserData.id,
+                name: oldUserData.name,
+                commands: oldUserData.commands,
+                receivedWelcome: oldUserData.receivedWelcome,
+                owner: oldUserData.owner,
+                admin: oldUserData.admin,
+                command_rate: oldUserData.command_rate ? oldUserData.command_rate : {
+                    limited: false,
+                    expire_limited: 0,
+                    cmds: 1,
+                    expire_cmds: timestamp + 60
+                }
+            }
+
+            await db.removeAsync({id: user.id}, {})
+            await db.insertAsync(updatedUserData)
+        }
     }
 
     public async isUserRegistered(userId: string){
@@ -65,5 +101,33 @@ export class UserService{
 
     public increaseUserCommandsCount(userId: string){
         return db.updateAsync({id : userId}, {$inc: {commands: 1}})
+    }
+
+    public async hasExpiredCommands(user: User, currentTimestamp: number){
+        if (currentTimestamp > user.command_rate.expire_cmds){
+            const expireTimestamp = currentTimestamp + 60
+            await db.updateAsync({id: user.id}, { $set : { 'command_rate.expire_cmds': expireTimestamp, 'command_rate.cmds': 1 } })
+            return true
+        } else {
+            await db.updateAsync({id: user.id}, { $inc : { "command_rate.cmds": 1 } })
+            return false
+        }
+    }
+
+    public async hasExpiredLimited(user: User, botInfo: Bot, currentTimestamp: number){
+        if (currentTimestamp > user.command_rate.expire_limited){
+            await this.setLimitedUser(user.id, false, botInfo, currentTimestamp)
+            return true
+        } else {
+            return false
+        }
+    }
+
+    public setLimitedUser(userId: string, isLimited: boolean, botInfo: Bot, currentTimestamp: number){
+        if(isLimited){
+            return db.updateAsync({id: userId}, { $set : { 'command_rate.limited': isLimited, 'command_rate.expire_limited': currentTimestamp + botInfo.command_rate.block_time} })
+        } else {
+            return db.updateAsync({id: userId}, { $set : { 'command_rate.limited': isLimited, 'command_rate.expire_limited': 0, 'command_rate.cmds': 1, 'command_rate.expire_cmds': currentTimestamp + 60} })
+        }
     }
 }

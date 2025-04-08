@@ -16,11 +16,3 @@ export interface Bot {
         block_time: number,
     }
 }
-
-export interface UserCommandRate {
-    user_id : string,
-    limited: boolean,
-    expire_limited: number,
-    cmds : number,
-    expire_cmds : number
-}

@@ -1,3 +1,5 @@
+import { Bot } from "../interfaces/bot.interface.js";
+import { User } from "../interfaces/user.interface.js";
 import { UserService } from "../services/user.service.js";
 
 export class UserController{
@@ -9,6 +11,10 @@ export class UserController{
 
     public registerUser(userId: string, name?: string|null){
         return this.userService.registerUser(userId, name)
+    }
+
+    public rebuildUsersDatabase(){
+        return this.userService.rebuildUserDatabase()
     }
 
     public setName(userId: string, name: string){
@@ -53,6 +59,18 @@ export class UserController{
 
     public increaseUserCommandsCount(userId: string){
         return this.userService.increaseUserCommandsCount(userId)
+    }
+
+    public async hasExpiredCommands(user: User, currentTimestamp: number){
+        return this.userService.hasExpiredCommands(user, currentTimestamp)
+    }
+
+    public async hasExpiredLimited(user: User, botInfo: Bot, currentTimestamp: number){
+        return this.userService.hasExpiredLimited(user, botInfo, currentTimestamp)
+    }
+
+    public setLimitedUser(userId: string, isLimited: boolean, botInfo: Bot, currentTimestamp: number){
+        return this.userService.setLimitedUser(userId, isLimited, botInfo, currentTimestamp)
     }
 
 }

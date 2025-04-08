@@ -68,10 +68,6 @@ export class BotController {
         return this.botService.setCommandRate(status, maxCommandsMinute, blockTime)
     }
 
-    public hasExceededCommandRate(botInfo: Bot, userId: string, isBotAdmin: boolean){
-        return this.botService.hasExceededCommandRate(botInfo, userId, isBotAdmin)
-    }
-
     // Bloquear/Desbloquear comandos globalmente
     public blockCommandsGlobally(commands: string[]){
         return this.botService.blockCommandsGlobally(commands)

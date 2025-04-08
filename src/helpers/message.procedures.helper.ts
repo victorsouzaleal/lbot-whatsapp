@@ -88,14 +88,43 @@ export async function updateUserName(message: Message){
 
 export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot, message: Message){
     if (botInfo.command_rate.status){
-        const isLimited = await botController.hasExceededCommandRate(botInfo, message.sender, message.isBotAdmin)
-        if (isLimited){
-            const botTexts = getBotTexts(botInfo)
-            const replyText = buildText(botTexts.command_rate_limited_message, botInfo.command_rate.block_time)
-            await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
-            return true
+        const currentTimestamp = Math.round(moment.now()/1000)
+        const { isBotAdmin } = message
+        const user = await userController.getUser(message.sender)
+
+        if (isBotAdmin) {
+            return false
+        }
+
+        if (user){
+            let isUserLimited : boolean
+
+            if (user.command_rate.limited){
+                const hasExpiredLimited = await userController.hasExpiredLimited(user, botInfo, currentTimestamp)
+                isUserLimited = hasExpiredLimited ? false : true
+            } else {
+                const hasExpiredMessages = await userController.hasExpiredCommands(user, currentTimestamp)
+
+                if (!hasExpiredMessages && user.command_rate.cmds >= botInfo.command_rate.max_cmds_minute) {
+                    await userController.setLimitedUser(user.id, true, botInfo, currentTimestamp)
+                    isUserLimited = true
+                } else {
+                    isUserLimited = false
+                }
+            }
+
+            if (isUserLimited) {
+                const botTexts = getBotTexts(botInfo)
+                const replyText = buildText(botTexts.command_rate_limited_message, botInfo.command_rate.block_time)
+                await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+                return true
+            }
+
+        } else {
+            await userController.registerUser(message.sender, message.pushname)
         }
     }
+
     return false
 }
 
