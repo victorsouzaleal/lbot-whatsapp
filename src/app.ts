@@ -10,7 +10,7 @@ import('@ffmpeg-installer/ffmpeg').then((ffmpegInstaller)=>{
 async function init(){
     let hasBotUpdated = await botUpdater()
     
-    if(!hasBotUpdated) {
+    if (!hasBotUpdated) {
         connect()
     }
 }

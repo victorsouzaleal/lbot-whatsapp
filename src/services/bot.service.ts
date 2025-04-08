@@ -26,10 +26,6 @@ export class BotService {
         }
     }
 
-    private updateBot(bot : Bot){
-        fs.writeFileSync(this.pathJSON, JSON.stringify(bot))
-    }
-
     private initBot(){
         const bot : Bot = {
             started : 0,
@@ -51,6 +47,39 @@ export class BotService {
         }
 
         this.updateBot(bot)
+    }
+
+    private updateBot(bot : Bot){
+        fs.writeFileSync(this.pathJSON, JSON.stringify(bot))
+    }
+
+    private deleteBotData(){
+        fs.writeFileSync(this.pathJSON, JSON.stringify({}))
+    }
+
+    public rebuildBot() {
+        const oldBotData =  this.getBot() as any
+        const newBotData : Bot = {
+            started : oldBotData.started ?? 0,
+            host_number: oldBotData.host_number ?? '',
+            name: oldBotData.name ?? 'LBOT',
+            author_sticker: oldBotData.author_sticker ?? 'Leal',
+            pack_sticker: oldBotData.pack_sticker ?? 'LBOT Sticker',
+            prefix: oldBotData.prefix ?? "!",
+            executed_cmds: oldBotData.executed_cmds ?? 0,
+            autosticker: oldBotData.autosticker ?? false,
+            commands_pv: oldBotData.commands_pv ?? true,
+            admin_mode: oldBotData.admin_mode ?? false, 
+            block_cmds: oldBotData.block_cmds ?? [],    
+            command_rate: {
+                status: oldBotData.command_rate.status ?? false,
+                max_cmds_minute: oldBotData.command_rate.max_cmds_minute ?? 5,
+                block_time: oldBotData.command_rate.block_time ?? 60,
+            }
+        }
+
+        this.deleteBotData()
+        this.updateBot(newBotData)
     }
 
     public startBot(hostNumber : string){

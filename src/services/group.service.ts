@@ -55,7 +55,7 @@ export class GroupService {
         return newGroup
     }
 
-    public async rebuildGroupsDatabase() {
+    public async rebuildGroups() {
         const groups = await this.getAllGroups()
 
         for (let group of groups) {
@@ -68,15 +68,25 @@ export class GroupService {
                 owner: oldGroupData.owner,
                 restricted: oldGroupData.restricted,
                 expiration: oldGroupData.expiration,
-                muted : oldGroupData.muted ? oldGroupData.muted : false,
-                welcome : oldGroupData.welcome ? oldGroupData.welcome : { status: false, msg: '' },
-                antifake : oldGroupData.antifake ? oldGroupData.antifake : { status: false, allowed: [] },
-                antilink : oldGroupData.antilink ? oldGroupData.antilink : false,
-                antiflood : oldGroupData.antiflood ? oldGroupData.antiflood : { status: false, max_messages: 10, interval: 10},
-                autosticker : oldGroupData.autosticker ? oldGroupData.autosticker : false,
-                block_cmds : oldGroupData.block_cmds ? oldGroupData.block_cmds : [],
-                blacklist : oldGroupData.blacklist ? oldGroupData.blacklist : [],
-                word_filter: oldGroupData.word_filter ? oldGroupData.word_filter : []
+                muted : oldGroupData.muted ?? false,
+                welcome : { 
+                    status: oldGroupData.welcome.status ?? false,
+                    msg: oldGroupData.welcome.msg ?? '' 
+                },
+                antifake : { 
+                    status:  oldGroupData.antifake.status ?? false, 
+                    allowed: oldGroupData.antifake.allowed ?? [] 
+                },
+                antilink : oldGroupData.antilink ?? false,
+                antiflood : { 
+                    status: oldGroupData.antiflood.status ?? false, 
+                    max_messages: oldGroupData.antiflood.max_messages ?? 10, 
+                    interval: oldGroupData.antiflood.interval ?? 10
+                },
+                autosticker : oldGroupData.autosticker ?? false,
+                block_cmds : oldGroupData.block_cmds ?? [],
+                blacklist : oldGroupData.blacklist ?? [],
+                word_filter: oldGroupData.word_filter ?? []
             }
 
             await db.removeAsync({id: group.id}, {})

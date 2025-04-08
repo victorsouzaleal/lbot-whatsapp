@@ -62,7 +62,7 @@ export class ParticipantService {
         return db.insertAsync(participant)
     }
 
-    public async rebuildParticipantsDatabase() {
+    public async rebuildParticipants() {
         const participants = await this.getAllParticipants()
 
         for (let participant of participants) {
@@ -73,17 +73,17 @@ export class ParticipantService {
                 registered_since: oldParticipantData.registered_since,
                 commands: oldParticipantData.commands,
                 admin: oldParticipantData.admin,
-                msgs: oldParticipantData.msgs ? oldParticipantData.msgs : 0,
-                image: oldParticipantData.image ? oldParticipantData.image : 0,
-                audio: oldParticipantData.audio ? oldParticipantData.audio : 0,
-                sticker: oldParticipantData.sticker ? oldParticipantData.sticker : 0,
-                video: oldParticipantData.video ? oldParticipantData.video : 0,
-                text: oldParticipantData.text ? oldParticipantData.text : 0,
-                other: oldParticipantData.other ? oldParticipantData.other : 0,
-                warnings: oldParticipantData.warnings ? oldParticipantData.warnings : 0,
-                antiflood : oldParticipantData.antiflood ? oldParticipantData.antiflood : {
-                    expire: 0,
-                    msgs: 0
+                msgs: oldParticipantData.msgs ?? 0,
+                image: oldParticipantData.image ?? 0,
+                audio: oldParticipantData.audio ?? 0,
+                sticker: oldParticipantData.sticker ?? 0,
+                video: oldParticipantData.video ?? 0,
+                text: oldParticipantData.text ?? 0,
+                other: oldParticipantData.other ?? 0,
+                warnings: oldParticipantData.warnings ?? 0,
+                antiflood : {
+                    expire: oldParticipantData.antiflood.expire ?? 0,
+                    msgs: oldParticipantData.antiflood.msgs ?? 0
                 }
             }
 

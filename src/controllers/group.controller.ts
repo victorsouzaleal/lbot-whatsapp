@@ -40,8 +40,12 @@ export class GroupController {
         return this.groupService.registerGroup(group)
     }
 
-    public rebuildGroupsDatabase() {
-        return this.groupService.rebuildGroupsDatabase()
+    public rebuildGroups() {
+        return this.groupService.rebuildGroups()
+    }
+
+    public rebuildParticipants(){
+        return this.participantService.rebuildParticipants()
     }
 
     public setNameGroup(groupId: string, name: string) {

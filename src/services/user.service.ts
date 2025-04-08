@@ -42,7 +42,7 @@ export class UserService{
         return db.insertAsync(user)
     }
 
-    public async rebuildUserDatabase(){
+    public async rebuildUsers(){
         const users = await this.getUsers()
 
         for (let user of users) {
@@ -55,11 +55,11 @@ export class UserService{
                 receivedWelcome: oldUserData.receivedWelcome,
                 owner: oldUserData.owner,
                 admin: oldUserData.admin,
-                command_rate: oldUserData.command_rate ? oldUserData.command_rate : {
-                    limited: false,
-                    expire_limited: 0,
-                    cmds: 1,
-                    expire_cmds: timestamp + 60
+                command_rate: {
+                    limited: oldUserData.command_rate.limited ?? false,
+                    expire_limited: oldUserData.command_rate.expire_limited ?? 0,
+                    cmds: oldUserData.command_rate.cmds ?? 1,
+                    expire_cmds: oldUserData.command_rate.expire_cmds ?? timestamp + 60
                 }
             }
 

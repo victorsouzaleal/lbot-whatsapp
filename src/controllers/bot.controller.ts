@@ -14,6 +14,10 @@ export class BotController {
         return this.botService.startBot(hostNumber)
     }
 
+    public rebuildBot(){
+        return this.botService.rebuildBot()
+    }
+
     public getBot(){
         return this.botService.getBot()
     }

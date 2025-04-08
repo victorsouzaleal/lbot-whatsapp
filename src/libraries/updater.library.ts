@@ -10,17 +10,14 @@ export async function checkUpdate(currentBotVersion : string){
         const [remoteMajor, remoteMinor, remotePatch] = remoteVersion.split(".")
         let response = {
             latest : true,
-            patch_update: false,
         }
 
         if(Number(currentMajor) == Number(remoteMajor) && Number(currentMinor) == Number(remoteMinor) && Number(currentPatch) < Number(remotePatch)){
             response.latest = false
-            response.patch_update = true
         } 
         
         if (Number(currentMajor) < Number(remoteMajor) || (Number(currentMajor) == Number(remoteMajor) && Number(currentMinor) < Number(remoteMinor))){
             response.latest = false
-            response.patch_update = false
         }
 
         return response
