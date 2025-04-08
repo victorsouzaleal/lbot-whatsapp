@@ -11,8 +11,8 @@
 </p>
 
 <br>
-
-<h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a>  </h2>
+<h2 align="center"> 📱 Quer utilizar o bot no privado? <a href="https://wa.me/553497079608">AQUI</a> </h2>
+<h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a></h2>
 
 <br>
 
