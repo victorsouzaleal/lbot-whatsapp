@@ -50,6 +50,10 @@ export async function gruposCommand(client: WASocket, botInfo: Bot, message: Mes
     const currentGroups = await groupController.getAllGroups()
     let replyText = buildText(adminCommands.grupos.msgs.reply_title, currentGroups.length)
 
+    if (!currentGroups.length) {
+        throw new Error(adminCommands.grupos.msgs.error)
+    }
+
     for (let group of currentGroups){
         const groupNumber = currentGroups.indexOf(group) + 1
         const adminsGroup = await groupController.getAdmins(group.id)

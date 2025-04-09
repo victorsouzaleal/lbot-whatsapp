@@ -27,7 +27,8 @@ export function commandsAdmin(botInfo?: Bot){
                 "- *Admins*: {p4}\n"+
                 "- *Bot é admin?* {p5}\n"+
                 `- *Link*: {p6}\n\n`+
-                `- *Deseja sair desse grupo?* Use ${PREFIX}sair {p7}\n\n`
+                `- *Deseja sair desse grupo?* Use ${PREFIX}sair {p7}\n\n`,
+                error: "O bot nesse momento não está em nenhum grupo."
             },
             function: adminFunctions.gruposCommand
         },
