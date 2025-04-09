@@ -5,9 +5,10 @@ export default function getBotTexts (botInfo? : Bot){
     return {
         starting: "  _____     ______      ___    _________  \r\n |_   _|   |_   _ \\   .\'   `. |  _   _  | \r\n   | |       | |_) | \/  .-.  \\|_\/ | | \\_| \r\n   | |   _   |  __\'. | |   | |    | |     \r\n  _| |__\/ | _| |__) |\\  `-\'  \/   _| |_    \r\n |________||_______\/  `.___.\'   |_____|   \r\n" + "\n  Iniciando na versão {p1}\n",
         bot_data: "✓ Obteve dados do BOT",
-        no_update_available: 'Não há atualização disponível, seu bot está na versão mais recente.',
-        update_available: 'Uma nova atualização compatível foi encontrada, aguarde o término da atualização...',
+        no_update_available: '✓ Não há atualização disponível, seu bot está na versão mais recente.',
+        update_available: '! Uma nova atualização foi encontrada, aguarde o término da atualização...',
         error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
+        bot_updated: 'Seu bot foi atualizado com sucesso e será desligado, inicie ele novamente.',
         input_connection_method: 'Qual dos métodos você prefere usar para se conectar?\n\n'+
         '1 - QR Code\n'+
         '2 - Código de Pareamento\n\n'+
@@ -15,7 +16,6 @@ export default function getBotTexts (botInfo? : Bot){
         input_phone_number: 'Digite aqui o número em que o bot vai ficar, o número precisa ter o código internacional'+
         '(Ex: 5521912345678) -> ',
         show_pairing_code: 'Seu código de pareamento é {p1}',
-        bot_updated: 'Seu bot foi atualizado e será desligado, inicie novamente usando yarn start.',
         update_available_manual: 'Há uma atualização disponível, mas é necessário deletar todos os dados para a nova atualização funcionar corretamente. Deseja atualizar?\n\n'+
         "1 - NÃO\n"+
         "2 - SIM\n\n"+
@@ -54,8 +54,8 @@ export default function getBotTexts (botInfo? : Bot){
         "*Quem baniu*: {p2}",
         sync_blacklist: '✅ Foram banidos {p1} membros na sincronização da LISTA-NEGRA',
         sync_antifake: '✅ Foram banidos {p1} membros na sincronização do ANTI-FAKE',
-        queue_commands: "⏳ O bot está atendendo muitas pessoas ao mesmo tempo, tenha paciência!\n\n"+
-        "Atualmente existem *{p1}* comandos na fila de espera.",
+        owner_registered: '✓ Número do DONO configurado.',
+        owner_not_found: 'O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono do bot.',
         user_types: {
             owner: '💻 Dono',
             admin: '⭐ Admin',

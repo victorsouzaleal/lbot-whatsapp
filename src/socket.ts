@@ -10,6 +10,8 @@ import { groupParticipantsUpdated } from './events/group-participants-updated.ev
 import { partialGroupUpdate } from './events/group-partial-update.event.js'
 import { syncGroupsOnStart } from './helpers/groups.sync.helper.js'
 import { executeEventQueue, queueEvent } from './helpers/events.queue.helper.js'
+import getBotTexts from './helpers/bot.texts.helper.js'
+import { colorText } from './utils/general.util.js'
 
 //Cache de tentativa de envios
 const retryCache = new NodeCache()
@@ -41,6 +43,7 @@ export default async function connect(){
                 connectionOpen(client)
                 isBotReady = await syncGroupsOnStart(client)
                 await executeEventQueue(client, eventsCache)
+                console.log(colorText(getBotTexts(botInfo).server_started))
             } else if (connection === 'close'){
                 needReconnect = connectionClose(connectionState)
             }

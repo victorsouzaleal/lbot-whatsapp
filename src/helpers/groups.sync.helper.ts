@@ -15,10 +15,9 @@ export async function syncGroupsOnStart(client: WASocket){
             let groupController = new GroupController()
             await groupController.syncGroups(groupsMetadata)
             await syncResources(client)
-            console.log('[GRUPOS]', colorText(botTexts.groups_loaded))
+            console.log(colorText(botTexts.groups_loaded))
         }
 
-        console.log('[SERVIDOR]', colorText(botTexts.server_started))
         return true
     } catch(err: any){
         showConsoleError(err, "GROUPS-START-UPDATE")

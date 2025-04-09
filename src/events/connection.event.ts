@@ -23,7 +23,7 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
     if (answerMethod == '2') {
         const answerNumber = await rl.question(botTexts.input_phone_number)
         const code = await client.requestPairingCode(answerNumber.replace(/\W+/g,""))
-        console.log('[CÓDIGO DE PAREAMENTO]', colorText(buildText(botTexts.show_pairing_code, code)))
+        console.log(colorText(buildText(botTexts.show_pairing_code, code)))
     } else {
         if (qr) {
             await new Promise<void>(resolve => {
@@ -40,10 +40,9 @@ export async function connectionOpen(client: WASocket){
     try{
         const botTexts = getBotTexts()
         const botController = new BotController()
-        console.log(buildText(botTexts.starting, getCurrentBotVersion()))
         dotenv.config()
         botController.startBot(waLib.getHostNumber(client))
-        console.log("[BOT]", colorText(botTexts.bot_data))
+        console.log(colorText(botTexts.bot_data))
         await checkOwnerRegister()
     } catch(err: any) {
         showConsoleError(err, "CONNECTION")
@@ -83,10 +82,12 @@ export function connectionClose(connectionState : Partial<ConnectionState>){
 }
 
  async function checkOwnerRegister(){
+    const botTexts = getBotTexts()
     const owner = await new UserController().getOwner()
+
     if (!owner){
-        console.log("[DONO]", colorText("O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono do bot.", "#d63e3e"))
+        console.log(colorText(botTexts.owner_not_found, "#d63e3e"))
     } else {
-        console.log("[DONO]", colorText("✓ Número do DONO configurado."))
+        console.log(colorText(botTexts.owner_registered))
     }
 }

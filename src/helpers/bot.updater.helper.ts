@@ -14,19 +14,19 @@ export async function botUpdater(){
         const checkUpdate = await updaterLib.checkUpdate(currentVersion)
 
         if (checkUpdate.latest) {
-            console.log("[ATUALIZAÇÃO]", colorText(botTexts.no_update_available))
+            console.log(colorText(botTexts.no_update_available))
         } else {
-            console.log("[ATUALIZAÇÃO]", colorText(botTexts.update_available, '#e0e031'))
+            console.log(colorText(botTexts.update_available, '#e0e031'))
             fs.removeSync('./dist')
             await updaterLib.makeUpdate('./')
             await databaseRebuilder()
-            console.log("[ATUALIZAÇÃO]", colorText(botTexts.bot_updated))
+            console.log(colorText(botTexts.bot_updated))
             hasBotUpdated = true
         }
         
         return hasBotUpdated
     } catch(err){
-        console.log("[ATUALIZAÇÃO]", colorText(botTexts.error_check_update, '#e0e031'))
+        console.log("[botUpdater]", colorText(botTexts.error_check_update, "#d63e3e"))
         return hasBotUpdated
     }
 }
