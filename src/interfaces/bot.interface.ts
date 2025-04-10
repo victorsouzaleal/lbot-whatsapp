@@ -6,6 +6,7 @@ export interface Bot {
     pack_sticker: string,
     prefix: string,
     executed_cmds: number,
+    database_updated: boolean,
     autosticker: boolean,
     block_cmds: string[],
     commands_pv: boolean,

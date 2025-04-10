@@ -35,6 +35,7 @@ export class BotService {
             pack_sticker: "LBOT Sticker",
             prefix: "!",
             executed_cmds: 0,
+            database_updated: true,
             autosticker: false,
             commands_pv: true,
             admin_mode: false, 
@@ -67,6 +68,7 @@ export class BotService {
             pack_sticker: oldBotData.pack_sticker ?? 'LBOT Sticker',
             prefix: oldBotData.prefix ?? "!",
             executed_cmds: oldBotData.executed_cmds ?? 0,
+            database_updated: oldBotData.database_updated ?? true,
             autosticker: oldBotData.autosticker ?? false,
             commands_pv: oldBotData.commands_pv ?? true,
             admin_mode: oldBotData.admin_mode ?? false, 
@@ -110,11 +112,22 @@ export class BotService {
         bot.pack_sticker = name
         return this.updateBot(bot)
     }
+
+    public setDatabaseUpdated(status: boolean) {
+        let bot = this.getBot()
+        bot.database_updated = status
+        return this.updateBot(bot)
+    }
     
     public setPrefix(prefix: string){
         let bot = this.getBot()
         bot.prefix = prefix
         return this.updateBot(bot)
+    }
+
+    public isDatabaseUpdated(){
+        let bot = this.getBot()
+        return bot.database_updated ?? false
     }
 
     public storeMessageOnCache(message : proto.IWebMessageInfo, messageCache : NodeCache){

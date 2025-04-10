@@ -56,6 +56,7 @@ export default function getBotTexts (botInfo? : Bot){
         sync_antifake: '✅ Foram banidos {p1} membros na sincronização do ANTI-FAKE',
         owner_registered: '✓ Número do DONO configurado.',
         owner_not_found: 'O número do DONO ainda não foi configurado, digite !admin para cadastrar seu número como dono do bot.',
+        rebuilding_database: '! O banco de dados está sendo reconstruído, por favor aguarde...',
         user_types: {
             owner: '💻 Dono',
             admin: '⭐ Admin',

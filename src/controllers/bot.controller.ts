@@ -38,6 +38,10 @@ export class BotController {
         return this.botService.setPrefix(prefix)
     }
 
+    public setDatabaseUpdated(status: boolean) {
+        return this.botService.setDatabaseUpdated(status)
+    }    
+
     public storeMessageOnCache(message : proto.IWebMessageInfo, messageCache : NodeCache){
         return this.botService.storeMessageOnCache(message, messageCache)
     }
@@ -48,6 +52,10 @@ export class BotController {
 
     public incrementExecutedCommands(){
         return this.botService.incrementExecutedCommands()
+    }
+
+    public isDatabaseUpdated(){
+        return this.botService.isDatabaseUpdated()
     }
 
     // Recursos do BOT

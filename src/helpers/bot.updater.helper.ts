@@ -6,10 +6,19 @@ import fs from 'fs-extra'
 import databaseRebuilder from "./database.rebuilder.helper.js";
 
 export async function botUpdater(){
-    const botTexts = getBotTexts(new BotController().getBot())
+    const botController = new BotController()
+    const botInfo = botController.getBot()
+    const botTexts = getBotTexts(botInfo)
     let hasBotUpdated = false
     
     try{
+
+        if (!botController.isDatabaseUpdated()) {
+            await databaseRebuilder()
+            botController.setDatabaseUpdated(true)
+            console.log(colorText(botTexts.rebuilding_database, '#e0e031'))
+        }
+
         const currentVersion = getCurrentBotVersion()
         const checkUpdate = await updaterLib.checkUpdate(currentVersion)
 
@@ -19,7 +28,7 @@ export async function botUpdater(){
             console.log(colorText(botTexts.update_available, '#e0e031'))
             fs.removeSync('./dist')
             await updaterLib.makeUpdate('./')
-            await databaseRebuilder()
+            botController.setDatabaseUpdated(false)
             console.log(colorText(botTexts.bot_updated))
             hasBotUpdated = true
         }
