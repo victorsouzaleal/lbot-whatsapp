@@ -4,8 +4,7 @@
 <h1 align="center">Azyra - Bot para WhatsApp</h1>
 <p align="center">
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouzaleal/lbot-whatsapp?label=vers%C3%A3o&color=#79C83D"/></a>
-<a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat&color=#79C83D"></a>
-<a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&style=flat&color=#79C83D"></a>
+<a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img t
 <a href="https://github.com/mathwqz"><img title="Autor" src="https://img.shields.io/badge/mathz-bot-blue"></a>
 </p>
 <br>
