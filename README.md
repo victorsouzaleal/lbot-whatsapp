@@ -7,11 +7,7 @@
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img t
 <a href="https://github.com/mathwqz"><img title="Autor" src="https://img.shields.io/badge/mathz-bot-blue"></a>
 </p>
-<br>
-<h2 align="center"> 📱 Quer utilizar o bot no privado? <a href="https://wa.me/553497079608">AQUI</a> </h2>
-<h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a></h2>
 
-<br>
 
 ## 🚨 REQUERIMENTOS :
 - Um **número de celular conectado ao WhatsApp** para conectar o bot. <br>
