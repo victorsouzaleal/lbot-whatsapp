@@ -1,6 +1,21 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.2.0 - 11/04/2025
+
+### GERAL
+- A partir dessa versão o banco de dados é reconstruído a cada atualização não sendo mais necessário perder os dados para atualizar.
+- Melhoria na sincronização de grupos.
+- Melhoria na fila de eventos para evitar eventos desnecessários.
+- Pequenas alterações nos textos exibidos no terminal em cada inicialização.
+
+### COMANDOS
+- Todos os comandos que necessitavam de uma chave API (com pouco limite) foram removidos, no momento apenas o **!ia** e **!criarimg** por serem altamente requisitados e acabar rápido o limite.
+- Adicionada mensagem de erro ao usar o **!grupos** se o bot não estiver em nenhum grupo.
+
+### CORREÇÕES
+- Correção ao remover administrador do grupo que não era reconhecido pelo bot que um membro não já não era mais administrador.
+
 ## 3.1.5 - 04/04/2025
 
 ### CORREÇÕES
