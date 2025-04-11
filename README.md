@@ -1,15 +1,13 @@
 <p align="center">
-<img src="https://img95.pixhost.to/images/1083/472612217_8876.jpg" width="350" height="350"/>
+<a href="https://pixhost.to/show/1593/586788807_whatsapp-image-2025-04-11-at-09-49-49.jpg"><img src="https://t12.pixhost.to/thumbs/1593/586788807_whatsapp-image-2025-04-11-at-09-49-49.jpg" alt="whatsapp-image-2025-04-11-at-09-49-49.jpg" border="0"/></a>
 </p>
-<h1 align="center">🤖 LBot - Robô para WhatsApp</h1>
+<h1 align="center">Azyra - Bot para WhatsApp</h1>
 <p align="center">
 <a href="#"><img title="Versão" src="https://img.shields.io/github/package-json/v/victorsouzaleal/lbot-whatsapp?label=vers%C3%A3o&color=#79C83D"/></a>
-<a href="https://github.com/victorsouzaleal/followers"><img title="Seguidores" src="https://img.shields.io/github/followers/victorsouzaleal?label=seguidores&style=flat&color=#79C83D"/></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/stargazers/"><img title="Estrelas" src="https://img.shields.io/github/stars/victorsouzaleal/lbot-whatsapp?label=estrelas&style=flat&color=#79C83D"></a>
 <a href="https://github.com/victorsouzaleal/lbot-whatsapp/watchers"><img title="Acompanhando" src="https://img.shields.io/github/watchers/victorsouzaleal/lbot-whatsapp?label=acompanhando&style=flat&color=#79C83D"></a>
-<a href="https://github.com/victorsouzaleal"><img title="Autor" src="https://img.shields.io/badge/autor-victorsouzaleal-blue.svg?logo=github&color=#79C83D"></a>
+<a href="https://github.com/mathwqz"><img title="Autor" src=" https://img.shields.io/badge/mathz-b-blue"></a>
 </p>
-
 <br>
 <h2 align="center"> 📱 Quer utilizar o bot no privado? <a href="https://wa.me/553497079608">AQUI</a> </h2>
 <h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a></h2>
@@ -152,9 +150,9 @@ Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!n
 ## 5 - 👤 Contato
 Caso tenha algum problema ou queira ajudar de alguma forma com o projeto. 
 
-* **Email**: victorsouzaleal@gmail.com
-* **WhatsApp (NÃO É O BOT, É MEU CONTATO PESSOAL PELO AMOR DE DEUS)**: https://wa.me/5521995612287
-
+* **Email**: hs.pro.theuz@gmail.com
+* **WhatsApp (NÃO É O BOT, É MEU CONTATO PESSOAL PELO AMOR DE DEUS)**: https://wa.me/5563992516644
+* **Doe**: <button onclick="window.location.href='https://pix.sejaefi.com.br/pagar/015b3a880163a893a9baee17a37f327825a3f5a0.html'">Doe</button>
 <br>
 
 ## 6 - 🙏 Agradecimentos
