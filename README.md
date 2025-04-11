@@ -157,5 +157,5 @@ Caso tenha algum problema ou queira ajudar de alguma forma com o projeto.
 
 ## 6 - 🙏 Agradecimentos
 
-* A minha mãe e o meu pai que me fizeram com muito amor
+* Ao https://github.com/victorsouzaleal por manter o projeto vivo. Todos os créditos são dele.
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Por disponibilizar a biblioteca Baileys e dar suporte no Discord principalmente a nós brasileiros.
