@@ -12,6 +12,9 @@ logs/session/*
 #Ignorar arquivos temporarios
 temp
 #Ignorar DB e etc
-dados
+storage
 #Sessão Baileys
-sessao
+session
+
+# Codigo JS
+dist
