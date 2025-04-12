@@ -98,54 +98,37 @@ Todos os comandos tem um guia ao digitar: **!comando** guia
 ## 3 - ⚙️ Configuração do bot:
 
 ### Como configurar o DONO:
-Para usar as funções de **administrador** digite **!admin** pela primeira vez ao iniciar ao bot e ai seu número será cadastrado como dono.<br><br>
-Pronto, agora você tem acesso aos comandos de **ADMIN**. Use **!nomebot**, **!nomeautor**, **!nomepack** para personalizar o nome do seu bot em menus e em stickers, e veja todos os comandos de administrador com o **!admin**.<br><br>
+Para usar as funções de **administrador** envie **!admin** para o WhatsApp do bot e seu número será cadastrado como dono.
+
+<br>
+
+Após ser cadastrado como **DONO** envie **!admin** novamente e veja toda a lista de comandos de administrador.
 
 <br>
 
 ## 4 - 🛠️ Recursos/Comandos :
 
 ### 🖼️ Figurinhas
-- Foto para sticker
-- Video/GIF para sticker
-- Sticker para foto
-- EmojiMix
-- Renomear sticker
-- Auto sticker
+Diversos comandos para criação de figurinhas
 
 ### 📥 Downloads 
-- Youtube (video/audio)
-- Facebook (video)
-- Instagram (video/imagem)
-- X (video/imagem)
-- Tiktok (video)
-- Google (imagem)
+Diversos comandos para download de mídias das principais redes sociais : X, Youtube, Instagram, TikTok...
 
 ### ⚒️ Utilidades Gerais
-- Respostas de IA
-- Criar imagem com IA
-- Pesquisa na Steam verde
-- Brasileirão A/B 
-- Têndencias de filmes/séries
-- Encurtar links 
-- Upload de imagens 
-- Efeitos de aúdio 
-- Texto para voz 
-- Áudio para texto 
-- Letra de música 
-- Reconhecimento de músicas  
-- Detector de DDD 
-- Detector de anime 
-- Clima/Previsão do Tempo
-- Conversão de moedas
-- Calculadora 
-- Pesquisa Google      
-- Noticias Google 
-- Tradutor Google
+Diversos comandos de utilidades como encurtar link, editar áudio, obter letra de música, etc...
+
+### 👾 Entretenimento
+Diversos comandos para entretenimento do grupo
+
+### 👨‍👩‍👦‍👦 Administração de Grupo
+Diversos comandos de grupo para ajudar na administração
+
+### ⚙️ Administração geral do bot
+Diversos para administrar o bot e ter controle sobre ele.
 
 <br>
 
-### 👉 E muito mais... [Clique Aqui](docs/COMANDOS.md)
+### 👉 Lista completa de comandos... [Clique Aqui](docs/COMANDOS.md)
 
 <br>
 

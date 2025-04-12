@@ -2,7 +2,7 @@
 
 ### 🖼️ Figurinhas
 - Foto para sticker
-- Video/gif para sticker
+- Video/GIF para sticker
 - Sticker para foto
 - Renomear sticker
 - EmojiMix
@@ -17,46 +17,44 @@
 - Google (imagem)
 
 ### ⚒️ Utilidades Gerais
-- Respostas de IA
-- Criar imagem com IA
 - Brasileirão A/B
-- Têndencias de Filmes/Séries
-- Encurtar Links
+- Lista de animes atuais
+- Lista de mangás atuais
+- Têndencias de filmes/séries
+- Encurtar links
 - Upload de imagens
-- Efeitos de Aúdio
+- Efeitos de aúdio
 - Texto para voz
 - Áudio para texto
-- Letra de Música
+- Letra de música
 - Reconhecimento de músicas
 - Detector de DDD
-- Consulta de Clima/Previsão do Tempo
-- Conversão de Moedas
+- Consulta de clima e previsão do tempo
+- Conversão de moedas
 - Calculadora
-- Pesquisa Google     
-- Detector Anime  
-- Noticias Google
-- Tradutor Google
+- Pesquisa web    
+- Detector de anime
+- Noticias atuais
+- Tradutor de texto
 
 ### 👾 Variado
 - Pedra, papel e tesoura
 - Cara e coroa
 - Viadômetro
+- Gadômetro
+- Bafômetro
 - Detector de mentira
+- Compartibilidade de par
 - Casal
 - Frases do WhatsApp Jr.
-- Gadômetro
 - Chance
-- Bafômetro
 - Top 5
-- Compartibilidade de par
 - Roleta Russa
 
 
 ### 👨‍👩‍👦‍👦 Administração de Grupo
-- Promover participante
-- Rebaixar participante
-- Remover participante
-- Adicionar participante
+- Promover/rebaixar participante
+- Adicionar/remover participante
 - Marcar todos
 - Marcar participantes 
 - Marcar admins
@@ -66,13 +64,16 @@
 - Lista negra
 - Mutar grupo para não usar comandos
 - Bem vindo
-- Auto Sticker
-- Anti Fake
-- Anti Link
-- Anti Flood
-- Contagem de mensagens/atividade 
+- Auto sticker
+- Anti fake
+- Anti link
+- Anti flood
+- Filtro da palavras proibidas
+- Sistema de avisos (3 avisos e vai para a lista negra)
+- Contagem de mensagens
+- Ranking dos membros com mais mensagens do grupo
 - Marcar inativos 
-- Bloquear/Desbloquear comandos
+- Bloquear/desbloquear comandos no grupo
 - Apagar mensagens
 - Abrir/fechar grupo para admins
 
@@ -82,12 +83,15 @@
 - Sair de grupo
 - Sair de todos os grupos
 - Anúncio para os grupos
-- Bloquear/Desbloquear usuário
+- Bloquear/desbloquear usuário
+- Bloquear/desbloquear comandos globalmente
+- Modo admin para apenas admins usarem comandos
+- Ligar/desligar comandos no privado do bot
 - Limitar comandos por minuto
-- Auto Sticker em mensagens privadas
+- Auto sticker em mensagens privadas
 - Obter usuários bloqueados
 - Modificar foto do bot
-- Modificar descrição do bot
-- Modificar nome do bot em menus e figurinhas
+- Modificar descrição/recado do bot
+- Modificar nome do bot
 - Promover/rebaixar usuários
   
