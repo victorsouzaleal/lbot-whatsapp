@@ -10,7 +10,8 @@ export function commandsSticker(botInfo?: Bot){
             `Ex: Envie/responda uma *IMAGEM* com *${PREFIX}s 2* - Transforma em sticker sem perder a proporção.\n`,
             msgs: {
                 error_limit: 'O video/gif deve ter no máximo 8 segundos.',
-                error_message: "Houve um erro ao obter os dados da mensagem."
+                error_message: "Houve um erro ao obter os dados da mensagem.",
+                author_text: 'Solicitado por: {p1}'
             },
             function: stickerFunctions.sCommand
         },
@@ -28,7 +29,8 @@ export function commandsSticker(botInfo?: Bot){
             msgs: {
                 wait: `[AGUARDE] 📸 O fundo da imagem está sendo removido e o sticker será enviado em breve.`,
                 error_image: `Este comando é válido apenas para imagens.`,
-                error_message: "Houve um erro ao obter os dados da mensagem."
+                error_message: "Houve um erro ao obter os dados da mensagem.",
+                author_text: 'Solicitado por: {p1}'
             },
             function: stickerFunctions.ssfCommand
         },
@@ -38,7 +40,8 @@ export function commandsSticker(botInfo?: Bot){
             msgs: {
                 error_emoji: "O emoji {p1} não é compatível para essa união",
                 error_emojis: "Os emoji {p1} e {p2} não são compatíveis para a união",
-                error_not_found: "Não foi encontrada uma união válida para esses emojis"
+                error_not_found: "Não foi encontrada uma união válida para esses emojis",
+                author_text: 'Solicitado por: {p1}'
             },
             function: stickerFunctions.emojimixCommand
         },

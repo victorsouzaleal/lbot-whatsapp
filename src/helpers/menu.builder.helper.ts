@@ -302,8 +302,6 @@ export const adminMenu = (botInfo : Bot)=>{
 *|*━━ ✦ 🎨 *CUSTOMIZAÇÃO* ✦
 *|*
 *|*► *${prefix}nomebot* nome - Altera nome do bot
-*|*► *${prefix}nomeautor* nome - Altera nome do autor de sticker
-*|*► *${prefix}nomepack* nome - Altera nome do pacote de figurinhas
 *|*► *${prefix}prefixo* simbolo - Altera o prefixo dos comandos
 *|*► *${prefix}fotobot* - Altera foto do bot
 *|*► *${prefix}recado* texto - Altera o texto do recado/status

@@ -26,14 +26,6 @@ export class BotController {
         return this.botService.setNameBot(name)
     }
 
-    public setAuthorSticker(name: string){
-        return this.botService.setAuthorSticker(name)
-    }
-
-    public setPackSticker(name: string){
-        return this.botService.setPackSticker(name)
-    }
-
     public setPrefix(prefix: string){
         return this.botService.setPrefix(prefix)
     }

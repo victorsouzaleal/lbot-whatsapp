@@ -197,20 +197,6 @@ export function commandsAdmin(botInfo?: Bot){
             },
             function: adminFunctions.nomebotCommand
         },
-        nomepack: {
-            guide: `Ex: *${PREFIX}nomesticker* Teste123 - Muda o nome do *PACOTE DE STICKERS* para *Teste123* e atualiza os novos stickers com o novo nome.\n`,
-            msgs: {
-                reply: "✅ O nome do pacote de figurinhas foi alterado com sucesso.",
-            },
-            function: adminFunctions.nomepackCommand
-        },
-        nomeautor: {
-            guide: `Ex: *${PREFIX}nomeadm* Teste123 - Muda o nome do *ADMINISTRADOR* para *Teste123* e atualiza os menus com o novo nome.\n`,
-            msgs: {
-                reply: "✅ O nome do autor de figurinhas foi alterado com sucesso.",
-            },
-            function: adminFunctions.nomeautorCommand
-        },
         prefixo: {
             guide: `Ex: *${PREFIX}prefixo* .  - Muda o prefixo dos *COMANDOS* para *.* e atualiza os menus e comandos com o novo prefixo.\n\n`+
             `Suporta os seguintes prefixos: *!*  *#*  *.*  ***\n`,

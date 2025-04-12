@@ -5,7 +5,6 @@ import { Message } from "../interfaces/message.interface.js"
 import { waLib, imageLib, stickerLib } from "../libraries/library.js"
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import { commandsSticker } from "./sticker.list.commands.js"
-import getBotTexts from "../helpers/bot.texts.helper.js"
 
 export async function sCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const stickerCommands = commandsSticker(botInfo)
@@ -32,17 +31,24 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     }
     
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
-    const stickerBuffer = await stickerLib.createSticker(mediaBuffer, {pack: botInfo.pack_sticker.trim(), author: botInfo.author_sticker.trim(), fps: 9, type: stickerType})
-    await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
+    const authorText = buildText(stickerCommands.s.msgs.author_text, message.pushname)
+    const stickerBuffer = await stickerLib.createSticker(mediaBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: stickerType})
+    await waLib.sendSticker(client, message.chat_id, stickerBuffer, { expiration: message.expiration })
 }
 
 export async function simgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const stickerCommands = commandsSticker(botInfo)
 
-    if (!message.isQuoted) {
+    if (!message.isQuoted || !message.quotedMessage) {
         throw new Error(messageErrorCommandUsage(botInfo, message))
-    } else if (message.quotedMessage?.type != "stickerMessage") {
+    } else if (message.quotedMessage.type != "stickerMessage") {
         throw new Error(stickerCommands.simg.msgs.error_sticker)
+    }
+
+    let messageQuotedData = message.quotedMessage.wa_message
+
+    if (messageQuotedData.message?.stickerMessage?.url == "https://web.whatsapp.net") {
+        messageQuotedData.message.stickerMessage.url = `https://mmg.whatsapp.net${messageQuotedData.message.stickerMessage.directPath}` 
     }
 
     const stickerBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
@@ -67,7 +73,8 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
     await waLib.replyText(client, message.chat_id, stickerCommands.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     const imageBuffer = await imageLib.removeBackground(mediaBuffer)
-    const stickerBuffer = await stickerLib.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
+    const authorText = buildText(stickerCommands.ssf.msgs.author_text, message.pushname)
+    const stickerBuffer = await stickerLib.createSticker(imageBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
     await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
@@ -100,13 +107,13 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(stickerCommands.emojimix.msgs.error_not_found)
     } 
 
-    const stickerBuffer = await stickerLib.createSticker(imageBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
+    const authorText = buildText(stickerCommands.emojimix.msgs.author_text, message.pushname)
+    const stickerBuffer = await stickerLib.createSticker(imageBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
     await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
 export async function snomeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const stickerCommands = commandsSticker(botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isQuoted || message.quotedMessage?.type != "stickerMessage") {
         throw new Error(messageErrorCommandUsage(botInfo, message))
@@ -124,25 +131,27 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
         throw new Error(stickerCommands.snome.msgs.error_message)
     }
 
-    messageQuotedData.message.stickerMessage.url = (messageQuotedData.message.stickerMessage.url == "https://web.whatsapp.net") 
-        ? `https://mmg.whatsapp.net${messageQuotedData.message.stickerMessage.directPath}` 
-        : messageQuotedData.message.stickerMessage.url
+    if (messageQuotedData.message.stickerMessage.url == "https://web.whatsapp.net") {
+        messageQuotedData.message.stickerMessage.url = `https://mmg.whatsapp.net${messageQuotedData.message.stickerMessage.directPath}` 
+    }
 
-    let stickerBuffer = await downloadMediaMessage(messageQuotedData, 'buffer', {})
-
-    let stickerRenamedBuffer = await stickerLib.renameSticker(stickerBuffer, pack, author).catch(() => {
-        throw new Error(botTexts.library_error)
-    })
-
+    const stickerBuffer = await downloadMediaMessage(messageQuotedData, 'buffer', {})
+    const stickerRenamedBuffer = await stickerLib.renameSticker(stickerBuffer, pack, author)
     await waLib.sendSticker(client, message.chat_id, stickerRenamedBuffer, {expiration: message.expiration})
 }
 
 export async function autoSticker(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    if (message.type != 'imageMessage' && message.type != "videoMessage") return
-    if (message.type == "videoMessage" && message.media?.seconds && message.media?.seconds > 9) return
+    const stickerCommands = commandsSticker(botInfo)
+
+    if (message.type != 'imageMessage' && message.type != "videoMessage") {
+        return
+    } else if (message.type == "videoMessage" && message.media?.seconds && message.media?.seconds > 9) {
+        return
+    }
 
     let mediaBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
-    let stickerBuffer = await stickerLib.createSticker(mediaBuffer, {pack: botInfo.pack_sticker?.trim(), author: botInfo.author_sticker?.trim(), fps: 9, type: 'resize'})
+    const authorText = buildText(stickerCommands.s.msgs.author_text, message.pushname)
+    let stickerBuffer = await stickerLib.createSticker(mediaBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
     await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 

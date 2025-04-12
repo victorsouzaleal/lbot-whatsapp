@@ -2,8 +2,6 @@ export interface Bot {
     started: number,
     host_number: string,
     name: string,
-    author_sticker: string,
-    pack_sticker: string,
     prefix: string,
     executed_cmds: number,
     database_updated: boolean,

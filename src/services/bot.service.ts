@@ -31,8 +31,6 @@ export class BotService {
             started : 0,
             host_number: '',
             name: "LBOT",
-            author_sticker: "Leal",
-            pack_sticker: "LBOT Sticker",
             prefix: "!",
             executed_cmds: 0,
             database_updated: true,
@@ -64,8 +62,6 @@ export class BotService {
             started : oldBotData.started ?? 0,
             host_number: oldBotData.host_number ?? '',
             name: oldBotData.name ?? 'LBOT',
-            author_sticker: oldBotData.author_sticker ?? 'Leal',
-            pack_sticker: oldBotData.pack_sticker ?? 'LBOT Sticker',
             prefix: oldBotData.prefix ?? "!",
             executed_cmds: oldBotData.executed_cmds ?? 0,
             database_updated: oldBotData.database_updated ?? true,
@@ -98,18 +94,6 @@ export class BotService {
     public setNameBot(name: string){
         let bot = this.getBot()
         bot.name = name
-        return this.updateBot(bot)
-    }
-
-    public setAuthorSticker(name: string){
-        let bot = this.getBot()
-        bot.author_sticker = name
-        return this.updateBot(bot)
-    }
-
-    public setPackSticker(name: string){
-        let bot = this.getBot()
-        bot.pack_sticker = name
         return this.updateBot(bot)
     }
 

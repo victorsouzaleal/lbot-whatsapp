@@ -375,30 +375,6 @@ export async function nomebotCommand(client: WASocket, botInfo: Bot, message: Me
     await waLib.replyText(client, message.chat_id, adminCommands.nomebot.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
-export async function nomepackCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const botController = new BotController()
-    const adminCommands = commandsAdmin(botInfo)
-
-    if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
-    }
-
-    botController.setPackSticker(message.text_command)
-    await waLib.replyText(client, message.chat_id, adminCommands.nomepack.msgs.reply, message.wa_message, {expiration: message.expiration})
-}
-
-export async function nomeautorCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const botController = new BotController()
-    const adminCommands = commandsAdmin(botInfo)
-
-    if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
-    }
-
-    botController.setAuthorSticker(message.text_command)
-    await waLib.replyText(client, message.chat_id, adminCommands.nomeautor.msgs.reply, message.wa_message, {expiration: message.expiration})
-}
-
 export async function prefixoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const botController = new BotController()
     const adminCommands = commandsAdmin(botInfo)
