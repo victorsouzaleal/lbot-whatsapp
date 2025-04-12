@@ -236,17 +236,20 @@ export async function demoteParticipant(client: WASocket, groupId: string, parti
 }
 
 export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){
-    if (!m.message) return
+    if (!m.message) {
+        return
+    }
     
     const type = getContentType(m.message)
 
-    if (!type) return 
-    if (!isAllowedType(type)) return 
-    if (!m.message[type]) return
+    if (!type || !isAllowedType(type) || !m.message[type]) {
+        return
+    }
 
     const contextInfo : proto.IContextInfo | undefined  = (typeof m.message[type] != "string" && m.message[type] && "contextInfo" in m.message[type]) ? m.message[type].contextInfo as proto.IContextInfo: undefined
     const isQuoted = (contextInfo?.quotedMessage) ? true : false
     const sender = (m.key.fromMe) ? hostId : m.key.participant || m.key.remoteJid
+    const pushName = m.pushName
     const body =  m.message.conversation ||  m.message.extendedTextMessage?.text || undefined
     const caption = (typeof m.message[type] != "string" && m.message[type] && "caption" in m.message[type]) ? m.message[type].caption as string | null: undefined
     const text =  caption || body || ''
@@ -257,7 +260,9 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     const chat_id = m.key.remoteJid
     const isGroupAdmin = (sender && group) ? await new GroupController().isParticipantAdmin(group.id, sender) : false
 
-    if (!message_id || !t || !sender || !chat_id ) return 
+    if (!message_id || !t || !sender || !chat_id || !pushName ) {
+        return 
+    }
 
     let formattedMessage : Message = {
         message_id,
@@ -266,7 +271,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
         t,
         chat_id,
         expiration : contextInfo?.expiration || undefined,
-        pushname: m.pushName || '',
+        pushname: pushName,
         body: m.message.conversation || m.message.extendedTextMessage?.text || '',
         caption : caption || '',
         mentioned: contextInfo?.mentionedJid || [],

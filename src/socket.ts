@@ -1,5 +1,5 @@
 
-import {makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, WASocket} from 'baileys'
+import {makeWASocket, fetchLatestBaileysVersion, WASocket} from 'baileys'
 import NodeCache from 'node-cache'
 import configSocket from './config.js'
 import { BotController } from './controllers/bot.controller.js'
@@ -12,6 +12,7 @@ import { syncGroupsOnStart } from './helpers/groups.sync.helper.js'
 import { executeEventQueue, queueEvent } from './helpers/events.queue.helper.js'
 import getBotTexts from './helpers/bot.texts.helper.js'
 import { colorText } from './utils/general.util.js'
+import { useNeDBAuthState } from './helpers/session.auth.helper.js'
 
 //Cache de tentativa de envios
 const retryCache = new NodeCache()
@@ -21,7 +22,8 @@ const eventsCache = new NodeCache()
 const messagesCache = new NodeCache({stdTTL: 5*60, useClones: false})
 
 export default async function connect(){
-    const { state, saveCreds } = await useMultiFileAuthState('session')
+    const { state, saveCreds } = await useNeDBAuthState()
+    
     const {version} = await fetchLatestBaileysVersion()
     const client : WASocket = makeWASocket(configSocket(state, retryCache, version, messagesCache))
     let isBotReady = false
@@ -45,7 +47,7 @@ export default async function connect(){
                 await executeEventQueue(client, eventsCache)
                 console.log(colorText(getBotTexts(botInfo).server_started))
             } else if (connection === 'close'){
-                needReconnect = connectionClose(connectionState)
+                needReconnect = await connectionClose(connectionState)
             }
                 
             if (needReconnect) {
