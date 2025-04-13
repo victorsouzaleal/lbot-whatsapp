@@ -521,7 +521,7 @@ export async function pingCommand(client: WASocket, botInfo: Bot, message: Messa
     const ramTotal = (os.totalmem()/1024000000).toFixed(2)
     const ramUsed = ((os.totalmem() - os.freemem())/1024000000).toFixed(2)
     const systemName = `${os.type()} ${os.release()}`
-    const cpuName = os.cpus()[0].model
+    const cpuName = os.cpus()[0]?.model ?? '---'
     const currentGroups = await groupController.getAllGroups()
     const currentUsers = await userController.getUsers()
     const botStarted = timestampToDate(botInfo.started)
