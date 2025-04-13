@@ -12,7 +12,7 @@ import UserAgent from 'user-agents'
 import { AnimeRelease, CurrencyConvert, MangaRelease, MusicLyrics, News, SearchGame, WebSearch, Wheather } from '../interfaces/library.interface.js'
 import moment from 'moment-timezone'
 import Fuse from 'fuse.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function animeReleases(){
     try {
@@ -42,7 +42,7 @@ export async function animeReleases(){
         return animes
     } catch(err){
         showConsoleLibraryError(err, 'animeReleases')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -73,7 +73,7 @@ export async function mangaReleases(){
         return mangas
     } catch(err){
         showConsoleLibraryError(err, 'mangaReleases')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -92,7 +92,7 @@ export async function brasileiraoTable(serie : "A" | "B"){
         return table
     } catch(err) {
         showConsoleLibraryError(err, 'brasileiraoTable')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -109,7 +109,7 @@ export async function moviedbTrendings(type : 'movie' | 'tv' = "movie"){
         return trendings
     } catch(err) {
         showConsoleLibraryError(err, 'moviedbTrendings')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -135,7 +135,7 @@ export async function calcExpression(expr: string){
         return calcResult as string
     } catch(err) {
         showConsoleLibraryError(err, 'calcExpression')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -154,7 +154,7 @@ export async function newsGoogle(lang = 'pt'){
         return newsResponse
     } catch(err) {
         showConsoleLibraryError(err, 'newsGoogle')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -165,7 +165,7 @@ export async function translationGoogle(text: string, lang: "pt" | "es" | "en" |
         return translationResponse.text
     } catch (err){
         showConsoleLibraryError(err, 'translationGoogle')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -181,7 +181,7 @@ export async function shortenUrl(url: string){
         return shortenResponse.data as string
     } catch(err) {
         showConsoleLibraryError(err, 'shortenUrl')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -199,7 +199,7 @@ export async function webSearchGoogle(texto: string){
         return searchResponse
     } catch(err) {
         showConsoleLibraryError(err, 'webSearchGoogle')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -259,7 +259,7 @@ export async function wheatherInfo(location: string){
         return weatherResponse
     } catch(err) {
         showConsoleLibraryError(err, 'wheatherInfo')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -288,7 +288,7 @@ export async function musicLyrics(text: string){
         return musicResult
     } catch(err) {
         showConsoleLibraryError(err, 'musicLyrics')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -357,7 +357,7 @@ export async function convertCurrency(currency: "dolar" | "euro" | "real" | "ien
         return convertResult
     } catch(err) {
         showConsoleLibraryError(err, 'convertCurrency')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -380,7 +380,7 @@ export async function infoDDD(ddd: string){
         return response
     } catch(err) {
         showConsoleLibraryError(err, 'infoDDD')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -392,7 +392,7 @@ export async function symbolsASCI(){
         return symbolsResponse as string
     } catch(err) {
         showConsoleLibraryError(err, 'symbolsASCI')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -431,7 +431,7 @@ export async function searchGame(gameTitle: string){
         return resultList
     } catch(err) {
         showConsoleLibraryError(err, 'searchGame')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 

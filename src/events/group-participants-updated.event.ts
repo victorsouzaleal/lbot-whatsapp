@@ -3,7 +3,7 @@ import { buildText, showConsoleError} from '../utils/general.util.js'
 import { Bot } from '../interfaces/bot.interface.js'
 import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 import { waLib } from '../libraries/library.js'
 
 export async function groupParticipantsUpdated (client: WASocket, event: {id: string, author: string, participants: string[], action: ParticipantAction}, botInfo: Bot){
@@ -69,7 +69,6 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
 async function isParticipantBlacklisted(client: WASocket, botInfo: Bot, group: Group, userId: string){
     const groupController = new GroupController()
     const isUserBlacklisted = await groupController.isBlackListed(group.id, userId)
-    const botTexts = getBotTexts(botInfo)
     const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
 
     if (isBotAdmin && isUserBlacklisted) {
@@ -93,7 +92,6 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
             const isFake = groupController.isNumberFake(group, userId)
 
             if (isFake && !isBotNumber && !isGroupAdmin){
-                const botTexts = getBotTexts(botInfo)
                 const replyText = buildText(botTexts.antifake_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
                 await waLib.sendTextWithMentions(client, group.id, replyText , [userId], {expiration: group.expiration})
                 await waLib.removeParticipant(client, group.id, userId)
@@ -109,7 +107,6 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
 
 async function sendWelcome(client: WASocket, group: Group, botInfo: Bot, userId: string){
     if (group.welcome.status) {
-        const botTexts = getBotTexts(botInfo)
         const customMessage = group.welcome.msg ?  group.welcome.msg + "\n\n" : ""
         const welcomeMessage = buildText(botTexts.group_welcome_message, waLib.removeWhatsappSuffix(userId), group.name, customMessage)
         await waLib.sendTextWithMentions(client, group.id, welcomeMessage, [userId], {expiration: group.expiration})

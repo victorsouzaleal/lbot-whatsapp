@@ -6,7 +6,7 @@ import Tiktok from '@tobyg74/tiktok-api-dl'
 import axios from 'axios'
 import yts from 'yt-search'
 import { FacebookMedia, InstagramMedia, TiktokMedia, XMedia, YTInfo } from '../interfaces/library.interface.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function xMedia (url: string){
     try {
@@ -30,7 +30,7 @@ export async function xMedia (url: string){
         return xMedia
     } catch(err) {
         showConsoleLibraryError(err, 'xMedia')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -53,7 +53,7 @@ export async function tiktokMedia (url : string){
         return tiktokMedia
     } catch(err) {
         showConsoleLibraryError(err, 'tiktokMedia')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -72,7 +72,7 @@ export async function facebookMedia(url : string) {
         return facebookMedia
     } catch(err) {
         showConsoleLibraryError(err, 'facebookMedia')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -96,7 +96,7 @@ export async function instagramMedia (url: string){
         return instagramMedia
     } catch(err) {
         showConsoleLibraryError(err, 'instagramMedia')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -149,6 +149,6 @@ export async function youtubeMedia (text : string){
         return ytInfo
     } catch(err) {
         showConsoleLibraryError(err, 'youtubeMedia')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }

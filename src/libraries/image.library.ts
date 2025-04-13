@@ -6,7 +6,7 @@ import FormData from 'form-data'
 import getEmojiMixUrl, {checkSupported} from 'emoji-mixer'
 import {ImageUploadService} from 'node-upload-images'
 import { AnimeRecognition, ImageSearch } from '../interfaces/library.interface.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function uploadImage(imageBuffer : Buffer){
     try {
@@ -16,7 +16,7 @@ export async function uploadImage(imageBuffer : Buffer){
         return directLink
     } catch(err){
         showConsoleLibraryError(err, 'uploadImage')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -30,7 +30,7 @@ export async function checkEmojiMixSupport(emoji1: string, emoji2: string){
         return emojiSupport
     } catch(err){
         showConsoleLibraryError(err, 'checkEmojiMixSupport')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -47,7 +47,7 @@ export async function emojiMix(emoji1: string, emoji2: string){
         return imageBuffer as Buffer
     } catch(err){
         showConsoleLibraryError(err, 'emojiMix')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -112,7 +112,7 @@ export async function removeBackground(imageBuffer: Buffer){
         return imageBufferRemovedBg as Buffer
     } catch(err){
         showConsoleLibraryError(err, 'removeBackground')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -156,7 +156,7 @@ export async function animeRecognition(imageBuffer : Buffer){
         return animeInfo
     } catch(err){
         showConsoleLibraryError(err, 'animeRecognition')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -173,6 +173,6 @@ export async function imageSearchGoogle(text: string){
         return imagesResult
     } catch(err){
         showConsoleLibraryError(err, 'imageSearchGoogle')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }

@@ -3,16 +3,14 @@ import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
 import { waLib, miscLib } from "../libraries/library.js"
-import { buildText, messageErrorCommandUsage, timestampToDate, uppercaseFirst} from "../utils/general.util.js"
-import getBotTexts from "../helpers/bot.texts.helper.js"
-import { commandsMisc } from "./misc.list.commands.js"
+import { buildText, messageErrorCommandUsage, uppercaseFirst} from "../utils/general.util.js"
+import botTexts from "../helpers/bot.texts.helper.js"
+import miscCommands from "./misc.list.commands.js"
 import { GroupController } from "../controllers/group.controller.js"
 
 export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     } 
 
     const chosenNumber = Number(message.text_command)
@@ -28,8 +26,6 @@ export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Me
 
 export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const groupController = new GroupController()
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupMsg || !group){
         throw new Error(botTexts.permission.group)
@@ -42,7 +38,6 @@ export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, messa
 }
 
 export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
     const PIC_URL = "https://i.imgur.com/mVwa7q4.png"
     await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', PIC_URL, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
 }
@@ -51,7 +46,7 @@ export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Me
 export async function simiCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
 
-    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo, message))
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(message))
 
     const simiResult = await miscLib.simSimi(message.text_command)
     const replyText = buildText(miscCommands.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
@@ -59,13 +54,10 @@ export async function simiCommand(client: WASocket, botInfo: Bot, message: Messa
 }*/
 
 export async function viadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
-
     if (!message.isGroupMsg){
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted && !message.mentioned.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     } else if (message.mentioned.length > 1){
         throw new Error(miscCommands.viadometro.msgs.error_mention)
     }
@@ -77,13 +69,10 @@ export async function viadometroCommand(client: WASocket, botInfo: Bot, message:
 }
 
 export async function detectorCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
-
     if (!message.isGroupMsg) {
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const quotedMessage = message.quotedMessage?.wa_message
@@ -100,7 +89,6 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 }
 
 export async function roletarussaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
     const bulletPosition = Math.floor(Math.random() * 6) + 1
     const currentPosition = Math.floor(Math.random() * 6) + 1
     const hasShooted  = (bulletPosition == currentPosition)
@@ -117,9 +105,7 @@ export async function roletarussaCommand(client: WASocket, botInfo: Bot, message
 
 export async function casalCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const groupController = new GroupController()
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
-   
+
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } 
@@ -140,12 +126,11 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
 }
 
 export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
     const validChoices = ['cara', 'coroa']
     const userChoice = message.text_command.toLowerCase()
 
     if (!message.args.length || !validChoices.includes(userChoice)) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
     
     const flipCoinInfo = miscLib.flipCoin()
@@ -165,13 +150,12 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
 }
 
 export async function pptCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
     const validChoices = ["pedra", "papel", "tesoura"]
     const userChoice = message.text_command.toLocaleLowerCase()
     const randomIndex = Math.floor(Math.random() * validChoices.length)
 
     if (!message.args.length || !validChoices.includes(userChoice)) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     let botChoice = validChoices[randomIndex]
@@ -210,13 +194,10 @@ export async function pptCommand(client: WASocket, botInfo: Bot, message: Messag
 }
 
 export async function gadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
-   
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted && !message.mentioned.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     } else if (message.mentioned.length > 1) {
         throw new Error(miscCommands.gadometro.msgs.error_mention)
     }
@@ -228,13 +209,10 @@ export async function gadometroCommand(client: WASocket, botInfo: Bot, message: 
 }
 
 export async function bafometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
-   
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted && !message.mentioned.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     } else if (message.mentioned.length > 1) {
         throw new Error(miscCommands.bafometro.msgs.error_mention)
     }
@@ -247,13 +225,11 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
 
 export async function top5Command(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const groupController = new GroupController()
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
     
     let rankingTheme = message.text_command
@@ -294,13 +270,10 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
 }
 
 export async function parCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-    const botTexts = getBotTexts(botInfo)
-
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (message.mentioned.length !== 2) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const randomNumber = Math.floor(Math.random() * 100)
@@ -309,10 +282,8 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
 }
 
 export async function chanceCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
-
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const randomNumber = Math.floor(Math.random() * 100)
@@ -322,7 +293,6 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
 }
 
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const miscCommands = commandsMisc(botInfo)
     const phraseResult = await miscLib.funnyRandomPhrases()
     const replyText =  buildText(miscCommands.frase.msgs.reply, phraseResult.text)
     await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message, {expiration: message.expiration})

@@ -3,7 +3,7 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { UserController } from "../controllers/user.controller.js";
-import getBotTexts from "../helpers/bot.texts.helper.js";
+import botTexts from "../helpers/bot.texts.helper.js";
 import { GroupController } from "../controllers/group.controller.js";
 import { buildText, removeFormatting } from "../utils/general.util.js";
 import { BotController } from "../controllers/bot.controller.js";
@@ -21,11 +21,10 @@ export async function isUserBlocked(client: WASocket, message: Message){
 
 export async function isOwnerRegister(client: WASocket, botInfo: Bot, message: Message){
     const admins = await userController.getAdmins()
-    const botTexts = getBotTexts(botInfo)
 
     if (!admins.length && message.command == `${botInfo.prefix}admin`){
         await userController.registerOwner(message.sender)
-        await waLib.replyText(client, message.chat_id, botTexts.admin_registered, message.wa_message, {expiration: message.expiration})
+        await waLib.replyText(client, message.chat_id, buildText(botTexts.admin_registered), message.wa_message, {expiration: message.expiration})
         return true
     }
     
@@ -66,7 +65,6 @@ export async function isBotLimitedByGroupRestricted(group: Group, botInfo: Bot){
 }
 
 export async function sendPrivateWelcome(client: WASocket, botInfo: Bot, message: Message){
-    const botTexts = getBotTexts(botInfo)
     const user = await userController.getUser(message.sender)
 
     if (user && !user.receivedWelcome){
@@ -114,7 +112,6 @@ export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot,
             }
 
             if (isUserLimited) {
-                const botTexts = getBotTexts(botInfo)
                 const replyText = buildText(botTexts.command_rate_limited_message, botInfo.command_rate.block_time)
                 await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
                 return true
@@ -130,7 +127,6 @@ export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot,
 
 export async function isCommandBlockedGlobally(client: WASocket, botInfo: Bot, message: Message ){
     const commandBlocked = botController.isCommandBlockedGlobally(message.command)
-    const botTexts = getBotTexts(botInfo)
 
     if (commandBlocked && !message.isBotAdmin){
         const replyText = buildText(botTexts.globally_blocked_command, message.command)
@@ -143,7 +139,6 @@ export async function isCommandBlockedGlobally(client: WASocket, botInfo: Bot, m
 
 export async function isCommandBlockedGroup(client: WASocket, group: Group, botInfo: Bot, message: Message){
     const commandBlocked = groupController.isBlockedCommand(group, message.command, botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (commandBlocked && !message.isGroupAdmin){
         const replyText = buildText(botTexts.group_blocked_command, message.command)
@@ -172,7 +167,6 @@ export async function isDetectedByWordFilter(client: WASocket, botInfo: Bot, gro
 }
 
 export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group: Group, message: Message){
-    const botTexts = getBotTexts(botInfo)
     const { body, caption, isGroupAdmin} = message
     const userText = body || caption
     const groupAdmins = await groupController.getAdminsIds(group.id)
@@ -195,7 +189,6 @@ export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group
 }
 
 export async function isDetectedByAntiFlood(client: WASocket, botInfo: Bot, group: Group, message: Message){
-    const botTexts = getBotTexts(botInfo)
     const currentTimestamp = Math.round(moment.now()/1000)
     const { isGroupAdmin } = message
     const participant = await groupController.getParticipant(group.id, message.sender)

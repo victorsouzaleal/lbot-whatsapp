@@ -11,5 +11,4 @@ export default async function databaseRebuilder(){
     await new GroupController().rebuildGroups()
     //Reconstroi e atualiza os dados dos participantes dos grupos
     await new GroupController().rebuildParticipants()
-    
 }

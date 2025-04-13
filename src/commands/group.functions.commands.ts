@@ -4,13 +4,12 @@ import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { waLib } from "../libraries/library.js";
 import { buildText, messageErrorCommandUsage } from "../utils/general.util.js";
-import getBotTexts from "../helpers/bot.texts.helper.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
-import { commandsGroup } from "./group.list.commands.js";
+import groupCommands from "./group.list.commands.js";
+import botTexts from "../helpers/bot.texts.helper.js";
 
 export async function grupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const groupCommands = commandsGroup(botInfo)
     const groupController = new GroupController()
     const currentParticipants = await groupController.getParticipants(group.id)
     const currentAdmins = await groupController.getAdmins(group.id)
@@ -44,8 +43,6 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function avisoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
     let targetUserId : string
     let replyText: string
@@ -61,7 +58,7 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
     } else if (message.isQuoted && message.quotedMessage) {
         targetUserId = message.quotedMessage.sender
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const isBotTarget = botInfo.host_number == targetUserId
@@ -93,8 +90,6 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
     let targetUserId : string
 
@@ -109,7 +104,7 @@ export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Me
     } else if (message.isQuoted && message.quotedMessage) {
         targetUserId = message.quotedMessage.sender
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const participant = await groupController.getParticipant(group.id, targetUserId)
@@ -129,8 +124,6 @@ export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Me
 
 export async function zeraravisosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -146,8 +139,6 @@ export async function zeraravisosCommand(client: WASocket, botInfo: Bot, message
 
 export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -155,7 +146,7 @@ export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message:
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     let replyText = groupCommands.addfiltros.msgs.reply_title
@@ -174,8 +165,6 @@ export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message:
 
 export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -183,7 +172,7 @@ export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: 
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     let replyText = groupCommands.rmfiltros.msgs.reply_title
@@ -202,8 +191,6 @@ export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: 
 
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -211,7 +198,7 @@ export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: 
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (message.type != 'imageMessage' && message.quotedMessage?.type != 'imageMessage') {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
     
     let imageBuffer : Buffer
@@ -228,8 +215,6 @@ export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: 
 
 export async function addlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
     let targetUserId : string
 
@@ -246,7 +231,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.args.length) {
         targetUserId = waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     if (targetUserId == botInfo.host_number) {
@@ -271,8 +256,6 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
     let targetUserId : string
 
@@ -281,7 +264,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
     
     const currentBlacklist = await groupController.getBlackList(group.id)
@@ -303,8 +286,6 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
 export async function listanegraCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const userController = new UserController()
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -331,8 +312,6 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
 
 export async function addCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -340,7 +319,7 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
     
     let userId = waLib.addWhatsappSuffix(message.text_command.trim())
@@ -363,8 +342,6 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function banCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -380,7 +357,7 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
     } else if (message.mentioned.length) {
         targetUsers = message.mentioned
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     let replyText = groupCommands.ban.msgs.reply_title
@@ -403,8 +380,6 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function promoverCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -421,7 +396,7 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.isQuoted && message.quotedMessage) {
         targetUsers.push(message.quotedMessage.sender)
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     for(let userId of targetUsers){
@@ -438,8 +413,6 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -456,7 +429,7 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.isQuoted && message.quotedMessage) {
         targetUsers.push(message.quotedMessage.sender)
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     for(let userId of targetUsers){
@@ -475,8 +448,6 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function mtCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const currentParticipantsIds = await groupController.getParticipantsIds(group.id)
 
     if (!message.isGroupAdmin) {
@@ -495,9 +466,7 @@ export async function mtCommand(client: WASocket, botInfo: Bot, message: Message
 }
 
 export async function mmCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const groupCommands = commandsGroup(botInfo)
     const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
     let replyText : string
 
     if (!message.isGroupAdmin) throw new Error(botTexts.permission.admin_group_only)
@@ -520,7 +489,6 @@ export async function mmCommand(client: WASocket, botInfo: Bot, message: Message
 
 export async function admsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
     const adminsIds = await groupController.getAdminsIds(group.id)
     let replyText : string
     
@@ -535,8 +503,6 @@ export async function admsCommand(client: WASocket, botInfo: Bot, message: Messa
 }
 
 export async function donoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
-    const groupCommands = commandsGroup(botInfo)
-
     if (!group.owner) {
         throw new Error(groupCommands.dono.msgs.error)
     }
@@ -547,8 +513,6 @@ export async function donoCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function mutarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
@@ -561,8 +525,6 @@ export async function mutarCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function linkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -578,8 +540,6 @@ export async function linkCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -598,8 +558,6 @@ export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function restritoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -615,8 +573,6 @@ export async function restritoCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function antilinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -632,8 +588,6 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function autostickerCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
@@ -646,8 +600,6 @@ export async function autostickerCommand(client: WASocket, botInfo: Bot, message
 
 export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
@@ -660,8 +612,6 @@ export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function antifakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -678,8 +628,6 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function antifloodCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const groupCommands = commandsGroup(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -712,7 +660,6 @@ export async function antifloodCommand(client: WASocket, botInfo: Bot, message: 
 
 export async function apgCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
     const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
 
     if (!message.isGroupAdmin) {
@@ -720,7 +667,7 @@ export async function apgCommand(client: WASocket, botInfo: Bot, message: Messag
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.isQuoted || !message.quotedMessage) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
     
     await waLib.deleteMessage(client, message.wa_message, true)
@@ -728,8 +675,6 @@ export async function apgCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function topativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
-    const groupCommands = commandsGroup(botInfo)
     let qtyRanking = 10
 
     if (!message.isGroupAdmin) {
@@ -776,8 +721,6 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
 export async function membroCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
     const userController = new UserController()
-    const botTexts = getBotTexts(botInfo)
-    const groupCommands = commandsGroup(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
@@ -790,7 +733,7 @@ export async function membroCommand(client: WASocket, botInfo: Bot, message: Mes
     } else if (message.mentioned.length === 1) {
         targetUserId = message.mentioned[0]
     } else {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     let participant = await groupController.getParticipant(group.id, targetUserId)
@@ -806,13 +749,11 @@ export async function membroCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function inativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
-    const groupCommands = commandsGroup(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const qtyMessage = Number(message.text_command)
@@ -841,12 +782,11 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const replyText = await groupController.blockCommands(group, message.args, botInfo)
@@ -855,12 +795,11 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
-    const botTexts = getBotTexts(botInfo)
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const replyText = await groupController.unblockCommands(group, message.args, botInfo)

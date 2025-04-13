@@ -10,7 +10,7 @@ import { groupParticipantsUpdated } from './events/group-participants-updated.ev
 import { partialGroupUpdate } from './events/group-partial-update.event.js'
 import { syncGroupsOnStart } from './helpers/groups.sync.helper.js'
 import { executeEventQueue, queueEvent } from './helpers/events.queue.helper.js'
-import getBotTexts from './helpers/bot.texts.helper.js'
+import botTexts from './helpers/bot.texts.helper.js'
 import { colorText } from './utils/general.util.js'
 import { useNeDBAuthState } from './helpers/session.auth.helper.js'
 
@@ -45,7 +45,7 @@ export default async function connect(){
                 connectionOpen(client)
                 isBotReady = await syncGroupsOnStart(client)
                 await executeEventQueue(client, eventsCache)
-                console.log(colorText(getBotTexts(botInfo).server_started))
+                console.log(colorText(botTexts.server_started))
             } else if (connection === 'close'){
                 needReconnect = await connectionClose(connectionState)
             }

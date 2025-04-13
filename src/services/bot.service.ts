@@ -7,7 +7,7 @@ import { buildText } from "../utils/general.util.js"
 import { proto } from "baileys"
 import NodeCache from "node-cache"
 import { commandExist, getCommandsByCategory } from "../utils/commands.util.js"
-import { commandsAdmin } from "../commands/admin.list.commands.js"
+import adminCommands from "../commands/admin.list.commands.js"
 import { waLib } from "../libraries/library.js"
 
 export class BotService {
@@ -163,11 +163,10 @@ export class BotService {
         return this.updateBot(bot)
     }
 
-    // Bloquear/Desbloquear comandos
+    // ********************* MOVER AS FUNÇÕES DE BLOQUEAR/DESBLOQUEAR PARA OS COMANDOS ESPECIFICOS
     public blockCommandsGlobally(commands : string[]){
         let botInfo = this.getBot()
-        const adminCommands = commandsAdmin(botInfo)
-        const {prefix} = botInfo
+        const { prefix } = botInfo
         let blockResponse = adminCommands.bcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] = ['sticker', 'utility', 'download', 'misc']
 
@@ -178,18 +177,18 @@ export class BotService {
         } 
         
         if (categories.includes(commands[0] as CategoryCommand)) {
-            commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+            commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
         }
         
         for(let command of commands){
-            if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'misc') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')){
+            if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')){
                 if (botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))){
                     blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_already_blocked, command)
                 } else {
                     botInfo.block_cmds.push(waLib.removePrefix(prefix, command))
                     blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_blocked, command)
                 }
-            } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info') ){
+            } else if (commandExist(prefix, command, 'group') || commandExist(prefix, command, 'admin') || commandExist(prefix, command, 'info') ){
                 blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_error, command)
             } else {
                 blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_not_exist, command)
@@ -202,7 +201,6 @@ export class BotService {
 
     public unblockCommandsGlobally(commands: string[]){
         let botInfo = this.getBot()
-        const adminCommands = commandsAdmin(botInfo)
         const {prefix} = botInfo
         let unblockResponse = adminCommands.dcmdglobal.msgs.reply_title
         let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
@@ -219,7 +217,7 @@ export class BotService {
             if (commands[0] === 'all') {
                 commands = botInfo.block_cmds.map(command => prefix+command)
             } else {
-                commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+                commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
             }
         }
 

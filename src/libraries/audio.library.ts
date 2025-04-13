@@ -10,7 +10,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import FormData from 'form-data'
 import { ApiKeys, AudioModificationType, MusicRecognition } from '../interfaces/library.interface.js'
 import crypto from 'node:crypto'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function audioTranscription (audioBuffer : Buffer){
     try {
@@ -43,7 +43,7 @@ export async function audioTranscription (audioBuffer : Buffer){
         throw error
     } catch(err){
         showConsoleLibraryError(err, 'audioTranscription')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -116,7 +116,7 @@ export async function musicRecognition (mediaBuffer : Buffer){
         throw error
     } catch(err){
         showConsoleLibraryError(err, 'musicRecognition')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -134,7 +134,7 @@ export async function textToVoice (lang: "pt" | 'en' | 'ja' | 'es' | 'it' | 'ru'
         return audioBuffer
     } catch(err){
         showConsoleLibraryError(err, 'textToVoice')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -187,7 +187,7 @@ export async function audioModified (audioBuffer: Buffer, type: AudioModificatio
         return bufferModifiedAudio
     } catch(err){
         showConsoleLibraryError(err, 'audioTranscription')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 

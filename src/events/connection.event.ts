@@ -4,7 +4,7 @@ import fs from "fs-extra"
 import dotenv from 'dotenv'
 import { BotController } from '../controllers/bot.controller.js'
 import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../utils/general.util.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
 import qrcode from 'qrcode-terminal'
@@ -12,7 +12,6 @@ import readline from 'readline/promises'
 import { cleanCreds } from '../helpers/session.auth.helper.js'
 
 export async function connectionQr(client: WASocket, connectionState : Partial<ConnectionState>){
-    const botTexts = getBotTexts()
     const { qr } = connectionState
     const rl = readline.createInterface({
         input: process.stdin,
@@ -39,7 +38,6 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
 
 export async function connectionOpen(client: WASocket){
     try{
-        const botTexts = getBotTexts()
         const botController = new BotController()
         dotenv.config()
         botController.startBot(waLib.getHostNumber(client))
@@ -53,7 +51,6 @@ export async function connectionOpen(client: WASocket){
 
 export async function connectionClose(connectionState : Partial<ConnectionState>){
     try{
-        const botTexts = getBotTexts()
         const { lastDisconnect } = connectionState
         let needReconnect = false
         const errorCode = (new Boom(lastDisconnect?.error)).output.statusCode
@@ -83,7 +80,6 @@ export async function connectionClose(connectionState : Partial<ConnectionState>
 }
 
  async function checkOwnerRegister(){
-    const botTexts = getBotTexts()
     const owner = await new UserController().getOwner()
 
     if (!owner){

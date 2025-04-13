@@ -6,7 +6,7 @@ import {getTempPath, showConsoleLibraryError} from '../utils/general.util.js'
 import {fileTypeFromBuffer} from 'file-type'
 import jimp from 'jimp'
 import { StickerOptions, StickerType } from "../interfaces/library.interface.js"
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function createSticker(mediaBuffer : Buffer, {pack = 'LBOT', author = 'LBOT Stickers', fps = 9, type = 'resize'}: StickerOptions){
     try {
@@ -15,7 +15,7 @@ export async function createSticker(mediaBuffer : Buffer, {pack = 'LBOT', author
         return bufferSticker
     } catch(err){
         showConsoleLibraryError(err, 'createSticker')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -26,7 +26,7 @@ export async function renameSticker(stickerBuffer: Buffer, pack: string, author:
         return stickerBufferModified
     } catch(err){
         showConsoleLibraryError(err, 'renameSticker')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -50,7 +50,7 @@ export async function stickerToImage(stickerBuffer: Buffer){
         return imageBuffer
     } catch(err){
         showConsoleLibraryError(err, 'stickerToImage')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 

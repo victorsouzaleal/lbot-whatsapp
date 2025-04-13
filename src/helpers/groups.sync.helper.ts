@@ -2,14 +2,12 @@ import { WASocket, GroupMetadata } from 'baileys'
 import { BotController } from '../controllers/bot.controller.js'
 import { buildText, showConsoleError, colorText } from '../utils/general.util.js'
 import { GroupController } from '../controllers/group.controller.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 import { waLib } from '../libraries/library.js'
 
 export async function syncGroupsOnStart(client: WASocket){
     try{
         const groupsMetadata = await waLib.getAllGroups(client)
-        const botInfo = new BotController().getBot()
-        const botTexts = getBotTexts(botInfo)
 
         if (groupsMetadata.length){
             let groupController = new GroupController()
@@ -32,7 +30,6 @@ async function syncResources(client: WASocket){
     const botInfo = new BotController().getBot()
 
     for (let group of currentGroups){
-        const botTexts = getBotTexts(botInfo)
         const participants = await groupController.getParticipants(group.id)
         const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
         let bannedByBlackList = 0

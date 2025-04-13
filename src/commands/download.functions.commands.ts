@@ -5,13 +5,11 @@ import { Message } from "../interfaces/message.interface.js"
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import { downloadLib, imageLib, convertLib, waLib } from "../libraries/library.js"
 import format from 'format-duration'
-import { commandsDownload } from "./download.list.commands.js"
+import downloadCommands from "./download.list.commands.js"
 
 export async function playCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     } 
 
     const videoInfo = await downloadLib.youtubeMedia(message.text_command)
@@ -32,10 +30,8 @@ export async function playCommand(client: WASocket, botInfo: Bot, message: Messa
 }
 
 export async function ytCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const videoInfo = await downloadLib.youtubeMedia(message.text_command)
@@ -54,10 +50,8 @@ export async function ytCommand(client: WASocket, botInfo: Bot, message: Message
 }
 
 export async function fbCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const fbInfo = await downloadLib.facebookMedia(message.text_command)
@@ -72,10 +66,8 @@ export async function fbCommand(client: WASocket, botInfo: Bot, message: Message
 }
 
 export async function igCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const igInfo = await downloadLib.instagramMedia(message.text_command)
@@ -92,10 +84,8 @@ export async function igCommand(client: WASocket, botInfo: Bot, message: Message
 }
 
 export async function xCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const xInfo = await downloadLib.xMedia(message.text_command)
@@ -117,10 +107,8 @@ export async function xCommand(client: WASocket, botInfo: Bot, message: Message,
 }
 
 export async function tkCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
     const tiktok = await downloadLib.tiktokMedia(message.text_command)
@@ -150,17 +138,15 @@ export async function tkCommand(client: WASocket, botInfo: Bot, message: Message
 }
 
 export async function imgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const downloadCommands = commandsDownload(botInfo)
-
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     } 
 
     const MAX_SENT = 5
     const MAX_RESULTS = 50
     let imagesSent = 0
 
-    let images =  await imageLib.imageSearchGoogle(message.text_command)
+    let images = await imageLib.imageSearchGoogle(message.text_command)
     const maxImageResults = images.length > MAX_RESULTS ? MAX_RESULTS : images.length
     images = images.splice(0, maxImageResults)
 

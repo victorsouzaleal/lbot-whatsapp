@@ -2,7 +2,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs-extra'
 import axios from 'axios'
 import {getTempPath, showConsoleLibraryError} from '../utils/general.util.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function convertMp4ToMp3 (sourceType: 'buffer' | 'url',  video: Buffer | string){
     try {
@@ -45,7 +45,7 @@ export async function convertMp4ToMp3 (sourceType: 'buffer' | 'url',  video: Buf
         return audioBuffer
     } catch(err){
         showConsoleLibraryError(err, 'convertMp4ToMp3')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -102,7 +102,7 @@ export async function convertVideoToWhatsApp(sourceType: 'buffer' | 'url',  vide
         return videoBuffer
     } catch(err){
         showConsoleLibraryError(err, 'convertVideoToWhatsApp')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -161,6 +161,6 @@ export async function convertVideoToThumbnail(sourceType : "file"|"buffer"|"url"
         return thumbBase64
     } catch(err){
         showConsoleLibraryError(err, 'convertVideoToThumbnail')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }

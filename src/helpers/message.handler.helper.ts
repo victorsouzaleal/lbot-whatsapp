@@ -6,7 +6,7 @@ import { commandExist } from "../utils/commands.util.js";
 import * as procs from './message.procedures.helper.js'
 
 export async function handlePrivateMessage(client: WASocket, botInfo: Bot, message: Message){
-    const isCommand = commandExist(botInfo, message.command)
+    const isCommand = commandExist(botInfo.prefix, message.command)
     const isAutosticker = ((message.type === 'videoMessage' || message.type === "imageMessage") && botInfo.autosticker)
     let callCommand : boolean
 
@@ -65,7 +65,7 @@ export async function handlePrivateMessage(client: WASocket, botInfo: Bot, messa
 }
 
 export async function handleGroupMessage(client: WASocket, group: Group, botInfo: Bot, message: Message){
-    const isCommand = commandExist(botInfo, message.command)
+    const isCommand = commandExist(botInfo.prefix, message.command)
     const isAutosticker = ((message.type === 'videoMessage' || message.type === "imageMessage") && group?.autosticker)
     let callCommand : boolean
 

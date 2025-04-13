@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'querystring'
 import { showConsoleLibraryError } from '../utils/general.util.js'
-import getBotTexts from '../helpers/bot.texts.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function simSimi(text: string){
     try {
@@ -24,7 +24,7 @@ export async function simSimi(text: string){
         return simiResponse.message as string | null | undefined
     } catch(err){
         showConsoleLibraryError(err, 'simSimi')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -56,7 +56,7 @@ export async function funnyRandomPhrases(){
         return response
     } catch(err) {
         showConsoleLibraryError(err, 'funnyRandomPhrases')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -83,7 +83,7 @@ export function truthMachine(){
         return response
     } catch(err) {
         showConsoleLibraryError(err, 'truthMachine')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 
@@ -100,7 +100,7 @@ export function flipCoin(){
         return response
     } catch(err) {
         showConsoleLibraryError(err, 'flipCoin')
-        throw new Error(getBotTexts().library_error)
+        throw new Error(botTexts.library_error)
     }
 }
 

@@ -4,14 +4,13 @@ import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { waLib } from "../libraries/library.js";
 import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../utils/general.util.js";
-import getBotTexts from "../helpers/bot.texts.helper.js";
 import { UserController } from "../controllers/user.controller.js";
 import * as menu from "../helpers/menu.builder.helper.js";
-import commandsInfo from "./info.list.commands.js";
+import infoCommands from "./info.list.commands.js";
+import botTexts from "../helpers/bot.texts.helper.js";
 
 export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const userController = new UserController()
-    const infoCommands = commandsInfo(botInfo)
     const blockedUsers = await waLib.getBlockedContacts(client)
     const adminsBot = await userController.getAdmins()
     const adminsBotContacts = adminsBot.map(admin => `- wa.me/${waLib.removeWhatsappSuffix(admin.id)}\n`)
@@ -55,10 +54,9 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function reportarCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(botInfo, message))
+        throw new Error(messageErrorCommandUsage(message))
     }
 
-    const infoCommands = commandsInfo(botInfo)
     const admins = await new UserController().getAdmins()
 
     if (!admins.length) {
@@ -74,8 +72,6 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
 }
 
 export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
-    const botTexts = getBotTexts(botInfo)
-    const infoCommands = commandsInfo(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
     if (!userData) {
@@ -90,8 +86,6 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
 }
 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
-    const infoCommands = commandsInfo(botInfo)
-    const botTexts = getBotTexts(botInfo)
     const userData = await new UserController().getUser(message.sender)
 
     if (!userData) {
@@ -128,7 +122,7 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
                 break
             case "5":
                 if (!message.isGroupMsg) {
-                    throw new Error(getBotTexts(botInfo).permission.group)
+                    throw new Error(botTexts.permission.group)
                 } else if (message.isGroupAdmin) {
                     replyText += menu.groupAdminMenu(botInfo)
                 } else {

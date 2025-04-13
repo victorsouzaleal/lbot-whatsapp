@@ -1,14 +1,12 @@
 import { updaterLib } from "../libraries/library.js";
 import { colorText, getCurrentBotVersion } from "../utils/general.util.js";
-import getBotTexts from "../helpers/bot.texts.helper.js";
+import botTexts from "../helpers/bot.texts.helper.js";
 import { BotController } from "../controllers/bot.controller.js";
 import fs from 'fs-extra'
 import databaseRebuilder from "./database.rebuilder.helper.js";
 
 export async function botUpdater(){
     const botController = new BotController()
-    const botInfo = botController.getBot()
-    const botTexts = getBotTexts(botInfo)
     let hasBotUpdated = false
     
     try{

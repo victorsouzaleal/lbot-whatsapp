@@ -3,7 +3,7 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { CategoryCommand } from "../interfaces/command.interface.js";
 import { GroupMetadata } from 'baileys'
 import { buildText } from '../utils/general.util.js'
-import { commandsGroup } from "../commands/group.list.commands.js";
+import groupCommands from "../commands/group.list.commands.js";
 import { commandExist, getCommandsByCategory } from "../utils/commands.util.js";
 import { waLib } from "../libraries/library.js";
 import DataStore from "@seald-io/nedb";
@@ -257,10 +257,9 @@ export class GroupService {
         return list.includes(userId)
     }
 
-    // ***** BLOQUEAR/DESBLOQUEAR COMANDOS *****
+    // ***** MOVER ESSAS FUNÇÕES DE BLOQUEIO/DESBLOQUEIO PARA SEUS COMANDOS ESPECIFICOS
     public async blockCommands(group: Group, commands : string[], botInfo: Bot){
         const { prefix } = botInfo
-        const groupCommands = commandsGroup(botInfo)
         let blockedCommands : string[] = []
         let blockResponse = groupCommands.bcmd.msgs.reply_title
         let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'misc']
@@ -272,18 +271,18 @@ export class GroupService {
         } 
         
         if (categories.includes(commands[0] as CategoryCommand)) {
-            commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+            commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
         }
 
         for (let command of commands) {
-            if (commandExist(botInfo, command, 'utility') || commandExist(botInfo, command, 'misc') || commandExist(botInfo, command, 'sticker') || commandExist(botInfo, command, 'download')) {
+            if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')) {
                 if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
                     blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_already_blocked, command)
                 } else {
                     blockedCommands.push(waLib.removePrefix(prefix, command))
                     blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_blocked, command)
                 }
-            } else if (commandExist(botInfo, command, 'group') || commandExist(botInfo, command, 'admin') || commandExist(botInfo, command, 'info')) {
+            } else if (commandExist(prefix, command, 'group') || commandExist(prefix, command, 'admin') || commandExist(prefix, command, 'info')) {
                 blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_error, command)
             } else {
                 blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_not_exist, command)
@@ -298,7 +297,6 @@ export class GroupService {
     }
 
     public async unblockCommand(group: Group, commands: string[], botInfo: Bot){
-        const groupCommands = commandsGroup(botInfo)
         const { prefix } = botInfo
         let unblockedCommands : string[] = []
         let unblockResponse = groupCommands.dcmd.msgs.reply_title
@@ -316,7 +314,7 @@ export class GroupService {
             if (commands[0] === 'all') {
                 commands = group.block_cmds.map(command => prefix + command)
             } else {
-                commands = getCommandsByCategory(botInfo, commands[0] as CategoryCommand)
+                commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
             }
         }
 
