@@ -12,6 +12,7 @@
 
 <br>
 <h2 align="center"> 📱 Quer utilizar o bot no privado? <a href="https://wa.me/553497079608">AQUI</a> </h2>
+<h2 align="center"> 👤 Contato e Doações: <a href="https://github.com/victorsouzaleal/lbot-whatsapp?tab=readme-ov-file#5----contato-e-doações">AQUI</a> </h2>
 <h2 align="center"> 🔄 Notas de atualização: <a href="https://github.com/victorsouzaleal/lbot-whatsapp/blob/main/docs/CHANGELOG.md">AQUI</a></h2>
 
 <br>
@@ -132,9 +133,10 @@ Diversos para administrar o bot e ter controle sobre ele.
 
 <br>
 
-## 5 - 👤 Contato
-Caso tenha algum problema ou queira ajudar de alguma forma com o projeto. 
+## 5 - 👤 Contato e Doações
+Caso tenha algum problema ou queira ajudar o projeto com qualquer valor. 
 
+* **Chave PIX (Celular)**: 21995612287
 * **Email**: victorsouzaleal@gmail.com
 * **WhatsApp (NÃO É O BOT, É MEU CONTATO PESSOAL PELO AMOR DE DEUS)**: https://wa.me/5521995612287
 
