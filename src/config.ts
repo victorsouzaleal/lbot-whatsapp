@@ -1,5 +1,5 @@
 import {pino} from 'pino'
-import {isJidBroadcast, AuthenticationState, WAVersion, UserFacingSocketConfig} from 'baileys'
+import {isJidBroadcast, AuthenticationState, WAVersion, UserFacingSocketConfig, makeCacheableSignalKeyStore} from 'baileys'
 import NodeCache from 'node-cache'
 import { BotController } from './controllers/bot.controller.js'
 
@@ -7,7 +7,7 @@ export default function configSocket (state : AuthenticationState, retryCache : 
     const config : UserFacingSocketConfig =  {
         auth: {
             creds: state.creds,
-            keys: state.keys
+            keys: makeCacheableSignalKeyStore(state.keys, pino({level: 'silent'}))
         },
         version,
         msgRetryCounterCache : retryCache,
