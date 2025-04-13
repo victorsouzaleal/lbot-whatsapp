@@ -66,9 +66,7 @@ export default async function connect(){
 
             if (isBotReady) {
                 await messageReceived(client, message, botInfo, messagesCache)
-            } else {
-                queueEvent(eventsCache, "messages.upsert", message)
-            }   
+            }
         }
 
         // Atualização de participantes no grupo
