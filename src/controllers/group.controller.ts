@@ -208,15 +208,11 @@ export class GroupController {
     }
 
     // ***** BLOQUEAR/DESBLOQUEAR COMANDOS *****
-    public blockCommands(group: Group, commands: string[], botInfo: Bot) {
-        return this.groupService.blockCommands(group, commands, botInfo)
+    public blockCommands(groupId: string, prefix: string, commands: string[]) {
+        return this.groupService.blockCommands(groupId, prefix, commands)
     }
 
-    public unblockCommands(group: Group, commands: string[], botInfo: Bot) {
-        return this.groupService.unblockCommand(group, commands, botInfo)
-    }
-
-    public isBlockedCommand(group: Group, command: string, botInfo: Bot) {
-        return this.groupService.isBlockedCommand(group, command, botInfo)
+    public unblockCommands(groupId: string, prefix: string, commands: string[]) {
+        return this.groupService.unblockCommands(groupId, prefix, commands)
     }
 }

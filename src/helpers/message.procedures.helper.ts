@@ -138,7 +138,7 @@ export async function isCommandBlockedGlobally(client: WASocket, botInfo: Bot, m
 }
 
 export async function isCommandBlockedGroup(client: WASocket, group: Group, botInfo: Bot, message: Message){
-    const commandBlocked = groupController.isBlockedCommand(group, message.command, botInfo)
+    const commandBlocked = group.block_cmds.includes(waLib.removePrefix(botInfo.prefix, message.command))
 
     if (commandBlocked && !message.isGroupAdmin){
         const replyText = buildText(botTexts.group_blocked_command, message.command)

@@ -257,87 +257,21 @@ export class GroupService {
         return list.includes(userId)
     }
 
-    // ***** MOVER ESSAS FUNÇÕES DE BLOQUEIO/DESBLOQUEIO PARA SEUS COMANDOS ESPECIFICOS
-    public async blockCommands(group: Group, commands : string[], botInfo: Bot){
-        const { prefix } = botInfo
-        let blockedCommands : string[] = []
-        let blockResponse = groupCommands.bcmd.msgs.reply_title
-        let categories : CategoryCommand[]  = ['sticker', 'utility', 'download', 'misc']
+    // ***** Bloquear/desbloquear comandos *****
 
-        if (commands[0] == 'variado') {
-            commands[0] = 'misc'
-        } else if (commands[0] == 'utilidade') {
-            commands[0] = 'utility'
-        } 
-        
-        if (categories.includes(commands[0] as CategoryCommand)) {
-            commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
-        }
-
-        for (let command of commands) {
-            if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')) {
-                if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
-                    blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_already_blocked, command)
-                } else {
-                    blockedCommands.push(waLib.removePrefix(prefix, command))
-                    blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_blocked, command)
-                }
-            } else if (commandExist(prefix, command, 'group') || commandExist(prefix, command, 'admin') || commandExist(prefix, command, 'info')) {
-                blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_error, command)
-            } else {
-                blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_not_exist, command)
-            }
-        }
-
-        if (blockedCommands.length != 0) {
-            await db.updateAsync({id : group.id}, { $push: { block_cmds: { $each: blockedCommands } } })
-        }
-
-        return blockResponse
+    public async blockCommands(groupId: string, prefix: string, commands: string[]) {
+        const group = await this.getGroup(groupId)
+        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const blockCommands = commandsWithoutPrefix.filter(command => !group?.block_cmds.includes(command))
+        await db.updateAsync({id: groupId}, { $push: { block_cmds: { $each: blockCommands } } })
+        return blockCommands.map(command => prefix+command)
     }
 
-    public async unblockCommand(group: Group, commands: string[], botInfo: Bot){
-        const { prefix } = botInfo
-        let unblockedCommands : string[] = []
-        let unblockResponse = groupCommands.dcmd.msgs.reply_title
-        let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
-
-        if (commands[0] == 'todos') {
-            commands[0] = 'all'
-        } else if (commands[0] == 'utilidade') {
-            commands[0] = 'utility'
-        } else if (commands[0] == 'variado') {
-            commands[0] = 'misc'
-        } 
-        
-        if (categories.includes(commands[0])) {
-            if (commands[0] === 'all') {
-                commands = group.block_cmds.map(command => prefix + command)
-            } else {
-                commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
-            }
-        }
-
-        for (let command of commands) {
-            if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
-                unblockedCommands.push(waLib.removePrefix(prefix, command))
-                unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_unblocked, command)
-            } else {
-                unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_not_blocked, command)
-            }
-        }
-
-        if (unblockedCommands.length != 0) {
-            await db.updateAsync({id : group.id}, { $pull: { block_cmds: { $in: unblockedCommands }} })
-        }
-
-        return unblockResponse
+    public async unblockCommands(groupId: string, prefix: string, commands: string[]) {
+        const group = await this.getGroup(groupId)
+        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const unblockCommands = commandsWithoutPrefix.filter(command => group?.block_cmds.includes(command))
+        await db.updateAsync({id: groupId}, { $pull: { block_cmds: { $in: unblockCommands }} })
+        return unblockCommands.map(command => prefix+command)
     }
-
-    public isBlockedCommand(group: Group, command: string, botInfo: Bot) {
-        const {prefix} = botInfo
-        return group.block_cmds.includes(waLib.removePrefix(prefix, command))
-    }
-
-
 }

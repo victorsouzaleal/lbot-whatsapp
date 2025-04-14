@@ -8,6 +8,8 @@ import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import groupCommands from "./group.list.commands.js";
 import botTexts from "../helpers/bot.texts.helper.js";
+import { CategoryCommand } from "../interfaces/command.interface.js";
+import { commandExist, getCommandsByCategory } from "../utils/commands.util.js";
 
 export async function grupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
@@ -782,6 +784,11 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
+    const { prefix } = botInfo
+    let commands = message.args
+    let validCommands = [] as string[]
+    let blockResponse = groupCommands.bcmd.msgs.reply_title
+    const categories = ['sticker', 'utility', 'download', 'misc']
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
@@ -789,12 +796,42 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
         throw new Error(messageErrorCommandUsage(message))
     }
 
-    const replyText = await groupController.blockCommands(group, message.args, botInfo)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    if (commands[0] == 'variado') {
+        commands[0] = 'misc'
+    } else if (commands[0] == 'utilidade') {
+        commands[0] = 'utility'
+    }
+    
+    if (categories.includes(commands[0])) {
+        commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
+    }
+
+    for (let command of commands) {
+        if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')) {
+            if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
+                blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_already_blocked, command)
+            } else {
+                validCommands.push(command)
+                blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_blocked, command)
+            }
+        } else if (commandExist(prefix, command, 'group') || commandExist(prefix, command, 'admin') || commandExist(prefix, command, 'info')) {
+            blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_error, command)
+        } else {
+            blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_not_exist, command)
+        }
+    }
+
+    await groupController.blockCommands(group.id, prefix, validCommands)
+    await waLib.replyText(client, message.chat_id, blockResponse, message.wa_message, { expiration: message.expiration })
 }
 
 export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
+    const { prefix } = botInfo
+    let commands = message.args
+    let validCommands = [] as string[]
+    let unblockResponse = groupCommands.dcmd.msgs.reply_title
+    let categories = ['all', 'sticker', 'utility', 'download', 'misc']
 
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
@@ -802,8 +839,34 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
         throw new Error(messageErrorCommandUsage(message))
     }
 
-    const replyText = await groupController.unblockCommands(group, message.args, botInfo)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+
+    if (commands[0] == 'todos') {
+        commands[0] = 'all'
+    } else if (commands[0] == 'utilidade') {
+        commands[0] = 'utility'
+    } else if (commands[0] == 'variado') {
+        commands[0] = 'misc'
+    } 
+    
+    if (categories.includes(commands[0])) {
+        if (commands[0] === 'all') {
+            commands = group.block_cmds.map(command => prefix + command)
+        } else {
+            commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
+        }
+    }
+
+    for (let command of commands) {
+        if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
+            validCommands.push(command)
+            unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_unblocked, command)
+        } else {
+            unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_not_blocked, command)
+        }
+    }
+
+    await groupController.unblockCommands(group.id, prefix, validCommands)
+    await waLib.replyText(client, message.chat_id, unblockResponse, message.wa_message, { expiration: message.expiration })
 }
 
 
