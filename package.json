@@ -6,9 +6,12 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
+    "clean": "rimraf dist/",
+    "copy-media": "copyfiles -u 2 src/media/* dist/media",
     "prestart": "yarn install --prod",
     "dev": "yarn run build && node dist/app.js",
-    "build": "tsc"
+    "build": "yarn clean && tsc && yarn copy-media",
+    "zip": "bestzip LBOT-v$npm_package_version.zip dist package.json LICENSE yarn.lock"
   },
   "author": "Leal",
   "license": "GPL-3.0-only",
@@ -30,7 +33,10 @@
     "@types/qrcode-terminal": "^0.12.2",
     "@types/user-agents": "^1.0.4",
     "@types/yt-search": "^2.10.3",
+    "bestzip": "^2.2.1",
     "copyfiles": "^2.4.1",
+    "cross-var": "^1.1.0",
+    "rimraf": "^6.0.1",
     "rollup": "^4.34.8",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
