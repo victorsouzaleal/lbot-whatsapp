@@ -7,6 +7,7 @@ import { buildText, messageErrorCommandUsage, uppercaseFirst} from "../utils/gen
 import botTexts from "../helpers/bot.texts.helper.js"
 import miscCommands from "./misc.list.commands.js"
 import { GroupController } from "../controllers/group.controller.js"
+import path from 'path'
 
 export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
@@ -38,8 +39,8 @@ export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, messa
 }
 
 export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const PIC_URL = "https://i.imgur.com/mVwa7q4.png"
-    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', PIC_URL, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
+    const imagePath = path.resolve('dist/media/mascote.png')
+    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePath, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
 }
 
 /*
@@ -79,13 +80,24 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
     if (!quotedMessage) {
         throw new Error(miscCommands.detector.msgs.error_message)
-    } 
+    }
+    
+    const imagePathCalibration = path.resolve('dist/media/calibrando.png')
+    const imagePathsResult = [
+        path.resolve('dist/media/calibrando.png'),
+        path.resolve('dist/media/estressealto.png'),
+        path.resolve('dist/media/incerteza.png'),
+        path.resolve('dist/media/kao.png'),
+        path.resolve('dist/media/meengana.png'),
+        path.resolve('dist/media/mentiroso.png'),
+        path.resolve('dist/media/vaipra.png'),
+        path.resolve('dist/media/verdade.png')
+    ]
 
-    const truthMachineResult = miscLib.truthMachine()
+    const randomIndex = Math.floor(Math.random() * imagePathsResult.length)
     const waitReply = miscCommands.detector.msgs.wait
-    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.calibration_url, waitReply, quotedMessage, {expiration: message.expiration})
-    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', truthMachineResult.result_url, '', quotedMessage, {expiration: message.expiration})
-
+    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePathCalibration, waitReply, quotedMessage, {expiration: message.expiration})
+    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePathsResult[randomIndex], '', quotedMessage, {expiration: message.expiration})
 }
 
 export async function roletarussaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -126,26 +138,27 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
 }
 
 export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const validChoices = ['cara', 'coroa']
+    const coinSides = ['cara', 'coroa']
     const userChoice = message.text_command.toLowerCase()
 
-    if (!message.args.length || !validChoices.includes(userChoice)) {
+    if (!message.args.length || !coinSides.includes(userChoice)) {
         throw new Error(messageErrorCommandUsage(message))
     }
     
-    const flipCoinInfo = miscLib.flipCoin()
+    const chosenSide = coinSides[Math.floor(Math.random() * coinSides.length)]
+    const imagePath = chosenSide === 'cara' ? path.resolve('dist/media/cara.png') : path.resolve('dist/media/coroa.png')
     const waitText = miscCommands.caracoroa.msgs.wait
     await waLib.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
-    const isUserVictory = flipCoinInfo.chosen_side == userChoice
+    const isUserVictory = chosenSide == userChoice
     let replyText : string
 
     if (isUserVictory) {
-        replyText = buildText(miscCommands.caracoroa.msgs.reply_victory, uppercaseFirst(flipCoinInfo.chosen_side))
+        replyText = buildText(miscCommands.caracoroa.msgs.reply_victory, uppercaseFirst(chosenSide))
     } else {
-        replyText = buildText(miscCommands.caracoroa.msgs.reply_defeat, uppercaseFirst(flipCoinInfo.chosen_side))
+        replyText = buildText(miscCommands.caracoroa.msgs.reply_defeat, uppercaseFirst(chosenSide))
     }
     
-    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', flipCoinInfo.image_coin_url, replyText, message.wa_message, {expiration: message.expiration})
+    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePath, replyText, message.wa_message, { expiration: message.expiration })
     
 }
 
@@ -294,6 +307,7 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const phraseResult = await miscLib.funnyRandomPhrases()
-    const replyText =  buildText(miscCommands.frase.msgs.reply, phraseResult.text)
-    await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', phraseResult.image_url, replyText, message.wa_message, {expiration: message.expiration})
+    const replyText =  buildText(miscCommands.frase.msgs.reply, phraseResult)
+    const imagePath = path.resolve('dist/media/frasewhatsappjr.png')
+    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePath, replyText, message.wa_message, {expiration: message.expiration})
 }
