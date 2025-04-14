@@ -163,81 +163,26 @@ export class BotService {
         return this.updateBot(bot)
     }
 
-    // ********************* MOVER AS FUNÇÕES DE BLOQUEAR/DESBLOQUEAR PARA OS COMANDOS ESPECIFICOS
-    public blockCommandsGlobally(commands : string[]){
+    // ***** Bloquear/desbloquear comandos
+    public blockCommandsGlobally(prefix: string, commands: string[]) {
         let botInfo = this.getBot()
-        const { prefix } = botInfo
-        let blockResponse = adminCommands.bcmdglobal.msgs.reply_title
-        let categories : CategoryCommand[] = ['sticker', 'utility', 'download', 'misc']
-
-        if (commands[0] == 'variado') {
-            commands[0] = 'misc'
-        } else if (commands[0] == 'utilidade') {
-            commands[0] = 'utility'
-        } 
-        
-        if (categories.includes(commands[0] as CategoryCommand)) {
-            commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
-        }
-        
-        for(let command of commands){
-            if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')){
-                if (botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))){
-                    blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_already_blocked, command)
-                } else {
-                    botInfo.block_cmds.push(waLib.removePrefix(prefix, command))
-                    blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_blocked, command)
-                }
-            } else if (commandExist(prefix, command, 'group') || commandExist(prefix, command, 'admin') || commandExist(prefix, command, 'info') ){
-                blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_error, command)
-            } else {
-                blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_not_exist, command)
-            }
-        }
-
+        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const blockCommands = commandsWithoutPrefix.filter(command => !botInfo.block_cmds.includes(command))
+        botInfo.block_cmds.push(...blockCommands)
         this.updateBot(botInfo)
-        return blockResponse
+        return blockCommands.map(command => prefix+command)
     }
 
-    public unblockCommandsGlobally(commands: string[]){
+    public unblockCommandsGlobally(prefix: string, commands: string[]) {
         let botInfo = this.getBot()
-        const {prefix} = botInfo
-        let unblockResponse = adminCommands.dcmdglobal.msgs.reply_title
-        let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
+        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const unblockCommands = commandsWithoutPrefix.filter(command => botInfo.block_cmds.includes(command))
 
-        if (commands[0] == 'todos') {
-            commands[0] = 'all'
-        } else if (commands[0] == 'utilidade') {
-            commands[0] = 'utility'
-        } else if (commands[0] == 'variado') {
-            commands[0] = 'misc'
-        } 
-        
-        if (categories.includes(commands[0])){
-            if (commands[0] === 'all') {
-                commands = botInfo.block_cmds.map(command => prefix+command)
-            } else {
-                commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
-            }
-        }
-
-        for(let command of commands){
-            if (botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))) {
-                let commandIndex = botInfo.block_cmds.findIndex(command_blocked => command_blocked == waLib.removePrefix(prefix, command))
-                botInfo.block_cmds.splice(commandIndex, 1)
-                unblockResponse += buildText(adminCommands.dcmdglobal.msgs.reply_item_unblocked, command)
-            } else {
-                unblockResponse += buildText(adminCommands.dcmdglobal.msgs.reply_item_not_blocked, command)
-            }
-        }
+        unblockCommands.forEach((command) => {
+            botInfo.block_cmds.splice(botInfo.block_cmds.indexOf(command), 1)
+        })
 
         this.updateBot(botInfo)
-        return unblockResponse
-    }
-
-    public isCommandBlockedGlobally(command: string){
-        let botInfo = this.getBot()
-        const {prefix} = botInfo
-        return botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))
+        return unblockCommands.map(command => prefix+command)
     }
 }

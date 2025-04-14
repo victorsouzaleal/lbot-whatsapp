@@ -126,7 +126,7 @@ export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot,
 }
 
 export async function isCommandBlockedGlobally(client: WASocket, botInfo: Bot, message: Message ){
-    const commandBlocked = botController.isCommandBlockedGlobally(message.command)
+    const commandBlocked = botInfo.block_cmds.includes(waLib.removePrefix(botInfo.prefix, message.command))
 
     if (commandBlocked && !message.isBotAdmin){
         const replyText = buildText(botTexts.globally_blocked_command, message.command)

@@ -73,15 +73,11 @@ export class BotController {
     }
 
     // Bloquear/Desbloquear comandos globalmente
-    public blockCommandsGlobally(commands: string[]){
-        return this.botService.blockCommandsGlobally(commands)
+    public blockCommandsGlobally(prefix: string, commands: string[]){
+        return this.botService.blockCommandsGlobally(prefix, commands)
     }
 
-    public unblockCommandsGlobally(commands: string[]){
-        return this.botService.unblockCommandsGlobally(commands)
-    }
-
-    public isCommandBlockedGlobally(command: string){
-        return this.botService.isCommandBlockedGlobally(command)
+    public unblockCommandsGlobally(prefix: string, commands: string[]){
+        return this.botService.unblockCommandsGlobally(prefix, commands)
     }
 }

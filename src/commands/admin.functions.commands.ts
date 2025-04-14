@@ -12,6 +12,8 @@ import moment from "moment";
 import { waLib } from "../libraries/library.js";
 import botTexts from "../helpers/bot.texts.helper.js";
 import adminCommands from "./admin.list.commands.js";
+import { commandExist, getCommandsByCategory } from "../utils/commands.util.js";
+import { CategoryCommand } from "../interfaces/command.interface.js";
 
 export async function adminCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     await waLib.replyText(client, message.chat_id, adminMenu(botInfo), message.wa_message, {expiration: message.expiration})
@@ -253,24 +255,84 @@ export async function autostickerpvCommand(client: WASocket, botInfo: Bot, messa
 
 export async function bcmdglobalCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const botController = new BotController()
+    const { prefix } = botInfo
+    let commands = message.args
+    let validCommands : string[] = []
+    let blockResponse = adminCommands.bcmdglobal.msgs.reply_title
+    let categories = ['sticker', 'utility', 'download', 'misc']
 
     if (!message.args.length) {
         throw new Error(messageErrorCommandUsage(message))
     }
 
-    const replyText = botController.blockCommandsGlobally(message.args)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    if (commands[0] == 'variado') {
+        commands[0] = 'misc'
+    } else if (commands[0] == 'utilidade') {
+        commands[0] = 'utility'
+    } 
+    
+    if (categories.includes(commands[0])) {
+        commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
+    }
+    
+    for(let command of commands){
+        if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')){
+            if (botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))){
+                blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_already_blocked, command)
+            } else {
+                validCommands.push(command)
+                blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_blocked, command)
+            }
+        } else if (commandExist(prefix, command, 'group') || commandExist(prefix, command, 'admin') || commandExist(prefix, command, 'info') ){
+            blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_error, command)
+        } else {
+            blockResponse += buildText(adminCommands.bcmdglobal.msgs.reply_item_not_exist, command)
+        }
+    }
+
+    botController.blockCommandsGlobally(prefix, validCommands)
+    await waLib.replyText(client, message.chat_id, blockResponse, message.wa_message, {expiration: message.expiration})
 }
 
 export async function dcmdglobalCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const botController = new BotController()
+    const { prefix } = botInfo
+    let commands = message.args
+    let validCommands : string[] = []
+    let unblockResponse = adminCommands.dcmdglobal.msgs.reply_title
+    let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
 
     if (!message.args.length) {
         throw new Error(messageErrorCommandUsage(message))
     }
 
-    const replyText = botController.unblockCommandsGlobally(message.args)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    if (commands[0] == 'todos') {
+        commands[0] = 'all'
+    } else if (commands[0] == 'utilidade') {
+        commands[0] = 'utility'
+    } else if (commands[0] == 'variado') {
+        commands[0] = 'misc'
+    } 
+    
+    if (categories.includes(commands[0])){
+        if (commands[0] === 'all') {
+            commands = botInfo.block_cmds.map(command => prefix+command)
+        } else {
+            commands = getCommandsByCategory(prefix, commands[0] as CategoryCommand)
+        }
+    }
+
+    for (let command of commands) {
+        if (botInfo.block_cmds.includes(waLib.removePrefix(prefix, command))) {
+            validCommands.push(command)
+            unblockResponse += buildText(adminCommands.dcmdglobal.msgs.reply_item_unblocked, command)
+        } else {
+            unblockResponse += buildText(adminCommands.dcmdglobal.msgs.reply_item_not_blocked, command)
+        }
+    }
+
+    botController.unblockCommandsGlobally(prefix, validCommands)
+    await waLib.replyText(client, message.chat_id, unblockResponse, message.wa_message, {expiration: message.expiration})
 }
 
 export async function entrargrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
