@@ -9,9 +9,9 @@
     "clean": "rimraf dist/",
     "copy-media": "copyfiles -u 2 src/media/* dist/media",
     "prestart": "yarn install --prod",
-    "dev": "yarn run build && node dist/app.js",
+    "dev": "yarn build && node dist/app.js",
     "build": "yarn clean && tsc && yarn copy-media",
-    "zip": "bestzip LBOT-v$npm_package_version.zip dist package.json LICENSE yarn.lock"
+    "zip": "yarn build && bestzip LBOT-v$npm_package_version.zip dist package.json LICENSE yarn.lock"
   },
   "author": "Leal",
   "license": "GPL-3.0-only",
