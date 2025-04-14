@@ -20,7 +20,6 @@ export async function audioTranscription (audioBuffer : Buffer){
 
         for (let key of apiKeys.deepgram){
             try {
-                console.log(key)
                 const deepgram = createClient(key.secret_key)
                 const deepgramConfig = {
                     model: 'nova-2',
