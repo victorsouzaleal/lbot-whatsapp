@@ -276,7 +276,7 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
         let chosenParticipant = currentParticipantsIds[randomIndex]
         replyText += buildText(miscCommands.top5.msgs.reply_item, icon, i, waLib.removeWhatsappSuffix(chosenParticipant))
         mentionList.push(chosenParticipant)
-        currentParticipantsIds.splice(currentParticipantsIds.indexOf(chosenParticipant, 1))                
+        currentParticipantsIds.splice(currentParticipantsIds.indexOf(chosenParticipant), 1)                
     }
 
     await waLib.sendTextWithMentions(client, message.chat_id, replyText, mentionList, {expiration: message.expiration})
