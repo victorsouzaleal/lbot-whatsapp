@@ -27,7 +27,7 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         //Auto-Sticker
         replyText += (group.autosticker) ? groupCommands.grupo.msgs.reply_item_autosticker_on : groupCommands.grupo.msgs.reply_item_autosticker_off
         //Anti-Link
-        replyText += (group.antilink) ? groupCommands.grupo.msgs.reply_item_antilink_on : groupCommands.grupo.msgs.reply_item_antilink_off
+        replyText += (group.antilink.status) ? buildText(groupCommands.grupo.msgs.reply_item_antilink_on, group.antilink.exceptions.toString() || '---') : groupCommands.grupo.msgs.reply_item_antilink_off
         //Anti-Fake
         replyText += (group.antifake.status) ? buildText(groupCommands.grupo.msgs.reply_item_antifake_on, group.antifake.allowed.toString()) : groupCommands.grupo.msgs.reply_item_antifake_off
         //Anti-Flood
@@ -583,8 +583,8 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(botTexts.permission.bot_group_admin)
     }
     
-    const replyText = group.antilink ? groupCommands.antilink.msgs.reply_off : groupCommands.antilink.msgs.reply_on
-    await groupController.setAntiLink(group.id, !group.antilink)
+    const replyText = group.antilink.status ? groupCommands.antilink.msgs.reply_off : groupCommands.antilink.msgs.reply_on
+    await groupController.setAntiLink(group.id, !group.antilink.status, message.args)
     await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 

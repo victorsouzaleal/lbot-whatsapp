@@ -172,17 +172,28 @@ export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group
     const groupAdmins = await groupController.getAdminsIds(group.id)
     const isBotAdmin = groupAdmins.includes(botInfo.host_number)
 
-    if (group.antilink && !isBotAdmin) {
+    if (group.antilink.status && !isBotAdmin) {
         await groupController.setAntiLink(group.id, false)
-    } else if (group.antilink && !isGroupAdmin) {
-        const isUrl = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/img))
+    } else if (group.antilink.status && !isGroupAdmin) {
+        const detectedURLS = userText.match(new RegExp(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/[^\s]*)?/img))
         
-        if (isUrl) {
-            const replyText = buildText(botTexts.detected_link, waLib.removeWhatsappSuffix(message.sender))
-            await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
-            await waLib.deleteMessage(client, message.wa_message, false)
-            return true
-        }
+        if (detectedURLS) {
+            let needDeleteMessage = false
+
+            if (group.antilink.exceptions.length) {
+                const allowedURLS = detectedURLS.map(url => url.toLowerCase()).filter(url => group.antilink.exceptions.filter(exception => url.includes(exception.toLowerCase())).length)
+                needDeleteMessage = detectedURLS.length != allowedURLS.length
+            } else {
+                needDeleteMessage = true
+            }
+
+            if (needDeleteMessage) {
+                const replyText = buildText(botTexts.detected_link, waLib.removeWhatsappSuffix(message.sender))
+                await waLib.deleteMessage(client, message.wa_message, false)
+                await waLib.sendTextWithMentions(client, message.chat_id, replyText, [message.sender], {expiration: message.expiration})
+                return true
+            }
+        } 
     }
 
     return false

@@ -162,8 +162,8 @@ export class GroupController {
     }
 
     // ***** ANTI-LINK *****
-    public setAntiLink(groupId: string, status = true) {
-        return this.groupService.setAntilink(groupId, status)
+    public setAntiLink(groupId: string, status: boolean, exceptions?: string[]) {
+        return this.groupService.setAntilink(groupId, status, exceptions)
     }
 
     // ***** AUTO-STICKER *****

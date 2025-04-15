@@ -17,7 +17,8 @@ const groupCommands = {
             reply_item_mute_off: "*Mutar*: ❌\n",
             reply_item_autosticker_on: "*Auto-Sticker*: ✅\n",
             reply_item_autosticker_off: "*Auto-Sticker*: ❌\n",
-            reply_item_antilink_on: "*Anti-Link*: ✅\n",
+            reply_item_antilink_on: "*Anti-Link*: ✅\n"+
+            "- *Exceções*: {$1}\n",
             reply_item_antilink_off: "*Anti-Link*: ❌\n",
             reply_item_antifake_on: "*Anti-Fake*: ✅\n"+
             "- *Prefixos liberados*: {$1}\n",
@@ -253,7 +254,8 @@ const groupCommands = {
         function: groupFunctions.restritoCommand
     },
     antilink: {
-        guide: `Ex: *{$p}antilink* - Liga/desliga o Anti-LINK no grupo e apaga a mensagem de quem postar qualquer tipo de link.\n`,
+        guide: `Ex: *{$p}antilink* - Liga/desliga o Anti-LINK no grupo e apaga a mensagem de quem postar qualquer tipo de link.\n\n`+
+        `Ex: *{$p}antilink* google.com youtube.com - Liga/desliga o Anti-LINK no grupo e permite os links inseridos como exceção.`,
         msgs: {
             reply_on: "✅ O recurso de *ANTI-LINK* foi ativado com sucesso.",
             reply_off: "✅ O recurso de *ANTI-LINK* foi desativado com sucesso."

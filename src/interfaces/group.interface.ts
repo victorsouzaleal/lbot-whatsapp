@@ -15,7 +15,10 @@ export interface Group {
         status: boolean
         allowed : string[]
     },
-    antilink: boolean
+    antilink: {
+        status: boolean,
+        exceptions: string[]
+    },
     antiflood: {
         status: boolean
         max_messages: number

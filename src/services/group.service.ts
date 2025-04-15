@@ -37,7 +37,7 @@ export class GroupService {
             muted : false,
             welcome : { status: false, msg: '' },
             antifake : { status: false, allowed: [] },
-            antilink : false,
+            antilink : { status: false, exceptions: []},
             antiflood : { status: false, max_messages: 10, interval: 10},
             autosticker : false,
             block_cmds : [],
@@ -70,18 +70,21 @@ export class GroupService {
                 expiration: oldGroupData.expiration,
                 muted : oldGroupData.muted ?? false,
                 welcome : { 
-                    status: oldGroupData.welcome.status ?? false,
-                    msg: oldGroupData.welcome.msg ?? '' 
+                    status: oldGroupData.welcome?.status ?? false,
+                    msg: oldGroupData.welcome?.msg ?? '' 
                 },
                 antifake : { 
-                    status:  oldGroupData.antifake.status ?? false, 
-                    allowed: oldGroupData.antifake.allowed ?? [] 
+                    status:  oldGroupData.antifake?.status ?? false, 
+                    allowed: oldGroupData.antifake?.allowed ?? [] 
                 },
-                antilink : oldGroupData.antilink ?? false,
+                antilink : {
+                    status: oldGroupData.antilink?.status ?? false,
+                    exceptions: oldGroupData.antilink?.exceptions ?? []
+                },
                 antiflood : { 
-                    status: oldGroupData.antiflood.status ?? false, 
-                    max_messages: oldGroupData.antiflood.max_messages ?? 10, 
-                    interval: oldGroupData.antiflood.interval ?? 10
+                    status: oldGroupData.antiflood?.status ?? false, 
+                    max_messages: oldGroupData.antiflood?.max_messages ?? 10, 
+                    interval: oldGroupData.antiflood?.interval ?? 10
                 },
                 autosticker : oldGroupData.autosticker ?? false,
                 block_cmds : oldGroupData.block_cmds ?? [],
@@ -224,8 +227,8 @@ export class GroupService {
     }
 
     // ***** ANTI-LINK *****
-    public setAntilink(groupId: string, status: boolean){
-        return db.updateAsync({id : groupId}, { $set: { antilink: status } })
+    public setAntilink(groupId: string, status: boolean, exceptions?: string[]){
+        return db.updateAsync({id : groupId}, { $set: { 'antilink.status': status, 'antilink.exceptions': exceptions ?? []} })
     }
 
     // ***** AUTO-STICKER *****
