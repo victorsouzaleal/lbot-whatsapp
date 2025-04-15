@@ -308,11 +308,18 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
 
     if (formattedMessage.isQuoted){
         const quotedMessage = contextInfo?.quotedMessage
+
         if (!quotedMessage) return
+    
         const typeQuoted = getContentType(quotedMessage)
+        const quotedStanzaId = contextInfo.stanzaId ?? undefined
         const senderQuoted = contextInfo.participant || contextInfo.remoteJid
+
         if (!typeQuoted || !senderQuoted ) return
+
         const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
+        const quotedWAMessage = generateWAMessageFromContent(formattedMessage.chat_id, quotedMessage, { userJid: senderQuoted, messageId: quotedStanzaId })
+        quotedWAMessage.key.fromMe = (hostId == senderQuoted)
 
         formattedMessage.quotedMessage = {
             type: typeQuoted,
@@ -320,7 +327,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
             body: quotedMessage.conversation || quotedMessage.extendedTextMessage?.text || '',
             caption: captionQuoted || '',
             isMedia : typeQuoted != "conversation" && typeQuoted != "extendedTextMessage",
-            wa_message: generateWAMessageFromContent(formattedMessage.chat_id, quotedMessage, {userJid: senderQuoted})
+            wa_message: quotedWAMessage
         }
 
         if (formattedMessage.quotedMessage?.isMedia){
