@@ -87,11 +87,11 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
     const supportEmoji = await imageLib.checkEmojiMixSupport(emoji1.trim(), emoji2.trim())
 
     if (!supportEmoji.emoji1 && !supportEmoji.emoji2) {
-        throw new Error(buildText(stickerCommands.emojimix.msgs.error_emojis, supportEmoji.emoji1, supportEmoji.emoji2))
+        throw new Error(buildText(stickerCommands.emojimix.msgs.error_emojis, emoji1, emoji2))
     } else if (!supportEmoji.emoji1) {
-        throw new Error(buildText(stickerCommands.emojimix.msgs.error_emoji, supportEmoji.emoji1))
+        throw new Error(buildText(stickerCommands.emojimix.msgs.error_emoji, emoji1))
     } else if (!supportEmoji.emoji2) {
-        throw new Error(buildText(stickerCommands.emojimix.msgs.error_emoji, supportEmoji.emoji2))
+        throw new Error(buildText(stickerCommands.emojimix.msgs.error_emoji, emoji2))
     }
 
     const imageBuffer = await imageLib.emojiMix(emoji1.trim(), emoji2.trim())
