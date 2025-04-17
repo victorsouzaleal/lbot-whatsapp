@@ -1,6 +1,41 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.0 - 18/04/2025
+
+### Com as novas mudanças na sessão após essa atualização você terá que se conectar novamente lendo o código QR ou código de pareamento.
+
+### GERAL
+- O armazenamento de dados da sessão foi melhorado, isso deve ajudar a resolver alguns problemas do bot parar de responder do nada e alguns outros erros que aconteciam raramente.
+- O bot agora só lê as mensagens após iniciar totalmente para garantir que as mensagens recebidas são novas e não de quando ele estava desligado.
+- Os stickers criados agoram recebem o nome de quem fez o comando como autor do sticker.
+- As imagens enviadas pelos comandos da categoria **VARIADO** agora ficam armazenadas localmente.
+- Adicionado suporte a exceções de links no recurso **ANTI-LINK**
+
+### COMANDOS
+- Comando **!nomeautor** foi removido
+- Comando **!nomepack**  foi removido
+
+### CORREÇÕES
+- Correção da exibição da lista no comando **!top5**
+- Correção da conversão de sticker para imagem no comando **!simg**
+- Correção do erro 429 em comandos da categoria **VARIADO**
+
+## 3.2.0 - 11/04/2025
+
+### GERAL
+- A partir dessa versão o banco de dados é reconstruído a cada atualização não sendo mais necessário perder os dados para atualizar.
+- Melhoria na sincronização de grupos.
+- Melhoria na fila de eventos para evitar eventos desnecessários.
+- Pequenas alterações nos textos exibidos no terminal em cada inicialização.
+
+### COMANDOS
+- Todos os comandos que necessitavam de uma chave API (com pouco limite) foram removidos, no momento apenas o **!ia** e **!criarimg** por serem altamente requisitados e acabar rápido o limite.
+- Adicionada mensagem de erro ao usar o **!grupos** se o bot não estiver em nenhum grupo.
+
+### CORREÇÕES
+- Correção ao remover administrador do grupo que não era reconhecido pelo bot que um membro não já não era mais administrador.
+
 ## 3.2.0 - 11/04/2025
 
 ### GERAL
