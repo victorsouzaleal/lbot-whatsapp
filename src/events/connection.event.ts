@@ -1,9 +1,7 @@
 import {DisconnectReason, ConnectionState, WASocket} from 'baileys'
 import { Boom } from '@hapi/boom'
-import fs from "fs-extra"
-import dotenv from 'dotenv'
 import { BotController } from '../controllers/bot.controller.js'
-import { buildText, showConsoleError, getCurrentBotVersion, colorText } from '../utils/general.util.js'
+import { buildText, showConsoleError, colorText } from '../utils/general.util.js'
 import botTexts from '../helpers/bot.texts.helper.js'
 import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
@@ -21,7 +19,7 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
     const answerMethod = await rl.question(botTexts.input_connection_method)
 
     rl.close()
-    
+
     if (answerMethod == '2') {
         const answerNumber = await rl.question(botTexts.input_phone_number)
         const code = await client.requestPairingCode(answerNumber.replace(/\W+/g,""))
@@ -41,7 +39,6 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
 export async function connectionOpen(client: WASocket){
     try{
         const botController = new BotController()
-        dotenv.config()
         botController.startBot(waLib.getHostNumber(client))
         console.log(colorText(botTexts.bot_data))
         await checkOwnerRegister()

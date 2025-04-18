@@ -55,7 +55,6 @@
     "axios": "^1.7.4",
     "baileys": "^6.7.16",
     "chalk": "^4.1.0",
-    "dotenv": "^16.4.7",
     "emoji-mixer": "^1.1.12",
     "fb-downloader-scrapper": "^3.0.0",
     "file-type": "^20.1.0",
