@@ -204,11 +204,16 @@ export async function isDetectedByAntiFlood(client: WASocket, botInfo: Bot, grou
     const { isGroupAdmin } = message
     const participant = await groupController.getParticipant(group.id, message.sender)
 
-    if (!participant || isGroupAdmin || !group.antiflood.status) {
-        return false
-    }
+    if (!participant || isGroupAdmin || !group.antiflood.status) return false
+    
+    const hasExpiredMessages = currentTimestamp > participant.antiflood.expire
 
-    const hasExpiredMessages = await groupController.hasParticipantExpiredMessages(group, participant, currentTimestamp)
+    if (hasExpiredMessages) {
+        const expireTimestamp = currentTimestamp + group.antiflood.interval
+        await groupController.expireParticipantAntiFlood(group.id, message.sender, expireTimestamp)
+    } else {
+        await groupController.incrementAntiFloodMessage(group.id, message.sender)
+    }
 
     if (!hasExpiredMessages && participant.antiflood.msgs >= group.antiflood.max_messages) {
         const replyText = buildText(botTexts.antiflood_ban_messages, waLib.removeWhatsappSuffix(message.sender), botInfo.name)

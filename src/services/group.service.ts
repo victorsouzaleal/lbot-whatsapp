@@ -1,10 +1,5 @@
 import { Group } from "../interfaces/group.interface.js";
-import { Bot } from "../interfaces/bot.interface.js";
-import { CategoryCommand } from "../interfaces/command.interface.js";
 import { GroupMetadata } from 'baileys'
-import { buildText } from '../utils/general.util.js'
-import groupCommands from "../commands/group.list.commands.js";
-import { commandExist, getCommandsByCategory } from "../utils/commands.util.js";
 import { waLib } from "../libraries/library.js";
 import DataStore from "@seald-io/nedb";
 import { ParticipantService } from "./participant.service.js";
@@ -18,13 +13,10 @@ export class GroupService {
         this.participantService = new ParticipantService()
     }
 
-    // *********************** Registra/Atualiza/Remove grupos ***********************
     public async registerGroup(groupMetadata : GroupMetadata){
-        const isRegistered = await this.isRegistered(groupMetadata.id)
+        const group = await this.getGroup(groupMetadata.id)
 
-        if (isRegistered) {
-            return
-        }
+        if (!group) return
 
         const groupData : Group = {
             id: groupMetadata.id,
@@ -108,9 +100,9 @@ export class GroupService {
         
         //Atualizando grupos em que o bot está
         for (let groupMeta of groupsMeta) {
-            const isRegistered = await this.isRegistered(groupMeta.id)
+            const group = await this.getGroup(groupMeta.id)
 
-            if (isRegistered){ // Se o grupo já estiver registrado sincronize os dados do grupo e os participantes.
+            if (group){ // Se o grupo já estiver registrado sincronize os dados do grupo e os participantes.
                 await db.updateAsync({ id : groupMeta.id }, { $set: {
                     name: groupMeta.subject,
                     description: groupMeta.desc,
@@ -120,24 +112,18 @@ export class GroupService {
                 }})
 
                 await this.participantService.syncParticipants(groupMeta)
-    
             } else { // Se o grupo não estiver registrado, faça o registro.
                 await this.registerGroup(groupMeta)
             }
         }
     }
 
-    public updatePartialGroup(group: Partial<GroupMetadata>) {
+    public async updatePartialGroup(group: Partial<GroupMetadata>) {
         if (group.id){
-            if (group.desc) {
-                return this.setDescription(group.id, group.desc)
-            } else if (group.subject) {
-                return this.setName(group.id, group.subject)
-            } else if (group.announce) {
-                return this.setRestricted(group.id, group.announce)
-            } else if (group.ephemeralDuration) {
-                return this.setExpiration(group.id, group.ephemeralDuration)
-            }
+            if (group.desc) await this.setDescription(group.id, group.desc)
+            else if (group.subject) await this.setName(group.id, group.subject)
+            else if (group.announce) await this.setRestricted(group.id, group.announce)
+            else if (group.ephemeralDuration) await this.setExpiration(group.id, group.ephemeralDuration)
         }
     }
 
@@ -146,121 +132,75 @@ export class GroupService {
         return group
     }
 
-    public async removeGroup(groupId: string){
-        await this.participantService.removeParticipants(groupId)
-        return db.removeAsync({id: groupId}, {multi: true})
-    }
-
     public async getAllGroups(){
         const groups = await db.findAsync({}) as Group[]
         return groups
     }
 
-    public async isRegistered(groupId: string) {
-        const group = await this.getGroup(groupId)
-        return (group != null)
+    public async removeGroup(groupId: string){
+        await this.participantService.removeParticipants(groupId)
+        await db.removeAsync({id: groupId}, {multi: true})
     }
 
-    public async isRestricted(groupId: string) {
-        const group = await this.getGroup(groupId)
-        return group?.restricted
+    public async setName(groupId: string, name: string){
+        await db.updateAsync({id: groupId}, { $set : { name } })
     }
 
-    public setName(groupId: string, name: string){
-        return db.updateAsync({id: groupId}, { $set : { name } })
+    public async setRestricted(groupId: string, restricted: boolean){
+        await db.updateAsync({id: groupId}, { $set: { restricted } })
     }
 
-    public setRestricted(groupId: string, restricted: boolean){
-        return db.updateAsync({id: groupId}, { $set: { restricted } })
+    private async setExpiration(groupId: string, expiration: number | undefined){
+        await db.updateAsync({id: groupId}, { $set: { expiration } })
     }
 
-    private setExpiration(groupId: string, expiration: number | undefined){
-        return db.updateAsync({id: groupId}, { $set: { expiration } })
+    public async setDescription(groupId: string, description?: string){
+        await db.updateAsync({id: groupId}, { $set: { description } })
     }
 
-    public setDescription(groupId: string, description?: string){
-        return db.updateAsync({id: groupId}, { $set: { description } })
-    }
-
-    public incrementGroupCommands(groupId: string){
-        return db.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
+    public async incrementGroupCommands(groupId: string){
+        await db.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
     } 
 
-    public async getOwner(groupId: string){
-        const group = await this.getGroup(groupId)
-        return group?.owner
+    public async addWordFilter(groupId: string, word: string){
+        await db.updateAsync({id: groupId}, { $push: { word_filter : word }})
     }
 
-    // *********************** RECURSOS DO GRUPO ***********************
-    // ***** FILTRO DE PALAVRAS *****
-    public addWordFilter(groupId: string, word: string){
-        return db.updateAsync({id: groupId}, { $push: { word_filter : word }})
+    public async removeWordFilter(groupId: string, word: string){
+        await db.updateAsync({id: groupId}, { $pull: { word_filter : word }})
     }
 
-    public removeWordFilter(groupId: string, word: string){
-        return db.updateAsync({id: groupId}, { $pull: { word_filter : word }})
+    public async setWelcome(groupId: string, status: boolean, msg: string){
+        await db.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
     }
 
-    // ***** BEM-VINDO *****
-    public setWelcome(groupId: string, status: boolean, msg: string){
-        return db.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
+    public async setAntifake(groupId: string, status: boolean, allowed: string[]){
+        await db.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})
     }
 
-    // ***** ANTI-FAKE *****
-    public setAntifake(groupId: string, status: boolean, allowed: string[]){
-        return db.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})
+    public async setMuted(groupId: string, status: boolean){
+        await db.updateAsync({id: groupId}, {$set: { muted : status}})
     }
 
-    public isNumberFake(group: Group, userId: string){
-        const allowedPrefixes = group.antifake.allowed
-        for(let numberPrefix of allowedPrefixes){
-            if (userId.startsWith(numberPrefix)) {
-                return false
-            }
-        }
-        return true
+    public async setAntilink(groupId: string, status: boolean, exceptions?: string[]){
+        await db.updateAsync({id : groupId}, { $set: { 'antilink.status': status, 'antilink.exceptions': exceptions ?? []} })
     }
 
-    // ***** MUTAR GRUPO *****
-    public setMuted(groupId: string, status: boolean){
-        return db.updateAsync({id: groupId}, {$set: { muted : status}})
+    public async setAutosticker(groupId: string, status: boolean){
+        await db.updateAsync({id: groupId}, { $set: { autosticker: status } })
     }
 
-    // ***** ANTI-LINK *****
-    public setAntilink(groupId: string, status: boolean, exceptions?: string[]){
-        return db.updateAsync({id : groupId}, { $set: { 'antilink.status': status, 'antilink.exceptions': exceptions ?? []} })
-    }
-
-    // ***** AUTO-STICKER *****
-    public setAutosticker(groupId: string, status: boolean){
-        return db.updateAsync({id: groupId}, { $set: { autosticker: status } })
-    }
-
-    // ***** ANTI-FLOOD *****
     public async setAntiFlood(groupId: string, status: boolean, maxMessages: number, interval: number){
-        return db.updateAsync({id : groupId}, { $set: { 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
+        await db.updateAsync({id : groupId}, { $set: { 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
     }
 
-    // ***** LISTA-NEGRA *****
-    public async getBlackList(groupId: string){
-        const group = await this.getGroup(groupId)
-        return group?.blacklist || []
+    public async addBlackList(groupId: string, userId: string){
+        await db.updateAsync({id: groupId}, { $push: { blacklist: userId } })
     }
 
-    public addBlackList(groupId: string, userId: string){
-        return db.updateAsync({id: groupId}, { $push: { blacklist: userId } })
+    public async removeBlackList(groupId: string, userId: string){
+        await db.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
     }
-
-    public removeBlackList(groupId: string, userId: string){
-        return db.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
-    }
-
-    public async isBlackListed(groupId: string, userId: string){
-        const list = await this.getBlackList(groupId)
-        return list.includes(userId)
-    }
-
-    // ***** Bloquear/desbloquear comandos *****
 
     public async blockCommands(groupId: string, prefix: string, commands: string[]) {
         const group = await this.getGroup(groupId)

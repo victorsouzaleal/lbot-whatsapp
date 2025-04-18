@@ -19,46 +19,32 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
         if (event.action === 'add') {
             const isParticipant = await groupController.isParticipant(group.id, event.participants[0])
 
-            if (isParticipant) {
-                return
-            } else if (await isParticipantBlacklisted(client, botInfo, group, event.participants[0])){
-                return
-            } else if (await isParticipantFake(client, botInfo, group, event.participants[0])) {
-                return
-            }
+            if (isParticipant) return
 
+            if (await isParticipantBlacklisted(client, botInfo, group, event.participants[0])) return
+            else if (await isParticipantFake(client, botInfo, group, event.participants[0])) return
+            
             await sendWelcome(client, group, botInfo, event.participants[0])
             await groupController.addParticipant(group.id, event.participants[0])
-
         } else if (event.action === "remove"){
             const isParticipant = await groupController.isParticipant(group.id, event.participants[0])
 
-            if (!isParticipant) {
-                return
-            } else if (isBotUpdate){
-                await groupController.removeGroup(event.id)
-            } else {
-                await groupController.removeParticipant(group.id, event.participants[0])
-            }
-
+            if (!isParticipant) return
+            
+            if (isBotUpdate) await groupController.removeGroup(event.id)
+            else await groupController.removeParticipant(group.id, event.participants[0])
         } else if (event.action === "promote"){
             const isAdmin = await groupController.isParticipantAdmin(group.id, event.participants[0])
 
-            if (isAdmin) {
-                return
-            }
-
+            if (isAdmin) return
+        
             await groupController.addAdmin(event.id, event.participants[0])
-
         } else if (event.action === "demote"){
             const isAdmin = await groupController.isParticipantAdmin(group.id, event.participants[0])
 
-            if (!isAdmin) {
-                return
-            }
+            if (!isAdmin) return
             
             await groupController.removeAdmin(event.id, event.participants[0])
-
         }
     } catch(err: any){
         showConsoleError(err, "GROUP-PARTICIPANTS-UPDATE")
@@ -68,7 +54,7 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
 
 async function isParticipantBlacklisted(client: WASocket, botInfo: Bot, group: Group, userId: string){
     const groupController = new GroupController()
-    const isUserBlacklisted = await groupController.isBlackListed(group.id, userId)
+    const isUserBlacklisted = group.blacklist.includes(userId)
     const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
 
     if (isBotAdmin && isUserBlacklisted) {
@@ -89,9 +75,9 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
         const isBotNumber = userId == botInfo.host_number
         
         if (isBotAdmin){
-            const isFake = groupController.isNumberFake(group, userId)
-
-            if (isFake && !isBotNumber && !isGroupAdmin){
+            const allowedPrefixes = group.antifake.allowed
+            const isPrefixAllowed = allowedPrefixes.filter(numberPrefix => userId.startsWith(numberPrefix)).length ? true : false
+            if (!isPrefixAllowed && !isBotNumber && !isGroupAdmin){
                 const replyText = buildText(botTexts.antifake_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
                 await waLib.sendTextWithMentions(client, group.id, replyText , [userId], {expiration: group.expiration})
                 await waLib.removeParticipant(client, group.id, userId)

@@ -1,9 +1,9 @@
 import { Participant, Group } from "../interfaces/group.interface.js";
 import { MessageTypes } from "../interfaces/message.interface.js";
-import { timestampToDate, buildText } from '../utils/general.util.js'
+import { timestampToDate } from '../utils/general.util.js'
 import moment from 'moment-timezone'
 import DataStore from "@seald-io/nedb";
-import { GroupMetadata, GroupParticipant } from "baileys";
+import { GroupMetadata } from "baileys";
 
 const db = new DataStore<Participant>({filename : './storage/participants.groups.db', autoload: true})
 
@@ -35,10 +35,8 @@ export class ParticipantService {
     public async addParticipant(groupId: string, userId: string, isAdmin: boolean){
         const isGroupParticipant = await this.isGroupParticipant(groupId, userId)
 
-        if (isGroupParticipant) {
-            return
-        }
-
+        if (isGroupParticipant) return
+        
         const participant : Participant = {
             group_id : groupId,
             user_id: userId,
@@ -59,7 +57,7 @@ export class ParticipantService {
             }
         }
 
-        return db.insertAsync(participant)
+        await db.insertAsync(participant)
     }
 
     public async rebuildParticipants() {
@@ -93,18 +91,18 @@ export class ParticipantService {
     }
 
     public async removeParticipant(groupId: string, userId: string){
-        return db.removeAsync({group_id: groupId, user_id: userId}, {})
+        await db.removeAsync({group_id: groupId, user_id: userId}, {})
     }
 
     public async removeParticipants(groupId: string){
-        return db.removeAsync({group_id: groupId}, {multi: true})
+        await db.removeAsync({group_id: groupId}, {multi: true})
     }
 
     public async addAdmin(groupId: string, userId: string){
         const isGroupAdmin = await this.isGroupAdmin(groupId, userId)
 
         if (!isGroupAdmin) {
-            return db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
+            await db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
         }
     }
 
@@ -112,7 +110,7 @@ export class ParticipantService {
         const isGroupAdmin = await this.isGroupAdmin(groupId, userId)
 
         if (isGroupAdmin) {
-            return db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
+            await db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
         }
     }
 
@@ -156,7 +154,7 @@ export class ParticipantService {
         return adminsIds.includes(userId)
     }
 
-    public incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes, isCommand: boolean){
+    public async incrementParticipantActivity(groupId: string, userId: string, type: MessageTypes, isCommand: boolean){
         let incrementedUser : {
             msgs: number,
             commands?: number,
@@ -168,10 +166,8 @@ export class ParticipantService {
             other?: number
         } = { msgs: 1 }
 
-        if(isCommand) {
-            incrementedUser.commands = 1
-        }
-
+        if (isCommand) incrementedUser.commands = 1
+        
         switch (type) {
             case "conversation":
             case "extendedTextMessage":
@@ -194,7 +190,7 @@ export class ParticipantService {
                 break
         }
 
-        return db.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
+        await db.updateAsync({group_id : groupId, user_id: userId}, {$inc: incrementedUser})
     }  
 
     public async getParticipantActivityLowerThan(group: Group, num : number){
@@ -208,27 +204,23 @@ export class ParticipantService {
         return participantsLeaderboard.splice(0, qty_leaderboard)
     }
 
-    public addWarning(groupId: string, userId: string){
-        return db.updateAsync({group_id: groupId, user_id: userId}, { $inc: { warnings: 1} })
+    public async addWarning(groupId: string, userId: string){
+        await db.updateAsync({group_id: groupId, user_id: userId}, { $inc: { warnings: 1} })
     }
 
-    public removeWarning(groupId: string, userId: string, currentWarnings: number){
-        return db.updateAsync({group_id: groupId, user_id: userId}, { $set: { warnings: --currentWarnings} })
+    public async removeWarning(groupId: string, userId: string, currentWarnings: number){
+        await db.updateAsync({group_id: groupId, user_id: userId}, { $set: { warnings: --currentWarnings} })
     }
 
-    public removeParticipantsWarnings(groupId: string){
-        return db.updateAsync({group_id: groupId}, { $set: { warnings: 0} })
+    public async removeParticipantsWarnings(groupId: string){
+        await db.updateAsync({group_id: groupId}, { $set: { warnings: 0} })
     }
 
-    public async hasAntiFloodExpiredMessages(group: Group, participant: Participant, currentTimestamp: number){
-        if (group && currentTimestamp > participant.antiflood.expire){
-            const expireTimestamp = currentTimestamp + group?.antiflood.interval
-            await db.updateAsync({group_id: group.id, user_id: participant.user_id}, { $set : { 'antiflood.expire': expireTimestamp, 'antiflood.msgs': 1 } })
-            return true
-        } else {
-            await db.updateAsync({group_id: group.id, user_id: participant.user_id}, { $inc : { 'antiflood.msgs': 1 } })
-            return false
-        }
+    public async expireParticipantAntiFlood(groupId: string, userId: string, newExpireTimestamp: number){
+        await db.updateAsync({group_id: groupId, user_id: userId}, { $set : { 'antiflood.expire': newExpireTimestamp, 'antiflood.msgs': 1 } })
     }
 
+    public async incrementAntiFloodMessage(groupId: string, userId: string){
+        await db.updateAsync({group_id: groupId, user_id: userId}, { $inc : { 'antiflood.msgs': 1 } })
+    }
 }

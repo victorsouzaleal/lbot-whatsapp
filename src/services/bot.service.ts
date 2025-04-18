@@ -1,13 +1,9 @@
 import { Bot } from "../interfaces/bot.interface.js"
-import { CategoryCommand } from "../interfaces/command.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
-import { buildText } from "../utils/general.util.js"
 import { proto } from "baileys"
 import NodeCache from "node-cache"
-import { commandExist, getCommandsByCategory } from "../utils/commands.util.js"
-import adminCommands from "../commands/admin.list.commands.js"
 import { waLib } from "../libraries/library.js"
 
 export class BotService {
@@ -17,13 +13,8 @@ export class BotService {
         const storageFolderExists = fs.pathExistsSync(path.resolve("storage"))
         const jsonFileExists = fs.existsSync(this.pathJSON)
         
-        if (!storageFolderExists) {
-            fs.mkdirSync(path.resolve("storage"), {recursive: true})
-        }
-
-        if (!jsonFileExists) {
-            this.initBot()
-        }
+        if (!storageFolderExists) fs.mkdirSync(path.resolve("storage"), {recursive: true})
+        if (!jsonFileExists) this.initBot()
     }
 
     private initBot(){

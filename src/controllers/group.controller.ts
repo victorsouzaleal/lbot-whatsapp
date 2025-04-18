@@ -1,8 +1,7 @@
-import { GroupMetadata, GroupParticipant } from "baileys"
+import { GroupMetadata } from "baileys"
 import { GroupService } from "../services/group.service.js"
-import { Bot } from "../interfaces/bot.interface.js"
-import { Group, Participant } from "../interfaces/group.interface.js"
-import { Message, MessageTypes } from "../interfaces/message.interface.js"
+import { Group } from "../interfaces/group.interface.js"
+import { MessageTypes } from "../interfaces/message.interface.js"
 import { ParticipantService } from "../services/participant.service.js"
 
 export class GroupController {
@@ -14,28 +13,7 @@ export class GroupController {
         this.participantService = new ParticipantService()
     }
 
-    // *********************** OBTER DADOS DO GRUPO ***********************
-    public getGroup(groupId: string) {
-        return this.groupService.getGroup(groupId)
-    }
-
-    public isRegistered(groupId: string) {
-        return this.groupService.isRegistered(groupId)
-    }
-
-    public getOwner(groupId: string) {
-        return this.groupService.getOwner(groupId)
-    }
-
-    public isRestricted(groupId: string) {
-        return this.groupService.isRestricted(groupId)
-    }
-
-    public getAllGroups() {
-        return this.groupService.getAllGroups()
-    }
-
-    // *********************** REGISTRA/REMOVE/ATUALIZA GRUPOS ***********************
+    // ***** Grupo *****
     public registerGroup(group : GroupMetadata) {
         return this.groupService.registerGroup(group)
     }
@@ -44,8 +22,12 @@ export class GroupController {
         return this.groupService.rebuildGroups()
     }
 
-    public rebuildParticipants(){
-        return this.participantService.rebuildParticipants()
+    public getGroup(groupId: string) {
+        return this.groupService.getGroup(groupId)
+    }
+
+    public getAllGroups() {
+        return this.groupService.getAllGroups()
     }
 
     public setNameGroup(groupId: string, name: string) {
@@ -72,7 +54,75 @@ export class GroupController {
         return this.groupService.incrementGroupCommands(groupId)
     }
 
-    // *********************** PARTICIPANTES/ADMINS ***********************
+    public addWordFilter(groupId: string, word: string){
+        return this.groupService.addWordFilter(groupId, word)
+    }
+
+    public removeWordFilter(groupId: string, word: string){
+        return this.groupService.removeWordFilter(groupId, word)
+    }
+
+    public setWelcome(groupId: string, status: boolean, message = '') {
+        return this.groupService.setWelcome(groupId, status, message)
+    }
+
+    public setAntiLink(groupId: string, status: boolean, exceptions?: string[]) {
+        return this.groupService.setAntilink(groupId, status, exceptions)
+    }
+
+    public setAutoSticker(groupId: string, status = true) {
+        return this.groupService.setAutosticker(groupId, status)
+    }
+
+    public setAntiFake(groupId: string, status = true, allowed : string[]) {
+        return this.groupService.setAntifake(groupId, status, allowed)
+    }
+
+    public setMuted(groupId: string, status = true) {
+        return this.groupService.setMuted(groupId, status)
+    }
+
+    public setAntiFlood(groupId: string, status = true, maxMessages = 10, interval = 10) {
+        return this.groupService.setAntiFlood(groupId, status, maxMessages, interval)
+    }
+
+    public addBlackList(groupId: string, userId: string) {
+        return this.groupService.addBlackList(groupId, userId)
+    }
+
+    public removeBlackList(groupId: string, userId: string) {
+        return this.groupService.removeBlackList(groupId, userId)
+    }
+
+    public blockCommands(groupId: string, prefix: string, commands: string[]) {
+        return this.groupService.blockCommands(groupId, prefix, commands)
+    }
+
+    public unblockCommands(groupId: string, prefix: string, commands: string[]) {
+        return this.groupService.unblockCommands(groupId, prefix, commands)
+    }
+
+    // ***** Participantes *****
+    public addParticipant(groupId: string, userId: string, isAdmin = false) {
+        return this.participantService.addParticipant(groupId, userId, isAdmin)
+    }
+
+    public removeParticipant(groupId: string, userId: string) {
+        return this.participantService.removeParticipant(groupId, userId)
+    }
+
+    public addAdmin(groupId: string, userId: string) {
+        return this.participantService.addAdmin(groupId, userId)
+    }
+
+    public removeAdmin(groupId: string, userId: string) {
+        return this.participantService.removeAdmin(groupId, userId)
+    }
+
+    public rebuildParticipants(){
+        return this.participantService.rebuildParticipants()
+    }
+
     public getParticipant(groupId: string, userId: string){
         return this.participantService.getParticipantFromGroup(groupId, userId)
     }
@@ -97,24 +147,8 @@ export class GroupController {
         return this.participantService.isGroupParticipant(groupId, userId)
     }
 
-    public addParticipant(groupId: string, userId: string, isAdmin = false) {
-        return this.participantService.addParticipant(groupId, userId, isAdmin)
-    }
-
-    public addAdmin(groupId: string, userId: string) {
-        return this.participantService.addAdmin(groupId, userId)
-    }
-
-    public removeAdmin(groupId: string, userId: string) {
-        return this.participantService.removeAdmin(groupId, userId)
-    }
-
     public isParticipantAdmin(groupId: string, userId: string) {
         return this.participantService.isGroupAdmin(groupId, userId)
-    }
-
-    public removeParticipant(groupId: string, userId: string) {
-        return this.participantService.removeParticipant(groupId, userId)
     }
 
     public getParticipantsActivityLowerThan(group: Group, num: number) {
@@ -141,78 +175,11 @@ export class GroupController {
         return this.participantService.removeParticipantsWarnings(groupId)
     }
 
-    public hasParticipantExpiredMessages(group: Group, participant: Participant, currentTimestamp: number){
-        return this.participantService.hasAntiFloodExpiredMessages(group, participant, currentTimestamp)
+    public async expireParticipantAntiFlood(groupId: string, userId: string, newExpireTimestamp: number){
+        return this.participantService.expireParticipantAntiFlood(groupId, userId, newExpireTimestamp)
     }
 
-    // *********************** Recursos do grupo ***********************
-
-    // ***** FILTRO DE PALAVRAS *****
-    public addWordFilter(groupId: string, word: string){
-        return this.groupService.addWordFilter(groupId, word)
-    }
-
-    public removeWordFilter(groupId: string, word: string){
-        return this.groupService.removeWordFilter(groupId, word)
-    }
-
-    // ***** BEM VINDO *****
-    public setWelcome(groupId: string, status: boolean, message = '') {
-        return this.groupService.setWelcome(groupId, status, message)
-    }
-
-    // ***** ANTI-LINK *****
-    public setAntiLink(groupId: string, status: boolean, exceptions?: string[]) {
-        return this.groupService.setAntilink(groupId, status, exceptions)
-    }
-
-    // ***** AUTO-STICKER *****
-    public setAutoSticker(groupId: string, status = true) {
-        return this.groupService.setAutosticker(groupId, status)
-    }
-
-    // ***** ANTI-FAKE *****
-    public setAntiFake(groupId: string, status = true, allowed : string[]) {
-        return this.groupService.setAntifake(groupId, status, allowed)
-    }
-
-    public isNumberFake(group: Group, userId: string){
-        return this.groupService.isNumberFake(group, userId)
-    }
-
-    // ***** MUTAR GRUPO *****
-    public setMuted(groupId: string, status = true) {
-        return this.groupService.setMuted(groupId, status)
-    }
-
-    // ***** ANTI-FLOOD *****
-    public setAntiFlood(groupId: string, status = true, maxMessages = 10, interval = 10) {
-        return this.groupService.setAntiFlood(groupId, status, maxMessages, interval)
-    }
-
-    // ***** LISTA-NEGRA *****
-    public getBlackList(groupId: string) {
-        return this.groupService.getBlackList(groupId)
-    }
-
-    public addBlackList(groupId: string, userId: string) {
-        return this.groupService.addBlackList(groupId, userId)
-    }
-
-    public removeBlackList(groupId: string, userId: string) {
-        return this.groupService.removeBlackList(groupId, userId)
-    }
-
-    public isBlackListed(groupId: string, userId: string){
-        return this.groupService.isBlackListed(groupId, userId)
-    }
-
-    // ***** BLOQUEAR/DESBLOQUEAR COMANDOS *****
-    public blockCommands(groupId: string, prefix: string, commands: string[]) {
-        return this.groupService.blockCommands(groupId, prefix, commands)
-    }
-
-    public unblockCommands(groupId: string, prefix: string, commands: string[]) {
-        return this.groupService.unblockCommands(groupId, prefix, commands)
+    public async incrementAntiFloodMessage(groupId: string, userId: string){
+        return this.participantService.incrementAntiFloodMessage(groupId, userId)
     }
 }

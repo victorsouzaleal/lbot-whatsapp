@@ -242,7 +242,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(groupCommands.addlista.msgs.error_add_admin)
     } 
 
-    const currentBlacklist = await groupController.getBlackList(group.id)
+    const currentBlacklist = group.blacklist
 
     if (currentBlacklist.includes(targetUserId)) {
         throw new Error(groupCommands.addlista.msgs.error_already_listed)
@@ -269,7 +269,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
         throw new Error(messageErrorCommandUsage(message))
     }
     
-    const currentBlacklist = await groupController.getBlackList(group.id)
+    const currentBlacklist = group.blacklist
 
     if (message.args.length == 1 && message.args[0].length <= 3) {
         targetUserId = currentBlacklist[parseInt(message.text_command) - 1]
@@ -296,7 +296,7 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
         throw new Error(botTexts.permission.bot_group_admin)
     }
 
-    const currentBlacklist = await groupController.getBlackList(group.id)
+    const currentBlacklist = group.blacklist
     let replyText = buildText(groupCommands.listanegra.msgs.reply_title, currentBlacklist.length)
 
     if (!currentBlacklist.length) {

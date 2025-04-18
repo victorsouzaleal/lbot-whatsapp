@@ -37,7 +37,7 @@ async function syncResources(client: WASocket){
 
         if (isBotAdmin){
             for (let participant of participants){
-                const isUserBlacklisted = await groupController.isBlackListed(group.id, participant.user_id)
+                const isUserBlacklisted = group.blacklist.includes(participant.user_id)
                 const isBotNumber = participant.user_id == botInfo.host_number
 
                 //Sync LISTA-NEGRA
@@ -49,8 +49,9 @@ async function syncResources(client: WASocket){
 
                 //Sync ANTI-FAKE
                 if(group.antifake.status){
-                    const isFake = groupController.isNumberFake(group, participant.user_id)
-                    if (isFake && group.antifake.status && !participant.admin && !isBotNumber) {
+                    const allowedPrefixes = group.antifake.allowed
+                    const isPrefixAllowed = allowedPrefixes.filter(numberPrefix => participant.user_id.startsWith(numberPrefix)).length ? true : false
+                    if (!isPrefixAllowed && group.antifake.status && !participant.admin && !isBotNumber) {
                         await waLib.removeParticipant(client, group.id, participant.user_id)
                         bannedByAntiFake++
                         continue
