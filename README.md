@@ -17,36 +17,37 @@
 
 <br>
 
-## 🚨 REQUERIMENTOS :
+## 🚨 REQUERIMENTOS
+- Conhecimento básico de informática. <br>
 - Um **número de celular conectado ao WhatsApp** para conectar o bot. <br>
 - Um **computador com sistema Windows/Linux** ou um **smartphone Android** para executar a aplicação.<br>
 
 <br>
 
-## 1 - 💿 Instalação :
+## 1 - 💿 Instalação
 
-### 🖥️ Windows/Linux :
+### 1.1 - 🖥️ Desktop (Windows/Linux)
 
-Antes da instalação você tem que instalar os programas abaixo, no Windows é só instalar pelo link indicado e no Linux você tem que pesquisar qual é o comando para instalar na sua distribuição.
+#### 1.1.1 - Antes da instalação você tem que instalar os programas abaixo, no Windows é só instalar pelo link indicado e no Linux você tem que pesquisar qual é o comando para instalar na sua distribuição.
 - Git 64-bit - [DOWNLOAD](https://git-scm.com/downloads/win)<br>
 - Node.js LTS - [DOWNLOAD](https://nodejs.org/en/)<br><br>
 
+#### 1.1.2 - Após instalar o Git e o Node.js, faça o download do **.zip** da última versão lançada: [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)
+
+#### 1.1.3 - Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** :
+
 <br>
 
-Após instalar o Git e o Node.js no sistema, use o comando abaixo para instalar o **Yarn**
+**TODOS OS COMANDOS ABAIXO DEVEM SER EXECUTADOS NO TERMINAL/PROMPT DE COMANDO DENTRO DA PASTA DO BOT!!**
+
+#### 1.1.4 - Se for a sua primeira vez instalando o bot você vai ter que digitar esse comando para instalar o **Yarn**
 ```bash
 npm i -g yarn
 ```
 
 **OBS**: Caso o comando retorne erro no **Linux** você vai precisar se elevar a superusuário utilizando **sudo** antes do comando.
 
-<br>
-
-Faça o download do **.zip** da última versão lançada: [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)
-
-<br>
-
-Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** e inicie o bot com o abaixo:
+#### 1.1.5 - Após instalar o **Yarn** ou se ele já tiver instalado, você só precisa iniciar o bot com o comando abaixo:
 ```bash
 yarn start
 ```
@@ -57,13 +58,11 @@ yarn start
 
 <br>
 
-### 📱 Termux :
+### 1.2 - 📱 Smartphone (Android)
 
-Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/termux/termux-app/releases/download/v0.118.2/termux-app_v0.118.2+github-debug_universal.apk).
+#### 1.2.1 - Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/termux/termux-app/releases/download/v0.118.2/termux-app_v0.118.2+github-debug_universal.apk).
 
-<br>
-
-Abra o **Termux** comece usando este comando para fazer o download e instalação do bot, isso pode demorar algum tempo até instalar tudo.
+#### 1.2.2 - Abra o **Termux** comece usando este comando para fazer o download e instalação do bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
 pkg install wget -y && wget -O - dub.sh/lbot-termux | bash && cd ~/LBOT && yarn start
 ```
@@ -72,8 +71,9 @@ pkg install wget -y && wget -O - dub.sh/lbot-termux | bash && cd ~/LBOT && yarn 
 É normal demorar na primeira vez será feito o download de todas as dependências, se tudo der certo será perguntado se você quer se conectar com **QR Code** ou **Código de Pareamento**, faça a sua escolha e se conecte com o aplicativo do WhatsApp. 
 
 <br>
+<br>
 
-Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
+#### DICA - Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
 ```bash
 cd ~/LBOT && yarn start
 ```
@@ -81,7 +81,7 @@ cd ~/LBOT && yarn start
 <br>
 <br>
 
-## 2 - 🤖 Uso :
+## 2 - 🤖 Uso
 
 Seu bot já deve estar iniciando normalmente após o passo anterior, use os comandos abaixo para visualizar os comandos disponíveis.
 
@@ -96,7 +96,7 @@ Todos os comandos tem um guia ao digitar: **!comando** guia
 
 <br>
 
-## 3 - ⚙️ Configuração do bot:
+## 3 - ⚙️ Configuração do bot
 
 ### Como configurar o DONO:
 Para usar as funções de **administrador** envie **!admin** para o WhatsApp do bot e seu número será cadastrado como dono.
@@ -107,7 +107,7 @@ Após ser cadastrado como **DONO** envie **!admin** novamente e veja toda a list
 
 <br>
 
-## 4 - 🛠️ Recursos/Comandos :
+## 4 - 🛠️ Recursos/Comandos
 
 ### 🖼️ Figurinhas
 Diversos comandos para criação de figurinhas
