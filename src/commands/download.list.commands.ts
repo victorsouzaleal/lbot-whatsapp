@@ -40,8 +40,8 @@ const downloadCommands = {
         msgs: {
             wait: "[AGUARDE] 🎬 Sua mídia está sendo baixada e processada.\n\n"+
             "*Autor*: {$1} (@{$2})\n"+
-            "*Descrição*: {p3}\n"+
-            "*Likes*: {p4}",
+            "*Descrição*: {$3}\n"+
+            "*Likes*: {$4}",
         },
         function: downloadFunctions.igCommand
     },
