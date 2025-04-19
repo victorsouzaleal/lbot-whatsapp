@@ -13,8 +13,5 @@ logs/session/*
 temp
 #Ignorar DB e etc
 storage
-#Sessão Baileys
-session
-
 # Codigo JS
 dist
