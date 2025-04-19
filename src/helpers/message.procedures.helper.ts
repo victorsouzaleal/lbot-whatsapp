@@ -90,20 +90,24 @@ export async function isUserLimitedByCommandRate(client: WASocket, botInfo: Bot,
         const { isBotAdmin } = message
         const user = await userController.getUser(message.sender)
 
-        if (isBotAdmin) {
-            return false
-        }
-
+        if (isBotAdmin) return false
+    
         if (user){
             let isUserLimited : boolean
 
             if (user.command_rate.limited){
-                const hasExpiredLimited = await userController.hasExpiredLimited(user, botInfo, currentTimestamp)
+                const hasExpiredLimited = currentTimestamp > user.command_rate.expire_limited
+
+                if (hasExpiredLimited) await userController.setLimitedUser(user.id, false, botInfo, currentTimestamp)
+
                 isUserLimited = hasExpiredLimited ? false : true
             } else {
-                const hasExpiredMessages = await userController.hasExpiredCommands(user, currentTimestamp)
+                const hasExpiredCommands = currentTimestamp > user.command_rate.expire_cmds
 
-                if (!hasExpiredMessages && user.command_rate.cmds >= botInfo.command_rate.max_cmds_minute) {
+                if (hasExpiredCommands) await userController.expireCommandsRate(user.id, currentTimestamp)
+                else await userController.incrementCommandRate(user.id)
+
+                if (!hasExpiredCommands && user.command_rate.cmds >= botInfo.command_rate.max_cmds_minute) {
                     await userController.setLimitedUser(user.id, true, botInfo, currentTimestamp)
                     isUserLimited = true
                 } else {

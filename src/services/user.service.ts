@@ -4,27 +4,14 @@ import moment from "moment";
 import { Bot } from "../interfaces/bot.interface.js";
 const db = new DataStore<User>({filename : './storage/users.db', autoload: true})
 
-export class UserService{
-    public async getUser (userId : string){
-        const user  = await db.findOneAsync({id: userId}) as User | null
-        return user
-    }
-
-    public async getUsers(){
-        const users = await db.findAsync({}) as User[]
-        return users
-    }
-
+export class UserService {
     public async registerUser(userId: string, name?: string|null){
-        const isRegistered = await this.isUserRegistered(userId)
+        const user = await this.getUser(userId)
 
-        if (isRegistered) {
-            return 
-        }
-
+        if (user) return 
+    
         const timestamp = Math.round(moment.now()/1000)
-
-        const user : User = {
+        const userData : User = {
             id : userId,
             name,
             commands: 0,
@@ -39,7 +26,7 @@ export class UserService{
             }
         }
 
-        return db.insertAsync(user)
+        await db.insertAsync(userData)
     }
 
     public async rebuildUsers(){
@@ -68,13 +55,18 @@ export class UserService{
         }
     }
 
-    public async isUserRegistered(userId: string){
-        const user = await this.getUser(userId)
-        return (user != null)
+    public async getUser (userId : string){
+        const user  = await db.findOneAsync({id: userId}) as User | null
+        return user
     }
 
-    public setAdmin(userId : string, admin: boolean){
-        return db.updateAsync({id : userId}, {$set: {admin}})
+    public async getUsers(){
+        const users = await db.findAsync({}) as User[]
+        return users
+    }
+
+    public async setAdmin(userId : string, admin: boolean){
+        await db.updateAsync({id : userId}, {$set: {admin}})
     }
 
     public async getAdmins(){
@@ -82,8 +74,8 @@ export class UserService{
         return admins
     }
 
-    public setOwner(userId : string){
-        return db.updateAsync({id : userId}, {$set: {owner : true, admin: true}})
+    public async setOwner(userId : string){
+        await db.updateAsync({id : userId}, {$set: {owner : true, admin: true}})
     }
 
     public async getOwner(){
@@ -91,43 +83,32 @@ export class UserService{
         return owner
     }
 
-    public setName(userId : string, name : string){
-        return db.updateAsync({id: userId}, {$set:{name}})
+    public async setName(userId : string, name : string){
+        await db.updateAsync({id: userId}, {$set:{name}})
     }
 
-    public setReceivedWelcome(userId: string, status = true){
-        return db.updateAsync({id : userId}, {$set : {receivedWelcome : status}})
+    public async setReceivedWelcome(userId: string, status = true){
+        await db.updateAsync({id : userId}, {$set : {receivedWelcome : status}})
     }
 
-    public increaseUserCommandsCount(userId: string){
-        return db.updateAsync({id : userId}, {$inc: {commands: 1}})
+    public async increaseUserCommandsCount(userId: string){
+        await db.updateAsync({id : userId}, {$inc: {commands: 1}})
     }
 
-    public async hasExpiredCommands(user: User, currentTimestamp: number){
-        if (currentTimestamp > user.command_rate.expire_cmds){
-            const expireTimestamp = currentTimestamp + 60
-            await db.updateAsync({id: user.id}, { $set : { 'command_rate.expire_cmds': expireTimestamp, 'command_rate.cmds': 1 } })
-            return true
+    public async expireCommandsRate(userId: string, currentTimestamp: number){
+        const expireTimestamp = currentTimestamp + 60
+        await db.updateAsync({id: userId}, { $set : { 'command_rate.expire_cmds': expireTimestamp, 'command_rate.cmds': 1 } })
+    }
+
+    public async incrementCommandRate(userId: string){
+        await db.updateAsync({id: userId}, { $inc : { "command_rate.cmds": 1 } })
+    }
+
+    public async setLimitedUser(userId: string, isLimited: boolean, botInfo: Bot, currentTimestamp: number){
+        if (isLimited){
+            await db.updateAsync({id: userId}, { $set : { 'command_rate.limited': isLimited, 'command_rate.expire_limited': currentTimestamp + botInfo.command_rate.block_time} })
         } else {
-            await db.updateAsync({id: user.id}, { $inc : { "command_rate.cmds": 1 } })
-            return false
-        }
-    }
-
-    public async hasExpiredLimited(user: User, botInfo: Bot, currentTimestamp: number){
-        if (currentTimestamp > user.command_rate.expire_limited){
-            await this.setLimitedUser(user.id, false, botInfo, currentTimestamp)
-            return true
-        } else {
-            return false
-        }
-    }
-
-    public setLimitedUser(userId: string, isLimited: boolean, botInfo: Bot, currentTimestamp: number){
-        if(isLimited){
-            return db.updateAsync({id: userId}, { $set : { 'command_rate.limited': isLimited, 'command_rate.expire_limited': currentTimestamp + botInfo.command_rate.block_time} })
-        } else {
-            return db.updateAsync({id: userId}, { $set : { 'command_rate.limited': isLimited, 'command_rate.expire_limited': 0, 'command_rate.cmds': 1, 'command_rate.expire_cmds': currentTimestamp + 60} })
+            await db.updateAsync({id: userId}, { $set : { 'command_rate.limited': isLimited, 'command_rate.expire_limited': 0, 'command_rate.cmds': 1, 'command_rate.expire_cmds': currentTimestamp + 60} })
         }
     }
 }
