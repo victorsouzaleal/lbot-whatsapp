@@ -7,11 +7,11 @@ import databaseRebuilder from "./database.rebuilder.helper.js";
 
 export async function botUpdater(){
     const botController = new BotController()
+    const botInfo = botController.getBot()
     let hasBotUpdated = false
     
     try{
-
-        if (!botController.isDatabaseUpdated()) {
+        if (!botInfo.database_updated) {
             await databaseRebuilder()
             botController.setDatabaseUpdated(true)
             console.log(colorText(botTexts.rebuilding_database, '#e0e031'))

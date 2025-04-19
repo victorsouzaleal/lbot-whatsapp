@@ -2,8 +2,6 @@ import { Bot } from "../interfaces/bot.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
-import { proto } from "baileys"
-import NodeCache from "node-cache"
 import { waLib } from "../libraries/library.js"
 
 export class BotService {
@@ -39,14 +37,6 @@ export class BotService {
         this.updateBot(bot)
     }
 
-    private updateBot(bot : Bot){
-        fs.writeFileSync(this.pathJSON, JSON.stringify(bot))
-    }
-
-    private deleteBotData(){
-        fs.writeFileSync(this.pathJSON, JSON.stringify({}))
-    }
-
     public rebuildBot() {
         const oldBotData =  this.getBot() as any
         const newBotData : Bot = {
@@ -71,6 +61,14 @@ export class BotService {
         this.updateBot(newBotData)
     }
 
+    private updateBot(bot : Bot){
+        fs.writeFileSync(this.pathJSON, JSON.stringify(bot))
+    }
+
+    private deleteBotData(){
+        fs.writeFileSync(this.pathJSON, JSON.stringify({}))
+    }
+
     public startBot(hostNumber : string){
         let bot = this.getBot()
         bot.started = moment.now()
@@ -85,76 +83,53 @@ export class BotService {
     public setNameBot(name: string){
         let bot = this.getBot()
         bot.name = name
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
     public setDatabaseUpdated(status: boolean) {
         let bot = this.getBot()
         bot.database_updated = status
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
     
     public setPrefix(prefix: string){
         let bot = this.getBot()
         bot.prefix = prefix
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
-    public isDatabaseUpdated(){
-        let bot = this.getBot()
-        return bot.database_updated ?? false
-    }
-
-    public storeMessageOnCache(message : proto.IWebMessageInfo, messageCache : NodeCache){
-        if (message.key.remoteJid && message.key.id && message.message){
-            messageCache.set(message.key.id, message.message)
-        }    
-    }
-
-    public getMessageFromCache(messageId: string, messageCache: NodeCache){
-        let message = messageCache.get(messageId) as proto.IMessage | undefined 
-        return message
-    }
-    
     public incrementExecutedCommands(){
         let bot = this.getBot()
         bot.executed_cmds++
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
-
-    // Recursos do BOT
-    // Auto-Sticker
     public setAutosticker(status: boolean){
         let bot = this.getBot()
         bot.autosticker = status
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
-    // Modo admin
     public setAdminMode(status: boolean){
         let bot = this.getBot()
         bot.admin_mode = status
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
-    // Comandos no PV
     public setCommandsPv(status: boolean){
         let bot = this.getBot()
         bot.commands_pv = status
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
-    // Taxa de comandos
     public async setCommandRate(status: boolean, maxCommandsMinute: number, blockTime: number){
         let bot = this.getBot()
         bot.command_rate.status = status
         bot.command_rate.max_cmds_minute = maxCommandsMinute
         bot.command_rate.block_time = blockTime
-        return this.updateBot(bot)
+        this.updateBot(bot)
     }
 
-    // ***** Bloquear/desbloquear comandos
     public blockCommandsGlobally(prefix: string, commands: string[]) {
         let botInfo = this.getBot()
         const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))

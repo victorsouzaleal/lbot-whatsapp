@@ -5,24 +5,18 @@ import NodeCache from 'node-cache'
 import { UserController } from '../controllers/user.controller.js'
 import { handleGroupMessage, handlePrivateMessage } from '../helpers/message.handler.helper.js'
 import { GroupController } from '../controllers/group.controller.js'
-import { BotController } from '../controllers/bot.controller.js'
 import { waLib } from '../libraries/library.js'
 import { commandInvoker } from '../helpers/command.invoker.helper.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){
     try{
-        if (!messages.messages[0].message) {
-            return
-        }
-
+        if (!messages.messages[0].message) return
+        
         const contentType = getContentType(messages.messages[0].message)
 
-        if (!contentType) {
-            return
-        } else if (messages.messages[0].key.fromMe) {
-            new BotController().storeMessageOnCache(messages.messages[0], messageCache)
-        }
-
+        if (!contentType) return
+        else if (messages.messages[0].key.fromMe) waLib.storeMessageOnCache(messages.messages[0], messageCache)
+    
         switch(messages.type){
             case 'notify':
                 const userController = new UserController()
@@ -39,20 +33,11 @@ export async function messageReceived (client: WASocket, messages : {messages: W
 
                     if (!isGroupMsg) {
                         callCommand = await handlePrivateMessage(client, botInfo, message)
-
-                        if (callCommand) {
-                            await commandInvoker(client, botInfo, message, null)
-                        }
-        
+                        if (callCommand) await commandInvoker(client, botInfo, message, null)
                     } else if (group) {
                         callCommand = await handleGroupMessage(client, group, botInfo, message)
-
-                        if (callCommand) {
-                            await commandInvoker(client, botInfo, message, group)
-                        }
-
+                        if (callCommand) await commandInvoker(client, botInfo, message, group)
                     }
-
                 }
 
                 break

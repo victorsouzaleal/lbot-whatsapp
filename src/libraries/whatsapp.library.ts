@@ -6,6 +6,7 @@ import { Group } from "../interfaces/group.interface.js"
 import { User } from "../interfaces/user.interface.js"
 import { removeBold } from "../utils/general.util.js"
 import { GroupController } from "../controllers/group.controller.js"
+import NodeCache from "node-cache"
 
 async function updatePresence(client: WASocket, chatId: string, presence: WAPresence){
     await client.presenceSubscribe(chatId)
@@ -233,6 +234,17 @@ export async function promoteParticipant(client: WASocket, groupId: string, part
 export async function demoteParticipant(client: WASocket, groupId: string, participant: string){
     const [response] = await client.groupParticipantsUpdate(groupId, [participant], "demote")
     return response
+}
+
+export function storeMessageOnCache(message : proto.IWebMessageInfo, messageCache : NodeCache){
+    if (message.key.remoteJid && message.key.id && message.message){
+        messageCache.set(message.key.id, message.message)
+    }    
+}
+
+export function getMessageFromCache(messageId: string, messageCache: NodeCache){
+    let message = messageCache.get(messageId) as proto.IMessage | undefined 
+    return message
 }
 
 export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){

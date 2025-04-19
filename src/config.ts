@@ -1,7 +1,7 @@
 import {pino} from 'pino'
 import {isJidBroadcast, AuthenticationState, WAVersion, UserFacingSocketConfig, makeCacheableSignalKeyStore} from 'baileys'
 import NodeCache from 'node-cache'
-import { BotController } from './controllers/bot.controller.js'
+import { waLib } from './libraries/library.js'
 
 export default function configSocket (state : AuthenticationState, retryCache : NodeCache, version: WAVersion, messageCache: NodeCache){
     const config : UserFacingSocketConfig =  {
@@ -16,7 +16,7 @@ export default function configSocket (state : AuthenticationState, retryCache : 
         logger: pino({level : "silent"}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
         getMessage: async (key) => {
-            const message = (key.id) ? new BotController().getMessageFromCache(key.id, messageCache) : undefined
+            const message = (key.id) ? waLib.getMessageFromCache(key.id, messageCache) : undefined
             return message
         }
     }
