@@ -18,8 +18,6 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
 
     const answerMethod = await rl.question(botTexts.input_connection_method)
 
-    rl.close()
-
     if (answerMethod == '2') {
         const answerNumber = await rl.question(botTexts.input_phone_number)
         const code = await client.requestPairingCode(answerNumber.replace(/\W+/g,""))
@@ -34,6 +32,8 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
             })
         }
     }
+
+    rl.close()
 }
 
 export async function connectionOpen(client: WASocket){
