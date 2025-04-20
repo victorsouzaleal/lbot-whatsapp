@@ -1,6 +1,12 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.1 - 20/04/2025
+
+### CORREÇÕES
+- Correção na mensagem de espera do comando **!ig**
+- Correção na sessão que não estava detectando corretamente algumas mensagens de grupo.
+
 ## 3.3.0 - 18/04/2025
 
 ### Com as novas mudanças na sessão após essa atualização você terá que se conectar novamente lendo o código QR ou código de pareamento.
