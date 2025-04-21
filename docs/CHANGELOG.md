@@ -1,6 +1,15 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.5 - 21/04/2025
+
+### GERAL
+- O registro do Baileys agora está ativo para indicar qualquer problema no bot, não se assuste se aparecer mais letras no console.
+- Foram adicionadas mais mensagens de erro nos caso de não conseguir ler a mensagem ou a mensagem não poder ser formatada de forma correta.
+
+### CORREÇÃO
+- Correção no registro de usuários, alguns grupos estavam sendo registrados como usuário indevidamente.
+
 ## 3.3.4 - 21/04/2025
 
 ### GERAL
