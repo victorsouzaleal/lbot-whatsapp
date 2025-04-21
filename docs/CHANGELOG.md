@@ -1,6 +1,11 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.3 - 21/04/2025
+
+### CORREÇÕES
+- Mais uma tentativa em corrigir as sessões em grupos
+
 ## 3.3.2 - 20/04/2025
 
 ### CORREÇÕES
