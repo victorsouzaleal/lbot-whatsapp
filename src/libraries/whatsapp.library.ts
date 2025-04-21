@@ -1,12 +1,13 @@
 import { GroupMetadata, WAMessage, WAPresence, WASocket, S_WHATSAPP_NET, generateWAMessageFromContent, getContentType, proto } from "baileys"
-import { randomDelay } from "../utils/general.util.js"
+import { buildText, randomDelay } from "../utils/general.util.js"
 import { MessageOptions, MessageTypes, Message } from "../interfaces/message.interface.js"
 import * as convertLibrary from './convert.library.js'
 import { Group } from "../interfaces/group.interface.js"
-import { User } from "../interfaces/user.interface.js"
 import { removeBold } from "../utils/general.util.js"
 import { GroupController } from "../controllers/group.controller.js"
 import NodeCache from "node-cache"
+import { UserController } from "../controllers/user.controller.js"
+import botTexts from "../helpers/bot.texts.helper.js"
 
 async function updatePresence(client: WASocket, chatId: string, presence: WAPresence){
     await client.presenceSubscribe(chatId)
@@ -247,13 +248,16 @@ export function getMessageFromCache(messageId: string, messageCache: NodeCache){
     return message
 }
 
-export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: string, admins: User[]){
+export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: string){
     if (!m.message) return
 
     const type = getContentType(m.message)
 
     if (!type || !isAllowedType(type) || !m.message[type]) return
     
+    const groupController = new GroupController()
+    const userController = new UserController()
+    const botAdmins = await userController.getAdmins()
     const contextInfo : proto.IContextInfo | undefined  = (typeof m.message[type] != "string" && m.message[type] && "contextInfo" in m.message[type]) ? m.message[type].contextInfo as proto.IContextInfo: undefined
     const isQuoted = (contextInfo?.quotedMessage) ? true : false
     const sender = (m.key.fromMe) ? hostId : m.key.participant || m.key.remoteJid
@@ -266,9 +270,12 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     const message_id = m.key.id
     const t = m.messageTimestamp as number
     const chat_id = m.key.remoteJid
-    const isGroupAdmin = (sender && group) ? await new GroupController().isParticipantAdmin(group.id, sender) : false
+    const isGroupAdmin = (sender && group) ? await groupController.isParticipantAdmin(group.id, sender) : false
 
-    if (!message_id || !t || !sender || !chat_id ) return 
+    if (!message_id || !t || !sender || !chat_id ) {
+        console.dir(m, {depth: null}) 
+        throw new Error(buildText(botTexts.message_malformed_error))
+    }
 
     let formattedMessage : Message = {
         message_id,
@@ -287,8 +294,8 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
         isQuoted,
         isGroupMsg,
         isGroupAdmin,
-        isBotAdmin : admins.map(admin => admin.id).includes(sender),
-        isBotOwner: admins.find(admin => admin.owner == true)?.id == sender,
+        isBotAdmin : botAdmins.map(admin => admin.id).includes(sender),
+        isBotOwner: botAdmins.find(admin => admin.owner == true)?.id == sender,
         isBotMessage: m.key.fromMe ?? false,
         isBroadcast: m.key.remoteJid == "status@broadcast",
         isMedia: type != "conversation" && type != "extendedTextMessage",
@@ -301,7 +308,10 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
         const seconds = (typeof m.message[type] != "string" && m.message[type] && "seconds" in m.message[type]) ? m.message[type].seconds as number | null : undefined
         const file_length = (typeof m.message[type] != "string" && m.message[type] && "fileLength" in m.message[type]) ? m.message[type].fileLength as number | Long | null : undefined
 
-        if (!mimetype || !url || !file_length) return
+        if (!mimetype || !url || !file_length) {
+            console.dir(m, {depth: null}) 
+            throw new Error(botTexts.message_malformed_error)
+        } 
 
         formattedMessage.media = {
             mimetype,
@@ -315,13 +325,19 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     if (formattedMessage.isQuoted){
         const quotedMessage = contextInfo?.quotedMessage
 
-        if (!quotedMessage) return
+        if (!quotedMessage) {
+            console.dir(m, {depth: null}) 
+            throw new Error(botTexts.message_malformed_error)
+        } 
     
         const typeQuoted = getContentType(quotedMessage)
         const quotedStanzaId = contextInfo.stanzaId ?? undefined
         const senderQuoted = contextInfo.participant || contextInfo.remoteJid
 
-        if (!typeQuoted || !senderQuoted ) return
+        if (!typeQuoted || !senderQuoted ) {
+            console.dir(m, {depth: null}) 
+            throw new Error(botTexts.message_malformed_error) 
+        }
 
         const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
         const quotedWAMessage = generateWAMessageFromContent(formattedMessage.chat_id, quotedMessage, { userJid: senderQuoted, messageId: quotedStanzaId })
@@ -342,7 +358,10 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
             const fileLengthQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "fileLength" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].fileLength as number| Long | null : undefined
             const secondsQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "seconds" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].seconds as number| null : undefined
             
-            if (!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) return
+            if (!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) {
+                console.dir(m, {depth: null}) 
+                throw new Error(botTexts.message_malformed_error) 
+            }
 
             formattedMessage.quotedMessage.media = {
                 url: urlQuoted,

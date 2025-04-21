@@ -7,36 +7,32 @@ import { handleGroupMessage, handlePrivateMessage } from '../helpers/message.han
 import { GroupController } from '../controllers/group.controller.js'
 import { waLib } from '../libraries/library.js'
 import { commandInvoker } from '../helpers/command.invoker.helper.js'
+import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){
     try{
-        if (!messages.messages[0].message) return
-        
-        const contentType = getContentType(messages.messages[0].message)
-
-        if (!contentType) return
-        else if (messages.messages[0].key.fromMe) waLib.storeMessageOnCache(messages.messages[0], messageCache)
+        if (messages.messages[0].key.fromMe) waLib.storeMessageOnCache(messages.messages[0], messageCache)
     
-        switch(messages.type){
+        switch (messages.type){
             case 'notify':
                 const userController = new UserController()
                 const groupController = new GroupController()
-                const admins = await userController.getAdmins()
                 const idChat = messages.messages[0].key.remoteJid
                 const isGroupMsg = idChat?.includes("@g.us")
                 const group = (isGroupMsg && idChat) ? await groupController.getGroup(idChat) : null
-                let message = await waLib.formatWAMessage(messages.messages[0], group, botInfo.host_number, admins)
+                let message = await waLib.formatWAMessage(messages.messages[0], group, botInfo.host_number)
 
                 if (message) {
                     await userController.registerUser(message.sender, message.pushname)
-                    let callCommand : boolean
-
+        
                     if (!isGroupMsg) {
-                        callCommand = await handlePrivateMessage(client, botInfo, message)
-                        if (callCommand) await commandInvoker(client, botInfo, message, null)
+                        const needCallCommand = await handlePrivateMessage(client, botInfo, message)
+                        if (needCallCommand) await commandInvoker(client, botInfo, message, null)
                     } else if (group) {
-                        callCommand = await handleGroupMessage(client, group, botInfo, message)
-                        if (callCommand) await commandInvoker(client, botInfo, message, group)
+                        const needCallCommand = await handleGroupMessage(client, group, botInfo, message)
+                        if (needCallCommand) await commandInvoker(client, botInfo, message, group)
+                    } else {
+                        throw new Error(botTexts.message_read_error)
                     }
                 }
 

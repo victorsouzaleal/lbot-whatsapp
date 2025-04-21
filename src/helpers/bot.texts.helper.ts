@@ -2,6 +2,8 @@ const botTexts = {
     starting: "  _____     ______      ___    _________  \r\n |_   _|   |_   _ \\   .\'   `. |  _   _  | \r\n   | |       | |_) | \/  .-.  \\|_\/ | | \\_| \r\n   | |   _   |  __\'. | |   | |    | |     \r\n  _| |__\/ | _| |__) |\\  `-\'  \/   _| |_    \r\n |________||_______\/  `.___.\'   |_____|   \r\n" + "\n  Iniciando na versão {$1}\n",
     bot_data: "✓ Obteve dados do BOT",
     no_update_available: '✓ Não há atualização disponível, seu bot está na versão mais recente.',
+    message_read_error: 'Não foi possível ler essa mensagem',
+    message_malformed_error: 'Essa mensagem não foi criada corretamente',
     update_available: '! Uma nova atualização foi encontrada, aguarde o término da atualização...',
     error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
     bot_updated: 'Seu bot foi atualizado com sucesso e será desligado, inicie ele novamente.',
