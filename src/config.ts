@@ -10,6 +10,7 @@ export default function configSocket (state : AuthenticationState, retryCache : 
         msgRetryCounterCache : retryCache,
         defaultQueryTimeoutMs: undefined,
         syncFullHistory: false,
+        logger: pino({level: 'silent'}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
         getMessage: async (key) => {
             const message = (key.id) ? waLib.getMessageFromCache(key.id, messageCache) : undefined
