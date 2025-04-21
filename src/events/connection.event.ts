@@ -7,7 +7,7 @@ import { UserController } from '../controllers/user.controller.js'
 import { waLib } from '../libraries/library.js'
 import qrcode from 'qrcode-terminal'
 import readline from 'readline/promises'
-import { cleanCreds } from '../helpers/session.auth.helper.js'
+import fs from 'fs-extra'
 
 export async function connectionQr(client: WASocket, connectionState : Partial<ConnectionState>){
     const { qr } = connectionState
@@ -48,7 +48,7 @@ export async function connectionOpen(client: WASocket){
     }
 }
 
-export async function connectionClose(connectionState : Partial<ConnectionState>){
+export function connectionClose(connectionState : Partial<ConnectionState>){
     try{
         const { lastDisconnect } = connectionState
         let needReconnect = false
@@ -61,10 +61,10 @@ export async function connectionClose(connectionState : Partial<ConnectionState>
         } else {
             needReconnect = true
             if (errorCode == DisconnectReason?.loggedOut){
-                await cleanCreds()
+                fs.rmSync("session", {recursive: true, force: true})
                 showConsoleError(new Error(botTexts.disconnected.logout), 'CONNECTION')
             } else if (errorCode == 405) {
-                await cleanCreds()
+                fs.rmSync("session", {recursive: true, force: true})
             } else if (errorCode == DisconnectReason?.restartRequired){
                 showConsoleError(new Error(botTexts.disconnected.restart), 'CONNECTION')
             } else {
