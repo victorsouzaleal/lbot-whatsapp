@@ -53,7 +53,7 @@
     "@vitalets/google-translate-api": "^7.0.0",
     "adm-zip": "^0.5.16",
     "axios": "^1.7.4",
-    "baileys": "https://github.com/victorsouzaleal/Baileys-temp-fix.git",
+    "baileys": "^6.7.16",
     "chalk": "^4.1.0",
     "emoji-mixer": "^1.1.12",
     "fb-downloader-scrapper": "^3.0.0",
