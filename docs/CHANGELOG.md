@@ -1,6 +1,12 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.4 - 21/04/2025
+
+### GERAL
+- Revertida versão do Baileys para a última versão original
+- O problema de grupos ainda não foi resolvido, estarei aguardando uma nova versão do Baileys.
+
 ## 3.3.3 - 21/04/2025
 
 ### CORREÇÕES
