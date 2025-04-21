@@ -1,6 +1,11 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.6 - 21/04/2025
+
+### CORREÇÃO
+- Corrigido o registro de grupos, agora as mensagens de grupo devem ser reconhecidas corretamente.
+
 ## 3.3.5 - 21/04/2025
 
 ### GERAL
