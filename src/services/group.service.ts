@@ -16,7 +16,7 @@ export class GroupService {
     public async registerGroup(groupMetadata : GroupMetadata){
         const group = await this.getGroup(groupMetadata.id)
 
-        if (!group) return
+        if (group) return
 
         const groupData : Group = {
             id: groupMetadata.id,
