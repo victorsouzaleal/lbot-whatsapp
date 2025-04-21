@@ -8,7 +8,7 @@ export class UserService {
     public async registerUser(userId: string, name?: string|null){
         const user = await this.getUser(userId)
 
-        if (user) return 
+        if (user || !userId.endsWith('@s.whatsapp.net')) return 
     
         const timestamp = Math.round(moment.now()/1000)
         const userData : User = {
