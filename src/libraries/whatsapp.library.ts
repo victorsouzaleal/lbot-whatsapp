@@ -272,10 +272,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     const chat_id = m.key.remoteJid
     const isGroupAdmin = (sender && group) ? await groupController.isParticipantAdmin(group.id, sender) : false
 
-    if (!message_id || !t || !sender || !chat_id ) {
-        console.dir(m, {depth: null}) 
-        throw new Error(buildText(botTexts.message_malformed_error))
-    }
+    if (!message_id || !t || !sender || !chat_id ) return
 
     let formattedMessage : Message = {
         message_id,
@@ -308,10 +305,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
         const seconds = (typeof m.message[type] != "string" && m.message[type] && "seconds" in m.message[type]) ? m.message[type].seconds as number | null : undefined
         const file_length = (typeof m.message[type] != "string" && m.message[type] && "fileLength" in m.message[type]) ? m.message[type].fileLength as number | Long | null : undefined
 
-        if (!mimetype || !url || !file_length) {
-            console.dir(m, {depth: null}) 
-            throw new Error(botTexts.message_malformed_error)
-        } 
+        if (!mimetype || !url || !file_length) return
 
         formattedMessage.media = {
             mimetype,
@@ -325,19 +319,13 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     if (formattedMessage.isQuoted){
         const quotedMessage = contextInfo?.quotedMessage
 
-        if (!quotedMessage) {
-            console.dir(m, {depth: null}) 
-            throw new Error(botTexts.message_malformed_error)
-        } 
+        if (!quotedMessage) return
     
         const typeQuoted = getContentType(quotedMessage)
         const quotedStanzaId = contextInfo.stanzaId ?? undefined
         const senderQuoted = contextInfo.participant || contextInfo.remoteJid
 
-        if (!typeQuoted || !senderQuoted ) {
-            console.dir(m, {depth: null}) 
-            throw new Error(botTexts.message_malformed_error) 
-        }
+        if (!typeQuoted || !senderQuoted ) return
 
         const captionQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "caption" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].caption as string | null : undefined
         const quotedWAMessage = generateWAMessageFromContent(formattedMessage.chat_id, quotedMessage, { userJid: senderQuoted, messageId: quotedStanzaId })
@@ -358,10 +346,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
             const fileLengthQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "fileLength" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].fileLength as number| Long | null : undefined
             const secondsQuoted = (typeof quotedMessage[typeQuoted] != "string" && quotedMessage[typeQuoted] && "seconds" in quotedMessage[typeQuoted]) ? quotedMessage[typeQuoted].seconds as number| null : undefined
             
-            if (!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) {
-                console.dir(m, {depth: null}) 
-                throw new Error(botTexts.message_malformed_error) 
-            }
+            if (!urlQuoted || !mimetypeQuoted || !fileLengthQuoted) return
 
             formattedMessage.quotedMessage.media = {
                 url: urlQuoted,

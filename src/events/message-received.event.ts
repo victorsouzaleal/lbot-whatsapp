@@ -7,7 +7,6 @@ import { handleGroupMessage, handlePrivateMessage } from '../helpers/message.han
 import { GroupController } from '../controllers/group.controller.js'
 import { waLib } from '../libraries/library.js'
 import { commandInvoker } from '../helpers/command.invoker.helper.js'
-import botTexts from '../helpers/bot.texts.helper.js'
 
 export async function messageReceived (client: WASocket, messages : {messages: WAMessage[], requestId?: string, type: MessageUpsertType}, botInfo : Bot, messageCache: NodeCache){
     try{
@@ -31,8 +30,6 @@ export async function messageReceived (client: WASocket, messages : {messages: W
                     } else if (group) {
                         const needCallCommand = await handleGroupMessage(client, group, botInfo, message)
                         if (needCallCommand) await commandInvoker(client, botInfo, message, group)
-                    } else {
-                        throw new Error(botTexts.message_read_error)
                     }
                 }
 
