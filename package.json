@@ -1,6 +1,6 @@
 {
   "name": "lbot-whatsapp",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Bot brasileiro para Whatsapp com diversas utilidades para o dia-a-dia.",
   "type": "module",
   "main": "dist/app.js",

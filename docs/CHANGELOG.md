@@ -1,6 +1,12 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.2 - 20/04/2025
+
+### CORREÇÕES
+- Correção de erro ao tentar usar o código de pareamento
+- O armazenamento de sessão foi revertido para a versão antiga já que vários usuários de Termux relataram problemas
+
 ## 3.3.1 - 20/04/2025
 
 ### CORREÇÕES
