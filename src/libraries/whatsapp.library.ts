@@ -254,7 +254,7 @@ export async function formatWAMessage(m: WAMessage, group: Group|null, hostId: s
     const type = getContentType(m.message)
 
     if (!type || !isAllowedType(type) || !m.message[type]) return
-    
+
     const groupController = new GroupController()
     const userController = new UserController()
     const botAdmins = await userController.getAdmins()
@@ -371,7 +371,10 @@ function isAllowedType(type : keyof proto.IMessage){
         "documentMessage",
         "stickerMessage",
         "videoMessage",
+        "viewOnceMessage",
+        "viewOnceMessageV2",
+        "viewOnceMessageV2Extension"
     ]
 
-    return allowedTypes.includes(type as MessageTypes)
+    return allowedTypes.includes(type)
 }
