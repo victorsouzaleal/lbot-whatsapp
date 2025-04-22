@@ -51,9 +51,9 @@ export class BotService {
             admin_mode: oldBotData.admin_mode ?? false, 
             block_cmds: oldBotData.block_cmds ?? [],    
             command_rate: {
-                status: oldBotData.command_rate.status ?? false,
-                max_cmds_minute: oldBotData.command_rate.max_cmds_minute ?? 5,
-                block_time: oldBotData.command_rate.block_time ?? 60,
+                status: oldBotData.command_rate?.status ?? false,
+                max_cmds_minute: oldBotData.command_rate?.max_cmds_minute ?? 5,
+                block_time: oldBotData.command_rate?.block_time ?? 60,
             }
         }
 

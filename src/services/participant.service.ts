@@ -80,8 +80,8 @@ export class ParticipantService {
                 other: oldParticipantData.other ?? 0,
                 warnings: oldParticipantData.warnings ?? 0,
                 antiflood : {
-                    expire: oldParticipantData.antiflood.expire ?? 0,
-                    msgs: oldParticipantData.antiflood.msgs ?? 0
+                    expire: oldParticipantData.antiflood?.expire ?? 0,
+                    msgs: oldParticipantData.antiflood?.msgs ?? 0
                 }
             }
 
