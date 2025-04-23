@@ -147,7 +147,7 @@ export async function imgCommand(client: WASocket, botInfo: Bot, message: Messag
     for (let i = 0; i < maxImageResults; i++){
         let randomIndex = Math.floor(Math.random() * images.length)
         let chosenImage = images[randomIndex].url
-        await waLib.sendFileFromUrl(client, message.chat_id, 'imageMessage', chosenImage, '', {expiration: message.expiration}).then(() =>{
+        await waLib.sendFileFromUrl(client, message.chat_id, 'imageMessage', chosenImage, '', {expiration: message.expiration, mimetype: 'image/jpeg'}).then(() =>{
             imagesSent++
         }).catch(() => {
             //Ignora se não for possível enviar essa imagem

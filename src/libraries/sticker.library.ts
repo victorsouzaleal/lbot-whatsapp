@@ -64,6 +64,9 @@ async function stickerCreation(mediaBuffer : Buffer, {author, pack, fps, type} :
 
         const mime = bufferData.mime
         const isAnimated = mime.startsWith('video') || mime.includes('gif') 
+
+        if (mime == 'image/webp') mediaBuffer = await pngConvertion(mediaBuffer)
+
         const webpBuffer = await webpConvertion(mediaBuffer, isAnimated, fps, type)
         const stickerBuffer = await addExif(webpBuffer, pack, author)
 
@@ -88,6 +91,32 @@ async function addExif(buffer: Buffer, pack: string, author: string){
 
         return stickerBuffer
     } catch(err){
+        throw err
+    }
+}
+
+async function pngConvertion(mediaBuffer : Buffer){
+    try {
+        const inputMediaPath = getTempPath('webp')
+        const outputMediaPath = getTempPath('png')
+        fs.writeFileSync(inputMediaPath, mediaBuffer)
+        
+        await new Promise <void>((resolve, reject) => {
+            ffmpeg(inputMediaPath)
+            .save(outputMediaPath)
+            .on('end', () => resolve())
+            .on('error', (err) => reject(err))
+        }).catch((err)=>{
+            fs.unlinkSync(inputMediaPath)
+            throw err
+        })
+
+        const pngBuffer = fs.readFileSync(outputMediaPath)
+        fs.unlinkSync(outputMediaPath)
+        fs.unlinkSync(inputMediaPath)
+
+        return pngBuffer
+    } catch(err) {
         throw err
     }
 }
