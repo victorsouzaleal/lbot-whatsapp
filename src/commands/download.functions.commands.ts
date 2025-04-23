@@ -12,21 +12,17 @@ export async function playCommand(client: WASocket, botInfo: Bot, message: Messa
         throw new Error(messageErrorCommandUsage(message))
     } 
 
-    const videoInfo = await downloadLib.youtubeMedia(message.text_command)
+    const videoInfo = await downloadLib.youtubeMedia(message.text_command, 'mp3')
 
     if (!videoInfo){
         throw new Error(downloadCommands.play.msgs.error_not_found)
-    } else if (videoInfo.is_live){
-        throw new Error(downloadCommands.play.msgs.error_live)
     } else if (videoInfo.duration > 360){
         throw new Error(downloadCommands.play.msgs.error_limit)
     }
 
     const waitReply = buildText(downloadCommands.play.msgs.wait, videoInfo.title, videoInfo.duration_formatted)
     await waLib.replyText(client, message.chat_id, waitReply, message.wa_message, {expiration: message.expiration})
-
-    const audioBuffer = await convertLib.convertMp4ToMp3('url', videoInfo.url)
-    await waLib.replyFileFromBuffer(client, message.chat_id, 'audioMessage', audioBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
+    await waLib.replyFileFromUrl(client, message.chat_id, 'audioMessage', videoInfo.url, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
 }
 
 export async function ytCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -34,12 +30,10 @@ export async function ytCommand(client: WASocket, botInfo: Bot, message: Message
         throw new Error(messageErrorCommandUsage(message))
     }
 
-    const videoInfo = await downloadLib.youtubeMedia(message.text_command)
+    const videoInfo = await downloadLib.youtubeMedia(message.text_command, '480')
 
     if (!videoInfo){
         throw new Error(downloadCommands.yt.msgs.error_not_found)
-    } else if (videoInfo.is_live){
-        throw new Error(downloadCommands.yt.msgs.error_live)
     } else if (videoInfo.duration > 360){
         throw new Error(downloadCommands.yt.msgs.error_limit)
     }
