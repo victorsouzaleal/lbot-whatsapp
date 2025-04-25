@@ -84,7 +84,6 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
     
     const imagePathCalibration = path.resolve('dist/media/calibrando.png')
     const imagePathsResult = [
-        path.resolve('dist/media/calibrando.png'),
         path.resolve('dist/media/estressealto.png'),
         path.resolve('dist/media/incerteza.png'),
         path.resolve('dist/media/kao.png'),
