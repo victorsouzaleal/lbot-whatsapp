@@ -1,6 +1,18 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.3.7 - 25/04/2025
+
+### GERAL
+- Agora o bot sincroniza todas as mensagens antes de iniciar, isso pode demorar dependendo de quantos grupos o bot está e por quanto tempo o bot estava offline recebendo mensagens.
+
+### CORREÇÃO
+- Corrigido possíveis erros na reconstrução do banco de dados
+- Corrigido erros nos comandos do Youtube **!play** e **!yt**
+- Corrigido erro na criação de stickers em imagens com formato **webp**
+- Corrigido envio incorreto de imagem que poderia acontecer no comando **!detector**
+
+
 ## 3.3.6 - 21/04/2025
 
 ### CORREÇÃO
