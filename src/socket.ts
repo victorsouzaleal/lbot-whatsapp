@@ -35,23 +35,27 @@ export default async function connect(){
         //Status da conexão
         if (events['connection.update']){
             const connectionState = events['connection.update']
-            const { connection, qr } = connectionState
+            const { connection, qr, receivedPendingNotifications } = connectionState
             let needReconnect = false
 
-            if (qr) {
-                connectionQr(client, connectionState) 
-            } else if (connection === 'open'){
+            if (!receivedPendingNotifications) {
+                if (qr) {
+                    connectionQr(client, connectionState) 
+                } else if (connection == 'connecting'){
+                    console.log(colorText(botTexts.connecting))
+                } else if (connection === 'close'){
+                    needReconnect = await connectionClose(connectionState)
+                }
+            } else {
+                await client.waitForSocketOpen()
                 connectionOpen(client)
-                isBotReady = await syncGroupsOnStart(client)
+                await syncGroupsOnStart(client)
+                isBotReady = true
                 await executeEventQueue(client, eventsCache)
                 console.log(colorText(botTexts.server_started))
-            } else if (connection === 'close'){
-                needReconnect = await connectionClose(connectionState)
             }
-                
-            if (needReconnect) {
-                connect()
-            }
+            
+            if (needReconnect) connect()
         }
 
         // Credenciais
@@ -63,31 +67,23 @@ export default async function connect(){
         if (events['messages.upsert']){
             const message = events['messages.upsert']
 
-            if (isBotReady) {
-                await messageReceived(client, message, botInfo, messagesCache)
-            }
+            if (isBotReady) await messageReceived(client, message, botInfo, messagesCache)
         }
 
         // Atualização de participantes no grupo
         if (events['group-participants.update']){
             const participantsUpdate = events['group-participants.update']
 
-            if (isBotReady) {
-                await groupParticipantsUpdated(client, participantsUpdate, botInfo)
-            } else {
-                queueEvent(eventsCache, "group-participants.update", participantsUpdate)
-            }     
+            if (isBotReady) await groupParticipantsUpdated(client, participantsUpdate, botInfo)
+            else queueEvent(eventsCache, "group-participants.update", participantsUpdate)    
         }
         
         // Novo grupo
         if (events['groups.upsert']){
             const groups = events['groups.upsert']
 
-            if (isBotReady) {
-                await addedOnGroup(client, groups, botInfo)
-            } else {
-                queueEvent(eventsCache, "groups.upsert", groups)
-            }       
+            if (isBotReady) await addedOnGroup(client, groups, botInfo)
+            else queueEvent(eventsCache, "groups.upsert", groups)     
         }
 
         // Atualização parcial de dados do grupo
@@ -95,11 +91,8 @@ export default async function connect(){
             const groups = events['groups.update']
 
             if (groups.length == 1 && groups[0].participants == undefined){
-                if (isBotReady) {
-                    await partialGroupUpdate(groups[0])
-                } else {
-                    queueEvent(eventsCache, "groups.update", groups)
-                }
+                if (isBotReady) await partialGroupUpdate(groups[0])
+                else queueEvent(eventsCache, "groups.update", groups)
             }
         }
     })

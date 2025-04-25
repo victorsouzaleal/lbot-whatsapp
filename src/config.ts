@@ -1,5 +1,5 @@
 import { pino } from 'pino'
-import { isJidBroadcast, AuthenticationState, WAVersion, UserFacingSocketConfig, makeCacheableSignalKeyStore } from 'baileys'
+import { isJidBroadcast, AuthenticationState, WAVersion, UserFacingSocketConfig, Browsers, makeCacheableSignalKeyStore } from 'baileys'
 import NodeCache from 'node-cache'
 import { waLib } from './libraries/library.js'
 
@@ -11,8 +11,11 @@ export default function configSocket (state : AuthenticationState, retryCache : 
         },
         version,
         msgRetryCounterCache : retryCache,
-        defaultQueryTimeoutMs: undefined,
+        defaultQueryTimeoutMs: 45000,
         syncFullHistory: false,
+        markOnlineOnConnect: true,
+        qrTimeout: undefined,
+        browser: Browsers.windows('Google Chrome'),
         logger: pino({level: 'silent'}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
         getMessage: async (key) => {

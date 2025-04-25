@@ -1,5 +1,6 @@
 const botTexts = {
     starting: "  _____     ______      ___    _________  \r\n |_   _|   |_   _ \\   .\'   `. |  _   _  | \r\n   | |       | |_) | \/  .-.  \\|_\/ | | \\_| \r\n   | |   _   |  __\'. | |   | |    | |     \r\n  _| |__\/ | _| |__) |\\  `-\'  \/   _| |_    \r\n |________||_______\/  `.___.\'   |_____|   \r\n" + "\n  Iniciando na versão {$1}\n",
+    connecting: '! Aguarde, o bot está conectando e sincronizando as conversas... (Isso pode levar algum tempo)',
     bot_data: "✓ Obteve dados do BOT",
     no_update_available: '✓ Não há atualização disponível, seu bot está na versão mais recente.',
     update_available: '! Uma nova atualização foi encontrada, aguarde o término da atualização...',
