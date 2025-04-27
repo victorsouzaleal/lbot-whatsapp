@@ -1,6 +1,6 @@
 import { Participant, Group } from "../interfaces/group.interface.js";
 import { MessageTypes } from "../interfaces/message.interface.js";
-import { timestampToDate } from '../utils/general.util.js'
+import { deepMerge, timestampToDate } from '../utils/general.util.js'
 import moment from 'moment-timezone'
 import DataStore from "@seald-io/nedb";
 import { GroupMetadata } from "baileys";
@@ -8,6 +8,25 @@ import { GroupMetadata } from "baileys";
 const db = new DataStore<Participant>({filename : './storage/participants.groups.db', autoload: true})
 
 export class ParticipantService {
+    private defaultParticipant : Participant = {
+        group_id : '',
+        user_id: '',
+        registered_since: timestampToDate(moment.now()),
+        commands: 0,
+        admin: false,
+        msgs: 0,
+        image: 0,
+        audio: 0,
+        sticker: 0,
+        video: 0,
+        text: 0,
+        other: 0,
+        warnings: 0,
+        antiflood : {
+            expire: 0,
+            msgs: 0
+        }
+    }
 
     public async syncParticipants(groupMeta: GroupMetadata){
         //Adiciona participantes no banco de dados que entraram enquanto o bot estava off.
@@ -38,55 +57,22 @@ export class ParticipantService {
         if (isGroupParticipant) return
         
         const participant : Participant = {
+            ...this.defaultParticipant,
             group_id : groupId,
             user_id: userId,
-            registered_since: timestampToDate(moment.now()),
-            commands: 0,
-            admin: isAdmin,
-            msgs: 0,
-            image: 0,
-            audio: 0,
-            sticker: 0,
-            video: 0,
-            text: 0,
-            other: 0,
-            warnings: 0,
-            antiflood : {
-                expire: 0,
-                msgs: 0
-            }
+            admin: isAdmin
         }
 
         await db.insertAsync(participant)
     }
 
-    public async rebuildParticipants() {
+    public async migrateParticipants() {
         const participants = await this.getAllParticipants()
 
         for (let participant of participants) {
             const oldParticipantData = participant as any
-            const updatedParticipantData : Participant = {
-                group_id : oldParticipantData.group_id,
-                user_id: oldParticipantData.user_id,
-                registered_since: oldParticipantData.registered_since,
-                commands: oldParticipantData.commands,
-                admin: oldParticipantData.admin,
-                msgs: oldParticipantData.msgs ?? 0,
-                image: oldParticipantData.image ?? 0,
-                audio: oldParticipantData.audio ?? 0,
-                sticker: oldParticipantData.sticker ?? 0,
-                video: oldParticipantData.video ?? 0,
-                text: oldParticipantData.text ?? 0,
-                other: oldParticipantData.other ?? 0,
-                warnings: oldParticipantData.warnings ?? 0,
-                antiflood : {
-                    expire: oldParticipantData.antiflood?.expire ?? 0,
-                    msgs: oldParticipantData.antiflood?.msgs ?? 0
-                }
-            }
-
-            await db.removeAsync({user_id: participant.user_id, group_id: participant.group_id}, {})
-            await db.insertAsync(updatedParticipantData)
+            const updatedParticipantData : Participant =  deepMerge(this.defaultParticipant, oldParticipantData)
+            await db.updateAsync({ group_id: participant.group_id, user_id: participant.user_id }, { $set: updatedParticipantData }, { upsert: true })
         }
     }
 

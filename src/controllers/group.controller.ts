@@ -18,8 +18,8 @@ export class GroupController {
         return this.groupService.registerGroup(group)
     }
 
-    public rebuildGroups() {
-        return this.groupService.rebuildGroups()
+    public migrateGroups() {
+        return this.groupService.migrateGroups()
     }
 
     public getGroup(groupId: string) {
@@ -119,8 +119,8 @@ export class GroupController {
         return this.participantService.removeAdmin(groupId, userId)
     }
 
-    public rebuildParticipants(){
-        return this.participantService.rebuildParticipants()
+    public migrateParticipants(){
+        return this.participantService.migrateParticipants()
     }
 
     public getParticipant(groupId: string, userId: string){

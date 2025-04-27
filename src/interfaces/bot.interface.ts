@@ -4,7 +4,7 @@ export interface Bot {
     name: string,
     prefix: string,
     executed_cmds: number,
-    database_updated: boolean,
+    db_migrated: boolean,
     autosticker: boolean,
     block_cmds: string[],
     commands_pv: boolean,

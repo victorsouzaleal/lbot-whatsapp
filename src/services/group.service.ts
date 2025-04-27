@@ -3,11 +3,44 @@ import { GroupMetadata } from 'baileys'
 import { waLib } from "../libraries/library.js";
 import DataStore from "@seald-io/nedb";
 import { ParticipantService } from "./participant.service.js";
+import { deepMerge } from "../utils/general.util.js";
 
 const db = new DataStore<Group>({filename : './storage/groups.db', autoload: true})
 
 export class GroupService {
     private participantService
+
+    private defaultGroup: Group = {
+        id: '',
+        name: '',
+        description: undefined,
+        commands_executed: 0,
+        owner: undefined,
+        restricted: false,
+        expiration: undefined,
+        muted: false,
+        welcome: { 
+            status: false, 
+            msg: '' 
+        },
+        antifake: { 
+            status: false, 
+            allowed: [] 
+        },
+        antilink: { 
+            status: false, 
+            exceptions: [] 
+        },
+        antiflood: { 
+            status: false, 
+            max_messages: 10, 
+            interval: 10 
+        },
+        autosticker: false,
+        block_cmds: [],
+        blacklist: [],
+        word_filter: []
+    }
 
     constructor() {
         this.participantService = new ParticipantService()
@@ -19,22 +52,13 @@ export class GroupService {
         if (group) return
 
         const groupData : Group = {
+            ...this.defaultGroup,
             id: groupMetadata.id,
             name: groupMetadata.subject,
             description: groupMetadata.desc,
-            commands_executed: 0,
             owner: groupMetadata.owner,
             restricted: groupMetadata.announce,
-            expiration: groupMetadata.ephemeralDuration,
-            muted : false,
-            welcome : { status: false, msg: '' },
-            antifake : { status: false, allowed: [] },
-            antilink : { status: false, exceptions: []},
-            antiflood : { status: false, max_messages: 10, interval: 10},
-            autosticker : false,
-            block_cmds : [],
-            blacklist : [],
-            word_filter: []
+            expiration: groupMetadata.ephemeralDuration
         }
 
         const newGroup = await db.insertAsync(groupData) as Group
@@ -47,45 +71,13 @@ export class GroupService {
         return newGroup
     }
 
-    public async rebuildGroups() {
+    public async migrateGroups() {
         const groups = await this.getAllGroups()
 
-        for (let group of groups) {
+        for (const group of groups) {
             const oldGroupData = group as any
-            const updatedGroupData : Group = {
-                id: oldGroupData.id,
-                name: oldGroupData.name,
-                description : oldGroupData.description,
-                commands_executed: oldGroupData.commands_executed,
-                owner: oldGroupData.owner,
-                restricted: oldGroupData.restricted,
-                expiration: oldGroupData.expiration,
-                muted : oldGroupData.muted ?? false,
-                welcome : { 
-                    status: oldGroupData.welcome?.status ?? false,
-                    msg: oldGroupData.welcome?.msg ?? '' 
-                },
-                antifake : { 
-                    status:  oldGroupData.antifake?.status ?? false, 
-                    allowed: oldGroupData.antifake?.allowed ?? [] 
-                },
-                antilink : {
-                    status: oldGroupData.antilink?.status ?? false,
-                    exceptions: oldGroupData.antilink?.exceptions ?? []
-                },
-                antiflood : { 
-                    status: oldGroupData.antiflood?.status ?? false, 
-                    max_messages: oldGroupData.antiflood?.max_messages ?? 10, 
-                    interval: oldGroupData.antiflood?.interval ?? 10
-                },
-                autosticker : oldGroupData.autosticker ?? false,
-                block_cmds : oldGroupData.block_cmds ?? [],
-                blacklist : oldGroupData.blacklist ?? [],
-                word_filter: oldGroupData.word_filter ?? []
-            }
-
-            await db.removeAsync({id: group.id}, {})
-            await db.insertAsync(updatedGroupData)
+            const updatedGroupData: Group = deepMerge(this.defaultGroup, oldGroupData)
+            await db.updateAsync({ id: group.id }, { $set: updatedGroupData }, { upsert: true })
         }
     }
 

@@ -2,56 +2,46 @@ import DataStore from "@seald-io/nedb";
 import { User } from "../interfaces/user.interface.js";
 import moment from "moment";
 import { Bot } from "../interfaces/bot.interface.js";
+import { deepMerge } from "../utils/general.util.js";
 const db = new DataStore<User>({filename : './storage/users.db', autoload: true})
 
 export class UserService {
+    private defaultUser: User = {
+        id: '',
+        name: '',
+        commands: 0,
+        receivedWelcome: false,
+        owner: false,
+        admin: false,
+        command_rate : {
+            limited: false,
+            expire_limited: 0,
+            cmds: 1,
+            expire_cmds: Math.round(moment.now()/1000) + 60
+        }
+    }
+
     public async registerUser(userId: string, name?: string|null){
         const user = await this.getUser(userId)
 
         if (user || !userId.endsWith('@s.whatsapp.net')) return 
     
-        const timestamp = Math.round(moment.now()/1000)
         const userData : User = {
-            id : userId,
-            name,
-            commands: 0,
-            receivedWelcome: false,
-            owner: false,
-            admin: false,
-            command_rate : {
-                limited: false,
-                expire_limited: 0,
-                cmds: 1,
-                expire_cmds: timestamp + 60
-            }
+            ...this.defaultUser,
+            id: userId,
+            name
         }
 
         await db.insertAsync(userData)
     }
 
-    public async rebuildUsers(){
+    public async migrateUsers(){
         const users = await this.getUsers()
 
         for (let user of users) {
-            const timestamp = Math.round(moment.now()/1000)
             const oldUserData = user as any
-            const updatedUserData = {
-                id: oldUserData.id,
-                name: oldUserData.name,
-                commands: oldUserData.commands,
-                receivedWelcome: oldUserData.receivedWelcome,
-                owner: oldUserData.owner,
-                admin: oldUserData.admin,
-                command_rate: {
-                    limited: oldUserData.command_rate.limited ?? false,
-                    expire_limited: oldUserData.command_rate.expire_limited ?? 0,
-                    cmds: oldUserData.command_rate.cmds ?? 1,
-                    expire_cmds: oldUserData.command_rate.expire_cmds ?? timestamp + 60
-                }
-            }
-
-            await db.removeAsync({id: user.id}, {})
-            await db.insertAsync(updatedUserData)
+            const updatedUserData : User = deepMerge(this.defaultUser, oldUserData)    
+            await db.updateAsync({ id: user.id}, { $set: updatedUserData }, { upsert: true })
         }
     }
 

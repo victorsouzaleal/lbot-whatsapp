@@ -13,8 +13,8 @@ export class UserController{
         return this.userService.registerUser(userId, name)
     }
 
-    public rebuildUsers(){
-        return this.userService.rebuildUsers()
+    public migrateUsers(){
+        return this.userService.migrateUsers()
     }
 
     public setName(userId: string, name: string){

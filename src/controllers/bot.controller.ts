@@ -11,8 +11,8 @@ export class BotController {
         return this.botService.startBot(hostNumber)
     }
 
-    public rebuildBot(){
-        return this.botService.rebuildBot()
+    public migrateBot(){
+        return this.botService.migrateBot()
     }
 
     public getBot(){
@@ -27,8 +27,8 @@ export class BotController {
         return this.botService.setPrefix(prefix)
     }
 
-    public setDatabaseUpdated(status: boolean) {
-        return this.botService.setDatabaseUpdated(status)
+    public setDbMigrated(status: boolean) {
+        return this.botService.setDbMigrated(status)
     }    
 
     public incrementExecutedCommands(){

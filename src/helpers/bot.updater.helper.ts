@@ -3,7 +3,7 @@ import { colorText, getCurrentBotVersion } from "../utils/general.util.js";
 import botTexts from "../helpers/bot.texts.helper.js";
 import { BotController } from "../controllers/bot.controller.js";
 import fs from 'fs-extra'
-import databaseRebuilder from "./database.rebuilder.helper.js";
+import databaseMigration from "./database.migrate.helper.js";
 
 export async function botUpdater(){
     const botController = new BotController()
@@ -11,10 +11,10 @@ export async function botUpdater(){
     let hasBotUpdated = false
     
     try{
-        if (!botInfo.database_updated) {
-            await databaseRebuilder()
-            botController.setDatabaseUpdated(true)
-            console.log(colorText(botTexts.rebuilding_database, '#e0e031'))
+        if (!botInfo.db_migrated) {
+            await databaseMigration()
+            botController.setDbMigrated(true)
+            console.log(colorText(botTexts.migrating_database, '#e0e031'))
         }
 
         const currentVersion = getCurrentBotVersion()
@@ -26,7 +26,7 @@ export async function botUpdater(){
             console.log(colorText(botTexts.update_available, '#e0e031'))
             fs.removeSync('./dist')
             await updaterLib.makeUpdate('./')
-            botController.setDatabaseUpdated(false)
+            botController.setDbMigrated(false)
             console.log(colorText(botTexts.bot_updated))
             hasBotUpdated = true
         }

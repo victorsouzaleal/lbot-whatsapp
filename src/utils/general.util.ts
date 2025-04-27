@@ -109,3 +109,20 @@ export function getTempPath(ext: FileExtensions){
   return path.join(tmpdir(), 'lbot-whatsapp', `${crypto.randomBytes(20).toString('hex')}.${ext}`)
 }
 
+export function deepMerge<T>(defaultObj: T, overrideObj: any): T {
+  const result: any = { ...defaultObj }
+
+  for (const key in defaultObj) {
+    if (overrideObj && Object.prototype.hasOwnProperty.call(overrideObj, key)) {
+      if (typeof defaultObj[key] === 'object' && defaultObj[key] !== null && !Array.isArray(defaultObj[key])) {
+        result[key] = deepMerge(defaultObj[key], overrideObj[key]);
+      } else {
+        result[key] = overrideObj[key];
+      }
+    }
+  }
+
+  return result
+}
+
+

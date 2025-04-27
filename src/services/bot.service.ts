@@ -3,9 +3,28 @@ import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
 import { waLib } from "../libraries/library.js"
+import { deepMerge } from "../utils/general.util.js"
 
 export class BotService {
     private pathJSON = path.resolve("storage/bot.json")
+
+    private defaultBot : Bot = {
+        started : 0,
+        host_number: '',
+        name: "LBOT",
+        prefix: "!",
+        executed_cmds: 0,
+        db_migrated: true,
+        autosticker: false,
+        commands_pv: true,
+        admin_mode: false, 
+        block_cmds: [],    
+        command_rate:{
+            status: false,
+            max_cmds_minute: 5,
+            block_time: 60,
+        }
+    }
 
     constructor(){
         const storageFolderExists = fs.pathExistsSync(path.resolve("storage"))
@@ -16,47 +35,12 @@ export class BotService {
     }
 
     private initBot(){
-        const bot : Bot = {
-            started : 0,
-            host_number: '',
-            name: "LBOT",
-            prefix: "!",
-            executed_cmds: 0,
-            database_updated: true,
-            autosticker: false,
-            commands_pv: true,
-            admin_mode: false, 
-            block_cmds: [],    
-            command_rate:{
-                status: false,
-                max_cmds_minute: 5,
-                block_time: 60,
-            }
-        }
-
-        this.updateBot(bot)
+        this.updateBot(this.defaultBot)
     }
 
-    public rebuildBot() {
+    public migrateBot() {
         const oldBotData =  this.getBot() as any
-        const newBotData : Bot = {
-            started : oldBotData.started ?? 0,
-            host_number: oldBotData.host_number ?? '',
-            name: oldBotData.name ?? 'LBOT',
-            prefix: oldBotData.prefix ?? "!",
-            executed_cmds: oldBotData.executed_cmds ?? 0,
-            database_updated: oldBotData.database_updated ?? true,
-            autosticker: oldBotData.autosticker ?? false,
-            commands_pv: oldBotData.commands_pv ?? true,
-            admin_mode: oldBotData.admin_mode ?? false, 
-            block_cmds: oldBotData.block_cmds ?? [],    
-            command_rate: {
-                status: oldBotData.command_rate?.status ?? false,
-                max_cmds_minute: oldBotData.command_rate?.max_cmds_minute ?? 5,
-                block_time: oldBotData.command_rate?.block_time ?? 60,
-            }
-        }
-
+        const newBotData : Bot = deepMerge(this.defaultBot, oldBotData)
         this.deleteBotData()
         this.updateBot(newBotData)
     }
@@ -86,9 +70,9 @@ export class BotService {
         this.updateBot(bot)
     }
 
-    public setDatabaseUpdated(status: boolean) {
+    public setDbMigrated(status: boolean) {
         let bot = this.getBot()
-        bot.database_updated = status
+        bot.db_migrated = status
         this.updateBot(bot)
     }
     
