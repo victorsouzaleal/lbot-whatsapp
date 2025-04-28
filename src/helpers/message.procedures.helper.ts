@@ -170,6 +170,26 @@ export async function isDetectedByWordFilter(client: WASocket, botInfo: Bot, gro
     return false
 }
 
+export async function autoReply(client: WASocket, botInfo: Bot, group: Group, message: Message){
+    if (group.auto_reply.status) {
+        const { body, caption } = message
+        const groupAdmins = await groupController.getAdminsIds(group.id)
+        const isBotGroupAdmin = groupAdmins.includes(botInfo.host_number)
+        const userText = body || caption
+        const userTextNoFormatting = removeFormatting(userText)
+        const userWords = userTextNoFormatting.split(' ').map(word => word.toLowerCase())
+        const wordsDetected = userWords.filter(userWord => group.auto_reply.config.find(config => config.word == userWord))
+    
+        if (wordsDetected.length && isBotGroupAdmin) {
+            const configWord = group.auto_reply.config.find(config => config.word == wordsDetected[0])
+    
+            if (configWord) {
+                await waLib.replyText(client, message.chat_id, configWord?.reply, message.wa_message, { expiration: message.expiration })
+            }
+        }
+    }
+}
+
 export async function isDetectedByAntiLink(client: WASocket, botInfo: Bot, group: Group, message: Message){
     const { body, caption, isGroupAdmin} = message
     const userText = body || caption

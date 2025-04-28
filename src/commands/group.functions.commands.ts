@@ -3,7 +3,7 @@ import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
 import { waLib } from "../libraries/library.js";
-import { buildText, messageErrorCommandUsage } from "../utils/general.util.js";
+import { buildText, messageErrorCommandUsage, removeFormatting } from "../utils/general.util.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
 import groupCommands from "./group.list.commands.js";
@@ -32,6 +32,8 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += (group.antifake.status) ? buildText(groupCommands.grupo.msgs.reply_item_antifake_on, group.antifake.exceptions.prefixes.toString(), group.antifake.exceptions.numbers.toString() || '---') : groupCommands.grupo.msgs.reply_item_antifake_off
         //Anti-Flood
         replyText += (group.antiflood.status) ? buildText(groupCommands.grupo.msgs.reply_item_antiflood_on, group.antiflood.max_messages, group.antiflood.interval) : groupCommands.grupo.msgs.reply_item_antiflood_off
+        //Resposta automática
+        replyText += (group.auto_reply.status) ? buildText(groupCommands.grupo.msgs.reply_item_autoreply_on) : groupCommands.grupo.msgs.reply_item_autoreply_off
         //Bloqueio de CMDS
         replyText += (group.block_cmds.length) ? buildText(groupCommands.grupo.msgs.reply_item_blockcmds_on, group.block_cmds.map(command => botInfo.prefix + command).toString()) : groupCommands.grupo.msgs.reply_item_blockcmds_off
         //Filtro de palavras
@@ -571,6 +573,97 @@ export async function restritoCommand(client: WASocket, botInfo: Bot, message: M
     await waLib.updateGroupRestriction(client, group.id, !group.restricted)
     const replyText = (group.restricted) ? groupCommands.restrito.msgs.reply_off : groupCommands.restrito.msgs.reply_on
     await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function autorespCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    }
+    
+    const replyText = group.auto_reply.status ? groupCommands.autoresp.msgs.reply_off : groupCommands.autoresp.msgs.reply_on
+    await groupController.setAutoReply(group.id, !group.auto_reply.status)
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function respostasCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    }
+
+    if (!group.auto_reply.config.length) throw new Error(buildText(groupCommands.respostas.msgs.error_empty))
+    
+    let replyText = groupCommands.respostas.msgs.reply_title
+
+    group.auto_reply.config.forEach(config => {
+        replyText += buildText(groupCommands.respostas.msgs.reply_item, config.word, config.reply)
+    })
+
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function addrespCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (message.args.length < 2){
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
+    }
+
+    let word = removeFormatting(message.args[0]).toLowerCase().trim()
+    let reply = message.args.slice(1).join(" ")
+
+    const wordRegistered = group.auto_reply.config.find(config => config.word == word) ? true : false
+
+    if (wordRegistered) {
+        throw new Error(buildText(groupCommands.addresp.msgs.error_already_added, word))
+    } else {
+        await groupController.addReply(group.id, word, reply.trim())    
+        const replyText = buildText(groupCommands.addresp.msgs.reply_added, word, reply.trim())
+        await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    }
+}
+
+export async function rmrespCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length){
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
+    }
+
+    const words = message.args.map(word => removeFormatting(word).toLowerCase().trim())
+    let replyText = groupCommands.rmresp.msgs.reply_title
+
+    words.forEach(async (word) => {
+        const wordRegistered = group.auto_reply.config.find(config => config.word == word)
+
+        if (wordRegistered) {
+            replyText += buildText(groupCommands.rmresp.msgs.reply_item_success, word)
+            await groupController.removeReply(group.id, wordRegistered.word, wordRegistered.reply)
+        } else {
+            replyText +=  buildText(groupCommands.rmresp.msgs.reply_item_error, word)
+        }
+    })
+
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antilinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){

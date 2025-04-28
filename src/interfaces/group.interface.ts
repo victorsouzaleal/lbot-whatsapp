@@ -27,6 +27,13 @@ export interface Group {
         max_messages: number
         interval: number
     },
+    auto_reply: {
+        status: boolean,
+        config: {
+            word: string,
+            reply: string
+        }[]
+    }
     autosticker: boolean
     block_cmds: string[]
     blacklist : string[]

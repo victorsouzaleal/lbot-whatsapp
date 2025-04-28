@@ -145,6 +145,8 @@ export async function handleGroupMessage(client: WASocket, group: Group, botInfo
 
         callCommand = true
     } else {
+        await procs.autoReply(client, botInfo, group, message)
+        
         callCommand = false
     }
 

@@ -27,6 +27,9 @@ const groupCommands = {
             reply_item_antiflood_on: "*Anti-Flood*: ✅\n"+
             "- Máx: *{$1}* msgs / *{$2}* s \n",
             reply_item_antiflood_off: "*Anti-Flood*: ❌\n",
+            reply_item_autoreply_off: "*Resposta automática*: ❌\n",
+            reply_item_autoreply_on: "*Resposta automática*: ✅\n"+
+            `- Veja em *{$p}respostas*\n`,
             reply_item_counter_on: "*Contador*: ✅\n"+
             "- {$1}\n",
             reply_item_counter_off: "*Contador*: ❌\n",
@@ -253,6 +256,46 @@ const groupCommands = {
             reply_off: '✅ O grupo foi liberado para todos os *MEMBROS* poderem conversar.'
         },
         function: groupFunctions.restritoCommand
+    },
+    autoresp: {
+        guide: `Ex: *{$p}autoresp* - Liga/desliga a resposta automática no grupo.\n\n`+
+        `*Obs*: Configure as respostas automáticas com os comandos *{$p}addresp* e *{$p}rmresp*, e veja `+
+        `a configuração atual com o comando *{$p}respostas*`,
+        msgs: {
+            reply_on: "✅ O recurso de *RESPOSTA AUTOMÁTICA* foi ativado com sucesso.",
+            reply_off: "✅ O recurso de *RESPOSTA AUTOMÁTICA* foi desativado com sucesso."
+        },
+        function: groupFunctions.autorespCommand
+    },
+    addresp: {
+        guide: `Ex: *{$p}addresp* !batata Vejo que você digitou !batata - Adiciona uma resposta automática para a palavra *!batata*.\n`,
+        msgs: {
+            reply_added: '✅ A resposta automática para a palavra *{$1}* foi adicionada com sucesso.\n\n'+
+            'Resposta configurada: {$2}',
+            error_already_added: 'Já existe uma resposta automática configurada para a palavra *{$1}*, use o comando *!rmresp* {$1} para remove-la primeiro.'
+        },
+        function: groupFunctions.addrespCommand
+    },
+    rmresp: {
+        guide: `Ex: *{$p}rmresp* !batata - Remove a resposta automática para a palavra *!batata*.\n`,
+        msgs: {
+            reply_removed: '✅ A resposta automática para a palavra *{$1}* foi removida com sucesso.',
+            error_not_exist: 'Não existe uma resposta automática configurada para a palavra *{$1}*',
+            reply_title: '🤖 Resposta automática\n\n',
+            reply_item_success: 'A resposta para *{$1}* foi removida com sucesso.\n',
+            reply_item_error: 'Não existe resposta para *{$1}*\n',
+        },
+        function: groupFunctions.rmrespCommand
+    },
+    respostas: {
+        guide: `Ex: *{$p}respostas* - Exibe todas as respostas automáticas configuradas.\n`,
+        msgs: {
+            reply_title: '✉️ Respostas automáticas\n\n',
+            reply_item: '*Palavra*: {$1}\n'+
+            '*Resposta*: {$2}\n\n',
+            error_empty: `Não existem respostas automáticas configuradas atualmente, use *{$p}addresp* para adicionar uma resposta primeiro.`
+        },
+        function: groupFunctions.respostasCommand
     },
     antilink: {
         guide: `Ex: *{$p}antilink* - Liga/desliga o Anti-LINK no grupo.\n`,

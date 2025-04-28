@@ -66,6 +66,18 @@ export class GroupController {
         return this.groupService.setWelcome(groupId, status, message)
     }
 
+    public setAutoReply(groupdId: string, status: boolean){
+        return this.groupService.setAutoReply(groupdId, status)
+    }
+
+    public addReply(groupdId: string, word: string, reply: string){
+        return this.groupService.addReply(groupdId, word, reply)
+    }
+
+    public removeReply(groupdId: string, word: string, reply: string){
+        return this.groupService.removeReply(groupdId, word, reply)
+    }
+
     public setAntiLink(groupId: string, status: boolean) {
         return this.groupService.setAntilink(groupId, status)
     }

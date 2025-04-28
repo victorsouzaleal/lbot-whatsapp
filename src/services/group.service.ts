@@ -39,6 +39,10 @@ export class GroupService {
             max_messages: 10, 
             interval: 10 
         },
+        auto_reply: {
+            status: false,
+            config: [],
+        },
         autosticker: false,
         block_cmds: [],
         blacklist: [],
@@ -167,6 +171,18 @@ export class GroupService {
 
     public async setWelcome(groupId: string, status: boolean, msg: string){
         await db.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
+    }
+
+    public setAutoReply(groupdId: string, status: boolean){
+        return db.updateAsync({id: groupdId}, {$set: { "auto_reply.status": status}})
+    }
+
+    public addReply(groupdId: string, word: string, reply: string){
+        return db.updateAsync({id: groupdId}, { $push: { "auto_reply.config" : { word, reply } }})
+    }
+
+    public removeReply(groupdId: string, word: string, reply: string){
+        return db.updateAsync({id: groupdId}, { $pull: { "auto_reply.config" : { word, reply } }})
     }
 
     public setAntifake(groupId: string, status: boolean){
