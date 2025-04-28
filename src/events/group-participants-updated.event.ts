@@ -75,16 +75,19 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
         const isBotNumber = userId == botInfo.host_number
         
         if (isBotAdmin){
-            const allowedPrefixes = group.antifake.allowed
-            const isPrefixAllowed = allowedPrefixes.filter(numberPrefix => userId.startsWith(numberPrefix)).length ? true : false
-            if (!isPrefixAllowed && !isBotNumber && !isGroupAdmin){
+            const allowedPrefixes = group.antifake.exceptions.prefixes
+            const allowedNumbers = group.antifake.exceptions.numbers
+            const isAllowedPrefix = allowedPrefixes.filter(numberPrefix => userId.startsWith(numberPrefix)).length ? true : false
+            const isAllowedNumber = allowedNumbers.filter(userNumber => waLib.addWhatsappSuffix(userNumber) == userId).length ? true : false
+
+            if (!isAllowedPrefix && !isAllowedNumber && !isBotNumber && !isGroupAdmin){
                 const replyText = buildText(botTexts.antifake_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
                 await waLib.sendTextWithMentions(client, group.id, replyText , [userId], {expiration: group.expiration})
                 await waLib.removeParticipant(client, group.id, userId)
                 return true
             }
         } else {
-            await groupController.setAntiFake(group.id, false, [])
+            await groupController.setAntiFake(group.id, false)
         }
     }
 

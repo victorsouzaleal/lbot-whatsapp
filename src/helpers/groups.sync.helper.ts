@@ -49,9 +49,11 @@ async function syncResources(client: WASocket){
 
                 //Sync ANTI-FAKE
                 if(group.antifake.status){
-                    const allowedPrefixes = group.antifake.allowed
-                    const isPrefixAllowed = allowedPrefixes.filter(numberPrefix => participant.user_id.startsWith(numberPrefix)).length ? true : false
-                    if (!isPrefixAllowed && group.antifake.status && !participant.admin && !isBotNumber) {
+                    const allowedPrefixes = group.antifake.exceptions.prefixes
+                    const allowedNumbers = group.antifake.exceptions.numbers
+                    const isAllowedPrefix = allowedPrefixes.filter(numberPrefix => participant.user_id.startsWith(numberPrefix)).length ? true : false
+                    const isAllowedNumber = allowedNumbers.filter(userNumber => waLib.addWhatsappSuffix(userNumber) == participant.user_id).length ? true : false
+                    if (!isAllowedPrefix && !isAllowedNumber && group.antifake.status && !participant.admin && !isBotNumber) {
                         await waLib.removeParticipant(client, group.id, participant.user_id)
                         bannedByAntiFake++
                         continue
@@ -71,7 +73,7 @@ async function syncResources(client: WASocket){
             }
         } else {
             if (group.antifake.status) {
-                await groupController.setAntiFake(group.id, false, [])
+                await groupController.setAntiFake(group.id, false)
             }
         }
     }

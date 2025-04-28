@@ -29,7 +29,7 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         //Anti-Link
         replyText += (group.antilink.status) ? buildText(groupCommands.grupo.msgs.reply_item_antilink_on, group.antilink.exceptions.toString() || '---') : groupCommands.grupo.msgs.reply_item_antilink_off
         //Anti-Fake
-        replyText += (group.antifake.status) ? buildText(groupCommands.grupo.msgs.reply_item_antifake_on, group.antifake.allowed.toString()) : groupCommands.grupo.msgs.reply_item_antifake_off
+        replyText += (group.antifake.status) ? buildText(groupCommands.grupo.msgs.reply_item_antifake_on, group.antifake.exceptions.prefixes.toString(), group.antifake.exceptions.numbers.toString() || '---') : groupCommands.grupo.msgs.reply_item_antifake_off
         //Anti-Flood
         replyText += (group.antiflood.status) ? buildText(groupCommands.grupo.msgs.reply_item_antiflood_on, group.antiflood.max_messages, group.antiflood.interval) : groupCommands.grupo.msgs.reply_item_antiflood_off
         //Bloqueio de CMDS
@@ -621,10 +621,93 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     }
-    
-    const allowedDDI = !message.args.length ? ["55"] : message.args
+
     const replyText = group.antifake.status ? groupCommands.antifake.msgs.reply_off : groupCommands.antifake.msgs.reply_on
-    await groupController.setAntiFake(group.id, !group.antifake.status, allowedDDI)
+    await groupController.setAntiFake(group.id, !group.antifake.status)
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function addexfakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(message))
+    }
+
+    const exceptions = message.text_command.split(',')
+
+    if (!exceptions.length) throw new Error(messageErrorCommandUsage(message))
+    
+    let replyText = groupCommands.addexfake.msgs.reply_title
+
+    exceptions.forEach(async (exception) => {
+        exception = exception.replace(/\W+/g, "")
+
+        if (exception.length <= 3) {
+            if (group.antifake.exceptions.prefixes.includes(exception)) {
+                replyText += buildText(groupCommands.addexfake.msgs.reply_prefix_already_added, exception)
+            } else {
+                replyText += buildText(groupCommands.addexfake.msgs.reply_item_added_prefix, exception)
+                await groupController.addFakePrefixException(group.id, exception)
+            }
+        } else {
+            if (group.antifake.exceptions.numbers.includes(exception)) {
+                replyText += buildText(groupCommands.addexfake.msgs.reply_number_already_added, exception)
+            } else {
+                replyText += buildText(groupCommands.addexfake.msgs.reply_item_added_number, exception)
+                await groupController.addFakeNumberException(group.id, exception)
+            }
+        }
+    })
+
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function rmexfakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(message))
+    }
+
+    const exceptions = message.text_command.split(',')
+
+    if (!exceptions.length) throw new Error(messageErrorCommandUsage(message))
+    
+    let replyText = groupCommands.rmexfake.msgs.reply_title
+
+    exceptions.forEach(async (exception) => {
+        exception = exception.replace(/\W+/g, "")
+
+        if (exception == '55') {
+            replyText += groupCommands.rmexfake.msgs.reply_not_removable
+        } else if (exception.length <= 3) {
+            if (!group.antifake.exceptions.prefixes.includes(exception)) {
+                replyText += buildText(groupCommands.rmexfake.msgs.reply_prefix_not_exist, exception)
+            } else {
+                replyText += buildText(groupCommands.rmexfake.msgs.reply_item_removed_prefix, exception)
+                await groupController.removeFakePrefixException(group.id, exception)
+            }
+        } else {
+            if (!group.antifake.exceptions.numbers.includes(exception)) {
+                replyText += buildText(groupCommands.rmexfake.msgs.reply_number_not_exist, exception)
+            } else {
+                replyText += buildText(groupCommands.rmexfake.msgs.reply_item_removed_number, exception)
+                await groupController.removeFakeNumberException(group.id, exception)
+            }
+        }
+    })
+
     await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 

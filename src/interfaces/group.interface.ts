@@ -11,9 +11,12 @@ export interface Group {
         status: boolean
         msg : string
     },
-    antifake: {
-        status: boolean
-        allowed : string[]
+    antifake: { 
+        status: boolean, 
+        exceptions: {
+            prefixes: string[],
+            numbers: string[]
+        }
     },
     antilink: {
         status: boolean,

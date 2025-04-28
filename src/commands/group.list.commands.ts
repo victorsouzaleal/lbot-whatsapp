@@ -21,7 +21,8 @@ const groupCommands = {
             "- *Exceções*: {$1}\n",
             reply_item_antilink_off: "*Anti-Link*: ❌\n",
             reply_item_antifake_on: "*Anti-Fake*: ✅\n"+
-            "- *Prefixos liberados*: {$1}\n",
+            "- *Prefixos liberados*: {$1}\n"+
+            "- *Números liberados*: {$2}\n",
             reply_item_antifake_off: "*Anti-Fake*: ❌\n",
             reply_item_antiflood_on: "*Anti-Flood*: ✅\n"+
             "- Máx: *{$1}* msgs / *{$2}* s \n",
@@ -280,15 +281,36 @@ const groupCommands = {
         function: groupFunctions.bemvindoCommand
     },
     antifake: {
-        guide: `Ex: *{$p}antifake* - Liga/desliga o Anti-FAKE no grupo.\n`+
-        `Ex: *{$p}antifake* DDI - Configura o anti-fake para que todos números com o DDI exterior seja banido, exceto o que você escolheu.\n`+
-        `Ex: *{$p}antifake* DDI1 DDI2 DDI3 - Configura o anti-fake para que todos números com DDI exterior sejam banidos, excetos o que você escolheu.\n\n`+
+        guide: `Ex: *{$p}antifake* - Liga/desliga o Anti-FAKE no grupo.\n\n`+
         `*Obs*: A ativação do anti-fake bane pessoas com DDI do exterior (que não sejam 55 - Brasil).\n`,
         msgs: {
             reply_on: "✅ O recurso de *ANTI-FAKE* foi ativado com sucesso.",
             reply_off: "✅ O recurso de *ANTI-FAKE* foi desativado com sucesso."
         },
         function: groupFunctions.antifakeCommand
+    },
+    addexfake: {
+        guide: `Ex: *{$p}addexfake 1, 64, +1 282 254 224* - Adiciona prefixos e/ou números para serem exceções do Anti-FAKE.\n`,
+        msgs: {
+            reply_title: '✅  Exceções do Anti-FAKE\n\n',
+            reply_item_added_prefix: "O prefixo *{$1}* foi adicionado com sucesso as exceções.\n",
+            reply_item_added_number: "O número *{$1}* foi adicionado com sucesso as exceções.\n",
+            reply_prefix_already_added: "O prefixo *{$1}* já está nas exceções.\n",
+            reply_number_already_added: "O número *{$1}* já está nas exceções.\n"
+        },
+        function: groupFunctions.addexfakeCommand
+    },
+    rmexfake: {
+        guide: `Ex: *{$p}rmexfake 1, 64, +1 282 254 224* - Remove prefixos e/ou números das exceções do Anti-FAKE.\n`,
+        msgs: {
+            reply_title: '✅  Exceções do Anti-FAKE\n\n',
+            reply_item_removed_prefix: "O prefixo *{$1}* foi removido com sucesso das exceções.\n",
+            reply_item_removed_number: "O número *{$1}* foi removido com sucesso das exceções.\n",
+            reply_prefix_not_exist: "O prefixo *{$1}* não está nas exceções.\n",
+            reply_number_not_exist: "O número *{$1}* não está nas exceções.\n",
+            reply_not_removable: 'O prefixo *55* (Brasil) não pode ser removido.\n'
+        },
+        function: groupFunctions.rmexfakeCommand
     },
     antiflood: {
         guide: `Ex: *{$p}antiflood*  - Liga/desliga o Anti-FLOOD no grupo.\n\n`+

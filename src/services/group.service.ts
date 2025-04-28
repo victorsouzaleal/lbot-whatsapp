@@ -25,7 +25,10 @@ export class GroupService {
         },
         antifake: { 
             status: false, 
-            allowed: [] 
+            exceptions: {
+                prefixes: ['55'],
+                numbers: []
+            }
         },
         antilink: { 
             status: false, 
@@ -166,8 +169,24 @@ export class GroupService {
         await db.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
     }
 
-    public async setAntifake(groupId: string, status: boolean, allowed: string[]){
-        await db.updateAsync({id: groupId}, {$set: { "antifake.status": status, "antifake.allowed": allowed }})
+    public setAntifake(groupId: string, status: boolean){
+        return db.updateAsync({id: groupId}, {$set: { "antifake.status": status}})
+    }
+
+    public addFakePrefixException(groupId: string, numberPrefix: string){
+        return db.updateAsync({id: groupId}, { $push: { "antifake.exceptions.prefixes" : numberPrefix }})
+    }
+
+    public addFakeNumberException(groupId: string, userNumber: string){
+        return db.updateAsync({id: groupId}, { $push: { "antifake.exceptions.numbers" : userNumber }})
+    }
+
+    public removeFakePrefixException(groupId: string, numberPrefix: string){
+        return db.updateAsync({id: groupId}, { $pull: { "antifake.exceptions.prefixes" : numberPrefix }})
+    }
+
+    public removeFakeNumberException(groupId: string, userNumber: string){
+        return db.updateAsync({id: groupId}, { $pull: { "antifake.exceptions.numbers" : userNumber }})
     }
 
     public async setMuted(groupId: string, status: boolean){

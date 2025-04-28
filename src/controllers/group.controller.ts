@@ -74,8 +74,24 @@ export class GroupController {
         return this.groupService.setAutosticker(groupId, status)
     }
 
-    public setAntiFake(groupId: string, status = true, allowed : string[]) {
-        return this.groupService.setAntifake(groupId, status, allowed)
+    public setAntiFake(groupId: string, status: boolean) {
+        return this.groupService.setAntifake(groupId, status)
+    }
+
+    public addFakePrefixException(groupId: string, numberPrefix: string){
+        return this.groupService.addFakePrefixException(groupId, numberPrefix)
+    }
+
+    public addFakeNumberException(groupId: string, userNumber: string){
+        return this.groupService.addFakeNumberException(groupId, userNumber)
+    }
+
+    public removeFakePrefixException(groupId: string, numberPrefix: string){
+        return this.groupService.removeFakePrefixException(groupId, numberPrefix)
+    }
+
+    public removeFakeNumberException(groupId: string, userNumber: string){
+        return this.groupService.removeFakeNumberException(groupId, userNumber)
     }
 
     public setMuted(groupId: string, status = true) {
