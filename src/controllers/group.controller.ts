@@ -66,8 +66,16 @@ export class GroupController {
         return this.groupService.setWelcome(groupId, status, message)
     }
 
-    public setAntiLink(groupId: string, status: boolean, exceptions?: string[]) {
-        return this.groupService.setAntilink(groupId, status, exceptions)
+    public setAntiLink(groupId: string, status: boolean) {
+        return this.groupService.setAntilink(groupId, status)
+    }
+
+    public addLinkException(groupId: string, exception: string){
+        return this.groupService.addLinkException(groupId, exception)
+    }
+
+    public removeLinkException(groupId: string, exception: string){
+        return this.groupService.removeLinkException(groupId, exception)
     }
 
     public setAutoSticker(groupId: string, status = true) {

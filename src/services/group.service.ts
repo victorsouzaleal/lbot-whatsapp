@@ -193,8 +193,16 @@ export class GroupService {
         await db.updateAsync({id: groupId}, {$set: { muted : status}})
     }
 
-    public async setAntilink(groupId: string, status: boolean, exceptions?: string[]){
-        await db.updateAsync({id : groupId}, { $set: { 'antilink.status': status, 'antilink.exceptions': exceptions ?? []} })
+    public setAntilink(groupId: string, status: boolean){
+        return db.updateAsync({id: groupId}, { $set: { 'antilink.status': status} })
+    }
+
+    public addLinkException(groupId: string, exception: string){
+        return db.updateAsync({id: groupId}, { $push: { "antilink.exceptions" : exception }})
+    }
+
+    public removeLinkException(groupId: string, exception: string){
+        return db.updateAsync({id: groupId}, { $pull: { "antilink.exceptions" : exception }})
     }
 
     public async setAutosticker(groupId: string, status: boolean){

@@ -255,13 +255,30 @@ const groupCommands = {
         function: groupFunctions.restritoCommand
     },
     antilink: {
-        guide: `Ex: *{$p}antilink* - Liga/desliga o Anti-LINK no grupo e apaga a mensagem de quem postar qualquer tipo de link.\n\n`+
-        `Ex: *{$p}antilink* google.com youtube.com - Liga/desliga o Anti-LINK no grupo e permite os links inseridos como exceção.`,
+        guide: `Ex: *{$p}antilink* - Liga/desliga o Anti-LINK no grupo.\n`,
         msgs: {
             reply_on: "✅ O recurso de *ANTI-LINK* foi ativado com sucesso.",
             reply_off: "✅ O recurso de *ANTI-LINK* foi desativado com sucesso."
         },
         function: groupFunctions.antilinkCommand
+    },
+    addexlink: {
+        guide: `Ex: *{$p}addexlink* google.com youtube.com - Adiciona links serem exceções do Anti-LINK.\n`,
+        msgs: {
+            reply_title: '✅  Exceções do Anti-LINK\n\n',
+            reply_item_added: "O link *{$1}* foi adicionado com sucesso as exceções.\n",
+            reply_item_already_added: "O link *{$1}* já está nas exceções.\n"
+        },
+        function: groupFunctions.addexlinkCommand
+    },
+    rmexlink: {
+        guide: `Ex: *{$p}rmexlink* google.com youtube.com - Remove links das exceções do Anti-LINK.\n`,
+        msgs: {
+            reply_title: '✅  Exceções do Anti-LINK\n\n',
+            reply_item_removed: "O link *{$1}* foi removido com sucesso das exceções.\n",
+            reply_item_not_exist: "O link *{$1}* não está nas exceções.\n"
+        },
+        function: groupFunctions.rmexlinkCommand
     },
     autosticker: {
         guide: `Ex: *{$p}autosticker* - Liga/desliga a criação automatica de stickers sem precisar de comandos.\n`,

@@ -584,9 +584,66 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
     }
     
     const replyText = group.antilink.status ? groupCommands.antilink.msgs.reply_off : groupCommands.antilink.msgs.reply_on
-    await groupController.setAntiLink(group.id, !group.antilink.status, message.args)
+    await groupController.setAntiLink(group.id, !group.antilink.status)
     await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
+
+export async function addexlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
+    }
+
+    let replyText = groupCommands.addexlink.msgs.reply_title
+
+    message.args.forEach(async (exception) => {
+        exception = exception.trim()
+
+        if (!group.antilink.exceptions.includes(exception)) {
+            replyText += buildText(groupCommands.addexlink.msgs.reply_item_added, exception)
+            await groupController.addLinkException(group.id, exception)
+        } else {
+            replyText += buildText(groupCommands.addexlink.msgs.reply_item_already_added, exception)
+        }
+    })
+    
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
+export async function rmexlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
+    const groupController = new GroupController()
+    const isBotGroupAdmin = await groupController.isParticipantAdmin(group.id, botInfo.host_number)
+
+    if (!message.isGroupAdmin) {
+        throw new Error(botTexts.permission.admin_group_only)
+    } else if (!isBotGroupAdmin) {
+        throw new Error(botTexts.permission.bot_group_admin)
+    } else if (!message.args.length) {
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
+    }
+    
+    let replyText = groupCommands.rmexlink.msgs.reply_title
+
+    message.args.forEach(async (exception) => {
+        exception = exception.trim()
+
+        if (group.antilink.exceptions.includes(exception)) {
+            replyText += buildText(groupCommands.rmexlink.msgs.reply_item_removed, exception)
+            await groupController.removeLinkException(group.id, exception)
+        } else {
+            replyText += buildText(groupCommands.rmexlink.msgs.reply_item_not_exist, exception)
+        }
+    })
+    
+    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+}
+
 
 export async function autostickerCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const groupController = new GroupController()
