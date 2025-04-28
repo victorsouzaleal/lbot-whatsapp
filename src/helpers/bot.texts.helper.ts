@@ -22,7 +22,7 @@ const botTexts = {
     guide_header_text: '❔ USO DO COMANDO ❔\n\n',
     no_guide_found: 'Não foi encontrado um guia para este comando.',
     error_command_usage: "Parece que você usou o comando *{$1}* incorretamente ou não sabe como utilizá-lo.\n\n"+
-    "Digite: *{$1} guia* para ver o guia e aprender sobre este comando.",
+    "{$2}",
     error_command: "❗ Não foi possível realizar o comando *{$1}*.\n\n"+
     "*Motivo* : {$2}\n",
     library_error: 'Houve um erro na biblioteca desse comando, tente novamente e se o problema persistir relate ao administrador.',

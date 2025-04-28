@@ -8,9 +8,11 @@ import { FileExtensions } from "../interfaces/library.interface.js"
 import { tmpdir } from "node:os"
 import crypto from 'node:crypto'
 import { BotController } from "../controllers/bot.controller.js"
+import { getCommandGuide } from "./commands.util.js"
 
 export function messageErrorCommandUsage(message: Message){
-  return buildText(botTexts.error_command_usage, message.command)
+  const botInfo = new BotController().getBot()
+  return buildText(botTexts.error_command_usage, message.command, getCommandGuide(botInfo.prefix, message.command))
 }
 
 export function messageErrorCommand(command: string, reason: string){
