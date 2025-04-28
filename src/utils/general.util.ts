@@ -10,9 +10,8 @@ import crypto from 'node:crypto'
 import { BotController } from "../controllers/bot.controller.js"
 import { getCommandGuide } from "./commands.util.js"
 
-export function messageErrorCommandUsage(message: Message){
-  const botInfo = new BotController().getBot()
-  return buildText(botTexts.error_command_usage, message.command, getCommandGuide(botInfo.prefix, message.command))
+export function messageErrorCommandUsage(prefix: string, message: Message){
+  return buildText(botTexts.error_command_usage, message.command, getCommandGuide(prefix, message.command))
 }
 
 export function messageErrorCommand(command: string, reason: string){

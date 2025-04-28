@@ -24,7 +24,7 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     if (!messageData.type || !messageData.message) {
         throw new Error(stickerCommands.s.msgs.error_message)
     } else if (messageData.type != "imageMessage" && messageData.type != "videoMessage") {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (messageData.type == "videoMessage" && messageData.seconds && messageData.seconds  > 9) {
         throw new Error(stickerCommands.s.msgs.error_limit)
     }
@@ -37,7 +37,7 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
 
 export async function simgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.isQuoted || !message.quotedMessage) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (message.quotedMessage.type != "stickerMessage") {
         throw new Error(stickerCommands.simg.msgs.error_sticker)
     }
@@ -75,13 +75,13 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function emojimixCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const [emoji1, emoji2] = message.text_command.split("+")
 
     if (!emoji1 || !emoji2) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const supportEmoji = await imageLib.checkEmojiMixSupport(emoji1.trim(), emoji2.trim())
@@ -107,13 +107,13 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function snomeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.isQuoted || message.quotedMessage?.type != "stickerMessage") {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
     let [pack, author] = message.text_command.split(',')
 
     if (!pack || !author) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let messageQuotedData = message.quotedMessage.wa_message

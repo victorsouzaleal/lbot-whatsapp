@@ -54,7 +54,7 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function reportarCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const admins = await new UserController().getAdmins()

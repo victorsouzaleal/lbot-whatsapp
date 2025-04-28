@@ -11,7 +11,7 @@ import path from 'path'
 
 export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
     const chosenNumber = Number(message.text_command)
@@ -47,7 +47,7 @@ export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Me
 export async function simiCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const miscCommands = commandsMisc(botInfo)
 
-    if (!message.args.length) throw new Error(messageErrorCommandUsage(message))
+    if (!message.args.length) throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
 
     const simiResult = await miscLib.simSimi(message.text_command)
     const replyText = buildText(miscCommands.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
@@ -58,7 +58,7 @@ export async function viadometroCommand(client: WASocket, botInfo: Bot, message:
     if (!message.isGroupMsg){
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted && !message.mentioned.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (message.mentioned.length > 1){
         throw new Error(miscCommands.viadometro.msgs.error_mention)
     }
@@ -73,7 +73,7 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
     if (!message.isGroupMsg) {
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const quotedMessage = message.quotedMessage?.wa_message
@@ -141,7 +141,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     const userChoice = message.text_command.toLowerCase()
 
     if (!message.args.length || !coinSides.includes(userChoice)) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     const chosenSide = coinSides[Math.floor(Math.random() * coinSides.length)]
@@ -167,7 +167,7 @@ export async function pptCommand(client: WASocket, botInfo: Bot, message: Messag
     const randomIndex = Math.floor(Math.random() * validChoices.length)
 
     if (!message.args.length || !validChoices.includes(userChoice)) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let botChoice = validChoices[randomIndex]
@@ -209,7 +209,7 @@ export async function gadometroCommand(client: WASocket, botInfo: Bot, message: 
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted && !message.mentioned.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (message.mentioned.length > 1) {
         throw new Error(miscCommands.gadometro.msgs.error_mention)
     }
@@ -224,7 +224,7 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (!message.isQuoted && !message.mentioned.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (message.mentioned.length > 1) {
         throw new Error(miscCommands.bafometro.msgs.error_mention)
     }
@@ -241,7 +241,7 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     let rankingTheme = message.text_command
@@ -285,7 +285,7 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
     if (!message.isGroupMsg || !group) {
         throw new Error(botTexts.permission.group)
     } else if (message.mentioned.length !== 2) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const randomNumber = Math.floor(Math.random() * 100)
@@ -295,7 +295,7 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
 
 export async function chanceCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const randomNumber = Math.floor(Math.random() * 100)

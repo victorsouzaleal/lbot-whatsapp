@@ -8,7 +8,7 @@ import utilityCommands from "./utility.list.commands.js"
 
 export async function ouvirCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.isQuoted || message.quotedMessage?.type != 'audioMessage') {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (message.quotedMessage?.media?.seconds && message.quotedMessage?.media?.seconds > 90) {
         throw new Error(utilityCommands.ouvir.msgs.error_audio_limit)
     }
@@ -22,7 +22,7 @@ export async function qualmusicaCommand(client: WASocket, botInfo: Bot, message:
     const messageType = message.isQuoted ? message.quotedMessage?.type : message.type
 
     if (messageType != "videoMessage" && messageType != "audioMessage") {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
     const messageData = message.isQuoted ? message.quotedMessage?.wa_message : message.wa_message 
@@ -48,7 +48,7 @@ export async function steamverdeCommand(client: WASocket, botInfo: Bot, message:
     const LIMIT_RESULTS = 20
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let gamesList = await utilityLib.searchGame(message.text_command.trim())
@@ -105,7 +105,7 @@ export async function brasileiraoCommand(client: WASocket, botInfo: Bot, message
         serieSelected = 'A'
     } else {
         if (!seriesSupported.includes(message.text_command.toUpperCase())) {
-            throw new Error(messageErrorCommandUsage(message))
+            throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
         }
   
         serieSelected = message.text_command.toUpperCase() as "A" | "B"
@@ -152,7 +152,7 @@ export async function brasileiraoCommand(client: WASocket, botInfo: Bot, message
 
 export async function encurtarCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const url = await utilityLib.shortenUrl(message.text_command)
@@ -166,7 +166,7 @@ export async function encurtarCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function upimgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (message.quotedMessage?.type !== 'imageMessage' && message.type !== 'imageMessage') {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
    
     let imageBuffer : Buffer
@@ -192,7 +192,7 @@ export async function seriesCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function rbgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.isMedia && !message.isQuoted) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let messageData = {
@@ -219,7 +219,7 @@ export async function tabelaCommand(client: WASocket, botInfo: Bot, message: Mes
 
 export async function letraCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const musicLyrics = await utilityLib.musicLyrics(message.text_command)
@@ -237,7 +237,7 @@ export async function audioCommand(client: WASocket, botInfo: Bot, message: Mess
     const supportedEffects = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume']
 
     if (!message.args.length || !supportedEffects.includes(message.text_command.trim().toLowerCase()) || !message.isQuoted || message.quotedMessage?.type != "audioMessage") {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
     const effectSelected = message.text_command.trim().toLowerCase() as 'estourar'|'x2'| 'reverso'| 'grave' | 'agudo' |'volume'
@@ -253,20 +253,20 @@ export async function traduzCommand(client: WASocket, botInfo: Bot, message: Mes
 
     if (message.isQuoted && (message.quotedMessage?.type == 'conversation' || message.quotedMessage?.type == 'extendedTextMessage')){
         if (!message.args.length) {
-            throw new Error(messageErrorCommandUsage(message))
+            throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
         }
 
         languageTranslation = message.args[0]
         textTranslation = message.quotedMessage.body || message.quotedMessage.caption
     } else if (!message.isQuoted && (message.type == 'conversation'|| message.type == 'extendedTextMessage')){
         if (message.args.length < 2) {
-            throw new Error(messageErrorCommandUsage(message))
+            throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
         }
 
         [languageTranslation, ...textTranslation] = message.args
         textTranslation = textTranslation.join(" ")
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (!languageSupported.includes(languageTranslation)){
@@ -284,7 +284,7 @@ export async function vozCommand(client: WASocket, botInfo: Bot, message: Messag
     let textVoice : string[] | string
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (message.isQuoted  && (message.quotedMessage?.type == 'extendedTextMessage' || message.quotedMessage?.type == 'conversation')){
         languageVoice = message.args[0]
         textVoice = message.quotedMessage.body || message.quotedMessage.caption
@@ -318,7 +318,7 @@ export async function noticiasCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function calcCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     const calcResult = await utilityLib.calcExpression(message.text_command)
@@ -333,7 +333,7 @@ export async function calcCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function pesquisaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let webSearchList = await utilityLib.webSearchGoogle(message.text_command)
@@ -354,13 +354,13 @@ export async function moedaCommand(client: WASocket, botInfo: Bot, message: Mess
     const supportedCurrencies = ["dolar" , "iene" , "euro" , "real"]
 
     if (message.args.length != 2) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     let [currencySelected, valueSelected] = message.args
 
     if (!supportedCurrencies.includes(currencySelected)) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (isNaN(parseInt(valueSelected))) {
         throw new Error(utilityCommands.moeda.msgs.error_invalid_value)
     }
@@ -377,7 +377,7 @@ export async function moedaCommand(client: WASocket, botInfo: Bot, message: Mess
 
 export async function climaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let wheatherResult = await utilityLib.wheatherInfo(message.text_command)
@@ -428,7 +428,7 @@ export async function dddCommand(client: WASocket, botInfo: Bot, message: Messag
     } 
     
     if (!dddSelected) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let dddResult = await utilityLib.infoDDD(dddSelected)
@@ -448,7 +448,7 @@ export async function qualanimeCommand(client: WASocket, botInfo: Bot, message: 
     }
 
     if (messageData.type != "imageMessage") {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (!messageData.message) {
         throw new Error(utilityCommands.qualanime.msgs.error_message)
     }

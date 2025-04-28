@@ -9,7 +9,7 @@ import downloadCommands from "./download.list.commands.js"
 
 export async function playCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
     const videoInfo = await downloadLib.youtubeMedia(message.text_command, 'mp3')
@@ -27,7 +27,7 @@ export async function playCommand(client: WASocket, botInfo: Bot, message: Messa
 
 export async function ytCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const videoInfo = await downloadLib.youtubeMedia(message.text_command, '480')
@@ -45,7 +45,7 @@ export async function ytCommand(client: WASocket, botInfo: Bot, message: Message
 
 export async function fbCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const fbInfo = await downloadLib.facebookMedia(message.text_command)
@@ -61,7 +61,7 @@ export async function fbCommand(client: WASocket, botInfo: Bot, message: Message
 
 export async function igCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const igInfo = await downloadLib.instagramMedia(message.text_command)
@@ -79,7 +79,7 @@ export async function igCommand(client: WASocket, botInfo: Bot, message: Message
 
 export async function xCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const xInfo = await downloadLib.xMedia(message.text_command)
@@ -102,7 +102,7 @@ export async function xCommand(client: WASocket, botInfo: Bot, message: Message,
 
 export async function tkCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const tiktok = await downloadLib.tiktokMedia(message.text_command)
@@ -133,7 +133,7 @@ export async function tkCommand(client: WASocket, botInfo: Bot, message: Message
 
 export async function imgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     if (!message.args.length){
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
     const MAX_SENT = 5

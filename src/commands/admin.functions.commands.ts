@@ -23,7 +23,7 @@ export async function sairCommand(client: WASocket, botInfo: Bot, message: Messa
     const groupController = new GroupController()
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let currentGroups = await groupController.getAllGroups()
@@ -85,7 +85,7 @@ export async function linkgrupoCommand(client: WASocket, botInfo: Bot, message: 
     const groupController = new GroupController()
 
     if(!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let currentGroups = await groupController.getAllGroups()
@@ -147,7 +147,7 @@ export async function addadminCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.args.length) {
         targetUserId = waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const userData = await userController.getUser(targetUserId)
@@ -184,7 +184,7 @@ export async function rmadminCommand(client: WASocket, botInfo: Bot, message: Me
     } else if (message.args.length) {
         targetUserId = waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const userData = await userController.getUser(targetUserId)
@@ -222,7 +222,7 @@ export async function taxacomandosCommand(client: WASocket, botInfo: Bot, messag
 
     if (!botInfo.command_rate.status){
         if (!message.args.length) {
-            throw new Error(messageErrorCommandUsage(message))
+            throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
         }
 
         let max_commands_minute = Number(message.args[0])
@@ -262,7 +262,7 @@ export async function bcmdglobalCommand(client: WASocket, botInfo: Bot, message:
     let categories = ['sticker', 'utility', 'download', 'misc']
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (commands[0] == 'variado') {
@@ -303,7 +303,7 @@ export async function dcmdglobalCommand(client: WASocket, botInfo: Bot, message:
     let categories : CategoryCommand[] | string[] = ['all', 'sticker', 'utility', 'download', 'misc']
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (commands[0] == 'todos') {
@@ -337,7 +337,7 @@ export async function dcmdglobalCommand(client: WASocket, botInfo: Bot, message:
 
 export async function entrargrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const linkGroup = message.text_command
@@ -363,7 +363,7 @@ export async function bcgruposCommand(client: WASocket, botInfo: Bot, message: M
     const groupController = new GroupController()
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const currentGroups = await groupController.getAllGroups()
@@ -389,7 +389,7 @@ export async function bcgruposCommand(client: WASocket, botInfo: Bot, message: M
 
 export async function fotobotCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     if(message.type != 'imageMessage' && message.quotedMessage?.type != 'imageMessage') {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const messageData = (message.isQuoted) ? message.quotedMessage?.wa_message : message.wa_message
@@ -407,7 +407,7 @@ export async function nomebotCommand(client: WASocket, botInfo: Bot, message: Me
     const botController = new BotController()
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     botController.setName(message.text_command)
@@ -419,7 +419,7 @@ export async function prefixoCommand(client: WASocket, botInfo: Bot, message: Me
     const supportedPrefixes = ["!", "#", ".", "*"]
 
     if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } else if (!supportedPrefixes.includes(message.text_command)) {
         throw new Error(adminCommands.prefixo.msgs.error_not_supported)
     }
@@ -458,7 +458,7 @@ export async function bloquearCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.args.length) {
         targetUserId =  waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (adminsId.includes(targetUserId)){
@@ -487,7 +487,7 @@ export async function desbloquearCommand(client: WASocket, botInfo: Bot, message
     } else if (message.args.length) {
         targetUserId =  waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (!blockedUsers.includes(targetUserId)) {
@@ -503,7 +503,7 @@ export async function desbloquearCommand(client: WASocket, botInfo: Bot, message
 
 export async function recadoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     if(!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     await waLib.updateProfileStatus(client, message.text_command)
@@ -522,7 +522,7 @@ export async function usuarioCommand(client: WASocket, botInfo: Bot, message: Me
     } else if (message.args.length) {
         targetUserId = waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let userData = await userController.getUser(targetUserId)

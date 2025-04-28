@@ -60,7 +60,7 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
     } else if (message.isQuoted && message.quotedMessage) {
         targetUserId = message.quotedMessage.sender
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const isBotTarget = botInfo.host_number == targetUserId
@@ -106,7 +106,7 @@ export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Me
     } else if (message.isQuoted && message.quotedMessage) {
         targetUserId = message.quotedMessage.sender
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const participant = await groupController.getParticipant(group.id, targetUserId)
@@ -148,7 +148,7 @@ export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message:
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let replyText = groupCommands.addfiltros.msgs.reply_title
@@ -174,7 +174,7 @@ export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: 
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let replyText = groupCommands.rmfiltros.msgs.reply_title
@@ -200,7 +200,7 @@ export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: 
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (message.type != 'imageMessage' && message.quotedMessage?.type != 'imageMessage') {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     let imageBuffer : Buffer
@@ -233,7 +233,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.args.length) {
         targetUserId = waLib.addWhatsappSuffix(message.text_command)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (targetUserId == botInfo.host_number) {
@@ -266,7 +266,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     const currentBlacklist = group.blacklist
@@ -321,7 +321,7 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     let userId = waLib.addWhatsappSuffix(message.text_command.trim())
@@ -359,7 +359,7 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
     } else if (message.mentioned.length) {
         targetUsers = message.mentioned
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let replyText = groupCommands.ban.msgs.reply_title
@@ -398,7 +398,7 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.isQuoted && message.quotedMessage) {
         targetUsers.push(message.quotedMessage.sender)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     for(let userId of targetUsers){
@@ -431,7 +431,7 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.isQuoted && message.quotedMessage) {
         targetUsers.push(message.quotedMessage.sender)
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     for(let userId of targetUsers){
@@ -636,12 +636,12 @@ export async function addexfakeCommand(client: WASocket, botInfo: Bot, message: 
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const exceptions = message.text_command.split(',')
 
-    if (!exceptions.length) throw new Error(messageErrorCommandUsage(message))
+    if (!exceptions.length) throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     
     let replyText = groupCommands.addexfake.msgs.reply_title
 
@@ -677,12 +677,12 @@ export async function rmexfakeCommand(client: WASocket, botInfo: Bot, message: M
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const exceptions = message.text_command.split(',')
 
-    if (!exceptions.length) throw new Error(messageErrorCommandUsage(message))
+    if (!exceptions.length) throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     
     let replyText = groupCommands.rmexfake.msgs.reply_title
 
@@ -752,7 +752,7 @@ export async function apgCommand(client: WASocket, botInfo: Bot, message: Messag
     } else if (!isBotGroupAdmin) {
         throw new Error(botTexts.permission.bot_group_admin)
     } else if (!message.isQuoted || !message.quotedMessage) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
     await waLib.deleteMessage(client, message.wa_message, true)
@@ -818,7 +818,7 @@ export async function membroCommand(client: WASocket, botInfo: Bot, message: Mes
     } else if (message.mentioned.length === 1) {
         targetUserId = message.mentioned[0]
     } else {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     let participant = await groupController.getParticipant(group.id, targetUserId)
@@ -838,7 +838,7 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     const qtyMessage = Number(message.text_command)
@@ -876,7 +876,7 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
     if (commands[0] == 'variado') {
@@ -919,7 +919,7 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     if (!message.isGroupAdmin) {
         throw new Error(botTexts.permission.admin_group_only)
     } else if (!message.args.length) {
-        throw new Error(messageErrorCommandUsage(message))
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
 
