@@ -9,9 +9,9 @@ export async function botUpdater(){
     const botController = new BotController()
     const botInfo = botController.getBot()
     let hasBotUpdated = false
-    
+
     try{
-        if (!botInfo.db_migrated) {
+        if (!botInfo.db_migrated || process.env.migrate) {
             await databaseMigration()
             botController.setDbMigrated(true)
             console.log(colorText(botTexts.migrating_database, '#e0e031'))
