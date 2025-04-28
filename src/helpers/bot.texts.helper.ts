@@ -25,7 +25,7 @@ const botTexts = {
     "{$2}",
     error_command: "❗ Não foi possível realizar o comando *{$1}*.\n\n"+
     "*Motivo* : {$2}\n",
-    library_error: 'Houve um erro na biblioteca desse comando, tente novamente e se o problema persistir relate ao administrador.',
+    library_error: 'Houve um erro interno ao realizar esse comando, tente novamente mais tarde.',
     command_rate_limited_message : "Você está impossibilitado de mandar comandos por *{$1}* segundos, pega leve cara.",
     group_blocked_command: "O comando *{$1}* está temporariamente bloqueado neste grupo pelo administrador.",
     globally_blocked_command: "O comando *{$1}* está indisponível no momento por ordem do administrador, tente novamente mais tarde.",
