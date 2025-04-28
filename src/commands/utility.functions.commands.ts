@@ -233,7 +233,7 @@ export async function letraCommand(client: WASocket, botInfo: Bot, message: Mess
 }
 
 
-export async function audioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+export async function efeitoaudioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const supportedEffects = ['estourar','x2', 'reverso', 'grave', 'agudo', 'volume']
 
     if (!message.args.length || !supportedEffects.includes(message.text_command.trim().toLowerCase()) || !message.isQuoted || message.quotedMessage?.type != "audioMessage") {

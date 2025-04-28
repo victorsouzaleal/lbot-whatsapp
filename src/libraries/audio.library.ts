@@ -152,10 +152,10 @@ export async function audioModified (audioBuffer: Buffer, type: AudioModificatio
                 options = ["-y", "-filter_complex", "areverse"]
                 break
             case "grave":
-                options = ["-y", "-af", "asetrate=44100*0.8"]
+                options = ["-y", "-af", "asetrate=44100*0.5,aresample=44100,atempo=1.20"]
                 break
             case "agudo":
-                options = ["-y", "-af", "asetrate=44100*1.4"]
+                options = ["-y", "-af", "asetrate=44100*1.1,aresample=44100,atempo=0.70"]
                 break
             case "x2":
                 options = ["-y", "-filter:a", "atempo=2.0", "-vn"]

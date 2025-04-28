@@ -129,19 +129,19 @@ const utilityCommands = {
         },
         function: utilityFunctions.rbgCommand
     },
-    audio: {
+    efeitoaudio: {
         guide: `Responda um aúdio com um desses comandos:\n\n`+
-        `Ex: *{$p}audio* grave - Torna audio mais grave e lento\n\n`+
-        `Ex: *{$p}audio* agudo - Torna o audio mais agudo e rapido\n\n`+
-        `Ex: *{$p}audio* estourar - Deixa o audio estourado\n\n`+
-        `Ex: *{$p}audio* volume  - Aumenta o volume em 4 vezes\n\n`+
-        `Ex: *{$p}audio* x2 - Acelera o audio em 2 vezes\n\n`+
-        `Ex: *{$p}audio* reverso - Reverte o audio\n\n`+
+        `Ex: *{$p}efeitoaudio* grave - Torna audio mais grave e lento\n\n`+
+        `Ex: *{$p}efeitoaudio* agudo - Torna o audio mais agudo e rapido\n\n`+
+        `Ex: *{$p}efeitoaudio* estourar - Deixa o audio estourado\n\n`+
+        `Ex: *{$p}efeitoaudio* volume  - Aumenta o volume em 4 vezes\n\n`+
+        `Ex: *{$p}efeitoaudio* x2 - Acelera o audio em 2 vezes\n\n`+
+        `Ex: *{$p}efeitoaudio* reverso - Reverte o audio\n\n`+
         `*Obs*: Este comando funciona apenas com *AUDIOS*.\n`,
         msgs: {
             error: "[❗] Houve um erro na conversão de audio"
         },
-        function: utilityFunctions.audioCommand
+        function: utilityFunctions.efeitoaudioCommand
     },
     traduz: {
         guide: `Ex: *{$p}traduz* pt texto - Traduz o texto que foi digitado para *Português*.\n\n`+
