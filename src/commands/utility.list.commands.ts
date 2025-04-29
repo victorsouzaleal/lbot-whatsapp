@@ -121,13 +121,21 @@ const utilityCommands = {
         function: utilityFunctions.tabelaCommand
     },
     rbg: {
-        guide: `Ex: Envie/responda uma *imagem* com *{$p}rbg* - Retira o fundo da imagem.\n\n`,
+        guide: `Ex: Envie/responda uma *imagem* com *{$p}rbg* - Retira o fundo da imagem.\n`,
         msgs: {
             error_message: "Houve um erro ao obter os dados da mensagem.",
             error_only_image: "Este comando só funciona com *IMAGENS*.",
             wait: "[AGUARDE] 📸 O fundo da imagem está sendo removido.",
         },
         function: utilityFunctions.rbgCommand
+    },
+    audio: {
+        guide: 'Ex: Envie/responda um vídeo com *{$p}audio* - Extrai o áudio do video e envia.\n',
+        msgs: {
+            error_message: "Houve um erro ao obter os dados da mensagem.",
+            error_only_video: 'Este comando funciona apenas com *VÍDEOS*.'
+        },
+        function: utilityFunctions.audioCommand
     },
     efeitoaudio: {
         guide: `Responda um aúdio com um desses comandos:\n\n`+

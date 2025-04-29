@@ -212,6 +212,27 @@ export async function rbgCommand(client: WASocket, botInfo: Bot, message: Messag
     await waLib.replyFileFromBuffer(client, message.chat_id, 'imageMessage', replyImageBuffer, '', message.wa_message, {expiration: message.expiration})
 }
 
+export async function audioCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
+    if (!message.isMedia && !message.isQuoted) {
+        throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
+    }
+    
+    let messageData = {
+        type : (message.isMedia) ? message.type : message.quotedMessage?.type,
+        wa_message: (message.isQuoted)? message.quotedMessage?.wa_message : message.wa_message
+    }
+
+    if (!messageData.type || !messageData.wa_message) {
+        throw new Error(utilityCommands.audio.msgs.error_message)
+    } else if (messageData.type != "videoMessage") {
+        throw new Error(utilityCommands.audio.msgs.error_only_video)
+    }
+
+    let videoBuffer = await downloadMediaMessage(messageData.wa_message, "buffer", {})
+    let replyAudioBuffer = await convertLib.extractAudioFromVideo('buffer', videoBuffer)
+    await waLib.replyFileFromBuffer(client, message.chat_id, 'audioMessage', replyAudioBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
+}
+
 export async function tabelaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const replyText = await utilityLib.symbolsASCI()
     await waLib.replyText(client, message.chat_id, buildText(utilityCommands.tabela.msgs.reply, replyText), message.wa_message, {expiration: message.expiration})

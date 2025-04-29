@@ -113,7 +113,8 @@ export const utilityMenu = (botInfo : Bot)=>{
 *|*
 *|*━━ ✦ 🔊 *AUDIO* ✦
 *|*► *${prefix}ouvir* - Áudio para texto
-*|*► *${prefix}audio* tipo - Edição de áudio
+*|*► *${prefix}audio* - Extrai áudio de um video
+*|*► *${prefix}efeitoaudio* tipo - Adiciona efeito no áudio
 *|*► *${prefix}voz* pt texto - Texto para áudio
 *|*
 *|*━━ ✦ 🖼️ *IMAGENS* ✦
