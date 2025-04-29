@@ -1,9 +1,9 @@
 import { GroupMetadata, WAMessage, WAPresence, WASocket, S_WHATSAPP_NET, generateWAMessageFromContent, getContentType, proto } from "baileys"
-import { buildText, randomDelay } from "../utils/general.util.js"
+import { buildText, randomDelay } from "./general.util.js"
 import { MessageOptions, MessageTypes, Message } from "../interfaces/message.interface.js"
-import * as convertLibrary from './convert.library.js'
+import * as convertLibrary from './convert.util.js'
 import { Group } from "../interfaces/group.interface.js"
-import { removeBold } from "../utils/general.util.js"
+import { removeBold } from "./general.util.js"
 import { GroupController } from "../controllers/group.controller.js"
 import NodeCache from "node-cache"
 import { UserController } from "../controllers/user.controller.js"

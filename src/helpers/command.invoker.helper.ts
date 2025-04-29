@@ -5,7 +5,7 @@ import { messageErrorCommand, showCommandConsole } from "../utils/general.util.j
 import { Group } from "../interfaces/group.interface.js";
 import { Commands } from "../interfaces/command.interface.js";
 import { autoSticker } from "../commands/sticker.functions.commands.js";
-import { waLib } from "../libraries/library.js";
+import * as waUtil from "../utils/whatsapp.util.js";
 import botTexts from "../helpers/bot.texts.helper.js";
 import infoCommands from "../commands/info.list.commands.js";
 import utilityCommands from "../commands/utility.list.commands.js";
@@ -19,7 +19,7 @@ import { getCommandCategory, getCommandGuide } from "../utils/commands.util.js";
 export async function commandInvoker(client: WASocket, botInfo: Bot, message: Message, group: Group|null){
     const isGuide = (!message.args.length) ? false : message.args[0] === 'guia'
     const categoryCommand = getCommandCategory(botInfo.prefix, message.command)
-    const commandName = waLib.removePrefix(botInfo.prefix, message.command)
+    const commandName = waUtil.removePrefix(botInfo.prefix, message.command)
 
     try{
         if (isGuide) {
@@ -104,11 +104,11 @@ export async function commandInvoker(client: WASocket, botInfo: Bot, message: Me
                 break
         }
     } catch(err: any){
-        await waLib.replyText(client, message.chat_id, messageErrorCommand(message.command, err.message), message.wa_message, {expiration: message.expiration})
+        await waUtil.replyText(client, message.chat_id, messageErrorCommand(message.command, err.message), message.wa_message, {expiration: message.expiration})
     }
 
 }
 
 async function sendCommandGuide(client: WASocket, prefix: string, message : Message){
-    await waLib.replyText(client, message.chat_id, getCommandGuide(prefix, message.command), message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, getCommandGuide(prefix, message.command), message.wa_message, {expiration: message.expiration})
 }

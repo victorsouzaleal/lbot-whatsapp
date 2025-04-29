@@ -2,7 +2,7 @@ import { Bot } from "../interfaces/bot.interface.js"
 import path from "node:path"
 import fs from 'fs-extra'
 import moment from "moment-timezone"
-import { waLib } from "../libraries/library.js"
+import { removePrefix } from "../utils/whatsapp.util.js"
 import { deepMerge } from "../utils/general.util.js"
 
 export class BotService {
@@ -116,7 +116,7 @@ export class BotService {
 
     public blockCommandsGlobally(prefix: string, commands: string[]) {
         let botInfo = this.getBot()
-        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
         const blockCommands = commandsWithoutPrefix.filter(command => !botInfo.block_cmds.includes(command))
         botInfo.block_cmds.push(...blockCommands)
         this.updateBot(botInfo)
@@ -125,7 +125,7 @@ export class BotService {
 
     public unblockCommandsGlobally(prefix: string, commands: string[]) {
         let botInfo = this.getBot()
-        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
         const unblockCommands = commandsWithoutPrefix.filter(command => botInfo.block_cmds.includes(command))
 
         unblockCommands.forEach((command) => {

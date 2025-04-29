@@ -3,11 +3,11 @@ import { BotController } from '../controllers/bot.controller.js'
 import { buildText, showConsoleError, colorText } from '../utils/general.util.js'
 import { GroupController } from '../controllers/group.controller.js'
 import botTexts from '../helpers/bot.texts.helper.js'
-import { waLib } from '../libraries/library.js'
+import * as waUtil from '../utils/whatsapp.util.js'
 
 export async function syncGroupsOnStart(client: WASocket){
     try{
-        const groupsMetadata = await waLib.getAllGroups(client)
+        const groupsMetadata = await waUtil.getAllGroups(client)
 
         if (groupsMetadata.length){
             let groupController = new GroupController()
@@ -42,7 +42,7 @@ async function syncResources(client: WASocket){
 
                 //Sync LISTA-NEGRA
                 if (isUserBlacklisted){
-                    await waLib.removeParticipant(client, group.id, participant.user_id)
+                    await waUtil.removeParticipant(client, group.id, participant.user_id)
                     bannedByBlackList++
                     continue
                 }
@@ -52,9 +52,9 @@ async function syncResources(client: WASocket){
                     const allowedPrefixes = group.antifake.exceptions.prefixes
                     const allowedNumbers = group.antifake.exceptions.numbers
                     const isAllowedPrefix = allowedPrefixes.filter(numberPrefix => participant.user_id.startsWith(numberPrefix)).length ? true : false
-                    const isAllowedNumber = allowedNumbers.filter(userNumber => waLib.addWhatsappSuffix(userNumber) == participant.user_id).length ? true : false
+                    const isAllowedNumber = allowedNumbers.filter(userNumber => waUtil.addWhatsappSuffix(userNumber) == participant.user_id).length ? true : false
                     if (!isAllowedPrefix && !isAllowedNumber && group.antifake.status && !participant.admin && !isBotNumber) {
-                        await waLib.removeParticipant(client, group.id, participant.user_id)
+                        await waUtil.removeParticipant(client, group.id, participant.user_id)
                         bannedByAntiFake++
                         continue
                     }
@@ -64,12 +64,12 @@ async function syncResources(client: WASocket){
 
             if (bannedByBlackList) {
                 const replyText = buildText(botTexts.sync_blacklist, bannedByBlackList)
-                await waLib.sendText(client, group.id, replyText, { expiration: group.expiration })
+                await waUtil.sendText(client, group.id, replyText, { expiration: group.expiration })
             }
 
             if (bannedByAntiFake) {
                 const replyText = buildText(botTexts.sync_antifake, bannedByAntiFake)
-                await waLib.sendText(client, group.id, replyText, { expiration: group.expiration })
+                await waUtil.sendText(client, group.id, replyText, { expiration: group.expiration })
             }
         } else {
             if (group.antifake.status) {

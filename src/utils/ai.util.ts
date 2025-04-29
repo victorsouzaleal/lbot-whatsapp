@@ -1,4 +1,4 @@
-import { showConsoleLibraryError } from '../utils/general.util.js';
+import { showConsoleLibraryError } from './general.util.js';
 import botTexts from '../helpers/bot.texts.helper.js';
 
 export async function questionAI(text: string){

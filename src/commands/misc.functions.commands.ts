@@ -2,7 +2,8 @@ import { WASocket } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
-import { waLib, miscLib } from "../libraries/library.js"
+import { funnyRandomPhrases } from '../utils/misc.util.js'
+import * as waUtil from '../utils/whatsapp.util.js'
 import { buildText, messageErrorCommandUsage, uppercaseFirst} from "../utils/general.util.js"
 import botTexts from "../helpers/bot.texts.helper.js"
 import miscCommands from "./misc.list.commands.js"
@@ -22,7 +23,7 @@ export async function sorteioCommand(client: WASocket, botInfo: Bot, message: Me
     
     const randomNumber = Math.floor(Math.random() * chosenNumber) + 1
     const replyText = buildText(miscCommands.sorteio.msgs.reply, randomNumber)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -34,13 +35,13 @@ export async function sorteiomembroCommand(client: WASocket, botInfo: Bot, messa
 
     const currentParticipantsIds = await groupController.getParticipantsIds(group.id)
     const randomParticipant = currentParticipantsIds[Math.floor(Math.random() * currentParticipantsIds.length)]
-    const replyText = buildText(miscCommands.sorteiomembro.msgs.reply, waLib.removeWhatsappSuffix(randomParticipant))
-    await waLib.replyWithMentions(client, message.chat_id, replyText, [randomParticipant], message.wa_message, {expiration: message.expiration})
+    const replyText = buildText(miscCommands.sorteiomembro.msgs.reply, waUtil.removeWhatsappSuffix(randomParticipant))
+    await waUtil.replyWithMentions(client, message.chat_id, replyText, [randomParticipant], message.wa_message, {expiration: message.expiration})
 }
 
 export async function mascoteCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
     const imagePath = path.resolve('dist/media/mascote.png')
-    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePath, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
+    await waUtil.replyFile(client, message.chat_id, 'imageMessage', imagePath, 'WhatsApp Jr.', message.wa_message, {expiration: message.expiration})
 }
 
 /*
@@ -51,7 +52,7 @@ export async function simiCommand(client: WASocket, botInfo: Bot, message: Messa
 
     const simiResult = await miscLib.simSimi(message.text_command)
     const replyText = buildText(miscCommands.simi.msgs.reply, timestampToDate(Date.now()), simiResult)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }*/
 
 export async function viadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -66,7 +67,7 @@ export async function viadometroCommand(client: WASocket, botInfo: Bot, message:
     const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
     const replyText = buildText(miscCommands.viadometro.msgs.reply, randomNumber)
-    await waLib.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
+    await waUtil.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
 }
 
 export async function detectorCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -95,8 +96,8 @@ export async function detectorCommand(client: WASocket, botInfo: Bot, message: M
 
     const randomIndex = Math.floor(Math.random() * imagePathsResult.length)
     const waitReply = miscCommands.detector.msgs.wait
-    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePathCalibration, waitReply, quotedMessage, {expiration: message.expiration})
-    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePathsResult[randomIndex], '', quotedMessage, {expiration: message.expiration})
+    await waUtil.replyFile(client, message.chat_id, 'imageMessage', imagePathCalibration, waitReply, quotedMessage, {expiration: message.expiration})
+    await waUtil.replyFile(client, message.chat_id, 'imageMessage', imagePathsResult[randomIndex], '', quotedMessage, {expiration: message.expiration})
 }
 
 export async function roletarussaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -111,7 +112,7 @@ export async function roletarussaCommand(client: WASocket, botInfo: Bot, message
         replyText = miscCommands.roletarussa.msgs.reply_alive
     } 
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function casalCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -132,8 +133,8 @@ export async function casalCommand(client: WASocket, botInfo: Bot, message: Mess
     currentParticipantsIds.splice(randomIndex, 1)
     randomIndex = Math.floor(Math.random() * currentParticipantsIds.length)
     let chosenParticipant2 = currentParticipantsIds[randomIndex]
-    let replyText = buildText(miscCommands.casal.msgs.reply, waLib.removeWhatsappSuffix(chosenParticipant1), waLib.removeWhatsappSuffix(chosenParticipant2))
-    await waLib.sendTextWithMentions(client, message.chat_id, replyText, [chosenParticipant1, chosenParticipant2], {expiration: message.expiration})
+    let replyText = buildText(miscCommands.casal.msgs.reply, waUtil.removeWhatsappSuffix(chosenParticipant1), waUtil.removeWhatsappSuffix(chosenParticipant2))
+    await waUtil.sendTextWithMentions(client, message.chat_id, replyText, [chosenParticipant1, chosenParticipant2], {expiration: message.expiration})
 }
 
 export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -147,7 +148,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
     const chosenSide = coinSides[Math.floor(Math.random() * coinSides.length)]
     const imagePath = chosenSide === 'cara' ? path.resolve('dist/media/cara.png') : path.resolve('dist/media/coroa.png')
     const waitText = miscCommands.caracoroa.msgs.wait
-    await waLib.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, waitText, message.wa_message, {expiration: message.expiration})
     const isUserVictory = chosenSide == userChoice
     let replyText : string
 
@@ -157,7 +158,7 @@ export async function caracoroaCommand(client: WASocket, botInfo: Bot, message: 
         replyText = buildText(miscCommands.caracoroa.msgs.reply_defeat, uppercaseFirst(chosenSide))
     }
     
-    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePath, replyText, message.wa_message, { expiration: message.expiration })
+    await waUtil.replyFile(client, message.chat_id, 'imageMessage', imagePath, replyText, message.wa_message, { expiration: message.expiration })
     
 }
 
@@ -202,7 +203,7 @@ export async function pptCommand(client: WASocket, botInfo: Bot, message: Messag
         replyText = buildText(miscCommands.ppt.msgs.reply_draw, userIconChoice, botIconChoice)
     }
     
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function gadometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -217,7 +218,7 @@ export async function gadometroCommand(client: WASocket, botInfo: Bot, message: 
     const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
     const replyText = buildText(miscCommands.gadometro.msgs.reply, randomNumber)
-    await waLib.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
+    await waUtil.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
 }
 
 export async function bafometroCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -232,7 +233,7 @@ export async function bafometroCommand(client: WASocket, botInfo: Bot, message: 
     const randomNumber = Math.floor(Math.random() * 100)
     const messageToReply = (message.quotedMessage && message.mentioned.length != 1) ? message.quotedMessage?.wa_message : message.wa_message
     const replyText = buildText(miscCommands.bafometro.msgs.reply, randomNumber)
-    await waLib.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
+    await waUtil.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})   
 }
 
 export async function top5Command(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -273,12 +274,12 @@ export async function top5Command(client: WASocket, botInfo: Bot, message: Messa
 
         let randomIndex = Math.floor(Math.random() * currentParticipantsIds.length)
         let chosenParticipant = currentParticipantsIds[randomIndex]
-        replyText += buildText(miscCommands.top5.msgs.reply_item, icon, i, waLib.removeWhatsappSuffix(chosenParticipant))
+        replyText += buildText(miscCommands.top5.msgs.reply_item, icon, i, waUtil.removeWhatsappSuffix(chosenParticipant))
         mentionList.push(chosenParticipant)
         currentParticipantsIds.splice(currentParticipantsIds.indexOf(chosenParticipant), 1)                
     }
 
-    await waLib.sendTextWithMentions(client, message.chat_id, replyText, mentionList, {expiration: message.expiration})
+    await waUtil.sendTextWithMentions(client, message.chat_id, replyText, mentionList, {expiration: message.expiration})
 }
 
 export async function parCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -289,8 +290,8 @@ export async function parCommand(client: WASocket, botInfo: Bot, message: Messag
     }
 
     const randomNumber = Math.floor(Math.random() * 100)
-    let replyText = buildText(miscCommands.par.msgs.reply, waLib.removeWhatsappSuffix(message.mentioned[0]), waLib.removeWhatsappSuffix(message.mentioned[1]), randomNumber)
-    await waLib.sendTextWithMentions(client, message.chat_id, replyText, message.mentioned, {expiration: message.expiration})
+    let replyText = buildText(miscCommands.par.msgs.reply, waUtil.removeWhatsappSuffix(message.mentioned[0]), waUtil.removeWhatsappSuffix(message.mentioned[1]), randomNumber)
+    await waUtil.sendTextWithMentions(client, message.chat_id, replyText, message.mentioned, {expiration: message.expiration})
 }
 
 export async function chanceCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -301,12 +302,12 @@ export async function chanceCommand(client: WASocket, botInfo: Bot, message: Mes
     const randomNumber = Math.floor(Math.random() * 100)
     const replyText = buildText(miscCommands.chance.msgs.reply, randomNumber, message.text_command)
     const messageToReply = (message.isQuoted && message.quotedMessage) ? message.quotedMessage?.wa_message : message.wa_message
-    await waLib.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, messageToReply, {expiration: message.expiration})
 }
 
 export async function fraseCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
-    const phraseResult = await miscLib.funnyRandomPhrases()
+    const phraseResult = await funnyRandomPhrases()
     const replyText =  buildText(miscCommands.frase.msgs.reply, phraseResult)
     const imagePath = path.resolve('dist/media/frasewhatsappjr.png')
-    await waLib.replyFile(client, message.chat_id, 'imageMessage', imagePath, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyFile(client, message.chat_id, 'imageMessage', imagePath, replyText, message.wa_message, {expiration: message.expiration})
 }

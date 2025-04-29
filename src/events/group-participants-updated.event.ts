@@ -4,7 +4,7 @@ import { Bot } from '../interfaces/bot.interface.js'
 import { Group } from '../interfaces/group.interface.js'
 import { GroupController } from '../controllers/group.controller.js'
 import botTexts from '../helpers/bot.texts.helper.js'
-import { waLib } from '../libraries/library.js'
+import { removeParticipant, sendTextWithMentions, removeWhatsappSuffix, addWhatsappSuffix } from '../utils/whatsapp.util.js'
 
 export async function groupParticipantsUpdated (client: WASocket, event: {id: string, author: string, participants: string[], action: ParticipantAction}, botInfo: Bot){
     try{
@@ -58,9 +58,9 @@ async function isParticipantBlacklisted(client: WASocket, botInfo: Bot, group: G
     const isBotAdmin = botInfo.host_number ? await groupController.isParticipantAdmin(group.id, botInfo.host_number) : false
 
     if (isBotAdmin && isUserBlacklisted) {
-        const replyText = buildText(botTexts.blacklist_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
-        await waLib.removeParticipant(client, group.id, userId)
-        await waLib.sendTextWithMentions(client, group.id, replyText, [userId], {expiration: group.expiration})
+        const replyText = buildText(botTexts.blacklist_ban_message, removeWhatsappSuffix(userId), botInfo.name)
+        await removeParticipant(client, group.id, userId)
+        await sendTextWithMentions(client, group.id, replyText, [userId], {expiration: group.expiration})
         return true
     }
 
@@ -78,12 +78,12 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
             const allowedPrefixes = group.antifake.exceptions.prefixes
             const allowedNumbers = group.antifake.exceptions.numbers
             const isAllowedPrefix = allowedPrefixes.filter(numberPrefix => userId.startsWith(numberPrefix)).length ? true : false
-            const isAllowedNumber = allowedNumbers.filter(userNumber => waLib.addWhatsappSuffix(userNumber) == userId).length ? true : false
+            const isAllowedNumber = allowedNumbers.filter(userNumber => addWhatsappSuffix(userNumber) == userId).length ? true : false
 
             if (!isAllowedPrefix && !isAllowedNumber && !isBotNumber && !isGroupAdmin){
-                const replyText = buildText(botTexts.antifake_ban_message, waLib.removeWhatsappSuffix(userId), botInfo.name)
-                await waLib.sendTextWithMentions(client, group.id, replyText , [userId], {expiration: group.expiration})
-                await waLib.removeParticipant(client, group.id, userId)
+                const replyText = buildText(botTexts.antifake_ban_message, removeWhatsappSuffix(userId), botInfo.name)
+                await sendTextWithMentions(client, group.id, replyText , [userId], {expiration: group.expiration})
+                await removeParticipant(client, group.id, userId)
                 return true
             }
         } else {
@@ -97,7 +97,7 @@ async function isParticipantFake(client: WASocket, botInfo: Bot, group: Group, u
 async function sendWelcome(client: WASocket, group: Group, botInfo: Bot, userId: string){
     if (group.welcome.status) {
         const customMessage = group.welcome.msg ?  group.welcome.msg + "\n\n" : ""
-        const welcomeMessage = buildText(botTexts.group_welcome_message, waLib.removeWhatsappSuffix(userId), group.name, customMessage)
-        await waLib.sendTextWithMentions(client, group.id, welcomeMessage, [userId], {expiration: group.expiration})
+        const welcomeMessage = buildText(botTexts.group_welcome_message, removeWhatsappSuffix(userId), group.name, customMessage)
+        await sendTextWithMentions(client, group.id, welcomeMessage, [userId], {expiration: group.expiration})
     }
 }

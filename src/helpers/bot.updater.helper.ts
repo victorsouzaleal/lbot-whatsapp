@@ -1,4 +1,4 @@
-import { updaterLib } from "../libraries/library.js";
+import * as updaterUtil from "../utils/updater.util.js";
 import { colorText, getCurrentBotVersion } from "../utils/general.util.js";
 import botTexts from "../helpers/bot.texts.helper.js";
 import { BotController } from "../controllers/bot.controller.js";
@@ -18,14 +18,14 @@ export async function botUpdater(){
         }
 
         const currentVersion = getCurrentBotVersion()
-        const checkUpdate = await updaterLib.checkUpdate(currentVersion)
+        const checkUpdate = await updaterUtil.checkUpdate(currentVersion)
 
         if (checkUpdate.latest) {
             console.log(colorText(botTexts.no_update_available))
         } else {
             console.log(colorText(botTexts.update_available, '#e0e031'))
             fs.removeSync('./dist')
-            await updaterLib.makeUpdate('./')
+            await updaterUtil.makeUpdate('./')
             botController.setDbMigrated(false)
             console.log(colorText(botTexts.bot_updated))
             hasBotUpdated = true

@@ -1,6 +1,6 @@
 import { Group } from "../interfaces/group.interface.js";
 import { GroupMetadata } from 'baileys'
-import { waLib } from "../libraries/library.js";
+import { removePrefix } from "../utils/whatsapp.util.js";
 import DataStore from "@seald-io/nedb";
 import { ParticipantService } from "./participant.service.js";
 import { deepMerge } from "../utils/general.util.js";
@@ -239,7 +239,7 @@ export class GroupService {
 
     public async blockCommands(groupId: string, prefix: string, commands: string[]) {
         const group = await this.getGroup(groupId)
-        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
         const blockCommands = commandsWithoutPrefix.filter(command => !group?.block_cmds.includes(command))
         await db.updateAsync({id: groupId}, { $push: { block_cmds: { $each: blockCommands } } })
         return blockCommands.map(command => prefix+command)
@@ -247,7 +247,7 @@ export class GroupService {
 
     public async unblockCommands(groupId: string, prefix: string, commands: string[]) {
         const group = await this.getGroup(groupId)
-        const commandsWithoutPrefix = commands.map(command => waLib.removePrefix(prefix, command))
+        const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
         const unblockCommands = commandsWithoutPrefix.filter(command => group?.block_cmds.includes(command))
         await db.updateAsync({id: groupId}, { $pull: { block_cmds: { $in: unblockCommands }} })
         return unblockCommands.map(command => prefix+command)

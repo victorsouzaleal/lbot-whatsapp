@@ -2,7 +2,7 @@ import { WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
-import { waLib } from "../libraries/library.js";
+import * as waUtil from "../utils/whatsapp.util.js";
 import { buildText, getCurrentBotVersion, messageErrorCommandUsage, timestampToDate } from "../utils/general.util.js";
 import { UserController } from "../controllers/user.controller.js";
 import * as menu from "../helpers/menu.builder.helper.js";
@@ -11,9 +11,9 @@ import botTexts from "../helpers/bot.texts.helper.js";
 
 export async function infoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
     const userController = new UserController()
-    const blockedUsers = await waLib.getBlockedContacts(client)
+    const blockedUsers = await waUtil.getBlockedContacts(client)
     const adminsBot = await userController.getAdmins()
-    const adminsBotContacts = adminsBot.map(admin => `- wa.me/${waLib.removeWhatsappSuffix(admin.id)}\n`)
+    const adminsBotContacts = adminsBot.map(admin => `- wa.me/${waUtil.removeWhatsappSuffix(admin.id)}\n`)
 
     let version = getCurrentBotVersion()
     let botStartedAt = timestampToDate(botInfo.started)
@@ -41,14 +41,14 @@ export async function infoCommand(client: WASocket, botInfo: Bot, message: Messa
     }
 
     //RESPOSTA
-    await waLib.getProfilePicUrl(client, botInfo.host_number).then(async (pic)=>{
+    await waUtil.getProfilePicUrl(client, botInfo.host_number).then(async (pic)=>{
         if (pic) {
-            await waLib.replyFileFromUrl(client, message.chat_id, 'imageMessage', pic, replyText, message.wa_message, {expiration: message.expiration})
+            await waUtil.replyFileFromUrl(client, message.chat_id, 'imageMessage', pic, replyText, message.wa_message, {expiration: message.expiration})
         } else {
-            await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+            await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
         }
     }).catch(async ()=>{
-        await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+        await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
     })
 }
 
@@ -64,11 +64,11 @@ export async function reportarCommand(client: WASocket, botInfo: Bot, message: M
     }
 
     admins.forEach(async (admin) => {
-        let replyAdmin = buildText(infoCommands.reportar.msgs.reply_admin, message.pushname, waLib.removeWhatsappSuffix(message.sender), message.text_command)
-        await waLib.sendText(client, admin.id, replyAdmin)
+        let replyAdmin = buildText(infoCommands.reportar.msgs.reply_admin, message.pushname, waUtil.removeWhatsappSuffix(message.sender), message.text_command)
+        await waUtil.sendText(client, admin.id, replyAdmin)
     })
 
-    await waLib.replyText(client, message.chat_id, infoCommands.reportar.msgs.reply, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, infoCommands.reportar.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
 export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
@@ -82,7 +82,7 @@ export async function meusdadosCommand(client: WASocket, botInfo: Bot, message: 
     const userType = userData.owner ? botTexts.user_types.owner : (userData.admin ? botTexts.user_types.admin  : botTexts.user_types.user)
     let replyText = buildText(infoCommands.meusdados.msgs.reply, userType, userName, userData.commands)
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function menuCommand(client: WASocket, botInfo: Bot, message: Message, group?: Group){
@@ -135,6 +135,6 @@ export async function menuCommand(client: WASocket, botInfo: Bot, message: Messa
         }
     }
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 

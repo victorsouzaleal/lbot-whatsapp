@@ -4,7 +4,7 @@ import { BotController } from '../controllers/bot.controller.js'
 import { buildText, showConsoleError, colorText } from '../utils/general.util.js'
 import botTexts from '../helpers/bot.texts.helper.js'
 import { UserController } from '../controllers/user.controller.js'
-import { waLib } from '../libraries/library.js'
+import { getHostNumber } from '../utils/whatsapp.util.js'
 import qrcode from 'qrcode-terminal'
 import readline from 'readline/promises'
 import { cleanCreds } from '../helpers/session.auth.helper.js'
@@ -39,7 +39,7 @@ export async function connectionQr(client: WASocket, connectionState : Partial<C
 export async function connectionOpen(client: WASocket){
     try{
         const botController = new BotController()
-        botController.startBot(waLib.getHostNumber(client))
+        botController.startBot(getHostNumber(client))
         console.log(colorText(botTexts.bot_data))
         await checkOwnerRegister()
     } catch(err: any) {

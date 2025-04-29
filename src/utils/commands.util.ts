@@ -9,7 +9,7 @@ import adminCommands from "../commands/admin.list.commands.js"
 import stickerCommands from "../commands/sticker.list.commands.js"
 import downloadCommands from "../commands/download.list.commands.js"
 import botTexts from "../helpers/bot.texts.helper.js"
-import { removePrefix } from "../libraries/whatsapp.library.js"
+import { removePrefix } from "./whatsapp.util.js"
 import { buildText } from "./general.util.js"
 
 const COMMAND_CATEGORIES = ['info', 'utility', 'download', 'sticker', 'misc', 'group', 'admin']

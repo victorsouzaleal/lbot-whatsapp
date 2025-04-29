@@ -2,7 +2,9 @@ import { downloadMediaMessage, WASocket } from "baileys"
 import { Bot } from "../interfaces/bot.interface.js"
 import { Group } from "../interfaces/group.interface.js"
 import { Message } from "../interfaces/message.interface.js"
-import { waLib, imageLib, stickerLib } from "../libraries/library.js"
+import * as waUtil from '../utils/whatsapp.util.js'
+import * as imageUtil from '../utils/image.util.js'
+import * as stickerUtil from '../utils/sticker.util.js'
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import stickerCommands from "./sticker.list.commands.js"
 
@@ -31,8 +33,8 @@ export async function sCommand(client: WASocket, botInfo: Bot, message: Message,
     
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
     const authorText = buildText(stickerCommands.s.msgs.author_text, message.pushname)
-    const stickerBuffer = await stickerLib.createSticker(mediaBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: stickerType})
-    await waLib.sendSticker(client, message.chat_id, stickerBuffer, { expiration: message.expiration })
+    const stickerBuffer = await stickerUtil.createSticker(mediaBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: stickerType})
+    await waUtil.sendSticker(client, message.chat_id, stickerBuffer, { expiration: message.expiration })
 }
 
 export async function simgCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -49,8 +51,8 @@ export async function simgCommand(client: WASocket, botInfo: Bot, message: Messa
     }
 
     const stickerBuffer = await downloadMediaMessage(message.quotedMessage.wa_message, "buffer", {})
-    const imageBuffer = await stickerLib.stickerToImage(stickerBuffer)
-    await waLib.replyFileFromBuffer(client, message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'image/png'})
+    const imageBuffer = await stickerUtil.stickerToImage(stickerBuffer)
+    await waUtil.replyFileFromBuffer(client, message.chat_id, 'imageMessage', imageBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'image/png'})
 }
 
 export async function ssfCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -65,12 +67,12 @@ export async function ssfCommand(client: WASocket, botInfo: Bot, message: Messag
         throw new Error(stickerCommands.ssf.msgs.error_image)
     }
 
-    await waLib.replyText(client, message.chat_id, stickerCommands.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, stickerCommands.ssf.msgs.wait, message.wa_message, {expiration: message.expiration})
     const mediaBuffer = await downloadMediaMessage(messageData.message, "buffer", {})
-    const imageBuffer = await imageLib.removeBackground(mediaBuffer)
+    const imageBuffer = await imageUtil.removeBackground(mediaBuffer)
     const authorText = buildText(stickerCommands.ssf.msgs.author_text, message.pushname)
-    const stickerBuffer = await stickerLib.createSticker(imageBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
-    await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
+    const stickerBuffer = await stickerUtil.createSticker(imageBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
+    await waUtil.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
 export async function emojimixCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -84,7 +86,7 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
-    const supportEmoji = await imageLib.checkEmojiMixSupport(emoji1.trim(), emoji2.trim())
+    const supportEmoji = await imageUtil.checkEmojiMixSupport(emoji1.trim(), emoji2.trim())
 
     if (!supportEmoji.emoji1 && !supportEmoji.emoji2) {
         throw new Error(buildText(stickerCommands.emojimix.msgs.error_emojis, emoji1, emoji2))
@@ -94,15 +96,15 @@ export async function emojimixCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(buildText(stickerCommands.emojimix.msgs.error_emoji, emoji2))
     }
 
-    const imageBuffer = await imageLib.emojiMix(emoji1.trim(), emoji2.trim())
+    const imageBuffer = await imageUtil.emojiMix(emoji1.trim(), emoji2.trim())
 
     if (!imageBuffer) {
         throw new Error(stickerCommands.emojimix.msgs.error_not_found)
     } 
 
     const authorText = buildText(stickerCommands.emojimix.msgs.author_text, message.pushname)
-    const stickerBuffer = await stickerLib.createSticker(imageBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
-    await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
+    const stickerBuffer = await stickerUtil.createSticker(imageBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
+    await waUtil.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 
 export async function snomeCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -127,8 +129,8 @@ export async function snomeCommand(client: WASocket, botInfo: Bot, message: Mess
     }
 
     const stickerBuffer = await downloadMediaMessage(messageQuotedData, 'buffer', {})
-    const stickerRenamedBuffer = await stickerLib.renameSticker(stickerBuffer, pack, author)
-    await waLib.sendSticker(client, message.chat_id, stickerRenamedBuffer, {expiration: message.expiration})
+    const stickerRenamedBuffer = await stickerUtil.renameSticker(stickerBuffer, pack, author)
+    await waUtil.sendSticker(client, message.chat_id, stickerRenamedBuffer, {expiration: message.expiration})
 }
 
 export async function autoSticker(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -140,7 +142,7 @@ export async function autoSticker(client: WASocket, botInfo: Bot, message: Messa
 
     let mediaBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
     const authorText = buildText(stickerCommands.s.msgs.author_text, message.pushname)
-    let stickerBuffer = await stickerLib.createSticker(mediaBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
-    await waLib.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
+    let stickerBuffer = await stickerUtil.createSticker(mediaBuffer, {pack: botInfo.name, author: authorText, fps: 9, type: 'resize'})
+    await waUtil.sendSticker(client, message.chat_id, stickerBuffer, {expiration: message.expiration})
 }
 

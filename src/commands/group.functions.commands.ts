@@ -2,7 +2,7 @@ import { downloadMediaMessage, WASocket } from "baileys";
 import { Bot } from "../interfaces/bot.interface.js";
 import { Message } from "../interfaces/message.interface.js";
 import { Group } from "../interfaces/group.interface.js";
-import { waLib } from "../libraries/library.js";
+import * as waUtil from "../utils/whatsapp.util.js";
 import { buildText, messageErrorCommandUsage, removeFormatting } from "../utils/general.util.js";
 import { UserController } from "../controllers/user.controller.js";
 import { GroupController } from "../controllers/group.controller.js";
@@ -42,7 +42,7 @@ export async function grupoCommand(client: WASocket, botInfo: Bot, message: Mess
         replyText += buildText(groupCommands.grupo.msgs.reply_item_blacklist, group.blacklist.length)
     }
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function avisoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -82,13 +82,13 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
     }
     
     if (participant.warnings < 3){
-        replyText = buildText(groupCommands.aviso.msgs.reply, waLib.removeWhatsappSuffix(targetUserId), participant.warnings)
-        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
+        replyText = buildText(groupCommands.aviso.msgs.reply, waUtil.removeWhatsappSuffix(targetUserId), participant.warnings)
+        await waUtil.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
     } else {
-        replyText = buildText(groupCommands.aviso.msgs.reply_max_warning, waLib.removeWhatsappSuffix(targetUserId))
-        await waLib.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
+        replyText = buildText(groupCommands.aviso.msgs.reply_max_warning, waUtil.removeWhatsappSuffix(targetUserId))
+        await waUtil.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
         await groupController.addBlackList(group.id, targetUserId)
-        await waLib.removeParticipant(client, group.id, targetUserId)
+        await waUtil.removeParticipant(client, group.id, targetUserId)
     }
 }
 
@@ -121,8 +121,8 @@ export async function rmavisoCommand(client: WASocket, botInfo: Bot, message: Me
         const currentWarnings = participant.warnings
         const newWarningCount = participant.warnings - 1
         await groupController.removeParticipantWarning(group.id, targetUserId, currentWarnings)
-        const replyText = buildText(groupCommands.rmaviso.msgs.reply, waLib.removeWhatsappSuffix(targetUserId), newWarningCount)
-        await waLib.replyWithMentions(client, message.chat_id, replyText, [targetUserId], message.wa_message, { expiration : message.expiration })
+        const replyText = buildText(groupCommands.rmaviso.msgs.reply, waUtil.removeWhatsappSuffix(targetUserId), newWarningCount)
+        await waUtil.replyWithMentions(client, message.chat_id, replyText, [targetUserId], message.wa_message, { expiration : message.expiration })
     }
 }
 
@@ -138,7 +138,7 @@ export async function zeraravisosCommand(client: WASocket, botInfo: Bot, message
 
     await groupController.removeParticipantsWarnings(group.id)
     const replyText = groupCommands.zeraravisos.msgs.reply
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
 }
 
 export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -164,7 +164,7 @@ export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message:
         }
     }
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
 }
 
 export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -190,7 +190,7 @@ export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: 
         }
     }
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, { expiration: message.expiration })
 }
 
 export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -213,8 +213,8 @@ export async function fotogrupoCommand(client: WASocket, botInfo: Bot, message: 
         imageBuffer = await downloadMediaMessage(message.wa_message, "buffer", {})
     }
 
-    await waLib.updateProfilePic(client, group.id, imageBuffer)
-    await waLib.replyText(client, group.id, groupCommands.fotogrupo.msgs.reply, message.wa_message, {expiration: message.expiration})
+    await waUtil.updateProfilePic(client, group.id, imageBuffer)
+    await waUtil.replyText(client, group.id, groupCommands.fotogrupo.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addlistaCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -233,7 +233,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     } else if (message.mentioned.length) {
         targetUserId = message.mentioned[0]
     } else if (message.args.length) {
-        targetUserId = waLib.addWhatsappSuffix(message.text_command)
+        targetUserId = waUtil.addWhatsappSuffix(message.text_command)
     } else {
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
@@ -251,10 +251,10 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
     }
 
     await groupController.addBlackList(group.id, targetUserId)
-    await waLib.replyText(client, message.chat_id, groupCommands.addlista.msgs.reply, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, groupCommands.addlista.msgs.reply, message.wa_message, {expiration: message.expiration})
 
     if (await groupController.isParticipant(group.id, targetUserId)) {
-        await waLib.removeParticipant(client, group.id, targetUserId)
+        await waUtil.removeParticipant(client, group.id, targetUserId)
     }
 }
 
@@ -276,7 +276,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     if (message.args.length == 1 && message.args[0].length <= 3) {
         targetUserId = currentBlacklist[parseInt(message.text_command) - 1]
     } else {
-        targetUserId = waLib.addWhatsappSuffix(message.text_command)
+        targetUserId = waUtil.addWhatsappSuffix(message.text_command)
     }
 
     if (!currentBlacklist.includes(targetUserId)) {
@@ -284,7 +284,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
     }
 
     await groupController.removeBlackList(group.id, targetUserId)
-    await waLib.replyText(client, message.chat_id, groupCommands.rmlista.msgs.reply, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, groupCommands.rmlista.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
 export async function listanegraCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -308,10 +308,10 @@ export async function listanegraCommand(client: WASocket, botInfo: Bot, message:
     for(let userId of currentBlacklist){
         const userData = await userController.getUser(userId)
         const userNumberList = currentBlacklist.indexOf(userId) + 1
-        replyText += buildText(groupCommands.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', waLib.removeWhatsappSuffix(userId))
+        replyText += buildText(groupCommands.listanegra.msgs.reply_item, userNumberList, userData?.name || '---', waUtil.removeWhatsappSuffix(userId))
     }
 
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -326,22 +326,22 @@ export async function addCommand(client: WASocket, botInfo: Bot, message: Messag
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
-    let userId = waLib.addWhatsappSuffix(message.text_command.trim())
+    let userId = waUtil.addWhatsappSuffix(message.text_command.trim())
 
-    if (!Number(waLib.removeWhatsappSuffix(userId))) {
+    if (!Number(waUtil.removeWhatsappSuffix(userId))) {
         throw new Error(groupCommands.add.msgs.error_input)
     }
 
-    let addResponse = await waLib.addParticipant(client, group.id, userId).catch((err) => {
-        throw new Error(buildText(groupCommands.add.msgs.error_invalid_number, waLib.removeWhatsappSuffix(userId)))
+    let addResponse = await waUtil.addParticipant(client, group.id, userId).catch((err) => {
+        throw new Error(buildText(groupCommands.add.msgs.error_invalid_number, waUtil.removeWhatsappSuffix(userId)))
     })
 
     if (addResponse.status != "200") {
-        throw new Error(buildText(groupCommands.add.msgs.error_add, waLib.removeWhatsappSuffix(userId)))
+        throw new Error(buildText(groupCommands.add.msgs.error_add, waUtil.removeWhatsappSuffix(userId)))
     }
 
-    const replyText = buildText(groupCommands.add.msgs.reply, waLib.removeWhatsappSuffix(userId))
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    const replyText = buildText(groupCommands.add.msgs.reply, waUtil.removeWhatsappSuffix(userId))
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function banCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -369,17 +369,17 @@ export async function banCommand(client: WASocket, botInfo: Bot, message: Messag
     for(let userId of targetUsers){
         if (await groupController.isParticipant(group.id, userId)){
             if (!await groupController.isParticipantAdmin(group.id, userId)){
-                await waLib.removeParticipant(client, group.id, userId)
-                replyText += buildText(groupCommands.ban.msgs.reply_item_success, waLib.removeWhatsappSuffix(userId))
+                await waUtil.removeParticipant(client, group.id, userId)
+                replyText += buildText(groupCommands.ban.msgs.reply_item_success, waUtil.removeWhatsappSuffix(userId))
             } else {
-                replyText += buildText(groupCommands.ban.msgs.reply_item_ban_admin, waLib.removeWhatsappSuffix(userId))
+                replyText += buildText(groupCommands.ban.msgs.reply_item_ban_admin, waUtil.removeWhatsappSuffix(userId))
             }
         } else {
-            replyText += buildText(groupCommands.ban.msgs.reply_item_not_found, waLib.removeWhatsappSuffix(userId))
+            replyText += buildText(groupCommands.ban.msgs.reply_item_not_found, waUtil.removeWhatsappSuffix(userId))
         }
     }
 
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function promoverCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -405,14 +405,14 @@ export async function promoverCommand(client: WASocket, botInfo: Bot, message: M
 
     for(let userId of targetUsers){
         if (!await groupController.isParticipantAdmin(group.id, userId)) {
-            await waLib.promoteParticipant(client, group.id, userId)
-            replyText += buildText(groupCommands.promover.msgs.reply_item_success, waLib.removeWhatsappSuffix(userId))
+            await waUtil.promoteParticipant(client, group.id, userId)
+            replyText += buildText(groupCommands.promover.msgs.reply_item_success, waUtil.removeWhatsappSuffix(userId))
         } else {
-            replyText += buildText(groupCommands.promover.msgs.reply_item_error, waLib.removeWhatsappSuffix(userId))
+            replyText += buildText(groupCommands.promover.msgs.reply_item_error, waUtil.removeWhatsappSuffix(userId))
         }
     }
 
-    await waLib.replyWithMentions(client, group.id, replyText, targetUsers, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, group.id, replyText, targetUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -438,16 +438,16 @@ export async function rebaixarCommand(client: WASocket, botInfo: Bot, message: M
 
     for(let userId of targetUsers){
         if (userId == botInfo.host_number || userId == group.owner){
-            replyText += buildText(groupCommands.rebaixar.msgs.reply_item_error, waLib.removeWhatsappSuffix(userId))
+            replyText += buildText(groupCommands.rebaixar.msgs.reply_item_error, waUtil.removeWhatsappSuffix(userId))
         } else if (await groupController.isParticipantAdmin(group.id, userId)) {
-            replyText += buildText(groupCommands.rebaixar.msgs.reply_item_success, waLib.removeWhatsappSuffix(userId))
-            await waLib.demoteParticipant(client, group.id, userId)
+            replyText += buildText(groupCommands.rebaixar.msgs.reply_item_success, waUtil.removeWhatsappSuffix(userId))
+            await waUtil.demoteParticipant(client, group.id, userId)
         } else {
-            replyText += buildText(groupCommands.rebaixar.msgs.reply_item_error_is_member, waLib.removeWhatsappSuffix(userId))
+            replyText += buildText(groupCommands.rebaixar.msgs.reply_item_error_is_member, waUtil.removeWhatsappSuffix(userId))
         }
     }
 
-    await waLib.replyWithMentions(client, message.chat_id, replyText, targetUsers, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, message.chat_id, replyText, targetUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mtCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -466,7 +466,7 @@ export async function mtCommand(client: WASocket, botInfo: Bot, message: Message
         replyMention = buildText(groupCommands.mt.msgs.reply, currentParticipantsIds.length)
     }
 
-    await waLib.replyWithMentions(client, message.chat_id, replyMention, currentParticipantsIds, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, message.chat_id, replyMention, currentParticipantsIds, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mmCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -488,7 +488,7 @@ export async function mmCommand(client: WASocket, botInfo: Bot, message: Message
         replyText = buildText(groupCommands.mm.msgs.reply, participantsNotAdmins.length)
     }
 
-    await waLib.replyWithMentions(client, message.chat_id, replyText, participantsNotAdmins, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, message.chat_id, replyText, participantsNotAdmins, message.wa_message, {expiration: message.expiration})
 }
 
 export async function admsCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -503,7 +503,7 @@ export async function admsCommand(client: WASocket, botInfo: Bot, message: Messa
     }
 
     const messageToReply = (message.isQuoted && message.quotedMessage) ? message.quotedMessage.wa_message : message.wa_message
-    await waLib.replyWithMentions(client, message.chat_id, replyText, adminsIds, messageToReply, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, message.chat_id, replyText, adminsIds, messageToReply, {expiration: message.expiration})
 }
 
 export async function donoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -511,8 +511,8 @@ export async function donoCommand(client: WASocket, botInfo: Bot, message: Messa
         throw new Error(groupCommands.dono.msgs.error)
     }
     
-    const replyText = buildText(groupCommands.dono.msgs.reply, waLib.removeWhatsappSuffix(group.owner))
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    const replyText = buildText(groupCommands.dono.msgs.reply, waUtil.removeWhatsappSuffix(group.owner))
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function mutarCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -524,7 +524,7 @@ export async function mutarCommand(client: WASocket, botInfo: Bot, message: Mess
     
     let replyText = group.muted ? groupCommands.mutar.msgs.reply_off : groupCommands.mutar.msgs.reply_on
     await groupController.setMuted(group.id, !group.muted)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function linkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -537,9 +537,9 @@ export async function linkCommand(client: WASocket, botInfo: Bot, message: Messa
         throw new Error(botTexts.permission.bot_group_admin)
     }
 
-    let inviteLink = await waLib.getGroupInviteLink(client, group.id)
+    let inviteLink = await waUtil.getGroupInviteLink(client, group.id)
     const replyText = buildText(groupCommands.link.msgs.reply, group.name, inviteLink)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -552,12 +552,12 @@ export async function rlinkCommand(client: WASocket, botInfo: Bot, message: Mess
         throw new Error(botTexts.permission.bot_group_admin)
     }
 
-    await waLib.revokeGroupInvite(client, group.id).catch(() => {
+    await waUtil.revokeGroupInvite(client, group.id).catch(() => {
         throw new Error(groupCommands.rlink.msgs.error)
     })
 
     const replyText = groupCommands.rlink.msgs.reply
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function restritoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -570,9 +570,9 @@ export async function restritoCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(botTexts.permission.bot_group_admin)
     }
     
-    await waLib.updateGroupRestriction(client, group.id, !group.restricted)
+    await waUtil.updateGroupRestriction(client, group.id, !group.restricted)
     const replyText = (group.restricted) ? groupCommands.restrito.msgs.reply_off : groupCommands.restrito.msgs.reply_on
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function autorespCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -587,7 +587,7 @@ export async function autorespCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.auto_reply.status ? groupCommands.autoresp.msgs.reply_off : groupCommands.autoresp.msgs.reply_on
     await groupController.setAutoReply(group.id, !group.auto_reply.status)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function respostasCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -608,7 +608,7 @@ export async function respostasCommand(client: WASocket, botInfo: Bot, message: 
         replyText += buildText(groupCommands.respostas.msgs.reply_item, config.word, config.reply)
     })
 
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addrespCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -633,7 +633,7 @@ export async function addrespCommand(client: WASocket, botInfo: Bot, message: Me
     } else {
         await groupController.addReply(group.id, word, reply.trim())    
         const replyText = buildText(groupCommands.addresp.msgs.reply_added, word, reply.trim())
-        await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+        await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
     }
 }
 
@@ -663,7 +663,7 @@ export async function rmrespCommand(client: WASocket, botInfo: Bot, message: Mes
         }
     })
 
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antilinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -678,7 +678,7 @@ export async function antilinkCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.antilink.status ? groupCommands.antilink.msgs.reply_off : groupCommands.antilink.msgs.reply_on
     await groupController.setAntiLink(group.id, !group.antilink.status)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addexlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -706,7 +706,7 @@ export async function addexlinkCommand(client: WASocket, botInfo: Bot, message: 
         }
     })
     
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function rmexlinkCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -734,7 +734,7 @@ export async function rmexlinkCommand(client: WASocket, botInfo: Bot, message: M
         }
     })
     
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 
@@ -747,7 +747,7 @@ export async function autostickerCommand(client: WASocket, botInfo: Bot, message
     
     const replyText = group.autosticker ? groupCommands.autosticker.msgs.reply_off : groupCommands.autosticker.msgs.reply_on
     await groupController.setAutoSticker(group.id, !group.autosticker)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -759,7 +759,7 @@ export async function bemvindoCommand(client: WASocket, botInfo: Bot, message: M
     
     const replyText = group.welcome.status ? groupCommands.bemvindo.msgs.reply_off : groupCommands.bemvindo.msgs.reply_on
     await groupController.setWelcome(group.id, !group.welcome.status, message.text_command || undefined)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antifakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -774,7 +774,7 @@ export async function antifakeCommand(client: WASocket, botInfo: Bot, message: M
 
     const replyText = group.antifake.status ? groupCommands.antifake.msgs.reply_off : groupCommands.antifake.msgs.reply_on
     await groupController.setAntiFake(group.id, !group.antifake.status)
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function addexfakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -815,7 +815,7 @@ export async function addexfakeCommand(client: WASocket, botInfo: Bot, message: 
         }
     })
 
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function rmexfakeCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -858,7 +858,7 @@ export async function rmexfakeCommand(client: WASocket, botInfo: Bot, message: M
         }
     })
 
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function antifloodCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -890,7 +890,7 @@ export async function antifloodCommand(client: WASocket, botInfo: Bot, message: 
     
     const replyText = group.antiflood.status ? groupCommands.antiflood.msgs.reply_off : buildText(groupCommands.antiflood.msgs.reply_on, maxMessage, interval)
     await groupController.setAntiFlood(group.id, !group.antiflood.status, Number(maxMessage), Number(interval))
-    await waLib.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function apgCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -905,7 +905,7 @@ export async function apgCommand(client: WASocket, botInfo: Bot, message: Messag
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
     
-    await waLib.deleteMessage(client, message.wa_message, true)
+    await waUtil.deleteMessage(client, message.wa_message, true)
 }
 
 export async function topativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -946,11 +946,11 @@ export async function topativosCommand(client: WASocket, botInfo: Bot, message: 
                 icon = ''
         }
 
-        replyText += buildText(groupCommands.topativos.msgs.reply_item, icon, positionRanking, waLib.removeWhatsappSuffix(usersRanking[i].user_id), usersRanking[i].msgs)
+        replyText += buildText(groupCommands.topativos.msgs.reply_item, icon, positionRanking, waUtil.removeWhatsappSuffix(usersRanking[i].user_id), usersRanking[i].msgs)
         mentionedUsers.push(usersRanking[i].user_id)   
     }
 
-    await waLib.replyWithMentions(client, message.chat_id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, message.chat_id, replyText, mentionedUsers, message.wa_message, {expiration: message.expiration})
 }
 
 export async function membroCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -978,8 +978,8 @@ export async function membroCommand(client: WASocket, botInfo: Bot, message: Mes
     }
     
     const userData = await userController.getUser(targetUserId)
-    const replyText = buildText(groupCommands.membro.msgs.reply, userData?.name || '---', waLib.removeWhatsappSuffix(targetUserId), participant.warnings, participant.registered_since, participant.commands, participant.msgs, participant.text, participant.image, participant.video, participant.sticker, participant.audio, participant.other)
-    await waLib.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
+    const replyText = buildText(groupCommands.membro.msgs.reply, userData?.name || '---', waUtil.removeWhatsappSuffix(targetUserId), participant.warnings, participant.registered_since, participant.commands, participant.msgs, participant.text, participant.image, participant.video, participant.sticker, participant.audio, participant.other)
+    await waUtil.replyText(client, message.chat_id, replyText, message.wa_message, {expiration: message.expiration})
 }
 
 export async function inativosCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -1009,10 +1009,10 @@ export async function inativosCommand(client: WASocket, botInfo: Bot, message: M
     let replyText = buildText(groupCommands.inativos.msgs.reply_title, inactiveUsers.length, qtyMessage)
 
     for(let user of inactiveUsers){
-        replyText += buildText(groupCommands.inativos.msgs.reply_item, waLib.removeWhatsappSuffix(user.user_id), user.msgs)
+        replyText += buildText(groupCommands.inativos.msgs.reply_item, waUtil.removeWhatsappSuffix(user.user_id), user.msgs)
     }
 
-    await waLib.replyWithMentions(client, group.id, replyText, inactiveUsersIds, message.wa_message, {expiration: message.expiration})
+    await waUtil.replyWithMentions(client, group.id, replyText, inactiveUsersIds, message.wa_message, {expiration: message.expiration})
 }
 
 export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -1041,7 +1041,7 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
 
     for (let command of commands) {
         if (commandExist(prefix, command, 'utility') || commandExist(prefix, command, 'misc') || commandExist(prefix, command, 'sticker') || commandExist(prefix, command, 'download')) {
-            if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
+            if (group.block_cmds.includes(waUtil.removePrefix(prefix, command))) {
                 blockResponse += buildText(groupCommands.bcmd.msgs.reply_item_already_blocked, command)
             } else {
                 validCommands.push(command)
@@ -1055,7 +1055,7 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     }
 
     await groupController.blockCommands(group.id, prefix, validCommands)
-    await waLib.replyText(client, message.chat_id, blockResponse, message.wa_message, { expiration: message.expiration })
+    await waUtil.replyText(client, message.chat_id, blockResponse, message.wa_message, { expiration: message.expiration })
 }
 
 export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Message, group: Group){
@@ -1090,7 +1090,7 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     }
 
     for (let command of commands) {
-        if (group.block_cmds.includes(waLib.removePrefix(prefix, command))) {
+        if (group.block_cmds.includes(waUtil.removePrefix(prefix, command))) {
             validCommands.push(command)
             unblockResponse += buildText(groupCommands.dcmd.msgs.reply_item_unblocked, command)
         } else {
@@ -1099,7 +1099,7 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
     }
 
     await groupController.unblockCommands(group.id, prefix, validCommands)
-    await waLib.replyText(client, message.chat_id, unblockResponse, message.wa_message, { expiration: message.expiration })
+    await waUtil.replyText(client, message.chat_id, unblockResponse, message.wa_message, { expiration: message.expiration })
 }
 
 
