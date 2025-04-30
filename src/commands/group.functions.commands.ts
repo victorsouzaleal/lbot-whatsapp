@@ -789,7 +789,7 @@ export async function addexfakeCommand(client: WASocket, botInfo: Bot, message: 
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
-    const exceptions = message.text_command.split(',')
+    const exceptions = message.text_command.split(',').filter(exception => exception.trim() != '')
 
     if (!exceptions.length) throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     
