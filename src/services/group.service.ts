@@ -161,64 +161,64 @@ export class GroupService {
         await db.updateAsync({id : groupId}, {$inc: {commands_executed: 1}})
     } 
 
-    public async addWordFilter(groupId: string, word: string){
-        await db.updateAsync({id: groupId}, { $push: { word_filter : word }})
-    }
-
-    public async removeWordFilter(groupId: string, word: string){
-        await db.updateAsync({id: groupId}, { $pull: { word_filter : word }})
+    public async setWordFilter(groupId: string, word: string, operation: 'add' | 'remove'){
+        if (operation == 'add'){
+            await db.updateAsync({id: groupId}, { $push: { word_filter : word }})
+        } else {
+            await db.updateAsync({id: groupId}, { $pull: { word_filter : word }})
+        }
     }
 
     public async setWelcome(groupId: string, status: boolean, msg: string){
         await db.updateAsync({id : groupId}, { $set: { "welcome.status": status, "welcome.msg":msg }})
     }
 
-    public setAutoReply(groupdId: string, status: boolean){
-        return db.updateAsync({id: groupdId}, {$set: { "auto_reply.status": status}})
+    public async setAutoReply(groupId: string, status: boolean){
+        await db.updateAsync({id: groupId}, {$set: { "auto_reply.status": status}})
     }
 
-    public addReply(groupdId: string, word: string, reply: string){
-        return db.updateAsync({id: groupdId}, { $push: { "auto_reply.config" : { word, reply } }})
+    public async setReplyConfig(groupId: string, word: string, reply: string, operation: 'add' | 'remove') {
+        if (operation == 'add'){
+            await db.updateAsync({id: groupId}, { $push: { "auto_reply.config" : { word, reply } }})
+        } else {
+            await db.updateAsync({id: groupId}, { $pull: { "auto_reply.config" : { word, reply } }})
+        }
     }
 
-    public removeReply(groupdId: string, word: string, reply: string){
-        return db.updateAsync({id: groupdId}, { $pull: { "auto_reply.config" : { word, reply } }})
+    public async setAntifake(groupId: string, status: boolean){
+        await db.updateAsync({id: groupId}, {$set: { "antifake.status": status}})
     }
 
-    public setAntifake(groupId: string, status: boolean){
-        return db.updateAsync({id: groupId}, {$set: { "antifake.status": status}})
+    public async setFakePrefixException(groupId: string, numberPrefix: string, operation: 'add' | 'remove'){
+        if (operation == 'add') {
+            await db.updateAsync({id: groupId}, { $push: { "antifake.exceptions.prefixes" : numberPrefix }})
+        } else {
+            await db.updateAsync({id: groupId}, { $pull: { "antifake.exceptions.prefixes" : numberPrefix }})
+        }
     }
 
-    public addFakePrefixException(groupId: string, numberPrefix: string){
-        return db.updateAsync({id: groupId}, { $push: { "antifake.exceptions.prefixes" : numberPrefix }})
-    }
-
-    public addFakeNumberException(groupId: string, userNumber: string){
-        return db.updateAsync({id: groupId}, { $push: { "antifake.exceptions.numbers" : userNumber }})
-    }
-
-    public removeFakePrefixException(groupId: string, numberPrefix: string){
-        return db.updateAsync({id: groupId}, { $pull: { "antifake.exceptions.prefixes" : numberPrefix }})
-    }
-
-    public removeFakeNumberException(groupId: string, userNumber: string){
-        return db.updateAsync({id: groupId}, { $pull: { "antifake.exceptions.numbers" : userNumber }})
+    public async setFakeNumberException(groupId: string, userNumber: string, operation: 'add' | 'remove'){
+        if (operation == 'add'){
+            await db.updateAsync({id: groupId}, { $push: { "antifake.exceptions.numbers" : userNumber }})
+        } else {
+            await db.updateAsync({id: groupId}, { $pull: { "antifake.exceptions.numbers" : userNumber }})
+        }
     }
 
     public async setMuted(groupId: string, status: boolean){
         await db.updateAsync({id: groupId}, {$set: { muted : status}})
     }
 
-    public setAntilink(groupId: string, status: boolean){
-        return db.updateAsync({id: groupId}, { $set: { 'antilink.status': status} })
+    public async setAntilink(groupId: string, status: boolean){
+        await db.updateAsync({id: groupId}, { $set: { 'antilink.status': status} })
     }
 
-    public addLinkException(groupId: string, exception: string){
-        return db.updateAsync({id: groupId}, { $push: { "antilink.exceptions" : exception }})
-    }
-
-    public removeLinkException(groupId: string, exception: string){
-        return db.updateAsync({id: groupId}, { $pull: { "antilink.exceptions" : exception }})
+    public async setLinkException(groupId: string, exception: string, operation: 'add' | 'remove'){
+        if (operation == 'add') {
+            await db.updateAsync({id: groupId}, { $push: { "antilink.exceptions" : exception }})
+        } else {
+            await db.updateAsync({id: groupId}, { $pull: { "antilink.exceptions" : exception }})
+        }
     }
 
     public async setAutosticker(groupId: string, status: boolean){
@@ -229,27 +229,26 @@ export class GroupService {
         await db.updateAsync({id : groupId}, { $set: { 'antiflood.status' : status, 'antiflood.max_messages' : maxMessages, 'antiflood.interval' : interval } })
     }
 
-    public async addBlackList(groupId: string, userId: string){
-        await db.updateAsync({id: groupId}, { $push: { blacklist: userId } })
+    public async setBlacklist(groupId: string, userId: string, operation: 'add' | 'remove'){
+        if (operation == 'add'){
+            await db.updateAsync({id: groupId}, { $push: { blacklist: userId } })
+        } else {
+            await db.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
+        }
     }
 
-    public async removeBlackList(groupId: string, userId: string){
-        await db.updateAsync({id: groupId}, { $pull: { blacklist: userId } } )
-    }
-
-    public async blockCommands(groupId: string, prefix: string, commands: string[]) {
+    public async setBlockedCommands(groupId: string, prefix: string, commands: string[], operation: 'add' | 'remove'){
         const group = await this.getGroup(groupId)
         const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
-        const blockCommands = commandsWithoutPrefix.filter(command => !group?.block_cmds.includes(command))
-        await db.updateAsync({id: groupId}, { $push: { block_cmds: { $each: blockCommands } } })
-        return blockCommands.map(command => prefix+command)
-    }
 
-    public async unblockCommands(groupId: string, prefix: string, commands: string[]) {
-        const group = await this.getGroup(groupId)
-        const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
-        const unblockCommands = commandsWithoutPrefix.filter(command => group?.block_cmds.includes(command))
-        await db.updateAsync({id: groupId}, { $pull: { block_cmds: { $in: unblockCommands }} })
-        return unblockCommands.map(command => prefix+command)
+        if (operation == 'add'){
+            const blockCommands = commandsWithoutPrefix.filter(command => !group?.block_cmds.includes(command))
+            await db.updateAsync({id: groupId}, { $push: { block_cmds: { $each: blockCommands } } })
+            return blockCommands.map(command => prefix+command)
+        } else {
+            const unblockCommands = commandsWithoutPrefix.filter(command => group?.block_cmds.includes(command))
+            await db.updateAsync({id: groupId}, { $pull: { block_cmds: { $in: unblockCommands }} })
+            return unblockCommands.map(command => prefix+command)
+        }
     }
 }

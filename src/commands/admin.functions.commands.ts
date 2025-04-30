@@ -290,7 +290,7 @@ export async function bcmdglobalCommand(client: WASocket, botInfo: Bot, message:
         }
     }
 
-    botController.blockCommandsGlobally(prefix, validCommands)
+    botController.setBlockedCommands(prefix, validCommands, 'add')
     await waUtil.replyText(client, message.chat_id, blockResponse, message.wa_message, {expiration: message.expiration})
 }
 
@@ -331,7 +331,7 @@ export async function dcmdglobalCommand(client: WASocket, botInfo: Bot, message:
         }
     }
 
-    botController.unblockCommandsGlobally(prefix, validCommands)
+    botController.setBlockedCommands(prefix, validCommands, 'remove')
     await waUtil.replyText(client, message.chat_id, unblockResponse, message.wa_message, {expiration: message.expiration})
 }
 

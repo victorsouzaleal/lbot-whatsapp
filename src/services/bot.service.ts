@@ -114,25 +114,24 @@ export class BotService {
         this.updateBot(bot)
     }
 
-    public blockCommandsGlobally(prefix: string, commands: string[]) {
+    public async setBlockedCommands(prefix: string, commands: string[], operation: 'add' | 'remove'){
         let botInfo = this.getBot()
         const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
-        const blockCommands = commandsWithoutPrefix.filter(command => !botInfo.block_cmds.includes(command))
-        botInfo.block_cmds.push(...blockCommands)
-        this.updateBot(botInfo)
-        return blockCommands.map(command => prefix+command)
-    }
 
-    public unblockCommandsGlobally(prefix: string, commands: string[]) {
-        let botInfo = this.getBot()
-        const commandsWithoutPrefix = commands.map(command => removePrefix(prefix, command))
-        const unblockCommands = commandsWithoutPrefix.filter(command => botInfo.block_cmds.includes(command))
+        if (operation == 'add'){
+            const blockCommands = commandsWithoutPrefix.filter(command => !botInfo.block_cmds.includes(command))
+            botInfo.block_cmds.push(...blockCommands)
+            this.updateBot(botInfo)
+            return blockCommands.map(command => prefix+command)
+        } else {
+            const unblockCommands = commandsWithoutPrefix.filter(command => botInfo.block_cmds.includes(command))
 
-        unblockCommands.forEach((command) => {
-            botInfo.block_cmds.splice(botInfo.block_cmds.indexOf(command), 1)
-        })
+            unblockCommands.forEach((command) => {
+                botInfo.block_cmds.splice(botInfo.block_cmds.indexOf(command), 1)
+            })
 
-        this.updateBot(botInfo)
-        return unblockCommands.map(command => prefix+command)
+            this.updateBot(botInfo)
+            return unblockCommands.map(command => prefix+command)
+        }
     }
 }

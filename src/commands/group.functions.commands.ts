@@ -87,7 +87,7 @@ export async function avisoCommand(client: WASocket, botInfo: Bot, message: Mess
     } else {
         replyText = buildText(groupCommands.aviso.msgs.reply_max_warning, waUtil.removeWhatsappSuffix(targetUserId))
         await waUtil.sendTextWithMentions(client, message.chat_id, replyText, [targetUserId], {expiration: message.expiration})
-        await groupController.addBlackList(group.id, targetUserId)
+        await groupController.setBlacklist(group.id, targetUserId, 'add')
         await waUtil.removeParticipant(client, group.id, targetUserId)
     }
 }
@@ -159,7 +159,7 @@ export async function addfiltrosCommand(client: WASocket, botInfo: Bot, message:
         if (group.word_filter.includes(word.toLowerCase())) {
             replyText += buildText(groupCommands.addfiltros.msgs.reply_item_error, word)
         } else {
-            await groupController.addWordFilter(group.id, word.toLowerCase())
+            await groupController.setWordFilter(group.id, word.toLowerCase(), 'add')
             replyText += buildText(groupCommands.addfiltros.msgs.reply_item_success, word)
         }
     }
@@ -185,7 +185,7 @@ export async function rmfiltrosCommand(client: WASocket, botInfo: Bot, message: 
         if (!group.word_filter.includes(word.toLowerCase())) {
             replyText += buildText(groupCommands.rmfiltros.msgs.reply_item_error, word)
         } else {
-            await groupController.removeWordFilter(group.id, word.toLowerCase())
+            await groupController.setWordFilter(group.id, word.toLowerCase(), 'remove')
             replyText += buildText(groupCommands.rmfiltros.msgs.reply_item_success, word)
         }
     }
@@ -250,7 +250,7 @@ export async function addlistaCommand(client: WASocket, botInfo: Bot, message: M
         throw new Error(groupCommands.addlista.msgs.error_already_listed)
     }
 
-    await groupController.addBlackList(group.id, targetUserId)
+    await groupController.setBlacklist(group.id, targetUserId, 'add')
     await waUtil.replyText(client, message.chat_id, groupCommands.addlista.msgs.reply, message.wa_message, {expiration: message.expiration})
 
     if (await groupController.isParticipant(group.id, targetUserId)) {
@@ -283,7 +283,7 @@ export async function rmlistaCommand(client: WASocket, botInfo: Bot, message: Me
         throw new Error(groupCommands.rmlista.msgs.error_not_listed)
     }
 
-    await groupController.removeBlackList(group.id, targetUserId)
+    await groupController.setBlacklist(group.id, targetUserId, 'remove')
     await waUtil.replyText(client, message.chat_id, groupCommands.rmlista.msgs.reply, message.wa_message, {expiration: message.expiration})
 }
 
@@ -631,7 +631,7 @@ export async function addrespCommand(client: WASocket, botInfo: Bot, message: Me
     if (wordRegistered) {
         throw new Error(buildText(groupCommands.addresp.msgs.error_already_added, word))
     } else {
-        await groupController.addReply(group.id, word, reply.trim())    
+        await groupController.setReplyConfig(group.id, word, reply.trim(), 'add')    
         const replyText = buildText(groupCommands.addresp.msgs.reply_added, word, reply.trim())
         await waUtil.replyText(client, group.id, replyText, message.wa_message, {expiration: message.expiration})
     }
@@ -657,7 +657,7 @@ export async function rmrespCommand(client: WASocket, botInfo: Bot, message: Mes
 
         if (wordRegistered) {
             replyText += buildText(groupCommands.rmresp.msgs.reply_item_success, word)
-            await groupController.removeReply(group.id, wordRegistered.word, wordRegistered.reply)
+            await groupController.setReplyConfig(group.id, wordRegistered.word, wordRegistered.reply, 'remove')
         } else {
             replyText +=  buildText(groupCommands.rmresp.msgs.reply_item_error, word)
         }
@@ -700,7 +700,7 @@ export async function addexlinkCommand(client: WASocket, botInfo: Bot, message: 
 
         if (!group.antilink.exceptions.includes(exception)) {
             replyText += buildText(groupCommands.addexlink.msgs.reply_item_added, exception)
-            await groupController.addLinkException(group.id, exception)
+            await groupController.setLinkException(group.id, exception, 'add')
         } else {
             replyText += buildText(groupCommands.addexlink.msgs.reply_item_already_added, exception)
         }
@@ -728,7 +728,7 @@ export async function rmexlinkCommand(client: WASocket, botInfo: Bot, message: M
 
         if (group.antilink.exceptions.includes(exception)) {
             replyText += buildText(groupCommands.rmexlink.msgs.reply_item_removed, exception)
-            await groupController.removeLinkException(group.id, exception)
+            await groupController.setLinkException(group.id, exception, 'remove')
         } else {
             replyText += buildText(groupCommands.rmexlink.msgs.reply_item_not_exist, exception)
         }
@@ -803,14 +803,14 @@ export async function addexfakeCommand(client: WASocket, botInfo: Bot, message: 
                 replyText += buildText(groupCommands.addexfake.msgs.reply_prefix_already_added, exception)
             } else {
                 replyText += buildText(groupCommands.addexfake.msgs.reply_item_added_prefix, exception)
-                await groupController.addFakePrefixException(group.id, exception)
+                await groupController.setFakePrefixException(group.id, exception, 'add')
             }
         } else {
             if (group.antifake.exceptions.numbers.includes(exception)) {
                 replyText += buildText(groupCommands.addexfake.msgs.reply_number_already_added, exception)
             } else {
                 replyText += buildText(groupCommands.addexfake.msgs.reply_item_added_number, exception)
-                await groupController.addFakeNumberException(group.id, exception)
+                await groupController.setFakeNumberException(group.id, exception, 'add')
             }
         }
     })
@@ -846,14 +846,14 @@ export async function rmexfakeCommand(client: WASocket, botInfo: Bot, message: M
                 replyText += buildText(groupCommands.rmexfake.msgs.reply_prefix_not_exist, exception)
             } else {
                 replyText += buildText(groupCommands.rmexfake.msgs.reply_item_removed_prefix, exception)
-                await groupController.removeFakePrefixException(group.id, exception)
+                await groupController.setFakePrefixException(group.id, exception, 'remove')
             }
         } else {
             if (!group.antifake.exceptions.numbers.includes(exception)) {
                 replyText += buildText(groupCommands.rmexfake.msgs.reply_number_not_exist, exception)
             } else {
                 replyText += buildText(groupCommands.rmexfake.msgs.reply_item_removed_number, exception)
-                await groupController.removeFakeNumberException(group.id, exception)
+                await groupController.setFakeNumberException(group.id, exception, 'remove')
             }
         }
     })
@@ -1054,7 +1054,7 @@ export async function bcmdCommand(client: WASocket, botInfo: Bot, message: Messa
         }
     }
 
-    await groupController.blockCommands(group.id, prefix, validCommands)
+    await groupController.setBlockedCommands(group.id, prefix, validCommands, 'add')
     await waUtil.replyText(client, message.chat_id, blockResponse, message.wa_message, { expiration: message.expiration })
 }
 
@@ -1098,7 +1098,7 @@ export async function dcmdCommand(client: WASocket, botInfo: Bot, message: Messa
         }
     }
 
-    await groupController.unblockCommands(group.id, prefix, validCommands)
+    await groupController.setBlockedCommands(group.id, prefix, validCommands, 'remove')
     await waUtil.replyText(client, message.chat_id, unblockResponse, message.wa_message, { expiration: message.expiration })
 }
 

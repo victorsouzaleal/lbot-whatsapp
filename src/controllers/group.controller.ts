@@ -54,40 +54,28 @@ export class GroupController {
         return this.groupService.incrementGroupCommands(groupId)
     }
 
-    public addWordFilter(groupId: string, word: string){
-        return this.groupService.addWordFilter(groupId, word)
-    }
-
-    public removeWordFilter(groupId: string, word: string){
-        return this.groupService.removeWordFilter(groupId, word)
+    public async setWordFilter(groupId: string, word: string, operation: 'add' | 'remove'){
+        return this.groupService.setWordFilter(groupId, word, operation)
     }
 
     public setWelcome(groupId: string, status: boolean, message = '') {
         return this.groupService.setWelcome(groupId, status, message)
     }
 
-    public setAutoReply(groupdId: string, status: boolean){
-        return this.groupService.setAutoReply(groupdId, status)
+    public setAutoReply(groupId: string, status: boolean){
+        return this.groupService.setAutoReply(groupId, status)
     }
 
-    public addReply(groupdId: string, word: string, reply: string){
-        return this.groupService.addReply(groupdId, word, reply)
-    }
-
-    public removeReply(groupdId: string, word: string, reply: string){
-        return this.groupService.removeReply(groupdId, word, reply)
+    public async setReplyConfig(groupId: string, word: string, reply: string, operation: 'add' | 'remove') {
+        return this.groupService.setReplyConfig(groupId, word, reply, operation)
     }
 
     public setAntiLink(groupId: string, status: boolean) {
         return this.groupService.setAntilink(groupId, status)
     }
 
-    public addLinkException(groupId: string, exception: string){
-        return this.groupService.addLinkException(groupId, exception)
-    }
-
-    public removeLinkException(groupId: string, exception: string){
-        return this.groupService.removeLinkException(groupId, exception)
+    public async setLinkException(groupId: string, exception: string, operation: 'add' | 'remove'){
+        return this.groupService.setLinkException(groupId, exception, operation)
     }
 
     public setAutoSticker(groupId: string, status = true) {
@@ -98,20 +86,12 @@ export class GroupController {
         return this.groupService.setAntifake(groupId, status)
     }
 
-    public addFakePrefixException(groupId: string, numberPrefix: string){
-        return this.groupService.addFakePrefixException(groupId, numberPrefix)
+    public async setFakePrefixException(groupId: string, numberPrefix: string, operation: 'add' | 'remove'){
+        return this.groupService.setFakePrefixException(groupId, numberPrefix, operation)
     }
 
-    public addFakeNumberException(groupId: string, userNumber: string){
-        return this.groupService.addFakeNumberException(groupId, userNumber)
-    }
-
-    public removeFakePrefixException(groupId: string, numberPrefix: string){
-        return this.groupService.removeFakePrefixException(groupId, numberPrefix)
-    }
-
-    public removeFakeNumberException(groupId: string, userNumber: string){
-        return this.groupService.removeFakeNumberException(groupId, userNumber)
+    public async setFakeNumberException(groupId: string, userNumber: string, operation: 'add' | 'remove'){
+        return this.groupService.setFakeNumberException(groupId, userNumber, operation)
     }
 
     public setMuted(groupId: string, status = true) {
@@ -122,20 +102,12 @@ export class GroupController {
         return this.groupService.setAntiFlood(groupId, status, maxMessages, interval)
     }
 
-    public addBlackList(groupId: string, userId: string) {
-        return this.groupService.addBlackList(groupId, userId)
+    public async setBlacklist(groupId: string, userId: string, operation: 'add' | 'remove'){
+        return this.groupService.setBlacklist(groupId, userId, operation)
     }
 
-    public removeBlackList(groupId: string, userId: string) {
-        return this.groupService.removeBlackList(groupId, userId)
-    }
-
-    public blockCommands(groupId: string, prefix: string, commands: string[]) {
-        return this.groupService.blockCommands(groupId, prefix, commands)
-    }
-
-    public unblockCommands(groupId: string, prefix: string, commands: string[]) {
-        return this.groupService.unblockCommands(groupId, prefix, commands)
+    public async setBlockedCommands(groupId: string, prefix: string, commands: string[], operation: 'add' | 'remove'){
+        return this.groupService.setBlockedCommands(groupId, prefix, commands, operation)
     }
 
     // ***** Participantes *****
@@ -147,12 +119,8 @@ export class GroupController {
         return this.participantService.removeParticipant(groupId, userId)
     }
 
-    public addAdmin(groupId: string, userId: string) {
-        return this.participantService.addAdmin(groupId, userId)
-    }
-
-    public removeAdmin(groupId: string, userId: string) {
-        return this.participantService.removeAdmin(groupId, userId)
+    public async setAdmin(groupId: string, userId: string, status: boolean){
+        return this.participantService.setAdmin(groupId, userId, status)
     }
 
     public migrateParticipants(){

@@ -51,11 +51,7 @@ export class BotController {
         return this.botService.setCommandRate(status, maxCommandsMinute, blockTime)
     }
 
-    public blockCommandsGlobally(prefix: string, commands: string[]){
-        return this.botService.blockCommandsGlobally(prefix, commands)
-    }
-
-    public unblockCommandsGlobally(prefix: string, commands: string[]){
-        return this.botService.unblockCommandsGlobally(prefix, commands)
+    public async setBlockedCommands(prefix: string, commands: string[], operation: 'add' | 'remove'){
+        return this.botService.setBlockedCommands(prefix, commands, operation)
     }
 }

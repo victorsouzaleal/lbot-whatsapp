@@ -38,13 +38,13 @@ export async function groupParticipantsUpdated (client: WASocket, event: {id: st
 
             if (isAdmin) return
         
-            await groupController.addAdmin(event.id, event.participants[0])
+            await groupController.setAdmin(event.id, event.participants[0], true)
         } else if (event.action === "demote"){
             const isAdmin = await groupController.isParticipantAdmin(group.id, event.participants[0])
 
             if (!isAdmin) return
             
-            await groupController.removeAdmin(event.id, event.participants[0])
+            await groupController.setAdmin(event.id, event.participants[0], false)
         }
     } catch(err: any){
         showConsoleError(err, "GROUP-PARTICIPANTS-UPDATE")

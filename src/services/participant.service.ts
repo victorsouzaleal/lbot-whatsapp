@@ -84,20 +84,8 @@ export class ParticipantService {
         await db.removeAsync({group_id: groupId}, {multi: true})
     }
 
-    public async addAdmin(groupId: string, userId: string){
-        const isGroupAdmin = await this.isGroupAdmin(groupId, userId)
-
-        if (!isGroupAdmin) {
-            await db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: true }})
-        }
-    }
-
-    public async removeAdmin(groupId: string, userId: string){
-        const isGroupAdmin = await this.isGroupAdmin(groupId, userId)
-
-        if (isGroupAdmin) {
-            await db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: false }})
-        }
+    public async setAdmin(groupId: string, userId: string, status: boolean){
+        await db.updateAsync({group_id : groupId, user_id: userId}, { $set: { admin: status }})
     }
 
     public async getParticipantFromGroup(groupId: string, userId: string){
