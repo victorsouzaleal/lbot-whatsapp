@@ -45,7 +45,6 @@
   },
   "dependencies": {
     "@deepgram/sdk": "^3.11.3",
-    "@distube/ytdl-core": "^4.16.8",
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.1.1",
     "@tobyg74/tiktok-api-dl": "^1.1.9",
@@ -66,7 +65,7 @@
     "fuse.js": "^7.1.0",
     "genius-lyrics": "^4.2.9",
     "google-sr": "^5.0.0",
-    "instagram-url-direct": "^2.0.2",
+    "instagram-url-direct": "^2.0.3",
     "jimp": "^0.22.12",
     "jsdom": "^24.1.1",
     "moment-timezone": "^0.5.47",

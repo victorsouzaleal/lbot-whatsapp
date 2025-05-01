@@ -1,5 +1,4 @@
 import {formatSeconds, showConsoleLibraryError} from './general.util.js'
-import ytdl from '@distube/ytdl-core'
 import {instagramGetUrl} from 'instagram-url-direct'
 import { getFbVideoInfo } from 'fb-downloader-scrapper'
 import Tiktok from '@tobyg74/tiktok-api-dl'
@@ -105,21 +104,15 @@ export async function instagramMedia (url: string){
 
 export async function youtubeMedia (text : string, format: '360' | '480' | '720' | '1080' | 'mp3'){
     try {
-        const isURLValid = ytdl.validateURL(text)
-        let videoId : string | undefined
-
-        if (isURLValid) {
-            videoId = ytdl.getVideoID(text)
-        } else {
-            const { videos } = await yts(text)
-
-            if (!videos.length) videoId = undefined
-            else videoId = videos[0].videoId
-        }
-
-        if (!videoId) return null
-
         const savetube = {
+            validQueryDomains: new Set([
+                "youtube.com",
+                "www.youtube.com",
+                "m.youtube.com",
+                "music.youtube.com",
+                "gaming.youtube.com",
+            ]),
+            validPathDomains: /^https?:\/\/(youtu\.be\/|(www\.)?youtube\.com\/(embed|v|shorts|live)\/)/,
             api: {
                 base: "https://media.savetube.me/api",
                 cdn: "/random-cdn",
@@ -132,6 +125,51 @@ export async function youtubeMedia (text : string, format: '360' | '480' | '720'
                 'origin': 'https://yt.savetube.me',
                 'referer': 'https://yt.savetube.me/',
                 'user-agent': 'Postify/1.0.0'
+            },
+            getURLVideoID: (link: string) => {
+                const idRegex = /^[a-zA-Z0-9-_]{11}$/;
+                const parsed = new URL(link.trim())
+                let id = parsed.searchParams.get("v")
+    
+                if (savetube.validPathDomains.test(link.trim()) && !id) {
+                    const paths = parsed.pathname.split("/");
+                    id = parsed.host === "youtu.be" ? paths[1] : paths[2]
+                } else if (parsed.hostname && !savetube.validQueryDomains.has(parsed.hostname)) {
+                    throw Error("Not a YouTube domain");
+                }
+    
+                if (!id) {
+                    throw Error(`No video id found: "${link}"`);
+                }
+    
+                id = id.substring(0, 11);
+                if (!savetube.validateID(id)) {
+                    throw TypeError(`Video id (${id}) does not match expected ` + `format (${idRegex.toString()})`);
+                }
+    
+                return id
+            },
+            validateURL: (text: string) => {
+                try {
+                  savetube.getURLVideoID(text);
+                  return true;
+                } catch (e) {
+                  return false;
+                }
+            },
+            validateID: (id: string) => {
+                const idRegex = /^[a-zA-Z0-9-_]{11}$/
+                return idRegex.test(id.trim())
+            },
+            getVideoID: (url: string) => {
+                const urlRegex = /^https?:\/\//;
+                if (savetube.validateID(url)) {
+                  return url;
+                } else if (urlRegex.test(url.trim())) {
+                  return savetube.getURLVideoID(url)
+                } else {
+                  throw Error(`No video id found: ${url}`)
+                }
             },
             crypto: {
                 hexToBuffer: (hexString: any) => {
@@ -232,6 +270,20 @@ export async function youtubeMedia (text : string, format: '360' | '480' | '720'
                 }
             }
         }
+
+        const isURLValid = savetube.validateURL(text)
+        let videoId : string | undefined
+
+        if (isURLValid) {
+            videoId = savetube.getVideoID(text)
+        } else {
+            const { videos } = await yts(text)
+
+            if (!videos.length) videoId = undefined
+            else videoId = videos[0].videoId
+        }
+
+        if (!videoId) return null
     
         const savetubeInfo = await savetube.download(videoId, format) as any
         const ytInfo : YTInfo = {
