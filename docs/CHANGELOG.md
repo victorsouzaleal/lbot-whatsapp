@@ -1,6 +1,26 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.4.0 - 02/05/2025
+
+### GERAL
+- Melhoria na migração de dados que acontece após cada atualização.
+- O menu de grupo foi reorganizado e agora exibe os recursos do grupo em categorias separadas.
+- A mensagem de erro quando um usuário fazia um comando incorretamente agora exibe diretamente o guia do comando.
+
+### NOVO
+- Recurso **Respostas automáticas (Grupo)**: Novo recurso de **GRUPO** para configurar mensagens automáticas de acordo com as palavras configuradas.
+- Comando **!audio**: Novo comando **UTILITÁRIO** para extrair áudio de vídeos.
+
+### ALTERAÇÕES
+- Recurso **Anti-fake**: O Anti-fake recebeu comandos para adicionar/remover exceções de prefixos internacionais ou até mesmo um número especifico, e as configurações não serão zeradas quando este recurso for desabilitado.
+- Recurso **Anti-link**: O Anti-link recebeu comandos para adicionar/remover exceções de links, e as configurações não serão zeradas quando este recurso for desabilitado.
+- Comando **!audio**: O comando de efeito de áudio agora foi renomeado para **!efeitoaudio**
+
+### CORREÇÃO
+- Correção no **Anti-fake** que não incluía o DDI 55 automaticamente quando configurava as exceções e podia gerar bans acidentais.
+- Correções nos efeitos de grave/agudo no comando **!efeitoaudio**
+
 ## 3.3.7 - 25/04/2025
 
 ### GERAL
