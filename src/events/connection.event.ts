@@ -1,39 +1,28 @@
 import {DisconnectReason, ConnectionState, WASocket} from 'baileys'
 import { Boom } from '@hapi/boom'
 import { BotController } from '../controllers/bot.controller.js'
-import { buildText, showConsoleError, colorText } from '../utils/general.util.js'
+import { buildText, showConsoleError, colorText, askQuestion } from '../utils/general.util.js'
 import botTexts from '../helpers/bot.texts.helper.js'
 import { UserController } from '../controllers/user.controller.js'
 import { getHostNumber } from '../utils/whatsapp.util.js'
 import qrcode from 'qrcode-terminal'
-import readline from 'readline/promises'
 import { cleanCreds } from '../helpers/session.auth.helper.js'
 
-export async function connectionQr(client: WASocket, connectionState : Partial<ConnectionState>){
-    const { qr } = connectionState
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    })
-
-    const answerMethod = await rl.question(botTexts.input_connection_method)
-
-    if (answerMethod == '2') {
-        const answerNumber = await rl.question(botTexts.input_phone_number)
-        const code = await client.requestPairingCode(answerNumber.replace(/\W+/g,""))
-        console.log(colorText(buildText(botTexts.show_pairing_code, code)))
-    } else {
-        if (qr) {
-            await new Promise<void>(resolve => {
-                qrcode.generate(qr, {small: true}, (qrcode) => {
-                    console.log(qrcode)
-                    resolve()
-                })
+export async function connectionQr(qr: string){
+    if (qr) {
+        await new Promise<void>(resolve => {
+            qrcode.generate(qr, {small: true}, (qrcode) => {
+                console.log(qrcode)
+                resolve()
             })
-        }
+        })
     }
+}
 
-    rl.close()
+export async function connectionPairingCode(client: WASocket){
+    const answerNumber = await askQuestion(botTexts.input_phone_number)
+    const code = await client.requestPairingCode(answerNumber.replace(/\W+/g,""))
+    console.log(colorText(buildText(botTexts.show_pairing_code, code)))
 }
 
 export async function connectionOpen(client: WASocket){

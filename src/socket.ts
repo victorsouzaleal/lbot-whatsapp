@@ -3,7 +3,7 @@ import {makeWASocket, fetchLatestBaileysVersion, WASocket} from 'baileys'
 import NodeCache from 'node-cache'
 import configSocket from './config.js'
 import { BotController } from './controllers/bot.controller.js'
-import { connectionClose, connectionOpen, connectionQr } from './events/connection.event.js'
+import { connectionClose, connectionOpen, connectionPairingCode, connectionQr } from './events/connection.event.js'
 import { messageReceived } from './events/message-received.event.js'
 import { addedOnGroup } from './events/group-added.event.js'
 import { groupParticipantsUpdated } from './events/group-participants-updated.event.js'
@@ -11,7 +11,7 @@ import { partialGroupUpdate } from './events/group-partial-update.event.js'
 import { syncGroupsOnStart } from './helpers/groups.sync.helper.js'
 import { executeEventQueue, queueEvent } from './helpers/events.queue.helper.js'
 import botTexts from './helpers/bot.texts.helper.js'
-import { colorText } from './utils/general.util.js'
+import { askQuestion, colorText } from './utils/general.util.js'
 import { useNeDBAuthState } from './helpers/session.auth.helper.js'
 
 //Cache de tentativa de envios
@@ -25,6 +25,7 @@ export default async function connect(){
     const { state, saveCreds } = await useNeDBAuthState()
     const { version } = await fetchLatestBaileysVersion()
     const client : WASocket = makeWASocket(configSocket(state, retryCache, version, messagesCache))
+    let connectionType : string | null = null
     let isBotReady = false
     eventsCache.set("events", [])
 
@@ -40,7 +41,18 @@ export default async function connect(){
 
             if (!receivedPendingNotifications) {
                 if (qr) {
-                    connectionQr(client, connectionState) 
+                    if (!connectionType) {
+                        console.log(colorText(botTexts.not_connected, '#e0e031'))
+                        connectionType = await askQuestion(botTexts.input_connection_method)
+
+                        if (connectionType == '2') {
+                            connectionPairingCode(client)
+                        } else {
+                            connectionQr(qr) 
+                        }
+                    } else if (connectionType != '2') {
+                        connectionQr(qr) 
+                    }
                 } else if (connection == 'connecting'){
                     console.log(colorText(botTexts.connecting))
                 } else if (connection === 'close'){

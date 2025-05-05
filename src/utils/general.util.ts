@@ -7,8 +7,31 @@ import botTexts from "../helpers/bot.texts.helper.js"
 import { FileExtensions } from "../interfaces/library.interface.js"
 import { tmpdir } from "node:os"
 import crypto from 'node:crypto'
+import readline from 'readline/promises'
 import { BotController } from "../controllers/bot.controller.js"
 import { getCommandGuide } from "./commands.util.js"
+let rl: readline.Interface | null = null;
+
+export async function askQuestion(question: string) {
+    const getReadline = () => {
+      if (rl){
+        rl?.close()
+        rl = null
+      }
+
+      rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      })
+
+      return rl
+    }
+
+    const rlInstance = getReadline()
+    const answer = await rlInstance.question(question)
+
+    return answer
+}
 
 export function messageErrorCommandUsage(prefix: string, message: Message){
   return buildText(botTexts.error_command_usage, message.command, getCommandGuide(prefix, message.command))

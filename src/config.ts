@@ -12,7 +12,6 @@ export default function configSocket (state : AuthenticationState, retryCache : 
         syncFullHistory: false,
         markOnlineOnConnect: true,
         qrTimeout: undefined,
-        browser: Browsers.windows('Google Chrome'),
         logger: pino({level: 'silent'}),
         shouldIgnoreJid: jid => isJidBroadcast(jid) || jid?.endsWith('@newsletter'),
         getMessage: async (key) => {

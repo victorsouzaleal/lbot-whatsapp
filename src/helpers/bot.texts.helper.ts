@@ -1,16 +1,16 @@
 const botTexts = {
     starting: "  _____     ______      ___    _________  \r\n |_   _|   |_   _ \\   .\'   `. |  _   _  | \r\n   | |       | |_) | \/  .-.  \\|_\/ | | \\_| \r\n   | |   _   |  __\'. | |   | |    | |     \r\n  _| |__\/ | _| |__) |\\  `-\'  \/   _| |_    \r\n |________||_______\/  `.___.\'   |_____|   \r\n" + "\n  Iniciando na versão {$1}\n",
-    connecting: '! Aguarde, o bot está conectando e sincronizando as conversas... (Isso pode levar algum tempo)',
+    connecting: '⏱ Conectando... O bot está conectando e sincronizando as conversas se necessário (Isso pode levar algum tempo)',
     bot_data: "✓ Obteve dados do BOT",
     no_update_available: '✓ Não há atualização disponível, seu bot está na versão mais recente.',
     update_available: '! Uma nova atualização foi encontrada, aguarde o término da atualização...',
     error_check_update: 'Não foi possível checar se há alguma atualização disponível, o bot será iniciado.',
     bot_updated: 'Seu bot foi atualizado com sucesso e será desligado, inicie ele novamente.',
+    not_connected: '! Parece que você não está com um dispositivo conectado.\n',
     input_connection_method: 'Qual dos métodos você prefere usar para se conectar?\n\n'+
     '1 - QR Code\n'+
-    '2 - Código de Pareamento\n\n'+
-    'Resposta: ',
-    input_phone_number: 'Digite aqui o número em que o bot vai ficar, o número precisa ter o código internacional'+
+    '2 - Código de Pareamento\n\n',
+    input_phone_number: '\nDigite aqui o número em que o bot vai ficar, o número precisa ter o código internacional'+
     '(Ex: 5521912345678) -> ',
     show_pairing_code: 'Seu código de pareamento é {$1}',
     server_started: '✓ Servidor iniciado!',
