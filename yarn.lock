@@ -2859,10 +2859,10 @@ inherits@2, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.1, 
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-instagram-url-direct@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/instagram-url-direct/-/instagram-url-direct-2.0.3.tgz#373c607ad22ed9a5bbe49f361bf948bad02cb581"
-  integrity sha512-ZNHE++YjntY8DRBRSe2vAOe3thSax0TR5g+RuHEp79ggcN72PtDaqEP2dWDsQneygsitIUifxAG7/G0rQCywXg==
+instagram-url-direct@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/instagram-url-direct/-/instagram-url-direct-2.0.4.tgz#7d6d07e5d3b046b541522c1b24760a7650e174d0"
+  integrity sha512-ZfJ1mXC0cco9Ikllit+fHdC45FwPfSGgOqewZESfOxOXAK4xExS5ip0A91qMbtgrbfQ7aD8oY6LgrIG/XNNgdg==
   dependencies:
     axios "^1.7.7"
     qs "^6.13.0"
