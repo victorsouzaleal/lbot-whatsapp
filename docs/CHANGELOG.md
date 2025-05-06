@@ -1,6 +1,12 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.4.1 - 06/05/2025
+
+### CORREÇÃO
+- Correção na conexão com código de pareamento
+- Correção no download de mídias do Instagram
+
 ## 3.4.0 - 02/05/2025
 
 ### GERAL
