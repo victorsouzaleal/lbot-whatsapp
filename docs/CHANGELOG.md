@@ -1,6 +1,11 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.4.2 - 20/05/2025
+
+### DEPENDENCIAS
+- As dependencias do projeto foram atualizadas para as versões mais recentes.
+
 ## 3.4.1 - 06/05/2025
 
 ### CORREÇÃO
