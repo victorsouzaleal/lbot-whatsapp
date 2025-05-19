@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {prettyNum} from 'pretty-num'
-import translate from '@vitalets/google-translate-api'
+import { translate } from '@vitalets/google-translate-api'
 import google from '@victorsouzaleal/googlethis'
 import { OrganicResult, search } from 'google-sr'
 import Genius from 'genius-lyrics'

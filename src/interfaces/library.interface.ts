@@ -1,3 +1,5 @@
+import { ContentType } from "@tobyg74/tiktok-api-dl/lib/types/common"
+
 export interface ApiKeys {
     deepgram: {
         secret_key: string
@@ -40,7 +42,7 @@ export interface XMedia {
 export interface TiktokMedia {
     author_profile?: string,
     description?: string,
-    type: "video" | "image",
+    type?: ContentType,
     duration : number | null,
     url: string | string []
 }

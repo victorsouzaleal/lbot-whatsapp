@@ -37,17 +37,34 @@ export async function xMedia (url: string){
 export async function tiktokMedia (url : string){
     try {
         const tiktokResponse = await Tiktok.Downloader(url, {version: "v1"})
+        let mediaUrl: string | string[]
 
-        if(tiktokResponse.status === 'error') {
+        if (tiktokResponse.status === 'error') {
+            return null
+        }
+
+        if (tiktokResponse.result?.type == 'video'){
+            if (tiktokResponse.result?.video?.playAddr?.length) {
+                mediaUrl = tiktokResponse.result?.video?.playAddr[0]
+            } else {
+                return null
+            } 
+        } else if(tiktokResponse.result?.type == 'image'){
+            if (tiktokResponse.result?.images) {
+                mediaUrl = tiktokResponse.result?.images
+            } else {
+                return null
+            }
+        } else {
             return null
         }
 
         const tiktokMedia : TiktokMedia = {
-            author_profile: tiktokResponse.result?.author.nickname,
-            description : tiktokResponse.result?.description,
-            type: (tiktokResponse.result?.type === "video") ? "video" : "image",
+            author_profile: tiktokResponse.result?.author?.nickname,
+            description : tiktokResponse.result?.desc,
+            type: tiktokResponse.result?.type,
             duration: tiktokResponse.result?.type == "video" ? parseInt(((tiktokResponse.result?.video?.duration as number)/1000).toFixed(0)) : null,
-            url: tiktokResponse.result?.type == "video" ? tiktokResponse.result?.video?.playAddr[0] as string : tiktokResponse.result?.images as string[]
+            url: mediaUrl
         }
 
         return tiktokMedia
