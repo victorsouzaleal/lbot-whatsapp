@@ -23,30 +23,32 @@
 
 <br>
 
-## 1 - 💿 Instalação
+## 💿 Instalação
 
-### 1.1 - 🖥️ Desktop (Windows/Linux)
+### 🖥️ Desktop (Windows/Linux)
 
-#### 1.1.1 - Antes da instalação você tem que instalar os programas abaixo, no Windows é só instalar pelo link indicado e no Linux você tem que pesquisar qual é o comando para instalar na sua distribuição.
+Antes da instalação você tem que instalar os programas abaixo, no Windows é só instalar pelo link indicado e no Linux você tem que pesquisar qual é o comando para instalar na sua distribuição.
 - Git 64-bit - [DOWNLOAD](https://git-scm.com/downloads/win)<br>
 - Node.js LTS - [DOWNLOAD](https://nodejs.org/en/)<br><br>
 
-#### 1.1.2 - Após instalar o Git e o Node.js, faça o download do **.zip** da última versão lançada: [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest)
-
-#### 1.1.3 - Extraia o **.zip**, entre na pasta e abra o **terminal/prompt de comando** do seu sistema **dentro dessa pasta** :
+Faça o download do **.zip** da última versão lançada [AQUI](https://github.com/victorsouzaleal/lbot-whatsapp/releases/latest), extraia o **.zip** e abra o **terminal/prompt de comando** dentro do local extraído.
 
 <br>
 
-**TODOS OS COMANDOS ABAIXO DEVEM SER EXECUTADOS NO TERMINAL/PROMPT DE COMANDO DENTRO DA PASTA DO BOT!!**
+**TODOS OS COMANDOS ABAIXO DEVEM SER EXECUTADOS NO TERMINAL/PROMPT DE COMANDO DENTRO DA PASTA EXTRAÍDA DO BOT!!** 
 
-#### 1.1.4 - Se for a sua primeira vez instalando o bot você vai ter que digitar esse comando para instalar o **Yarn**
+<br>
+
+Se for a sua primeira vez instalando o bot você vai ter que digitar esse comando para instalar o **Yarn**
 ```bash
 npm i -g yarn
 ```
 
 **OBS**: Caso o comando retorne erro no **Linux** você vai precisar se elevar a superusuário utilizando **sudo** antes do comando.
 
-#### 1.1.5 - Após instalar o **Yarn** ou se ele já tiver instalado, você só precisa iniciar o bot com o comando abaixo:
+<br>
+
+Após instalar o **Yarn** ou se ele já tiver instalado, você só precisa iniciar o bot com o comando abaixo:
 ```bash
 yarn start
 ```
@@ -57,11 +59,11 @@ yarn start
 
 <br>
 
-### 1.2 - 📱 Smartphone (Android)
+### 📱 Smartphone (Android)
 
-#### 1.2.1 - Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/termux/termux-app/releases/download/v0.118.2/termux-app_v0.118.2+github-debug_universal.apk).
+Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/termux/termux-app/releases/download/v0.118.2/termux-app_v0.118.2+github-debug_universal.apk).
 
-#### 1.2.2 - Abra o **Termux** comece usando este comando para fazer o download e instalação do bot, isso pode demorar algum tempo até instalar tudo.
+Abra o **Termux** comece usando este comando para fazer o download e instalação do bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
 pkg install wget -y && wget -O - dub.sh/lbot-termux | bash && cd ~/LBOT && yarn start
 ```
@@ -72,7 +74,7 @@ pkg install wget -y && wget -O - dub.sh/lbot-termux | bash && cd ~/LBOT && yarn 
 <br>
 <br>
 
-#### DICA - Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
+Caso você feche o Termux e queira iniciar o bot novamente faça o comando abaixo:
 ```bash
 cd ~/LBOT && yarn start
 ```
@@ -80,7 +82,7 @@ cd ~/LBOT && yarn start
 <br>
 <br>
 
-## 2 - 🤖 Uso
+## 🤖 Uso
 
 Seu bot já deve estar iniciando normalmente após o passo anterior, use os comandos abaixo para visualizar os comandos disponíveis.
 
@@ -95,9 +97,8 @@ Todos os comandos tem um guia ao digitar: **!comando** guia
 
 <br>
 
-## 3 - ⚙️ Configuração do bot
+## ⚙️ Configuração do bot
 
-### Como configurar o DONO:
 Para usar as funções de **administrador** envie **!admin** para o WhatsApp do bot e seu número será cadastrado como dono.
 
 <br>
@@ -106,7 +107,7 @@ Após ser cadastrado como **DONO** envie **!admin** novamente e veja toda a list
 
 <br>
 
-## 4 - 🛠️ Recursos/Comandos
+## 🛠️ Recursos/Comandos
 
 ### 🖼️ Figurinhas
 Diversos comandos para criação de figurinhas
@@ -132,7 +133,7 @@ Diversos para administrar o bot e ter controle sobre ele.
 
 <br>
 
-## 5 - 👤 Contato e Doações
+## 👤 Contato e Doações
 Caso tenha algum problema ou queira ajudar o projeto com qualquer valor. 
 
 * **Chave PIX (Celular)**: 21995612287
@@ -141,7 +142,7 @@ Caso tenha algum problema ou queira ajudar o projeto com qualquer valor.
 
 <br>
 
-## 6 - 🙏 Agradecimentos
+## 🙏 Agradecimentos
 
 * A minha mãe e o meu pai que me fizeram com muito amor
 * [`WhiskeySockets/Baileys`](https://github.com/WhiskeySockets/Baileys) - Por disponibilizar a biblioteca Baileys e dar suporte no Discord principalmente a nós brasileiros.
