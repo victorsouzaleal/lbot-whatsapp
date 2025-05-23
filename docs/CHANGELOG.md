@@ -1,6 +1,11 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.4.3 - 23/05/2025
+
+### ALTERAÇÕES
+- Alterada versão da API do Tiktok
+
 ## 3.4.2 - 20/05/2025
 
 ### DEPENDENCIAS
