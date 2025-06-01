@@ -97,13 +97,15 @@ Todos os comandos tem um guia ao digitar: **!comando** guia
 
 <br>
 
-## ⚙️ Configuração do bot
+## ⚙️ Administração do bot/grupo
 
-Para usar as funções de **administrador** envie **!admin** para o WhatsApp do bot e seu número será cadastrado como dono.
+Como ver os comandos de administração geral do **BOT**? <br>
+Envie **!admin** para o WhatsApp do bot e seu número será cadastrado como dono, após ser cadastrado você pode usar o **!admin** para ter acesso ao **menu do administrador**
 
 <br>
 
-Após ser cadastrado como **DONO** envie **!admin** novamente e veja toda a lista de comandos de administrador.
+Como ver os comandos de administração do **GRUPO**? <br>
+Se você for administrador do grupo envie **!menu 5** dentro de um grupo para ter acesso ao menu completo do grupo, caso você não seja administrador do grupo você só terá acesso a um menu limitado.
 
 <br>
 
