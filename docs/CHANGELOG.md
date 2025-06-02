@@ -1,6 +1,14 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.4.4 - 01/06/2025
+
+### CORREÇÕES
+- Corrigida a conexão por código de pareamento.
+
+### DEPENDENCIAS
+- As dependencias do projeto foram atualizadas para as versões mais recentes.
+
 ## 3.4.3 - 23/05/2025
 
 ### ALTERAÇÕES
