@@ -1391,10 +1391,10 @@ axios@^1.9.0:
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
-baileys@^6.7.17:
-  version "6.7.17"
-  resolved "https://registry.yarnpkg.com/baileys/-/baileys-6.7.17.tgz#3a20f9ce570a1f5373d6346faba7209d2856cfe0"
-  integrity sha512-p/swKm/7ecHcDhKHzAZzxlaGEkjYqxUwAaNzDjhhmCuf7hmR2rIbRzTGIMKJRbFTl/QKnkRLXAVNjYZmXYeeAg==
+baileys@^6.7.18:
+  version "6.7.18"
+  resolved "https://registry.yarnpkg.com/baileys/-/baileys-6.7.18.tgz#4169791f44666b27b9507f7fe46afb830f0b1c99"
+  integrity sha512-o90lVPkzAKCw10Ui1mhFxAUJn/Yn/RkB4jgHlFFtIXwB3L3oxOK58jbJdLvVIf3jxpDmGOQqtqu/JEnZc3mrTg==
   dependencies:
     "@cacheable/node-cache" "^1.4.0"
     "@hapi/boom" "^9.1.3"
