@@ -65,7 +65,7 @@ Faça a instalação do .apk mais atual do Termux: [AQUI](https://github.com/ter
 
 Abra o **Termux** comece usando este comando para fazer o download e instalação do bot, isso pode demorar algum tempo até instalar tudo.
 ```bash
-pkg install wget -y && wget -O - dub.sh/lbot-termux | bash && cd ~/LBOT && yarn start
+pkg install wget -y && wget -O - tinyurl.com/lbot-termux | bash && cd ~/LBOT && yarn start
 ```
 <br>
 
