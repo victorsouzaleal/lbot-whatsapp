@@ -36,7 +36,7 @@ export async function xMedia (url: string){
 
 export async function tiktokMedia (url : string){
     try {
-        const tiktokResponse = await Tiktok.Downloader(url, { version: "v2" })
+        const tiktokResponse = await Tiktok.Downloader(url, { version: "v1" })
         let mediaUrl: string | string[]
 
         if (tiktokResponse.status === 'error') {
