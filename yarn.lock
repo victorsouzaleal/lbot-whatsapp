@@ -802,10 +802,10 @@
     localforage "^1.9.0"
     util "^0.12.4"
 
-"@tobyg74/tiktok-api-dl@^1.3.1-fix":
-  version "1.3.1-fix"
-  resolved "https://registry.yarnpkg.com/@tobyg74/tiktok-api-dl/-/tiktok-api-dl-1.3.1-fix.tgz#50d3ce37b4a6be48f7f43e298ef4cfa028dae8f8"
-  integrity sha512-FOENwZq0mAKCnNBwA/0/06oVF2TXmD/iBSmjzMviUoR4qy7dmWNtTU3k7fnzh/Jp3RTtQ8Yv+sXX/QJgvRQWEA==
+"@tobyg74/tiktok-api-dl@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@tobyg74/tiktok-api-dl/-/tiktok-api-dl-1.3.2.tgz#ff45f6f5cd6b5711d9a9bb3dda7677c8ad4241ab"
+  integrity sha512-t1oF1M4f8xqeUijJ/h/PsXFFU8QiWPk2KB6EJqbVR/Uu212Yzd4HwGe8OjswrH3X07Li6kO/6t8zbyFliAbb/w==
   dependencies:
     async-retry "^1.3.3"
     axios "^1.3.4"
