@@ -1,6 +1,11 @@
 # Notas de atualização
 Colocarei neste arquivos as mudanças significativas em cada versão começando na versão 3.0.0
 
+## 3.4.6 - 09/06/2025
+
+### CORREÇÕES
+- Corrigido erro dos comandos do Youtube (**!play** e **!yt**) revertendo para a biblioteca **ytdl-core**
+
 ## 3.4.5 - 07/06/2025
 
 ### CORREÇÕES
