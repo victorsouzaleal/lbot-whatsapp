@@ -70,7 +70,10 @@ export interface InstagramMedia {
 export interface YTInfo {
     id_video: string,
     title: string,
+    description: string,
     duration: number,
+    channel: string,
+    is_live: boolean,
     duration_formatted: string,
     url: string
 }

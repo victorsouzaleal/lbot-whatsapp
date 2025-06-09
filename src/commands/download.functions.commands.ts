@@ -5,6 +5,7 @@ import { Message } from "../interfaces/message.interface.js"
 import { buildText, messageErrorCommandUsage} from "../utils/general.util.js"
 import * as waUtil from "../utils/whatsapp.util.js"
 import * as downloadUtil from '../utils/download.util.js'
+import * as convertUtil from '../utils/convert.util.js'
 import { imageSearchGoogle } from '../utils/image.util.js'
 import format from 'format-duration'
 import downloadCommands from "./download.list.commands.js"
@@ -14,17 +15,21 @@ export async function playCommand(client: WASocket, botInfo: Bot, message: Messa
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     } 
 
-    const videoInfo = await downloadUtil.youtubeMedia(message.text_command, 'mp3')
+    const videoInfo = await downloadUtil.youtubeMedia(message.text_command)
 
     if (!videoInfo){
         throw new Error(downloadCommands.play.msgs.error_not_found)
+    } else if (videoInfo.is_live){
+        throw new Error(downloadCommands.play.msgs.error_live)
     } else if (videoInfo.duration > 360){
         throw new Error(downloadCommands.play.msgs.error_limit)
     }
 
     const waitReply = buildText(downloadCommands.play.msgs.wait, videoInfo.title, videoInfo.duration_formatted)
     await waUtil.replyText(client, message.chat_id, waitReply, message.wa_message, {expiration: message.expiration})
-    await waUtil.replyFileFromUrl(client, message.chat_id, 'audioMessage', videoInfo.url, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
+
+    const audioBuffer = await convertUtil.convertMp4ToMp3('url', videoInfo.url)
+    await waUtil.replyFileFromBuffer(client, message.chat_id, 'audioMessage', audioBuffer, '', message.wa_message, {expiration: message.expiration, mimetype: 'audio/mpeg'})
 }
 
 export async function ytCommand(client: WASocket, botInfo: Bot, message: Message, group? : Group){
@@ -32,10 +37,12 @@ export async function ytCommand(client: WASocket, botInfo: Bot, message: Message
         throw new Error(messageErrorCommandUsage(botInfo.prefix, message))
     }
 
-    const videoInfo = await downloadUtil.youtubeMedia(message.text_command, '480')
+    const videoInfo = await downloadUtil.youtubeMedia(message.text_command)
 
     if (!videoInfo){
         throw new Error(downloadCommands.yt.msgs.error_not_found)
+    } else if (videoInfo.is_live){
+        throw new Error(downloadCommands.yt.msgs.error_live)
     } else if (videoInfo.duration > 360){
         throw new Error(downloadCommands.yt.msgs.error_limit)
     }
